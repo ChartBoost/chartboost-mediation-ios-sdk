@@ -1,0 +1,198 @@
+{
+  "id": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3",
+  "seatbid": [
+    {
+      "id": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3",
+      "seatbid": [
+        {
+          "bid": [
+            {
+              "id": "4021712904974906474",
+              "impid": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3",
+              "price": 99.99,
+              "adm": ".......... ADM STRING..........",
+              "nurl": "......... NURL STRING.........",
+              "lurl": "......... LURL STRING.........",
+              "ext": {
+                "bidder": {
+                  "helium": {
+                    "placement_name": "428939561173260_445238226210060"
+                  },
+                  "facebook": {}
+                }
+              }
+            }
+          ],
+          "seat": "facebook",
+          "helium_bid_id": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3_facebook_428939561173260_445238226210060"
+        }
+      ],
+      "bidid": "7588718493670513024",
+      "cur": "USD"
+    },
+    {
+      "id": "helium-test-mode-id",
+      "seatbid": [
+        {
+          "bid": [
+            {
+              "id": "helium-test-mode-bidid",
+              "impid": "helium-test-mode-impid",
+              "price": 87,
+              "adid": "1",
+              "adm": ".......... ADM STRING..........",
+              "ext": {
+                "bidder": {
+                  "template": "https://t.chartboost.com/base_templates/html/vast-moat-v2-e381a73d74.html",
+                  "trackingId": "helium-test-mode-trackingId"
+                }
+              }
+            }
+          ],
+          "seat": "chartboost",
+          "helium_bid_id": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3_chartboost_"
+        }
+      ],
+      "cur": "USD"
+    },
+    {
+      "id": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3",
+      "seatbid": [
+        {
+          "bid": [
+            {
+              "id": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3_bid",
+              "impid": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3",
+              "price": 75,
+              "crid": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3_bid",
+              "ext": {
+                "bidder": {
+                  "helium": {
+                    "placement_name": "iOSTJRewarded"
+                  },
+                  "tapjoy": {
+                    "tj_data": ".......... ADM STRING .........."
+                  }
+                }
+              }
+            }
+          ],
+          "seat": "tapjoy",
+          "helium_bid_id": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3_tapjoy_iOSTJRewarded"
+        }
+      ],
+      "bidid": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3_bid",
+      "cur": "USD"
+    },
+    {
+      "id": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3",
+      "seatbid": [
+        {
+          "bid": [
+            {
+              "id": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3_acbid",
+              "impid": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3",
+              "price": 68,
+              "crid": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3_acbid",
+              "nurl": "......... NURL STRING.........",
+              "lurl": "......... LURL STRING.........",
+              "ext": {
+                "bidder": {
+                  "helium": {
+                    "placement_name": "iOSTJRewarded"
+                  },
+                  "adcolony": {
+                  }
+                }
+              }
+            }
+          ],
+          "seat": "adcolony",
+          "helium_bid_id": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3_adcolony_iOSTJRewarded"
+        }
+      ],
+      "bidid": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3_bid",
+      "cur": "USD"
+    },
+    {
+      "seatbid": [
+        {
+          "bid": [
+            {
+              "id": "MEDIATION",
+              "impid": "1",
+              "price": 34,
+              "ext": {
+                "partner_placement": "MoatPublishingRewardedliOS"
+              }
+            }
+          ],
+          "seat": "chartboost",
+          "helium_bid_id": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3_chartboost_MoatPublishingRewardedliOS"
+        }
+      ]
+    },
+    {
+      "seatbid": [
+        {
+          "bid": [
+            {
+              "id": "MEDIATION",
+              "impid": "1",
+              "price": 18,
+              "ext": {
+                "partner_placement": "428939561173260_575105103223371"
+              }
+            }
+          ],
+          "seat": "facebook",
+          "helium_bid_id": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3_facebook_428939561173260_575105103223371"
+        }
+      ]
+    },
+    {
+      "seatbid": [
+        {
+          "bid": [
+            {
+              "id": "MEDIATION",
+              "impid": "1",
+              "price": 5,
+              "ext": {
+                "partner_placement": "TJNonProgRewarded"
+              }
+            }
+          ],
+          "seat": "tapjoy",
+          "helium_bid_id": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3_tapjoy_TJNonProgRewarded"
+        }
+      ]
+    },
+    {
+      "seatbid": [
+        {
+          "bid": [
+            {
+              "id": "MEDIATION",
+              "impid": "1",
+              "price": 2,
+              "ext": {
+                "partner_placement": "vz28a6addfaf944fb3bd"
+              }
+            }
+          ],
+          "seat": "adcolony",
+          "helium_bid_id": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3_adcolony_vz28a6addfaf944fb3bd"
+        }
+      ]
+    }
+  ],
+  "ext": {
+    "responsetimemillis": {
+      "chartboost": 30.184030532836914,
+      "tapjoy": 357.70320892333984,
+      "facebook": 83.12630653381348,
+      "adcolony": 148.3902931213379
+    }
+  }
+}

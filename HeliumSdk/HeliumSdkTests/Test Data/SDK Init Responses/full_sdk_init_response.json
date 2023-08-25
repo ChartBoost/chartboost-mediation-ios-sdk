@@ -1,0 +1,149 @@
+{
+	"app_id": "59c04299d989d60fc5d2c782",
+	"credentials": {
+		"adcolony": {
+			"adc_app_id": "app4a5d0480628d4fe0b2"
+		},
+		"admob": {
+			"admob_app_id": "ca-app-pub-6548817822928201~9620807135"
+		},
+		"amazon_aps": {
+			"application_id": "b242e84190ef4240a39858d5d75a5d4e",
+			"prebids": [{
+				"height": 50,
+				"helium_placement": "AllNetworkBanner",
+				"partner_placement": "5ee565ed-15c5-4053-bfe6-52afe4443776",
+				"type": "banner",
+				"width": 320
+			}, {
+				"helium_placement": "AllNetworkInterstitial",
+				"partner_placement": "39a5105a-8c16-4417-acb8-1c152c7db5b1",
+				"type": "interstitial"
+			}, {
+				"height": 50,
+				"helium_placement": "AllProBanner",
+				"partner_placement": "5ee565ed-15c5-4053-bfe6-52afe4443776",
+				"type": "banner",
+				"width": 320
+			}, {
+				"helium_placement": "AllProInterstitial",
+				"partner_placement": "39a5105a-8c16-4417-acb8-1c152c7db5b1",
+				"type": "interstitial"
+			}, {
+				"height": 90,
+				"helium_placement": "APSBannerLeaderboard",
+				"partner_placement": "8c7eff7b-35e9-4762-8f02-440b0ac8ee28",
+				"type": "banner",
+				"width": 728
+			}, {
+				"height": 250,
+				"helium_placement": "APSBannerMedium",
+				"partner_placement": "75a66d2d-416b-4601-9d18-fea363bfb7ae",
+				"type": "banner",
+				"width": 300
+			}, {
+				"height": 50,
+				"helium_placement": "APSBannerStandard",
+				"partner_placement": "5ee565ed-15c5-4053-bfe6-52afe4443776",
+				"type": "banner",
+				"width": 320
+			}, {
+				"helium_placement": "APSInterstitial",
+				"partner_placement": "39a5105a-8c16-4417-acb8-1c152c7db5b1",
+				"type": "interstitial"
+			}, {
+				"height": 50,
+				"helium_placement": "APSTestBanner",
+				"partner_placement": "a56d59d3-1dd1-4c27-896d-c2e39f14b106",
+				"type": "banner",
+				"width": 320
+			}]
+		},
+		"applovin": {
+			"package_name": "com.applovin.enterprise.apps.demoapp.test",
+			"sdk_key": "wy1dIpr2F2-9fqTT2ihBprfAvPyfd6qm_81WkbsZC6Fl31vaW4aiDFxR52R89x98WWNfPmTIGMInIvffFTOxLz"
+		},
+		"chartboost": {
+			"app_id": "59c04299d989d60fc5d2c782",
+			"app_signature": "6deb8e06616569af9306393f2ce1c9f8eefb405c"
+		},
+		"facebook": {
+			"applicationid": "428939561173260"
+		},
+		"fyber": {
+			"fyber_app_id": "126907"
+		},
+		"google_googlebidding": {
+			"google_googlebidding_app_id": "ca-app-pub-6548817822928201~9620807135"
+		},
+		"inmobi": {
+			"account_id": "1eec80192d354cedb466065f40fdd088"
+		},
+		"ironsource": {
+			"app_key": "52216cb5"
+		},
+		"mintegral": {
+			"app_key": "4ccdac5a4a32b28e5a88404ebf566475",
+			"mintegral_app_id": "155101"
+		},
+		"pangle": {
+			"application_id": "8025569"
+		},
+		"tapjoy": {
+			"sdk_key": "wcyoj4ZIRuKI0KSIxtuSwAEBtpbz8Ol3jnxsSCQjcEkIqyYGyeFbX8itGWtx"
+		},
+		"unity": {
+			"game_id": "3690830",
+			"org_core_id": "20066366404150"
+		},
+		"vungle": {
+			"vungle_app_id": "5dcde5072aa70a0017bcc85c"
+		},
+		"yahoo": {
+			"site_id": "8a809418014d4dba274de5017840037f"
+		}
+	},
+	"banner_load_timeout": 10,
+	"fullscreen_load_timeout": 22,
+	"interstitial_load_timeout": 24,
+	"rewarded_load_timeout": 43,
+	"show_timeout": 2,
+	"start_timeout": 20,
+	"prebid_fetch_timeout": 111,
+    "should_sort_bids": false,
+    "country": "some country",
+    "internal_test_id": "some test id",
+    "banner_impression_min_visible_dips": 3,
+    "banner_impression_min_visible_duration_ms": 4,
+    "visibility_tracker_poll_interval_ms": 5,
+    "visibility_tracker_traversal_limit": 6,
+    "adapter_classes": ["ONE", "two", "three"],
+	"placements": [
+		{
+			"chartboost_placement": "Placement1",
+			"format": "interstitial"
+		},
+		{
+			"chartboost_placement": "Placement2",
+			"format": "rewarded"
+		},
+		{
+			"chartboost_placement": "Placement3",
+			"format": "banner"
+		},
+		{
+			"chartboost_placement": "Placement4",
+			"format": "rewarded_interstitial"
+		},
+		{
+			"chartboost_placement": "Placement5",
+			"format": "unknown",
+			"some_extra_key": 23
+		},
+		{
+			"chartboost_placement": "Placement6",
+			"format": "banner",
+			"auto_refresh_rate": 35
+		}
+	]
+}

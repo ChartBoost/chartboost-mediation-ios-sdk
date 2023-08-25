@@ -1,0 +1,90 @@
+{
+    "id": "ab82501b580000bb8ace119907f7a4d6665212c3",
+    "seatbid": [
+        {
+            "bid": [
+                {
+                    "id": "MEDIATION",
+                    "impid": "1",
+                    "price": 100.0,
+                    "ext": {
+                        "partner_placement": "490251",
+                        "line_item_id": "c9151458-c03b-442d-8e9b-f8729fad9c04"
+                    }
+                }
+            ],
+            "seat": "fyber",
+            "helium_bid_id": "ab82501b580000bb8ace119907f7a4d6665212c3_fyber_490251"
+        },
+        {
+            "id": "helium-test-mode-id",
+            "cur": "USD",
+            "bid": [
+                {
+                    "id": "helium-test-mode-bidid",
+                    "impid": "helium-test-mode-impid",
+                    "price": 99,
+                    "adid": "1",
+                    "adm": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz5cbjxWQVNUIHZlcnNpb249IjMuMCI+XG4gICA8QWQgaWQ9IkhlbGl1bVRlc3RWYXN0QWQtUG9ydHJhaXQiPlxuICAgICAgPEluTGluZT5cbiAgICAgICAgIDxBZFN5c3RlbT5DaGFydGJvb3N0PC9BZFN5c3RlbT5cbiAgICAgICAgIDxDcmVhdGl2ZXM+XG4gICAgICAgICAgICA8Q3JlYXRpdmUgaWQ9IjEiPlxuICAgICAgICAgICAgICAgPExpbmVhcj5cbiAgICAgICAgICAgICAgICAgIDxEdXJhdGlvbj4wMDowMDozMDwvRHVyYXRpb24+XG4gICAgICAgICAgICAgICAgICA8TWVkaWFGaWxlcz5cbiAgICAgICAgICAgICAgICAgICAgIDxNZWRpYUZpbGUgdHlwZT0idmlkZW8vbXA0IiBkZWxpdmVyeT0icHJvZ3Jlc3NpdmUiIHdpZHRoPSI3NjgiIGhlaWdodD0iMTAyNCI+PCFbQ0RBVEFbaHR0cHM6Ly9jaGFydGJvb3N0LnMzLmFtYXpvbmF3cy5jb20vaGVsaXVtL2NyZWF0aXZlcy9jYnZpZGVvYWQtcG9ydHJhaXQubXA0XV0+PC9NZWRpYUZpbGU+XG4gICAgICAgICAgICAgICAgICA8L01lZGlhRmlsZXM+XG4gICAgICAgICAgICAgICAgICA8VmlkZW9DbGlja3M+XG4gICAgICAgICAgICAgICAgICAgICA8Q2xpY2tUaHJvdWdoPjwhW0NEQVRBW2h0dHBzOi8vd3d3LmNoYXJ0Ym9vc3QuY29tXV0+PC9DbGlja1Rocm91Z2g+XG4gICAgICAgICAgICAgICAgICA8L1ZpZGVvQ2xpY2tzPlxuICAgICAgICAgICAgICAgPC9MaW5lYXI+XG4gICAgICAgICAgICA8L0NyZWF0aXZlPlxuICAgICAgICAgICAgPENyZWF0aXZlIGlkPSIyIj5cbiAgICAgICAgICAgICAgIDxDb21wYW5pb25BZHM+XG4gICAgICAgICAgICAgICAgICA8Q29tcGFuaW9uIHdpZHRoPSI3NjgiIGhlaWdodD0iMTAyNCI+XG4gICAgICAgICAgICAgICAgICAgICA8Q29tcGFuaW9uQ2xpY2tUaHJvdWdoPjwhW0NEQVRBW2h0dHBzOi8vd3d3LmNoYXJ0Ym9vc3QuY29tXV0+PC9Db21wYW5pb25DbGlja1Rocm91Z2g+XG4gICAgICAgICAgICAgICAgICAgICA8U3RhdGljUmVzb3VyY2UgY3JlYXRpdmVUeXBlPSJpbWFnZS9wbmciPjwhW0NEQVRBW2h0dHBzOi8vY2hhcnRib29zdC5zMy5hbWF6b25hd3MuY29tL2hlbGl1bS9jcmVhdGl2ZXMvZW5kY2FyZC5wbmddXT48L1N0YXRpY1Jlc291cmNlPlxuICAgICAgICAgICAgICAgICAgPC9Db21wYW5pb24+XG4gICAgICAgICAgICAgICA8L0NvbXBhbmlvbkFkcz5cbiAgICAgICAgICAgIDwvQ3JlYXRpdmU+XG4gICAgICAgICA8L0NyZWF0aXZlcz5cbiAgICAgIDwvSW5MaW5lPlxuICAgPC9BZD5cbjwvVkFTVD5cbg==",
+                    "ext": {
+                        "bidder": {
+                            "template": "https://t.chartboost.com/base_templates/html/vast-moat-v2-370b0f7e45.html",
+                            "trackingId": "helium-test-mode-trackingId"
+                        }
+                    }
+                }
+            ],
+            "seat": "chartboost",
+            "helium_bid_id": "ab82501b580000bb8ace119907f7a4d6665212c3_chartboost_"
+        },
+        {
+            "id": "ab82501b580000bb8ace119907f7a4d6665212c3",
+            "bidid": "ab82501b580000bb8ace119907f7a4d6665212c3",
+            "cur": "USD",
+            "bid": [
+                {
+                    "id": "522f3280-868b-4642-9b06-4c7c96ee1311",
+                    "impid": "ab82501b580000bb8ace119907f7a4d6665212c3",
+                    "price": 25.0,
+                    "nurl": "https://events3.adcolony.com/rtb/bid_event?aid=${AUCTION_ID}&abid=${AUCTION_BID_ID}&aiid=${AUCTION_IMP_ID}&asid=${AUCTION_SEAT_ID}&aaid=${AUCTION_AD_ID}&ap=${AUCTION_PRICE}&ac=${AUCTION_CURRENCY}&ambr=${AUCTION_MBR}&al=${AUCTION_LOSS}&key=b6688c64-8ebc-4189-a495-a6363a22b863&ssp=ts4ij87q&t=1642059323119&type=bid_won",
+                    "lurl": "https://events3.adcolony.com/rtb/bid_event?aid=${AUCTION_ID}&abid=${AUCTION_BID_ID}&aiid=${AUCTION_IMP_ID}&asid=${AUCTION_SEAT_ID}&aaid=${AUCTION_AD_ID}&ap=${AUCTION_PRICE}&ac=${AUCTION_CURRENCY}&ambr=${AUCTION_MBR}&al=${AUCTION_LOSS}&key=1c1bd936-af79-44c0-a1dc-052766a8df13&ssp=ts4ij87q&t=1642059323119&type=bid_lost",
+                    "adm": "406368d4-8886-4cec-86a1-8fd124c3302c",
+                    "cid": "821",
+                    "crid": "234257",
+                    "cat": [
+                        "IAB24"
+                    ],
+                    "w": 1080,
+                    "h": 1920,
+                    "exp": 3600,
+                    "ext": {
+                        "bidder": {
+                            "helium": {
+                                "placement_name": "vz6ea19a677c314d1a86"
+                            },
+                            "adcolony": {}
+                        }
+                    }
+                }
+            ],
+            "seat": "adcolony",
+            "helium_bid_id": "ab82501b580000bb8ace119907f7a4d6665212c3_adcolony_vz6ea19a677c314d1a86"
+        }
+    ],
+    "ext": {
+        "responsetimemillis": {
+            "adcolony": 493.9408302307129,
+            "tapjoy": 403.6552906036377,
+            "chartboost": 247.1764087677002,
+            "vungle": 235.09788513183594,
+            "facebook": 95.69883346557617
+        },
+        "ilrd": {
+            "impression_id": "ab82501b580000bb8ace119907f7a4d6665212c3",
+            "currency_type": "USD",
+            "country": "USA",
+            "placement_name": "AllNetworkInterstitial",
+            "placement_type": "interstitial"
+        }
+    }
+}
