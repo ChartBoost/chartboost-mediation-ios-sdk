@@ -1,0 +1,88 @@
+{
+    "id" : "10ed5d777b23d503a05e9e2d7cc6d9f1aaea7a09",
+    "seatbid" : [
+      {
+        "bid" : [
+          {
+            "adm" : "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz5cbjxWQVNUIHZlcnNpb249IjMuMCI+XG4gICA8QWQgaWQ9IkhlbGl1bVRlc3RWYXN0QWQtUG9ydHJhaXQiPlxuICAgICAgPEluTGluZT5cbiAgICAgICAgIDxBZFN5c3RlbT5DaGFydGJvb3N0PC9BZFN5c3RlbT5cbiAgICAgICAgIDxDcmVhdGl2ZXM+XG4gICAgICAgICAgICA8Q3JlYXRpdmUgaWQ9IjEiPlxuICAgICAgICAgICAgICAgPExpbmVhcj5cbiAgICAgICAgICAgICAgICAgIDxEdXJhdGlvbj4wMDowMDozMDwvRHVyYXRpb24+XG4gICAgICAgICAgICAgICAgICA8TWVkaWFGaWxlcz5cbiAgICAgICAgICAgICAgICAgICAgIDxNZWRpYUZpbGUgdHlwZT0idmlkZW8vbXA0IiBkZWxpdmVyeT0icHJvZ3Jlc3NpdmUiIHdpZHRoPSI3NjgiIGhlaWdodD0iMTAyNCI+PCFbQ0RBVEFbaHR0cHM6Ly9jaGFydGJvb3N0LnMzLmFtYXpvbmF3cy5jb20vaGVsaXVtL2NyZWF0aXZlcy9jYnZpZGVvYWQtcG9ydHJhaXQubXA0XV0+PC9NZWRpYUZpbGU+XG4gICAgICAgICAgICAgICAgICA8L01lZGlhRmlsZXM+XG4gICAgICAgICAgICAgICAgICA8VmlkZW9DbGlja3M+XG4gICAgICAgICAgICAgICAgICAgICA8Q2xpY2tUaHJvdWdoPjwhW0NEQVRBW2h0dHBzOi8vd3d3LmNoYXJ0Ym9vc3QuY29tXV0+PC9DbGlja1Rocm91Z2g+XG4gICAgICAgICAgICAgICAgICA8L1ZpZGVvQ2xpY2tzPlxuICAgICAgICAgICAgICAgPC9MaW5lYXI+XG4gICAgICAgICAgICA8L0NyZWF0aXZlPlxuICAgICAgICAgICAgPENyZWF0aXZlIGlkPSIyIj5cbiAgICAgICAgICAgICAgIDxDb21wYW5pb25BZHM+XG4gICAgICAgICAgICAgICAgICA8Q29tcGFuaW9uIHdpZHRoPSI3NjgiIGhlaWdodD0iMTAyNCI+XG4gICAgICAgICAgICAgICAgICAgICA8Q29tcGFuaW9uQ2xpY2tUaHJvdWdoPjwhW0NEQVRBW2h0dHBzOi8vd3d3LmNoYXJ0Ym9vc3QuY29tXV0+PC9Db21wYW5pb25DbGlja1Rocm91Z2g+XG4gICAgICAgICAgICAgICAgICAgICA8U3RhdGljUmVzb3VyY2UgY3JlYXRpdmVUeXBlPSJpbWFnZS9wbmciPjwhW0NEQVRBW2h0dHBzOi8vY2hhcnRib29zdC5zMy5hbWF6b25hd3MuY29tL2hlbGl1bS9jcmVhdGl2ZXMvZW5kY2FyZC5wbmddXT48L1N0YXRpY1Jlc291cmNlPlxuICAgICAgICAgICAgICAgICAgPC9Db21wYW5pb24+XG4gICAgICAgICAgICAgICA8L0NvbXBhbmlvbkFkcz5cbiAgICAgICAgICAgIDwvQ3JlYXRpdmU+XG4gICAgICAgICA8L0NyZWF0aXZlcz5cbiAgICAgIDwvSW5MaW5lPlxuICAgPC9BZD5cbjwvVkFTVD5cbg==",
+            "id" : "helium-test-mode-bidid",
+            "adid" : "1",
+            "ext" : {
+              "bidder" : {
+                "template" : "https:\/\/t.chartboost.com\/base_templates\/html\/vast-moat-v2-e381a73d74.html",
+                "trackingId" : "helium-test-mode-trackingId"
+              }
+            },
+            "price" : 80,
+            "impid" : "helium-test-mode-impid"
+          }
+        ],
+        "seat" : "chartboost",
+        "helium_bid_id" : "10ed5d777b23d503a05e9e2d7cc6d9f1aaea7a09_chartboost"
+      },
+      {
+        "bid" : [
+          {
+            "id" : "MEDIATION",
+            "ext" : {
+              "partner_placement" : "TJNonProgInterstitial"
+            },
+            "price" : 60,
+            "impid" : "1"
+          }
+        ],
+        "seat" : "tapjoy",
+        "helium_bid_id" : "10ed5d777b23d503a05e9e2d7cc6d9f1aaea7a09_tapjoy"
+      },
+      {
+        "bid" : [
+          {
+            "id" : "MEDIATION",
+            "ext" : {
+              "partner_placement" : "428939561173260_575104883223393"
+            },
+            "price" : 90,
+            "impid" : "1"
+          }
+        ],
+        "seat" : "facebook",
+        "helium_bid_id" : "10ed5d777b23d503a05e9e2d7cc6d9f1aaea7a09_facebook"
+      },
+      {
+        "bid" : [
+          {
+            "id" : "MEDIATION",
+            "ext" : {
+              "partner_placement" : "MoatPublishingInterstitialiOS"
+            },
+            "price" : 100,
+            "impid" : "1"
+          }
+        ],
+        "seat" : "chartboost",
+        "helium_bid_id" : "10ed5d777b23d503a05e9e2d7cc6d9f1aaea7a09_chartboost"
+      },
+      {
+        "bid" : [
+          {
+            "id" : "MEDIATION",
+            "ext" : {
+              "partner_placement" : "vz2d478b18e6f14747a0"
+            },
+            "price" : 70,
+            "impid" : "1"
+          }
+        ],
+        "seat" : "adcolony",
+        "helium_bid_id" : "10ed5d777b23d503a05e9e2d7cc6d9f1aaea7a09_adcolony"
+      }
+    ],
+    "ext" : {
+      "responsetimemillis" : {
+        "adcolony" : 1,
+        "facebook" : 1,
+        "tapjoy" : 1,
+        "chartboost" : 1
+      }
+    }
+  }

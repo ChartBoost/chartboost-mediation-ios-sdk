@@ -1,0 +1,83 @@
+[
+            {
+            "helium_placement": "rewarded_mediation",
+            "type": "rewarded",
+            "batches": [
+                {
+                    "priority": 1,
+                    "line_items": [
+                        {
+                            "cpm": 34,
+                            "partner_id": "chartboost",
+                            "partner_placement": "MoatPublishingRewardedliOS",
+                            "priority": 1
+                        },
+                        {
+                            "cpm": 18,
+                            "partner_id": "facebook",
+                            "partner_placement": "428939561173260_575105103223371",
+                            "priority": 2
+                        },
+                        {
+                            "cpm": 5,
+                            "partner_id": "tapjoy",
+                            "partner_placement": "TJNonProgRewarded",
+                            "priority": 3
+                        },
+                        {
+                            "cpm": 2,
+                            "partner_id": "adcolony",
+                            "partner_placement": "vz28a6addfaf944fb3bd",
+                            "priority": 4
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "helium_placement": "instl_mediation",
+            "type": "interstitial",
+            "batches": [
+                {
+                    "priority": 1,
+                    "line_items": [
+                        {
+                            "cpm": 29,
+                            "partner_id": "chartboost",
+                            "partner_placement": "MoatPublishingInterstitialiOS",
+                            "priority": 1
+                        },
+                        {
+                            "cpm": 5,
+                            "partner_id": "facebook",
+                            "partner_placement": "428939561173260_575104883223393",
+                            "priority": 2
+                        },
+                        {
+                            "cpm": 4,
+                            "partner_id": "tapjoy",
+                            "partner_placement": "TJNonProgInterstitial",
+                            "priority": 3
+                        },
+                        {
+                            "cpm": 1,
+                            "partner_id": "adcolony",
+                            "partner_placement": "vz2d478b18e6f14747a0",
+                            "priority": 4
+                        }
+                    ]
+                },
+                {
+                    "priority": 2,
+                    "line_items": [
+                        {
+                            "cpm": 29,
+                            "partner_id": "chartboost",
+                            "partner_placement": "MoatPublishingInterstitialiOS",
+                            "priority": 1
+                        }
+                    ]
+                }
+            ]
+        }
+    ]

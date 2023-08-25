@@ -1,0 +1,45 @@
+{
+    "id": "ab82501b580000bb8ace119907f7a4d6665212c3",
+    "seatbid": [
+        {
+            "bid": [
+                {
+                    "id": "MEDIATION",
+                    "impid": "1",
+                    "price": 100.0,
+                    "ext": {
+                        "partner_placement": "490251",
+                        "line_item_id": "c9151458-c03b-442d-8e9b-f8729fad9c04",
+                        "ilrd": {
+                            "network_name": "fyber",
+                            "network_type": "mediation",
+                            "precision": "publisher_defined",
+                            "line_item_name": "FNonProAndroidInterstitialTest",
+                            "network_placement_id": "490251",
+                            "ad_revenue": null,
+                            "cpm_price": null
+                        }
+                    }
+                }
+            ],
+            "seat": "fyber",
+            "helium_bid_id": "ab82501b580000bb8ace119907f7a4d6665212c3_fyber_490251"
+        }
+    ],
+    "ext": {
+        "responsetimemillis": {
+            "adcolony": 493.9408302307129,
+            "tapjoy": 403.6552906036377,
+            "chartboost": 247.1764087677002,
+            "vungle": 235.09788513183594,
+            "facebook": 95.69883346557617
+        },
+        "ilrd": {
+            "impression_id": "ab82501b580000bb8ace119907f7a4d6665212c3",
+            "currency_type": "USD",
+            "country": "USA",
+            "placement_name": "AllNetworkInterstitial",
+            "placement_type": "interstitial"
+        }
+    }
+}

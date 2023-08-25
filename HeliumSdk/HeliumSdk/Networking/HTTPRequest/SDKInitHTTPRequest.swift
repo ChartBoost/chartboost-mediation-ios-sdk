@@ -1,0 +1,30 @@
+// Copyright 2022-2023 Chartboost, Inc.
+//
+// Use of this source code is governed by an MIT-style
+// license that can be found in the LICENSE file.
+
+import Foundation
+
+struct SDKInitHTTPRequest: HTTPRequest, HTTPRequestWithRawDataResponse {
+
+    let method = HTTP.Method.get
+    let customHeaders: HTTP.Headers
+    let isSDKInitializationRequired = false
+    private let appID: String
+
+    var url: URL {
+        get throws {
+            try makeURL(backendAPI: .sdk, path: [BackendAPI.Path.SDK.sdkInit, appID].joined(separator: "/"))
+        }
+    }
+
+    init(appID: String, deviceOSName: String, deviceOSVersion: String, sdkInitHash: String?, sdkVersion: String) {
+        self.appID = appID
+        customHeaders = [
+            HTTP.HeaderKey.deviceOS.rawValue: deviceOSName,
+            HTTP.HeaderKey.deviceOSVersion.rawValue: deviceOSVersion,
+            HTTP.HeaderKey.sdkInitHash.rawValue: sdkInitHash,
+            HTTP.HeaderKey.sdkVersion.rawValue: sdkVersion,
+        ].compactMapValues { $0 }
+    }
+}

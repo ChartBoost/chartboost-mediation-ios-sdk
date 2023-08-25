@@ -1,0 +1,35 @@
+{
+  "id" : "10ed5d777b23d503a05e9e2d7cc6d9f1aaea7a09",
+  "seatbid" : [
+    {
+      "bid": [
+        {
+          "id": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3_bid",
+          "impid": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3",
+          "price": 75,
+          "crid": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3_bid",
+          "ext": {
+            "bidder": {
+              "helium": {
+                "placement_name": "iOSTJRewarded"
+              },
+              "tapjoy": {
+                "tj_data": ".......... ADM STRING .........."
+              }
+            }
+          }
+        }
+      ],
+      "seat": "tapjoy",
+      "helium_bid_id": "2ff80d1bbb3f279f52aa5dcaa1a0b9414799efd3_tapjoy_iOSTJRewarded"
+    }
+  ],
+  "ext" : {
+    "responsetimemillis" : {
+      "adcolony" : 1,
+      "facebook" : 1,
+      "tapjoy" : 1,
+      "chartboost" : 1
+    }
+  }
+}
