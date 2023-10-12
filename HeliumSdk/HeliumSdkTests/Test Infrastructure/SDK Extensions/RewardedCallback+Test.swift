@@ -9,8 +9,8 @@ import Foundation
 extension RewardedCallback {
     /// A convenience factory method to obtain an instance with minimum boilerplate code.
     static func test(
-        adRevenue: Double? = 42.44,
-        cpmPrice: Double? = 1243.20,
+        adRevenue: Decimal? = 42.44,
+        cpmPrice: Decimal? = 1243.20,
         partnerIdentifier: PartnerIdentifier = "some partner id",
         urlString: String = "http://chartboost.com",
         method: HTTP.Method = .get,

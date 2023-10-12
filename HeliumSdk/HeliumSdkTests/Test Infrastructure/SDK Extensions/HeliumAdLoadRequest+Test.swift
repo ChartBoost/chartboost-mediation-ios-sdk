@@ -9,7 +9,10 @@ import Foundation
 extension HeliumAdLoadRequest {
     /// A convenience factory method to obtain an instance with minimum boilerplate code.
     static func test(
-        adSize: CGSize? = CGSize(width: 24.4, height: 50.12),
+        adSize: ChartboostMediationBannerSize? = .init(
+            size: .init(width: 50, height: 50),
+            type: .fixed
+        ),
         adFormat: AdFormat = .interstitial,
         keywords: [String: String]? = ["1234": "@4234", "42342 123 kf,welrp9ip": "adfkajsdk", "": "ewe"],
         heliumPlacement: String = "placement",

@@ -168,6 +168,27 @@ class UpdatableApplicationConfigurationTests: HeliumTestCase {
         XCTAssertEqual(configuration.penaltyLoadRetryRate, 240)
         XCTAssertEqual(configuration.penaltyLoadRetryCount, 4)
     }
+
+    func testBannerSizeEventDelay() throws {
+        var response = JSONLoader.loadDictionary("full_sdk_init_response")
+        response["banner_size_event_delay_ms"] = 2000
+        let data = try JSONSerialization.data(withJSONObject: response)
+
+        // Update the configuration
+        try configuration.update(with: data)
+
+        XCTAssertEqual(configuration.bannerSizeEventDelay, 2.0, accuracy: 0.001)
+    }
+
+    func testBannerSizeEventDelayUsesDefaultValueWhenMissing() throws {
+        let response = JSONLoader.loadDictionary("partial_sdk_init_response")
+        let data = try JSONSerialization.data(withJSONObject: response)
+
+        // Update the configuration
+        try configuration.update(with: data)
+
+        XCTAssertEqual(configuration.bannerSizeEventDelay, 1.0, accuracy: 0.001)
+    }
     
     /// Checks that the configuration returns proper values for all its protocol conformances.
     private func assertValues(in configuration: UpdatableApplicationConfiguration, match values: UpdatableApplicationConfiguration.RawValues?) {
@@ -196,6 +217,7 @@ class UpdatableApplicationConfigurationTests: HeliumTestCase {
             prebidFetchTimeout: 111,
             bannerImpressionMinVisibleDips: 3,
             bannerImpressionMinVisibleDurationMs: 4,
+            bannerSizeEventDelayMs: 1000,
             visibilityTrackerPollIntervalMs: 5,
             visibilityTrackerTraversalLimit: 6,
             adapterClasses: ["ONE", "two", "three"],
@@ -315,7 +337,8 @@ class UpdatableApplicationConfigurationTests: HeliumTestCase {
                 .init(chartboostPlacement: "Placement5", format: "unknown", autoRefreshRate: nil),
                 .init(chartboostPlacement: "Placement6", format: "banner", autoRefreshRate: 35)
 			],
-            logLevel: nil
+            logLevel: nil,
+            privacyBanList: PrivacyBanListCandidate.allCases.map { $0.rawValue }
         )
     }
     
@@ -330,6 +353,7 @@ class UpdatableApplicationConfigurationTests: HeliumTestCase {
             prebidFetchTimeout: nil,
             bannerImpressionMinVisibleDips: nil,
             bannerImpressionMinVisibleDurationMs: nil,
+            bannerSizeEventDelayMs: nil,
             visibilityTrackerPollIntervalMs: nil,
             visibilityTrackerTraversalLimit: nil,
             adapterClasses: nil,
@@ -344,7 +368,8 @@ class UpdatableApplicationConfigurationTests: HeliumTestCase {
             initTimeout: nil,
             initMetricsPostTimeout: nil,
             placements: [],
-            logLevel: nil
+            logLevel: nil,
+            privacyBanList: []
         )
     }
 }

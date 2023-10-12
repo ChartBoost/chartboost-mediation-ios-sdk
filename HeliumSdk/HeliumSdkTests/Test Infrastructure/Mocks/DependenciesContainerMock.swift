@@ -60,4 +60,5 @@ class DependenciesContainerMock: DependenciesContainer {
     var appTrackingInfo: AppTrackingInfoProviding { mocks.appTrackingInfo }
     var appTrackingInfoDependency: AppTrackingInfoProviderDependency { mocks.appTrackingInfoProviderDependency }
     var consoleLoggerConfiguration: ConsoleLoggerConfiguration { mocks.consoleLoggerConfigurationDependency }
+    var privacyConfiguration: PrivacyConfiguration { mocks.privacyConfigurationDependency }
 }

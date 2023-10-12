@@ -267,6 +267,7 @@ extension ChartboostMediationError.Code {
         .loadFailureServerError: ExpectedData(["CM_333", "CM_LOAD_FAILURE_SERVER_ERROR", defaultLoadMessage, "The load request failed due to a server error.", "If this problem persists, reach out to Chartboost Mediation Support and/or the mediation partner team for further assistance. If possible, always share a copy of your network traffic logs."]),
         .loadFailureInvalidCredentials: ExpectedData(["CM_334", "CM_LOAD_FAILURE_INVALID_CREDENTIALS", defaultLoadMessage, "Invalid/empty credentials were supplied to load the ad.", "Ensure appropriate fields are correctly entered on the partner dashboard."]),
         .loadFailureWaterfallExhaustedNoFill: ExpectedData(["CM_335", "CM_LOAD_FAILURE_WATERFALL_EXHAUSTED_NO_FILL", "All waterfall entries have been exhausted. No ad fill.", "All waterfall entries have resulted in an error or no fill.", "Try again. If the problem persists, verify Partner settings in the Chartboost Mediation dashboard."]),
+        .loadFailureAdTooLarge: ExpectedData(["CM_336", "CM_LOAD_FAILURE_AD_TOO_LARGE", defaultLoadMessage, "The partner ad dimension size is too large.", "Try again. If the problem persists, verify Partner settings in the Chartboost Mediation dashboard."]),
 
         // 400
         .showFailureUnknown: ExpectedData(["CM_400", "CM_SHOW_FAILURE_UNKNOWN", defaultShowMessage, "There was an error that was not accounted for.", "Try again. If the problem persists, contact Chartboost Mediation Support and provide your console logs."]),

@@ -8,7 +8,8 @@ import XCTest
 
 final class NetworkManagerTests: HeliumTestCase {
 
-    private static let backendAPI = BackendAPI.sdk
+    private static let mockURLString = "https://mock.com"
+    private static let mockURL = URL(unsafeString: "https://mock.com")!
     private static let httpResponseExpectationName = "HTTP response"
     private static let malformedJSON = "<html>Backend might return HTML body while JSON is expected.</html>"
     private static let malformedJSONData = malformedJSON.data(using: .utf8)
@@ -32,10 +33,10 @@ final class NetworkManagerTests: HeliumTestCase {
         mocks.appTrackingInfo.idfv = mockIDFV
 
         let requests = [
-            HTTPRequestWithRawDataResponseMock(urlString: "https://mock.com"),
+            HTTPRequestWithRawDataResponseMock(urlString: Self.mockURLString),
             // request #2, `HTTPRequestURL.url`, no session ID
-            HTTPRequestWithRawDataResponseMock(urlString: "https://mock.com", shouldIncludeSessionID: false),
-            HTTPRequestWithRawDataResponseMock(urlString: "https://mock.com", shouldIncludeIDFV: false)
+            HTTPRequestWithRawDataResponseMock(urlString: Self.mockURLString, shouldIncludeSessionID: false),
+            HTTPRequestWithRawDataResponseMock(urlString: Self.mockURLString, shouldIncludeIDFV: false)
         ]
         let headersWithSessionIDAndIDFV = [
             "Accept": "application/json; charset=utf-8",
@@ -72,7 +73,7 @@ final class NetworkManagerTests: HeliumTestCase {
 
                 return (
                     response: HTTPURLResponse(
-                        url: try XCTUnwrap(URL(string: Self.backendAPI.hostWithScheme)),
+                        url: Self.mockURL,
                         statusCode: successStatusCode,
                         httpVersion: nil,
                         headerFields: nil
@@ -93,7 +94,7 @@ final class NetworkManagerTests: HeliumTestCase {
 
         // We want to make sure to set the flag to include the IDFV, however it will not actually
         // be included because the IDFV is nil.
-        let httpRequest = HTTPRequestWithRawDataResponseMock(urlString: "https://mock.com", shouldIncludeIDFV: true)
+        let httpRequest = HTTPRequestWithRawDataResponseMock(urlString: Self.mockURLString, shouldIncludeIDFV: true)
         let headersWithOutIDFV = [
             "Accept": "application/json; charset=utf-8",
             "Content-Type": "application/json; charset=utf-8",
@@ -108,7 +109,7 @@ final class NetworkManagerTests: HeliumTestCase {
 
             return (
                 response: HTTPURLResponse(
-                    url: try XCTUnwrap(URL(string: Self.backendAPI.hostWithScheme)),
+                    url: Self.mockURL,
                     statusCode: successStatusCode,
                     httpVersion: nil,
                     headerFields: nil
@@ -127,7 +128,7 @@ final class NetworkManagerTests: HeliumTestCase {
 
     func testSDKNotInitializedError() throws {
         struct HTTPGETRequestMock: HTTPRequestWithRawDataResponse {
-            let url = URL(string: "https://www.mock.com\(NetworkManagerTests.urlPathFromTestName())")!
+            let url = URL(unsafeString: "https://www.mock.com\(NetworkManagerTests.urlPathFromTestName())")!
             let method = HTTP.Method.get
         }
 
@@ -150,7 +151,7 @@ final class NetworkManagerTests: HeliumTestCase {
         struct CorruptedHTTPRequestMock: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataResponse {
             struct EmptyEncodableBody: Encodable {}
 
-            let url = URL(string: "https://www.mock.com\(NetworkManagerTests.urlPathFromTestName())")!
+            let url = URL(unsafeString: "https://www.mock.com\(NetworkManagerTests.urlPathFromTestName())")!
             let method = HTTP.Method.post
             let body = EmptyEncodableBody()
             let requestKeyEncodingStrategy: JSONEncoder.KeyEncodingStrategy = .useDefaultKeys
@@ -179,7 +180,7 @@ final class NetworkManagerTests: HeliumTestCase {
     }
 
     func testDataTaskError() throws {
-        let httpRequest = HTTPRequestWithRawDataResponseMock(urlPath: Self.urlPathFromTestName())
+        let httpRequest = HTTPRequestWithRawDataResponseMock(endpoint: .load, urlPath: Self.urlPathFromTestName())
         let expectation = XCTestExpectation(description: Self.httpResponseExpectationName)
 
         try URLProtocolMock.registerHTTPRequest(httpRequest) { request in
@@ -204,7 +205,7 @@ final class NetworkManagerTests: HeliumTestCase {
     }
 
     func testNotHTTPURLResponseError() throws {
-        let httpRequest = HTTPRequestWithRawDataResponseMock(urlPath: Self.urlPathFromTestName())
+        let httpRequest = HTTPRequestWithRawDataResponseMock(endpoint: .load, urlPath: Self.urlPathFromTestName())
         let expectation = XCTestExpectation(description: Self.httpResponseExpectationName)
 
         try URLProtocolMock.registerHTTPRequest(httpRequest) { request in
@@ -224,7 +225,7 @@ final class NetworkManagerTests: HeliumTestCase {
     }
 
     func testResponseStatusCodeOutOfRangeError() throws {
-        let httpRequest = HTTPRequestWithRawDataResponseMock(urlPath: Self.urlPathFromTestName())
+        let httpRequest = HTTPRequestWithRawDataResponseMock(endpoint: .load, urlPath: Self.urlPathFromTestName())
 
         for badStatusCode in [199, 400] { // failure with a status code out of the [200, 400) range
             let expectation = XCTestExpectation(description: Self.httpResponseExpectationName)
@@ -232,7 +233,7 @@ final class NetworkManagerTests: HeliumTestCase {
             try URLProtocolMock.registerHTTPRequest(httpRequest) { request in
                 (
                     response: HTTPURLResponse(
-                        url: try XCTUnwrap(URL(string: Self.backendAPI.hostWithScheme)),
+                        url: Self.mockURL,
                         statusCode: badStatusCode,
                         httpVersion: nil,
                         headerFields: nil
@@ -256,14 +257,14 @@ final class NetworkManagerTests: HeliumTestCase {
     }
 
     func testResponseWithEmptyDataError() throws {
-        let httpRequest = HTTPRequestWithDecodableResponseMock(urlPath: Self.urlPathFromTestName())
+        let httpRequest = HTTPRequestWithDecodableResponseMock(endpoint: .load, urlPath: Self.urlPathFromTestName())
         let expectation = XCTestExpectation(description: Self.httpResponseExpectationName)
         let successStatusCode = 200
 
         try URLProtocolMock.registerHTTPRequest(httpRequest) { request in
             (
                 response: HTTPURLResponse(
-                    url: try XCTUnwrap(URL(string: Self.backendAPI.hostWithScheme)),
+                    url: Self.mockURL,
                     statusCode: successStatusCode,
                     httpVersion: nil,
                     headerFields: nil
@@ -286,14 +287,14 @@ final class NetworkManagerTests: HeliumTestCase {
     }
 
     func testJSONDecodeError() throws {
-        let httpRequest = HTTPRequestWithDecodableResponseMock(urlPath: Self.urlPathFromTestName())
+        let httpRequest = HTTPRequestWithDecodableResponseMock(endpoint: .load, urlPath: Self.urlPathFromTestName())
         let expectation = XCTestExpectation(description: Self.httpResponseExpectationName)
         let successStatusCode = 200
 
         try URLProtocolMock.registerHTTPRequest(httpRequest) { request in
             (
                 response: HTTPURLResponse(
-                    url: try XCTUnwrap(URL(string: Self.backendAPI.hostWithScheme)),
+                    url: Self.mockURL,
                     statusCode: successStatusCode,
                     httpVersion: nil,
                     headerFields: nil
@@ -320,14 +321,14 @@ final class NetworkManagerTests: HeliumTestCase {
     // MARK: - Success
 
     func testSuccessfulResponseWithEmptyData() throws {
-        let httpRequest = HTTPRequestWithDecodableResponseMock(urlPath: Self.urlPathFromTestName())
+        let httpRequest = HTTPRequestWithDecodableResponseMock(endpoint: .load, urlPath: Self.urlPathFromTestName())
         let expectation = XCTestExpectation(description: Self.httpResponseExpectationName)
         let successStatusCode = 204 // HTTP 204 = No Content
 
         try URLProtocolMock.registerHTTPRequest(httpRequest) { request in
             (
                 response: HTTPURLResponse(
-                    url: try XCTUnwrap(URL(string: Self.backendAPI.hostWithScheme)),
+                    url: Self.mockURL,
                     statusCode: successStatusCode,
                     httpVersion: nil,
                     headerFields: nil
@@ -350,14 +351,14 @@ final class NetworkManagerTests: HeliumTestCase {
     }
 
     func testSuccessfulResponseWithDecodableData() throws {
-        let httpRequest = HTTPRequestWithDecodableResponseMock(urlPath: Self.urlPathFromTestName())
+        let httpRequest = HTTPRequestWithDecodableResponseMock(endpoint: .load, urlPath: Self.urlPathFromTestName())
         let expectation = XCTestExpectation(description: Self.httpResponseExpectationName)
         let successStatusCode = 200
 
         try URLProtocolMock.registerHTTPRequest(httpRequest) { request in
             (
                 response: HTTPURLResponse(
-                    url: try XCTUnwrap(URL(string: Self.backendAPI.hostWithScheme)),
+                    url: Self.mockURL,
                     statusCode: successStatusCode,
                     httpVersion: nil,
                     headerFields: nil
@@ -389,7 +390,7 @@ final class NetworkManagerTests: HeliumTestCase {
     // MARK: - Retry Sending Request
 
     func testRetrySendingRequestWithFailureResult() throws {
-        let httpRequest = HTTPRequestWithRawDataResponseMock(urlPath: Self.urlPathFromTestName())
+        let httpRequest = HTTPRequestWithRawDataResponseMock(endpoint: .load, urlPath: Self.urlPathFromTestName())
         let expectation = XCTestExpectation(description: Self.httpResponseExpectationName)
         let retryStatusCode = 404
         let totalNumberOfRequests = 3
@@ -399,7 +400,7 @@ final class NetworkManagerTests: HeliumTestCase {
             requestCount += 1
             return (
                 response: HTTPURLResponse(
-                    url: try XCTUnwrap(URL(string: Self.backendAPI.hostWithScheme)),
+                    url: Self.mockURL,
                     statusCode: retryStatusCode, // always fails
                     httpVersion: nil,
                     headerFields: nil
@@ -425,7 +426,7 @@ final class NetworkManagerTests: HeliumTestCase {
     }
 
     func testRetrySendingRequestWithSuccessResult() throws {
-        let httpRequest = HTTPRequestWithRawDataResponseMock(urlPath: Self.urlPathFromTestName())
+        let httpRequest = HTTPRequestWithRawDataResponseMock(endpoint: .load, urlPath: Self.urlPathFromTestName())
         let expectation = XCTestExpectation(description: Self.httpResponseExpectationName)
         let successStatusCode = 200
         let retryStatusCode = 404
@@ -436,7 +437,7 @@ final class NetworkManagerTests: HeliumTestCase {
             requestCount += 1
             return (
                 response: HTTPURLResponse(
-                    url: try XCTUnwrap(URL(string: Self.backendAPI.hostWithScheme)),
+                    url: Self.mockURL,
                     statusCode: requestCount == totalNumberOfRequests ? successStatusCode : retryStatusCode, // keep failing until the last attempt
                     httpVersion: nil,
                     headerFields: nil
@@ -460,13 +461,5 @@ final class NetworkManagerTests: HeliumTestCase {
             expectation.fulfill()
         }
         wait(for: [expectation], timeout:  1)
-    }
-}
-
-// MARK: - Private
-
-private extension BackendAPI {
-    var hostWithScheme: String {
-        "\(scheme)://\(host)"
     }
 }

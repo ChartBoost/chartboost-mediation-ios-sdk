@@ -19,7 +19,7 @@ final class AdLoaderTests: HeliumTestCase {
         let expectedAd = mocks.adFactory.returnValue(for: .makeFullscreenAd) as ChartboostMediationFullscreenAdMock
         let expectedLoadID = "some load ID"
         let bid = Bid.makeMock()
-        let loadedAd = HeliumAd(bid: bid, bidInfo: ["hello": 23], partnerAd: PartnerAdMock(), request: .test(loadID: expectedLoadID))
+        let loadedAd = HeliumAd(bid: bid, bidInfo: ["hello": 23], partnerAd: PartnerAdMock(), adSize: .init(size: .zero, type: .fixed), request: .test(loadID: expectedLoadID))
         mocks.adLoaderConfiguration.setReturnValue(format, for: .adFormatForPlacement)
         
         // Load the ad
@@ -156,6 +156,26 @@ final class AdLoaderTests: HeliumTestCase {
             finished = true
         }
         
+        // Check we finished
+        XCTAssertTrue(finished)
+    }
+
+    func testLoadFullscreenAdWithAdaptiveBannerPlacement() {
+        let request = ChartboostMediationAdLoadRequest(placement: "")
+        let expectedError = ChartboostMediationError(code: .loadFailureMismatchedAdFormat)
+        mocks.adLoaderConfiguration.setReturnValue(AdFormat.adaptiveBanner, for: .adFormatForPlacement)
+
+        // Load the ad
+        var finished = false
+        adLoader.loadFullscreenAd(with: request) { result in
+            // Check we get a successful result
+            XCTAssertNil(result.ad)
+            XCTAssertEqual(result.error, expectedError)
+            XCTAssertNil(result.metrics)
+            XCTAssertEqual(result.loadID, "")
+            finished = true
+        }
+
         // Check we finished
         XCTAssertTrue(finished)
     }

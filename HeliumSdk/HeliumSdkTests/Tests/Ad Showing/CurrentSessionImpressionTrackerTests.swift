@@ -42,4 +42,14 @@ final class CurrentSessionImpressionTrackerTests: HeliumTestCase {
         XCTAssertEqual(impressionTracker.rewardedImpressionCount, 0)
         XCTAssertEqual(impressionTracker.bannerImpressionCount, 1)
     }
+
+    func testTracksTotalImpressionCountForBanners() {
+        impressionTracker.trackImpression(for: .banner)
+        impressionTracker.trackImpression(for: .banner)
+        impressionTracker.trackImpression(for: .adaptiveBanner)
+        impressionTracker.trackImpression(for: .adaptiveBanner)
+        impressionTracker.trackImpression(for: .adaptiveBanner)
+
+        XCTAssertEqual(impressionTracker.bannerImpressionCount, 5)
+    }
 }

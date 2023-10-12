@@ -94,7 +94,7 @@ final class AdLoader: FullscreenAdLoader {
         switch adFormat {
         case .interstitial, .rewarded, .rewardedInterstitial:
             return true
-        case .banner:
+        case .banner, .adaptiveBanner:
             return false
         }
     }

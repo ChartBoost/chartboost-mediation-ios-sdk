@@ -10,9 +10,22 @@ extension Bid {
     static let defaultPartnerIdentifierMock = "some partnerIdentifier"
 
     static func makeMock(
-        adRevenue: Double? = 4.2,
-        cpmPrice: Double? = 2.4,
-        partnerIdentifier: PartnerIdentifier = defaultPartnerIdentifierMock,
+        identifier: String = "some identifier \(Int.random(in: 1...99999))",
+        partnerIdentifier: String = defaultPartnerIdentifierMock,
+        partnerPlacement: String = "some partnerPlacement",
+        adm: String = "some adm \(Int.random(in: 1...99999))",
+        partnerDetails: [String: Any]? = ["a": "1", "2": "b", "92jfo92": "_asfd!#d"],
+        lineItemIdentifier: String = "some lineItemIdentifier",
+        adRevenue: Decimal? = Decimal(string: "4.2"),
+        cpmPrice: Decimal? = Decimal(string: "2.4"),
+        auctionIdentifier: String = "some auctionIdentifier",
+        isProgrammatic: Bool = true,
+        clearingPrice: Decimal? = Decimal(string: "42.24"),
+        winURL: String? = "winURL",
+        lossURL: String? = "lossURL",
+        size: CGSize? = nil,
+        // The following two aren't part of the Bid object directly, but are used as for
+        // compatibility with old tests that used them as a convenience.
         rewardedCallbackData: RewardedCallbackData? = nil,
         lineItemName: String? = nil
     ) -> Bid {
@@ -34,21 +47,22 @@ extension Bid {
             ilrd["line_item_name"] = lineItemName
         }
         return Bid(
-            identifier: "some identifier \(Int.random(in: 1...99999))",
-            partnerIdentifier: "some partnerIdentifier",
-            partnerPlacement: "some partnerPlacement",
-            adm: "some adm \(Int.random(in: 1...99999))",
-            partnerDetails: ["a": "1", "2": "b", "92jfo92": "_asfd!#d"],
-            lineItemIdentifier: "some lineItemIdentifier",
+            identifier: identifier,
+            partnerIdentifier: partnerIdentifier,
+            partnerPlacement: partnerPlacement,
+            adm: adm,
+            partnerDetails: partnerDetails,
+            lineItemIdentifier: lineItemIdentifier,
             ilrd: ilrd,
             cpmPrice: cpmPrice,
             adRevenue: adRevenue,
-            auctionIdentifier: "some auctionIdentifier",
-            isProgrammatic: true,
+            auctionIdentifier: auctionIdentifier,
+            isProgrammatic: isProgrammatic,
             rewardedCallback: rewardedCallback,
-            clearingPrice: 42.24,
-            winURL: "winURL",
-            lossURL: "lossURL"
+            clearingPrice: clearingPrice,
+            winURL: winURL,
+            lossURL: lossURL,
+            size: size
         )
     }
 }

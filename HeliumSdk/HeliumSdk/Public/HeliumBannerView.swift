@@ -17,16 +17,19 @@ import Foundation
 /// Add this view to the view hierarchy before showing the banner ad.
 @objc
 public class HeliumBannerView: UIView, HeliumBannerAd {
-    
+
     private let controller: BannerControllerProtocol
-    private let size: CGSize
+    public weak var delegate: HeliumBannerAdDelegate?
     
-    init(size: CGSize, controller: BannerControllerProtocol) {
+    init(
+        controller: BannerControllerProtocol,
+        delegate: HeliumBannerAdDelegate?
+    ) {
         self.controller = controller
-        self.size = size
-        super.init(frame: CGRect(origin: .zero, size: size))
+        self.delegate = delegate
+        super.init(frame: CGRect(origin: .zero, size: controller.request.size.size))
         self.backgroundColor = .clear
-        controller.bannerContainer = self
+        self.controller.delegate = self
         sendVisibilityStateToController()
     }
     
@@ -35,41 +38,83 @@ public class HeliumBannerView: UIView, HeliumBannerAd {
     }
     
     // MARK: - HeliumBannerAd
-    
+
     /// Optional keywords that can be associated with the advertisement placement.
     public var keywords: HeliumKeywords? {
-        get { controller.keywords }
-        set { controller.keywords = newValue }
+        get { HeliumKeywords(controller.keywords) }
+        set { controller.keywords = newValue?.dictionary }
     }
 
     public func load(with viewController: UIViewController) {
-        controller.loadAd(with: viewController)
+        controller.loadAd(
+            viewController: viewController
+        ) { [weak self] result in
+            guard let self else {
+                return
+            }
+
+            let placement = self.controller.request.placement
+            self.delegate?.heliumBannerAd(
+                placementName: placement,
+                requestIdentifier: result.loadID,
+                winningBidInfo: result.winningBidInfo,
+                didLoadWithError: result.error
+            )
+        }
     }
 
     public func clear() {
         controller.clearAd()
     }
-    
+
     // MARK: - UIView
-    
     public override var intrinsicContentSize: CGSize {
-        size
+        controller.request.size.size
     }
-    
+
     public override var isHidden: Bool {
         didSet {
             sendVisibilityStateToController()
         }
     }
-    
+
     public override func didMoveToSuperview() {
         super.didMoveToSuperview()
         sendVisibilityStateToController()
     }
-    
+
     private func sendVisibilityStateToController() {
         // The view is considered not visible if it's removed from the view hierarchy or if it's hidden.
         let visible = !isHidden && superview != nil
         controller.viewVisibilityDidChange(on: self, to: visible)
+    }
+}
+
+extension HeliumBannerView: BannerControllerDelegate {
+    func bannerController(
+        _ bannerController: BannerControllerProtocol,
+        displayBannerView bannerView: UIView
+    ) {
+        // Legacy code used the requested ad size, so we will do the same here.
+        let size = bannerController.request.size.size
+        bannerView.frame = CGRect(origin: .zero, size: size)
+        addSubview(bannerView)
+    }
+
+    func bannerController(
+        _ bannerController: BannerControllerProtocol,
+        clearBannerView bannerView: UIView
+    ) {
+        bannerView.removeFromSuperview()
+    }
+
+    func bannerControllerDidRecordImpression(_ bannerController: BannerControllerProtocol) {
+        let placement = bannerController.request.placement
+        delegate?.heliumBannerAdDidRecordImpression?(placementName: placement)
+    }
+
+    func bannerControllerDidClick(_ bannerController: BannerControllerProtocol) {
+        let placement = bannerController.request.placement
+        delegate?.heliumBannerAd?(placementName: placement, didClickWithError: nil)
     }
 }

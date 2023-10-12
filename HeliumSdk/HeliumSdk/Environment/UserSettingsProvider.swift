@@ -19,10 +19,16 @@ final class UserSettingsProvider: UserSettingsProviding {
     private lazy var taskDispatcher = GCDTaskDispatcher.serialBackgroundQueue(name: "user-settings")
 
     var inputLanguages: [String] {
-        // HB-4356 revealed that multiple threads using the `inputLanguages` getter resulted in crashes.
-        // To alleviate the crash, always access `activeInputModes` in the same serial queue.
-        taskDispatcher.sync(on: .background) {
-            UITextInputMode.activeInputModes.compactMap(\.primaryLanguage)
+        if #available(iOS 17.0, *) {
+            // Stop using `UITextInputMode.activeInputModes` on iOS 17+ because it's a Required
+            // Reason API and we don't have an approved reason to use it.
+            return []
+        } else {
+            // HB-4356 revealed that multiple threads using the `inputLanguages` getter resulted in crashes.
+            // To alleviate the crash, always access `activeInputModes` in the same serial queue.
+            return taskDispatcher.sync(on: .background) {
+                UITextInputMode.activeInputModes.compactMap(\.primaryLanguage)
+            }
         }
     }
 
@@ -31,6 +37,13 @@ final class UserSettingsProvider: UserSettingsProviding {
     }
 
     var languageCode: String? {
+        if #available(iOS 17.0, *) {
+            @Injected(\.privacyConfiguration) var privacyConfig
+            if privacyConfig.privacyBanList.contains(.languageAndLocale) {
+                return nil
+            }
+        }
+
         if #available(iOS 16.0, *) {
             if let languageCode = Locale.current.language.languageCode?.identifier {
                 return languageCode

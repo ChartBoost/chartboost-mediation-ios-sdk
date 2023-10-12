@@ -27,7 +27,7 @@ protocol PartnerController: ConsentSettingsDelegate {
     /// - parameter delegate: The delegate object that will receive ad life-cycle events.
     /// - parameter completion: A closure to be executed when the load operation ends, including the result with the loaded ad.
     /// - returns: A closure that cancels the load operation if executed, making sure the passed `completion` closure never fires.
-    func routeLoad(request: PartnerAdLoadRequest, viewController: UIViewController?, delegate: PartnerAdDelegate, completion: @escaping (Result<PartnerAd, ChartboostMediationError>) -> Void) -> CancelAction
+    func routeLoad(request: PartnerAdLoadRequest, viewController: UIViewController?, delegate: PartnerAdDelegate, completion: @escaping (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void) -> CancelAction
     /// Forwards a show request to a partner.
     /// - parameter ad: A previously loaded ad to show.
     /// - parameter viewController: The view controller on which the ad will be presented on.

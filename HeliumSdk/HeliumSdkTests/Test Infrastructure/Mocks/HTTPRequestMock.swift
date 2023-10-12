@@ -15,7 +15,7 @@ class HTTPRequestMock: HTTPRequest {
     let shouldIncludeIDFV: Bool
 
     convenience init(
-        backendAPI: BackendAPI = .sdk,
+        endpoint: BackendAPI.Endpoint,
         urlPath: String,
         method: HTTP.Method = .post,
         customHeaders: HTTP.Headers = [:],
@@ -24,7 +24,7 @@ class HTTPRequestMock: HTTPRequest {
         shouldIncludeIDFV: Bool = true
     ) {
         self.init(
-            urlString: "\(backendAPI.scheme)://\(backendAPI.host)\(urlPath)",
+            urlString: "\(endpoint.scheme)://\(endpoint.host)\(urlPath)",
             method: method,
             customHeaders: customHeaders,
             bodyData: bodyData,
@@ -41,7 +41,7 @@ class HTTPRequestMock: HTTPRequest {
         shouldIncludeSessionID: Bool = true,
         shouldIncludeIDFV: Bool = true
     ) {
-        self.url = URL(string: urlString)!
+        self.url = URL(unsafeString: urlString)!
         self.method = method
         self.customHeaders = customHeaders
         self.bodyData = bodyData

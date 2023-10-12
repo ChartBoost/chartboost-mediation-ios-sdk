@@ -35,7 +35,7 @@ class PartnerControllerMock: Mock<PartnerControllerMock.Method>, PartnerControll
         record(.setUpAdapters, parameters: [configurations, adapterClasses, partnerIdentifiersToSkip, completion])
     }
     
-    func routeLoad(request: PartnerAdLoadRequest, viewController: UIViewController?, delegate: PartnerAdDelegate, completion: @escaping (Result<PartnerAd, ChartboostMediationError>) -> Void) -> CancelAction {
+    func routeLoad(request: PartnerAdLoadRequest, viewController: UIViewController?, delegate: PartnerAdDelegate, completion: @escaping (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void) -> CancelAction {
         record(.routeLoad, parameters: [request, viewController, delegate, completion])
     }
     

@@ -14,8 +14,8 @@ class AppConfigurationServiceTests: HeliumTestCase {
     private static let fullSDKInitResponseData = JSONLoader.loadData(.full_sdk_init_response)
 
     @Injected(\.environment) private var environment
-    private var sdkInitURLString: String { "https://helium-sdk.chartboost.com/v1/sdk_init/\(environment.app.appID!)" }
-    private var sdkInitURL: URL { URL(string: sdkInitURLString)! }
+    private var sdkInitURLString: String { "https://config.mediation-sdk.chartboost.com/v1/sdk_init/\(environment.app.appID!)" }
+    private var sdkInitURL: URL { URL(unsafeString: sdkInitURLString)! }
 
     /// Backend response 200 (Success) contains SDK init hash and the config data.
     func testFetchSuccessWithHTTPStatusCode200() {

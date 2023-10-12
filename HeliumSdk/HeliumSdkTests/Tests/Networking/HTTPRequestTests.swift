@@ -9,6 +9,7 @@ import XCTest
 final class HTTPRequestTests: HeliumTestCase {
 
     func testCreateURLRequestWithComponents() throws {
+        let endpoint = BackendAPI.Endpoint.auction_nonTracking
         let method = HTTP.Method.get
         let path = "/path"
         let headers: HTTP.Headers = [
@@ -17,7 +18,7 @@ final class HTTPRequestTests: HeliumTestCase {
         ]
         let bodyDataMock = "some string"
         let httpRequest = HTTPRequestMock(
-            backendAPI: .rtb,
+            endpoint: endpoint,
             urlPath: path,
             method: method,
             customHeaders: headers,
@@ -27,7 +28,7 @@ final class HTTPRequestTests: HeliumTestCase {
         do {
             let urlRequest = try httpRequest.makeURLRequest()
             XCTAssertEqual(urlRequest.httpMethod, method.rawValue)
-            XCTAssertEqual(urlRequest.url?.absoluteString, "\(BackendAPI.rtb.scheme)://\(BackendAPI.rtb.host)\(path)")
+            XCTAssertEqual(urlRequest.url?.absoluteString, "\(endpoint.scheme)://\(endpoint.host)\(path)")
             XCTAssertAnyEqual(
                 try XCTUnwrap(urlRequest.allHTTPHeaderFields),
                 [
@@ -45,8 +46,9 @@ final class HTTPRequestTests: HeliumTestCase {
     }
 
     func testCreateURLRequestWithURLString() throws {
+        let endpoint = BackendAPI.Endpoint.auction_nonTracking
         let path = "/path"
-        let urlString = "\(BackendAPI.rtb.scheme)://\(BackendAPI.rtb.host)\(path)"
+        let urlString = "\(endpoint.scheme)://\(endpoint.host)\(path)"
         let method = HTTP.Method.get
         let headers: HTTP.Headers = [
             "key 1": "value 1",

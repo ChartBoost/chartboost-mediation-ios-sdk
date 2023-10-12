@@ -119,6 +119,7 @@ public final class Helium: NSObject {
     /// - Parameter placementName: Banner ad placement from the Chartboost dashboard.
     /// - Parameter bannerSize: Size of the banner to request.
     /// - Returns: The banner ad provider if successful; otherwise `nil` will be returned.
+    @available(*, deprecated, message: "Use ChartboostMediationBannerView for the most comprehensive banner ad experience.")
     @objc(bannerProviderWithDelegate:andPlacementName:andSize:)
     public func bannerProvider(
         with delegate: HeliumBannerAdDelegate?,
@@ -212,5 +213,19 @@ public final class Helium: NSObject {
     /// An array of all initialized adapters, or an empty array if the SDK is not initialized.
     public var initializedAdapterInfo: [HeliumAdapterInfo] {
         partnerController.initializedAdapterInfo.values.map { HeliumAdapterInfo(partnerAdapterInfo: $0) }
+    }
+
+    // MARK: - Other Settings
+
+    /// Boolean value indicating that ads returned from adapters that are larger than the requested size should be discarded.
+    ///
+    /// An ad is defined as too large if either the width or the height of the resulting ad is larger than the requested ad size
+    /// (unless the height of the requested ad size is 0, as is the case when using
+    /// ``ChartboostMediationBannerSize/adaptive(width:)``). In this case,
+    /// a ``ChartboostMediationError/Code/loadFailureAdTooLarge`` error will be returned.
+    /// This currently only applies to banners. Defaults to `false`.
+    public var discardOversizedAds: Bool {
+        get { environment.sdkSettings.discardOversizedAds }
+        set { environment.sdkSettings.discardOversizedAds = newValue }
     }
 }

@@ -25,6 +25,7 @@ struct MetricsEvent: Encodable {
         case partnerImpression = "partner_impression"
         case reward
         case winner
+        case bannerSize = "banner_size"
     }
     
     /// Start time the event started.

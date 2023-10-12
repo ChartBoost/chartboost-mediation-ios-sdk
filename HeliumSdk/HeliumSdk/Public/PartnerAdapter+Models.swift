@@ -66,10 +66,18 @@ public typealias PartnerEventDetails = [String: String]
 
 /// Ad format.
 public enum AdFormat: String, CaseIterable {
+    case adaptiveBanner = "adaptive_banner"                 // snake-case for compatibility with backend
+    case banner
     case interstitial
     case rewarded
     case rewardedInterstitial = "rewarded_interstitial"     // snake-case for compatibility with backend
-    case banner
+}
+
+extension AdFormat {
+    /// Returns `true` if this is `adaptiveBanner` or `banner`, or false if it's a fullscreen ad.
+    var isBanner: Bool {
+        self == .adaptiveBanner || self == .banner
+    }
 }
 
 /// Information used by partner adapters to set up.

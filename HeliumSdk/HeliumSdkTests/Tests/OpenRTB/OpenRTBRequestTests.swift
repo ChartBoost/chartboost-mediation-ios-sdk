@@ -27,8 +27,8 @@ class OpenRTBRequestTests: HeliumTestCase {
         XCTAssertNotNil(impression.video)
         if let video = impression.video {
             XCTAssertEqual("video/mp4", video.mimes[0])
-            XCTAssertEqual(Int(adLoadRequest.adSize?.width ?? 0), video.w)
-            XCTAssertEqual(Int(adLoadRequest.adSize?.height ?? 0), video.h)
+            XCTAssertEqual(Int(adLoadRequest.adSize?.size.width ?? 0), video.w)
+            XCTAssertEqual(Int(adLoadRequest.adSize?.size.height ?? 0), video.h)
             XCTAssertEqual(OpenRTB.Impression.Video.VideoPlacementType.interstitialSliderOrFloating, video.placement)
             XCTAssertEqual(OpenRTB.AdPosition.fullScreen, video.pos)
             XCTAssertNotNil(video.companiontype)
@@ -46,8 +46,8 @@ class OpenRTBRequestTests: HeliumTestCase {
         }
         XCTAssertNotNil(impression.banner)
         if let banner = impression.banner {
-            XCTAssertEqual(Int(adLoadRequest.adSize?.width ?? 0), banner.w)
-            XCTAssertEqual(Int(adLoadRequest.adSize?.height ?? 0), banner.h)
+            XCTAssertEqual(Int(adLoadRequest.adSize?.size.width ?? 0), banner.w)
+            XCTAssertEqual(Int(adLoadRequest.adSize?.size.height ?? 0), banner.h)
             XCTAssertEqual(OpenRTB.AdPosition.fullScreen, banner.pos)
             XCTAssertEqual(1, banner.topframe)
             XCTAssertNotNil(banner.ext)
@@ -170,7 +170,7 @@ class OpenRTBRequestTests: HeliumTestCase {
                 XCTAssertEqual(environment.sdk.sdkName, impression.displaymanager)
                 XCTAssertEqual(environment.sdk.sdkVersion, impression.displaymanagerver)
                 switch adFormat {
-                case .banner:
+                case .banner, .adaptiveBanner:
                     XCTAssertEqual(0, impression.instl)
                 default:
                     XCTAssertEqual(1, impression.instl)
@@ -180,10 +180,10 @@ class OpenRTBRequestTests: HeliumTestCase {
                 XCTAssertNotNil(impression.video)
                 if let video = impression.video {
                     XCTAssertEqual("video/mp4", video.mimes[0])
-                    XCTAssertEqual(Int(adLoadRequest.adSize?.width ?? 0), video.w)
-                    XCTAssertEqual(Int(adLoadRequest.adSize?.height ?? 0), video.h)
+                    XCTAssertEqual(Int(adLoadRequest.adSize?.size.width ?? 0), video.w)
+                    XCTAssertEqual(Int(adLoadRequest.adSize?.size.height ?? 0), video.h)
                     switch adFormat {
-                    case .banner:
+                    case .banner, .adaptiveBanner:
                         XCTAssertEqual(OpenRTB.Impression.Video.VideoPlacementType.inBanner, video.placement)
                         XCTAssertEqual(OpenRTB.AdPosition.footer, video.pos)
                     default:
@@ -205,10 +205,10 @@ class OpenRTBRequestTests: HeliumTestCase {
                 }
                 XCTAssertNotNil(impression.banner)
                 if let banner = impression.banner {
-                    XCTAssertEqual(Int(adLoadRequest.adSize?.width ?? 0), banner.w)
-                    XCTAssertEqual(Int(adLoadRequest.adSize?.height ?? 0), banner.h)
+                    XCTAssertEqual(Int(adLoadRequest.adSize?.size.width ?? 0), banner.w)
+                    XCTAssertEqual(Int(adLoadRequest.adSize?.size.height ?? 0), banner.h)
                     switch adFormat {
-                    case .banner:
+                    case .banner, .adaptiveBanner:
                         XCTAssertEqual(OpenRTB.AdPosition.footer, banner.pos)
                     default:
                         XCTAssertEqual(OpenRTB.AdPosition.fullScreen, banner.pos)
@@ -297,7 +297,7 @@ class OpenRTBRequestTests: HeliumTestCase {
                         XCTAssertEqual(mocks.consentSettings.expectedConsentValue, ext.consent)
                         XCTAssertEqual(UInt(environment.session.elapsedSessionDuration), ext.sessionduration)
                         switch adFormat {
-                        case .banner:
+                        case .banner, .adaptiveBanner:
                             XCTAssertEqual(UInt(environment.impressionCounter.bannerImpressionCount), ext.impdepth)
                         case .interstitial:
                             XCTAssertEqual(UInt(environment.impressionCounter.interstitialImpressionCount), ext.impdepth)
@@ -354,6 +354,29 @@ class OpenRTBRequestTests: HeliumTestCase {
                 // test
                 XCTAssertEqual(environment.testMode.isTestModeEnabled ? 1 : 0, request.test)
             }
+        }
+    }
+
+    func testPrivacyBanList() {
+        let adLoadRequest = HeliumAdLoadRequest.test(adFormat: .interstitial, keywords: [:])
+        var request: OpenRTB.BidRequest
+        
+        if #available(iOS 17.0, *) {
+            mocks.privacyConfigurationDependency.privacyBanList = [.timeZone]
+            request = OpenRTB.BidRequest.make(request: adLoadRequest, bidderInformation: [:])
+            XCTAssertNil(request.device?.geo?.utcoffset)
+
+            mocks.privacyConfigurationDependency.privacyBanList = []
+            request = OpenRTB.BidRequest.make(request: adLoadRequest, bidderInformation: [:])
+            XCTAssertNotNil(request.device?.geo?.utcoffset)
+        } else {
+            mocks.privacyConfigurationDependency.privacyBanList = [.timeZone]
+            request = OpenRTB.BidRequest.make(request: adLoadRequest, bidderInformation: [:])
+            XCTAssertNotNil(request.device?.geo?.utcoffset)
+
+            mocks.privacyConfigurationDependency.privacyBanList = []
+            request = OpenRTB.BidRequest.make(request: adLoadRequest, bidderInformation: [:])
+            XCTAssertNotNil(request.device?.geo?.utcoffset)
         }
     }
 

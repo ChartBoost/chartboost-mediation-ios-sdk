@@ -31,6 +31,13 @@ struct DeviceInfoProvider: DeviceInfoProviding {
     let deviceMake = "Apple"
 
     var deviceModel: String {
+        if #available(iOS 17.0, *) {
+            @Injected(\.privacyConfiguration) var privacyConfig
+            if privacyConfig.privacyBanList.contains(.sysctl) {
+                return UIDevice.current.model
+            }
+        }
+
         // Use `sysctlbyname` to obtain the most specific device modle if possible.
         var size : Int = 0
         sysctlbyname("hw.machine", nil, &size, nil, 0)
@@ -44,13 +51,19 @@ struct DeviceInfoProvider: DeviceInfoProviding {
     }
 
     var freeDiskSpace: UInt {
-        guard
-            let values = try? URL(fileURLWithPath:"/").resourceValues(forKeys: [.volumeAvailableCapacityKey]),
-            let capacity = values.volumeAvailableCapacity
-        else {
+        if #available(iOS 17.0, *) {
+            // Stop using `volumeAvailableCapacity(Key)` on iOS 17+ because it's a Required Reason API
+            // and we don't have an approved reason to use it.
             return 0
+        } else {
+            guard
+                let values = try? URL(fileURLWithPath:"/").resourceValues(forKeys: [.volumeAvailableCapacityKey]),
+                let capacity = values.volumeAvailableCapacity
+            else {
+                return 0
+            }
+            return UInt(capacity)
         }
-        return UInt(capacity)
     }
 
     var isBatteryCharging: Bool {
@@ -78,12 +91,18 @@ struct DeviceInfoProvider: DeviceInfoProviding {
     }
 
     var totalDiskSpace: UInt {
-        guard
-            let values = try? URL(fileURLWithPath:"/").resourceValues(forKeys: [.volumeTotalCapacityKey]),
-            let capacity = values.volumeTotalCapacity
-        else {
+        if #available(iOS 17.0, *) {
+            // Stop using `volumeTotalCapacity(Key)` on iOS 17+ because it's a Required Reason API
+            // and we don't have an approved reason to use it.
             return 0
+        } else {
+            guard
+                let values = try? URL(fileURLWithPath:"/").resourceValues(forKeys: [.volumeTotalCapacityKey]),
+                let capacity = values.volumeTotalCapacity
+            else {
+                return 0
+            }
+            return UInt(capacity)
         }
-        return UInt(capacity)
     }
 }

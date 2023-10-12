@@ -32,17 +32,33 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
         let metrics: [MetricsEvent]?
         let result: String?
         let error: Error?
+        // Only required in `/v2/event/load`.
+        let placementType: AdFormat?
+        // Only required if `adFormat` is `adaptiveBanner`.
+        let size: BackendEncodableSize?
 
         init(
             auctionID: AuctionID? = nil,
             metrics: [MetricsEvent]? = nil,
             result: String? = nil,
-            error: Error? = nil
+            error: Error? = nil,
+            adFormat: AdFormat? = nil,
+            size: BackendEncodableSize? = nil
         ) {
             self.auctionID = auctionID
             self.metrics = metrics
             self.result = result
             self.error = error
+            self.placementType = adFormat
+
+            // Size can be omitted if the format is not `adaptiveBanner`.
+            if adFormat == .adaptiveBanner {
+                // If size is nil for some reason, we need to send 0s, or else the server will
+                // return a 400 error.
+                self.size = size ?? CGSize.zero.backendEncodableSize
+            } else {
+                self.size = nil
+            }
         }
 
         struct Error: Encodable {
@@ -86,7 +102,7 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
 
     var url: URL {
         get throws {
-            try makeURL(backendAPI: .sdk, path: eventType.urlPath)
+            try makeURL(endpoint: eventType.endpoint)
         }
     }
 
@@ -112,14 +128,23 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
         Self.init(eventType: .prebid, loadID: loadID, body: .init(metrics: events))
     }
     
-    static func load(auctionID: String, loadID: LoadID, events: [MetricsEvent], error: ChartboostMediationError?) -> Self {
+    static func load(
+        auctionID: String,
+        loadID: LoadID,
+        events: [MetricsEvent],
+        error: ChartboostMediationError?,
+        adFormat: AdFormat,
+        size: CGSize?
+    ) -> Self {
         Self.init(
             eventType: .load,
             loadID: loadID,
             body: .init(
                 auctionID: auctionID,
                 metrics: events,
-                error: .init(error: error)
+                error: .init(error: error),
+                adFormat: adFormat,
+                size: size?.backendEncodableSize
             )
         )
     }
@@ -157,20 +182,21 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
 }
 
 private extension MetricsEvent.EventType {
-    var urlPath: String {
-        let eventPath = BackendAPI.Path.SDK.Event.self
-
+    var endpoint: BackendAPI.Endpoint {
         switch self {
-        case .click: return eventPath.click
-        case .expiration: return eventPath.expiration
-        case .initialization: return eventPath.initialization
-        case .load: return eventPath.load
-        case .prebid: return eventPath.prebid
-        case .show: return eventPath.show
-        case .heliumImpression: return eventPath.heliumImpression
-        case .partnerImpression: return eventPath.partnerImpression
-        case .reward: return eventPath.reward
-        case .winner: return eventPath.winner
+        case .bannerSize: return .bannerSize
+        case .click: return .click
+        case .expiration: return .expiration
+        case .heliumImpression: return .mediationImpression // "helium impression" will be renamed as "mediation impression" in the future
+        case .initialization: return .initialization
+        case .load: return .load
+        case .partnerImpression: return .partnerImpression
+        case .prebid: return .prebid
+        case .reward: return .reward
+        case .show: return .show
+        case .winner: return .winner
         }
     }
 }
+
+extension AdFormat: Encodable {}

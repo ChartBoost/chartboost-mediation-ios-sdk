@@ -13,6 +13,7 @@ extension HeliumAd {
         bidInfo: [String: String] = ["asdfasdf": "1234"],
         rewardedCallback: RewardedCallback? = .test(),
         partnerAd: PartnerAd = PartnerAdMock(),
+        adSize: ChartboostMediationBannerSize = .init(size: .zero, type: .fixed),
         request: HeliumAdLoadRequest = .test()
     ) -> Self {
         let bid = Bid(
@@ -30,13 +31,15 @@ extension HeliumAd {
             rewardedCallback: rewardedCallback,
             clearingPrice: 42.24,
             winURL: "winURL",
-            lossURL: "lossURL"
+            lossURL: "lossURL",
+            size: nil
         )
 
         return HeliumAd(
             bid: bid,
             bidInfo: bidInfo,
             partnerAd: partnerAd,
+            adSize: adSize,
             request: request
         )
     }

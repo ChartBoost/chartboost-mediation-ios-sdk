@@ -30,10 +30,10 @@ struct Bid {
     let ilrd: [String : Any]?
 
     /// The real or estimated bid price.
-    let cpmPrice: Double?
+    let cpmPrice: Decimal?
 
     /// The real or estimated revenue of this bid, represented as `cpmPrice / 1000`.
-    let adRevenue: Double?
+    let adRevenue: Decimal?
 
     /// Auction identifier common to all bids to the same auction.
     let auctionIdentifier: String
@@ -45,19 +45,22 @@ struct Bid {
     let rewardedCallback: RewardedCallback?
 
     /// Bid price expressed as CPM although the actual transaction is for a unit impression only.
-    let clearingPrice: Double?
+    let clearingPrice: Decimal?
 
     /// Win notice URL called by the exchange if the bid wins
     let winURL: String?
 
     /// Loss notice URL called by the exchange when a bid is known to have been lost.
     let lossURL: String?
+
+    /// The size of the ad.
+    let size: CGSize?
 }
 
 extension Bid {
     @Injected(\.environment) private static var environment
 
-    static func makeBids(response: OpenRTB.BidResponse, placement: String) -> [Bid] {
+    static func makeBids(response: OpenRTB.BidResponse, request: HeliumAdLoadRequest) -> [Bid] {
         guard let seatbids = response.seatbid else {
             return []
         }
@@ -72,7 +75,7 @@ extension Bid {
             }
             
             // TODO: Remove this reference adapter hack in HB-4504
-            let partnerIdentifier = environment.testMode.isTestModeEnabled && placement.hasPrefix("REF") ? "reference" : seat
+            let partnerIdentifier = environment.testMode.isTestModeEnabled && request.heliumPlacement.hasPrefix("REF") ? "reference" : seat
 
             for rtbBid in seatbid.bid {
                 // Merge the bidder's ILRD information with the base ILRD information,
@@ -97,11 +100,21 @@ extension Bid {
                     )
                 }
 
+                var size: CGSize?
+
+                // We've seen odd sizes come back for non-adaptive formats (e.g. 1x1), so we will
+                // completely ignore the width and height for non-adaptive formats.
+                if request.adFormat == .adaptiveBanner,
+                   let width = rtbBid.w,
+                   let height = rtbBid.h {
+                    size = CGSize(width: width, height: height)
+                }
+
                 // The final bid structure
                 let bid = Bid(
                     identifier: UUID().uuidString,
                     partnerIdentifier: partnerIdentifier,
-                    partnerPlacement: rtbBid.ext.partner_placement ?? "\(seat):\(placement)",
+                    partnerPlacement: rtbBid.ext.partner_placement ?? "\(seat):\(request.heliumPlacement)",
                     adm: rtbBid.adm,
                     partnerDetails: rtbBid.ext.partnerDetails,
                     lineItemIdentifier: rtbBid.ext.line_item_id,
@@ -113,7 +126,8 @@ extension Bid {
                     rewardedCallback: rewardedCallback,
                     clearingPrice: rtbBid.clearingPrice,
                     winURL: rtbBid.winURL,
-                    lossURL: rtbBid.lossURL
+                    lossURL: rtbBid.lossURL,
+                    size: size
                 )
                 bids.append(bid)
             }

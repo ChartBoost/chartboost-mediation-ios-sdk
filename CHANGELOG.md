@@ -2,6 +2,16 @@ iOS Change Log
 ==================
 Check for the latest Chartboost Mediation SDK at the Chartboost website.
 
+### Version 4.6.0 *(2023-10-12)*
+----------------------------
+Improvements:
+- Added support for Adaptive Banners.
+- Added privacy manifest.
+- Added option to discard oversized ads.
+
+Bug Fixes:
+- Fixed an issue where winner prices could sometimes have rounding errors.
+
 ### Version 4.5.0 *(2023-08-31)*
 ----------------------------
 Improvements:

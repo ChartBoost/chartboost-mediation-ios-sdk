@@ -19,7 +19,7 @@ protocol MetricsEventLogging {
     
     /// Logs a load event.
     /// - returns: Raw metrics dictionary sent to our backend.
-    func logLoad(auctionID: AuctionID, loadID: LoadID, events: [MetricsEvent], error: ChartboostMediationError?) -> RawMetrics?
+    func logLoad(auctionID: AuctionID, loadID: LoadID, events: [MetricsEvent], error: ChartboostMediationError?, adFormat: AdFormat, size: CGSize?) -> RawMetrics?
     
     /// Logs a show event.
     func logShow(auctionID: AuctionID, loadID: LoadID, event: MetricsEvent) -> RawMetrics?
@@ -46,7 +46,13 @@ protocol MetricsEventLogging {
     
     /// Logs that the ad auction is finished.
     /// - parameter bids: The participating bids in the auction.
-    func logAuctionCompleted(with bids: [Bid], winner: Bid, loadID: LoadID)
+    func logAuctionCompleted(
+        with bids: [Bid],
+        winner: Bid,
+        loadID: LoadID,
+        adFormat: AdFormat,
+        size: CGSize?
+    )
     
     /// Asynchronously notifies the endpoint specified at the rewarded callback URL that the user has earned a reward.
     /// This method will retry the callback attempt the number of times as specified in `RewardedCallback.maxRetries` property before giving up.
@@ -88,11 +94,30 @@ final class MetricsEventLogger: MetricsEventLogging {
         logToConsole(.prebid, events: events)
     }
     
-    func logLoad(auctionID: AuctionID, loadID: LoadID, events: [MetricsEvent], error: ChartboostMediationError?) -> RawMetrics? {
+    func logLoad(
+        auctionID: AuctionID,
+        loadID: LoadID,
+        events: [MetricsEvent],
+        error: ChartboostMediationError?,
+        adFormat: AdFormat,
+        size: CGSize?
+    ) -> RawMetrics? {
         guard configuration.filter.contains(.load) else { return nil }
-        
-        let metrics = send(MetricsHTTPRequest.load(auctionID: auctionID, loadID: loadID, events: events, error: error))
+
+        let request = MetricsHTTPRequest.load(
+            auctionID: auctionID,
+            loadID: loadID,
+            events: events,
+            error: error,
+            adFormat: adFormat,
+            size: size
+        )
+        var metrics = send(request)
         logToConsole(.load, auctionID: auctionID, loadID: loadID, events: events)
+        // Since the `loadID` is sent in the header, it's not part of the dict that's provided
+        // to the pub. Add it after logging to the console, since the `loadID` is logged as part
+        // of that.
+        metrics?["load_id"] = loadID
         return metrics
     }
 
@@ -142,8 +167,21 @@ final class MetricsEventLogger: MetricsEventLogging {
         logToConsole(.reward, auctionID: ad.request.auctionIdentifier, loadID: ad.request.loadID)
     }
     
-    func logAuctionCompleted(with bids: [Bid], winner: Bid, loadID: LoadID) {
-        networkManager.send(WinnerEventHTTPRequest(winner: winner, of: bids, loadID: loadID)) { _ in }
+    func logAuctionCompleted(
+        with bids: [Bid],
+        winner: Bid,
+        loadID: LoadID,
+        adFormat: AdFormat,
+        size: CGSize?
+    ) {
+        let request = WinnerEventHTTPRequest(
+            winner: winner,
+            of: bids,
+            loadID: loadID,
+            adFormat: adFormat,
+            size: size
+        )
+        networkManager.send(request) { _ in }
     }
     
     func logRewardedCallback(_ rewardedCallback: RewardedCallback, customData: String?) {

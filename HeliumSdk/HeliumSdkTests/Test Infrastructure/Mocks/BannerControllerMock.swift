@@ -7,7 +7,7 @@ import Foundation
 @testable import ChartboostMediationSDK
 
 class BannerControllerMock: Mock<BannerControllerMock.Method>, BannerControllerProtocol {
-    
+
     enum Method {
         case loadAd
         case clearAd
@@ -18,13 +18,19 @@ class BannerControllerMock: Mock<BannerControllerMock.Method>, BannerControllerP
         [.loadAd: "some request id",
          .clearAd: true]
     }
-    
-    var bannerContainer: UIView?
-    
-    var keywords: HeliumKeywords?
 
-    func loadAd(with viewController: UIViewController) {
-        record(.loadAd, parameters: [viewController])
+    var delegate: BannerControllerDelegate?
+    var keywords: [String : String]?
+    var request: ChartboostMediationBannerLoadRequest
+    var showingBannerLoadResult: AdLoadResult?
+    var isPaused: Bool = false
+
+    init(request: ChartboostMediationBannerLoadRequest = .init(placement: "placement", size: .standard)) {
+        self.request = request
+    }
+
+    func loadAd(viewController: UIViewController, completion: @escaping (ChartboostMediationSDK.ChartboostMediationBannerLoadResult) -> Void) {
+        record(.loadAd, parameters: [viewController, completion])
     }
     
     func clearAd() {

@@ -120,6 +120,8 @@ extension ChartboostMediationError.Code {
             return "Ensure appropriate fields are correctly entered on the partner dashboard."
         case .loadFailureWaterfallExhaustedNoFill:
             return "Try again. If the problem persists, verify Partner settings in the Chartboost Mediation dashboard."
+        case .loadFailureAdTooLarge:
+            return "Try again. If the problem persists, verify Partner settings in the Chartboost Mediation dashboard."
 
         // 400
         case .showFailureUnknown:

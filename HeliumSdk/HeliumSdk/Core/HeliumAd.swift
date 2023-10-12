@@ -13,6 +13,8 @@ struct HeliumAd {
     let bidInfo: [String: Any]
     /// The loaded ad obtained from the partner that won the auction.
     let partnerAd: PartnerAd
+    /// The size of the loaded banner, or `nil` for old adapter versions and fullscreen ads.
+    let adSize: ChartboostMediationBannerSize?
     /// The request that triggered the load process.
     let request: HeliumAdLoadRequest
 

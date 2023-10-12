@@ -73,7 +73,7 @@ final class NetworkAdAuctionService: AdAuctionService {
                     self?.loadRateLimiter.setLoadRateLimit(TimeInterval(newLoadRateLimit), placement: loadRequest.heliumPlacement)
                 }
                 logger.debug("Auction request succeeded")
-                completion(response.asAdAuctionResponse(placement: loadRequest.heliumPlacement))
+                completion(response.asAdAuctionResponse(request: loadRequest))
 
             case .failure(let requestError):
                 logger.error("Auction request failed with error: \(requestError)")
@@ -166,7 +166,7 @@ extension NetworkManager.RequestError {
 }
 
 extension NetworkManager.JSONResponse where T == OpenRTB.BidResponse {
-    fileprivate func asAdAuctionResponse(placement: String) -> AdAuctionResponse {
+    fileprivate func asAdAuctionResponse(request: HeliumAdLoadRequest) -> AdAuctionResponse {
         switch httpURLResponse.statusCode {
         case 200:
             guard let responseData = responseData else {
@@ -179,7 +179,7 @@ extension NetworkManager.JSONResponse where T == OpenRTB.BidResponse {
                 )
             }
 
-            let bids = Bid.makeBids(response: responseData.decodedData, placement: placement)
+            let bids = Bid.makeBids(response: responseData.decodedData, request: request)
             guard !bids.isEmpty else {
                 return AdAuctionResponse(
                     result: .failure(ChartboostMediationError(

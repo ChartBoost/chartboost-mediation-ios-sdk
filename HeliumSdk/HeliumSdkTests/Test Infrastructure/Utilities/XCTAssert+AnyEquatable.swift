@@ -9,3 +9,8 @@ import XCTest
 func XCTAssertAnyEqual(_ first: AnyEquatable, _ second: AnyEquatable, file: StaticString = #file, line: UInt = #line) {
     XCTAssert(first.isEqual(to: second), "\(String(describing: first)) is not equal to \(String(describing: second))", file: file, line: line)
 }
+
+/// Same as the standard `XCTAssertNotEqual` but for non-Equatable, AnyEquatable types.
+func XCTAssertAnyNotEqual(_ first: AnyEquatable, _ second: AnyEquatable, file: StaticString = #file, line: UInt = #line) {
+    XCTAssert(!first.isEqual(to: second), "\(String(describing: first)) is equal to \(String(describing: second))", file: file, line: line)
+}

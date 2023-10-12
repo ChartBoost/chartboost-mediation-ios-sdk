@@ -13,7 +13,7 @@ protocol BidFulfillOperation {
 
 /// The result of a bid fulfill operation.
 struct BidFulfillOperationResult {
-    let result: Result<(winningBid: Bid, loadedAd: PartnerAd), ChartboostMediationError>
+    let result: Result<(winningBid: Bid, loadedAd: PartnerAd, adSize: ChartboostMediationBannerSize?), ChartboostMediationError>
     let loadEvents: [MetricsEvent]
 }
 
@@ -31,7 +31,7 @@ extension BidFulfillOperationConfiguration {
         switch adFormat {
         case .interstitial, .rewarded, .rewardedInterstitial:
             return fullscreenLoadTimeout
-        case .banner:
+        case .banner, .adaptiveBanner:
             return bannerLoadTimeout
         }
     }
@@ -62,6 +62,7 @@ final class PartnerControllerBidFulfillOperation: BidFulfillOperation {
     private var cancelLoad: PartnerController.CancelAction?
     /// Configuration.
     @Injected(\.bidFulfillOperationConfiguration) private var configuration
+    @Injected(\.environment) private var environment
     /// Task dispatcher.
     @Injected(\.taskDispatcher) private var taskDispatcher
     /// Partner controller, in charge of forwarding loads to the partners.
@@ -149,31 +150,41 @@ final class PartnerControllerBidFulfillOperation: BidFulfillOperation {
         }
     }
     
-    private func processLoadedBid(_ bid: Bid, result: Result<PartnerAd, ChartboostMediationError>, start: Date) {
+    private func processLoadedBid(_ bid: Bid, result: Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>, start: Date) {
         // Cancel timeout task
         timeoutTask?.cancel()
         loadingBid = nil
         cancelLoad = nil
-        // Sanitize result, failing if a banner is provided without an inline view to show
+
         var sanitizedResult = result
-        if request.adFormat == .banner, let ad = try? result.get(), ad.inlineView == nil {
-            logger.warning("Discarding \(ad.adapter.partnerDisplayName) banner ad without an inline view")
-            sanitizedResult = .failure(ChartboostMediationError(code: .loadFailureNoInlineView))
-            partnerController.routeInvalidate(ad) { _ in }
+        var adSize: ChartboostMediationBannerSize?
+        if request.adFormat.isBanner, let (ad, partnerDetails) = try? result.get(), let requestedSize = request.adSize {
+            let bannerSize = makeAdSize(partnerDetails: partnerDetails, requestedSize: requestedSize)
+            if ad.inlineView == nil {
+                // Sanitize result, failing if a banner is provided without an inline view to show
+                logger.warning("Discarding \(ad.adapter.partnerDisplayName) banner ad without an inline view")
+                sanitizedResult = .failure(ChartboostMediationError(code: .loadFailureNoInlineView))
+                partnerController.routeInvalidate(ad) { _ in }
+            } else if environment.sdkSettings.discardOversizedAds && isAdSizeOversized(adSize: bannerSize) {
+                logger.warning("Discarding \(ad.adapter.partnerDisplayName) banner ad that is larger than the requested size")
+                sanitizedResult = .failure(ChartboostMediationError(code: .loadFailureAdTooLarge))
+                partnerController.routeInvalidate(ad) { _ in }
+            }
+            adSize = bannerSize
         }
         // Record the load event
         loadEvents.append(loadEvent(bid: bid, start: start, error: sanitizedResult.error))
         
         // If success we are done, otherwise we call fulfill() again to process the next bid
         switch sanitizedResult {
-        case .success(let partnerAd):
-            finishFulfillment(with: .success((bid, partnerAd)))
+        case .success((let partnerAd, _)):
+            finishFulfillment(with: .success((bid, partnerAd, adSize)))
         case .failure(_):
             fulfillNextBid()
         }
     }
     
-    private func finishFulfillment(with result: Result<(winningBid: Bid, loadedAd: PartnerAd), ChartboostMediationError>) {
+    private func finishFulfillment(with result: Result<(winningBid: Bid, loadedAd: PartnerAd, adSize: ChartboostMediationBannerSize?), ChartboostMediationError>) {
         // Complete
         if let error = result.error {
             logger.error("Bid fulfill operation failed with load ID \(request.loadID) and error: \(error)")
@@ -198,7 +209,9 @@ private extension PartnerControllerBidFulfillOperation {
             chartboostPlacement: request.heliumPlacement,
             partnerPlacement: bid.partnerPlacement,
             format: request.adFormat,
-            size: request.adSize,
+            // Fall back to the requested size if the bid size is not available. This should
+            // generally only be the case for fixed size banners.
+            size: bid.size ?? request.adSize?.size,
             adm: bid.adm,
             partnerSettings: bid.partnerDetails ?? [:],
             identifier: request.loadID,
@@ -215,5 +228,49 @@ private extension PartnerControllerBidFulfillOperation {
             networkType: bid.lineItemIdentifier != nil ? .mediation : .bidding,
             lineItemIdentifier: bid.lineItemIdentifier
         )
+    }
+
+    func makeAdSize(
+        partnerDetails: PartnerEventDetails,
+        requestedSize: ChartboostMediationBannerSize
+    ) -> ChartboostMediationBannerSize {
+        if let typeString = partnerDetails[Constants.bannerType],
+           let typeInt = Int(typeString),
+           let type = ChartboostMediationBannerType(rawValue: typeInt),
+           let widthString = partnerDetails[Constants.bannerWidth],
+           let width = Double(widthString),
+           let heightString = partnerDetails[Constants.bannerHeight],
+           let height = Double(heightString) {
+            return ChartboostMediationBannerSize(
+                size: CGSize(width: width, height: height),
+                type: type
+            )
+        } else {
+            // The ad came from an old adapter version, so we assume it's a fixed size ad of the
+            // original request size.
+            // Note that if the pub tries to load an adaptive banner on an old adapter, it will
+            // fail since that adapter does not support loading the adaptive banner ad type,
+            // so we will never get to this point in this case.
+            return ChartboostMediationBannerSize(size: requestedSize.size, type: .fixed)
+        }
+    }
+
+    func isAdSizeOversized(adSize: ChartboostMediationBannerSize) -> Bool {
+        // Only banner ads can be oversized.
+        guard let requestedSize = request.adSize else {
+            return false
+        }
+
+        return adSize.size.width > requestedSize.size.width
+            || (requestedSize.size.height > 0 && adSize.size.height > requestedSize.size.height)
+    }
+}
+
+// MARK: - Constants
+extension PartnerControllerBidFulfillOperation {
+    private struct Constants {
+        static let bannerType = "bannerType"
+        static let bannerWidth = "bannerWidth"
+        static let bannerHeight = "bannerHeight"
     }
 }

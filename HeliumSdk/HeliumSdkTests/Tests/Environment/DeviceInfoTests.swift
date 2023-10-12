@@ -16,9 +16,32 @@ class DeviceInfoTests: HeliumTestCase {
         XCTAssertEqual(info.deviceMake, "Apple")
         XCTAssertFalse(info.deviceModel.isEmpty)
         XCTAssertEqual(info.deviceType, UIDevice.current.userInterfaceIdiom == .pad ? .iPad : .iPhone)
-        XCTAssert(info.freeDiskSpace > 0)
         XCTAssertEqual(info.osName, "iOS")
         XCTAssertFalse(info.osVersion.isEmpty)
-        XCTAssert(info.totalDiskSpace > 0)
+        if #available(iOS 17.0, *) {
+            XCTAssert(info.freeDiskSpace == 0)
+            XCTAssert(info.totalDiskSpace == 0)
+        } else {
+            XCTAssert(info.freeDiskSpace > 0)
+            XCTAssert(info.totalDiskSpace > 0)
+        }
+    }
+
+    func testPrivacyBanList() {
+        let info = DeviceInfoProvider()
+
+        if #available(iOS 17.0, *) {
+            mocks.privacyConfigurationDependency.privacyBanList = [.sysctl]
+            XCTAssertEqual(info.deviceModel, "iPhone")
+
+            mocks.privacyConfigurationDependency.privacyBanList = []
+            XCTAssert(["arm64", "x86_64"].contains(info.deviceModel))
+        } else {
+            mocks.privacyConfigurationDependency.privacyBanList = [.sysctl]
+            XCTAssert(["arm64", "x86_64"].contains(info.deviceModel))
+
+            mocks.privacyConfigurationDependency.privacyBanList = []
+            XCTAssert(["arm64", "x86_64"].contains(info.deviceModel))
+        }
     }
 }

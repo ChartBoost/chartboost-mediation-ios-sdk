@@ -115,9 +115,11 @@
     "internal_test_id": "some test id",
     "banner_impression_min_visible_dips": 3,
     "banner_impression_min_visible_duration_ms": 4,
+    "banner_size_event_delay_ms": 1000,
     "visibility_tracker_poll_interval_ms": 5,
     "visibility_tracker_traversal_limit": 6,
     "adapter_classes": ["ONE", "two", "three"],
+    "privacy_ban_list": ["language_and_locale", "sysctl", "time_zone", "unexpected value to test robustness (no missing value or crash)"],
 	"placements": [
 		{
 			"chartboost_placement": "Placement1",

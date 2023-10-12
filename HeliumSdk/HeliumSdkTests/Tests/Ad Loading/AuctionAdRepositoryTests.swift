@@ -73,7 +73,9 @@ class AuctionAdRepositoryTests: HeliumTestCase {
             expectedAuctionID,
             request.loadID,
             [MetricsEvent](),
-            expectedError
+            expectedError,
+            request.adFormat,
+            request.adSize?.size
         ])
         
         // Check that we have finished with failure
@@ -131,7 +133,9 @@ class AuctionAdRepositoryTests: HeliumTestCase {
             XCTMethodSomeParameter<[MetricsEvent]> {
                 self.assertEqual($0, expectedLoadEvents)
             },
-            expectedError
+            expectedError,
+            request.adFormat,
+            request.adSize?.size
         ])
     }
     
@@ -158,7 +162,7 @@ class AuctionAdRepositoryTests: HeliumTestCase {
             // Check that the returned ad is valid according to the input data
             if case .success(let ad) = result.result {
                 XCTAssertJSONEqual(ad.ilrd, winningBid.ilrd)
-                XCTAssertJSONEqual(ad.bidInfo, [
+                XCTAssertAnyEqual(ad.bidInfo, [
                     "auction-id": winningBid.auctionIdentifier,
                     "partner-id": winningBid.partnerIdentifier,
                     "price": winningBid.cpmPrice ?? 0,
@@ -195,7 +199,7 @@ class AuctionAdRepositoryTests: HeliumTestCase {
         XCTAssertMethodCalls(fulfillOperation, .run, parameters: [XCTMethodCaptureParameter { fulfillCompletion = $0 }])
         
         // Make fulfill complete successfully
-        fulfillCompletion(BidFulfillOperationResult(result: .success((winningBid, partnerAd)), loadEvents: expectedLoadEvents))
+        fulfillCompletion(BidFulfillOperationResult(result: .success((winningBid, partnerAd, nil)), loadEvents: expectedLoadEvents))
         
         // Check that we have finished with success
         XCTAssertTrue(completed)
@@ -208,15 +212,196 @@ class AuctionAdRepositoryTests: HeliumTestCase {
                 XCTMethodSomeParameter<[MetricsEvent]> {
                     self.assertEqual($0, expectedLoadEvents)
                 },
-                nil
+                nil,
+                request.adFormat,
+                request.adSize?.size,
             ], [
                 bids,
                 winningBid,
-                loadID
+                loadID,
+                request.adFormat,
+                XCTMethodIgnoredParameter()
             ]
         )
     }
-    
+
+    func testSendsCorrectSizeInLogAuctionCompleted() {
+        let request = HeliumAdLoadRequest.test(loadID: loadID)
+        let viewController = UIViewController()
+        let delegate = PartnerAdDelegateMock()
+        let bids = [
+            Bid.makeMock()
+        ]
+        let winningBid = bids[0]
+        let partnerAd = PartnerAdMock()
+        let expectedLoadEvents = [MetricsEvent.test()]
+        let expectedAuctionID = "some auction ID"
+        let expectedRawMetrics: [String: Any] = ["hello": 23, "babab": "asdasfd"]
+        mocks.metrics.setReturnValue(expectedRawMetrics, for: .logLoad)
+
+        // Load ad
+        let loadExpectation = expectation(description: "Successful load")
+        adRepository.loadAd(request: request, viewController: viewController, delegate: delegate) { result in
+            loadExpectation.fulfill()
+        }
+
+        var auctionCompletion: (AdAuctionResponse) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionService, .startAuction, parameters: [request, XCTMethodCaptureParameter { auctionCompletion = $0 }])
+
+        // Make auction complete with success
+        auctionCompletion(AdAuctionResponse(result: .success(bids), auctionID: expectedAuctionID))
+
+        var fulfillCompletion: ((BidFulfillOperationResult) -> Void) = { _ in }
+        XCTAssertMethodCalls(mocks.bidFulfillOperationFactory, .makeBidFulfillOperation, parameters: [bids, request, viewController, delegate])
+        let fulfillOperation = mocks.bidFulfillOperationFactory.returnValue(for: .makeBidFulfillOperation) as BidFulfillOperationMock
+        XCTAssertMethodCalls(fulfillOperation, .run, parameters: [XCTMethodCaptureParameter { fulfillCompletion = $0 }])
+
+        // Make fulfill complete successfully
+        // The expected size should be sent in the `logAuctionCompleted` call.
+        let expectedSize = CGSize(width: 400.0, height: 100.0)
+        let size = ChartboostMediationBannerSize(size: expectedSize, type: .adaptive)
+        fulfillCompletion(BidFulfillOperationResult(result: .success((winningBid, partnerAd, size)), loadEvents: expectedLoadEvents))
+
+        waitForExpectations(timeout: 1.0)
+
+        // Check metrics are logged
+        XCTAssertMethodCalls(mocks.metrics, .logLoad, .logAuctionCompleted, parameters:
+            [
+                expectedAuctionID,
+                loadID,
+                XCTMethodSomeParameter<[MetricsEvent]> {
+                    self.assertEqual($0, expectedLoadEvents)
+                },
+                nil,
+                request.adFormat,
+                request.adSize?.size,
+            ], [
+                bids,
+                winningBid,
+                loadID,
+                request.adFormat,
+                expectedSize
+            ]
+        )
+    }
+
+    func testFallsBackToRequestedSizeIfSizeReturnedByAdapterIsNilInLogAuctionCompleted() {
+        let expectedSize = CGSize(width: 400.0, height: 100.0)
+        let size = ChartboostMediationBannerSize(size: expectedSize, type: .adaptive)
+        let request = HeliumAdLoadRequest.test(adSize: size, loadID: loadID)
+        let viewController = UIViewController()
+        let delegate = PartnerAdDelegateMock()
+        let bids = [
+            Bid.makeMock()
+        ]
+        let winningBid = bids[0]
+        let partnerAd = PartnerAdMock()
+        let expectedLoadEvents = [MetricsEvent.test()]
+        let expectedAuctionID = "some auction ID"
+        let expectedRawMetrics: [String: Any] = ["hello": 23, "babab": "asdasfd"]
+        mocks.metrics.setReturnValue(expectedRawMetrics, for: .logLoad)
+
+        // Load ad
+        let loadExpectation = expectation(description: "Successful load")
+        adRepository.loadAd(request: request, viewController: viewController, delegate: delegate) { result in
+            loadExpectation.fulfill()
+        }
+
+        var auctionCompletion: (AdAuctionResponse) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionService, .startAuction, parameters: [request, XCTMethodCaptureParameter { auctionCompletion = $0 }])
+
+        // Make auction complete with success
+        auctionCompletion(AdAuctionResponse(result: .success(bids), auctionID: expectedAuctionID))
+
+        var fulfillCompletion: ((BidFulfillOperationResult) -> Void) = { _ in }
+        XCTAssertMethodCalls(mocks.bidFulfillOperationFactory, .makeBidFulfillOperation, parameters: [bids, request, viewController, delegate])
+        let fulfillOperation = mocks.bidFulfillOperationFactory.returnValue(for: .makeBidFulfillOperation) as BidFulfillOperationMock
+        XCTAssertMethodCalls(fulfillOperation, .run, parameters: [XCTMethodCaptureParameter { fulfillCompletion = $0 }])
+
+        // Make fulfill complete successfully
+        fulfillCompletion(BidFulfillOperationResult(result: .success((winningBid, partnerAd, nil)), loadEvents: expectedLoadEvents))
+
+        waitForExpectations(timeout: 1.0)
+
+        // Check metrics are logged
+        XCTAssertMethodCalls(mocks.metrics, .logLoad, .logAuctionCompleted, parameters:
+            [
+                expectedAuctionID,
+                loadID,
+                XCTMethodSomeParameter<[MetricsEvent]> {
+                    self.assertEqual($0, expectedLoadEvents)
+                },
+                nil,
+                request.adFormat,
+                request.adSize?.size,
+            ], [
+                bids,
+                winningBid,
+                loadID,
+                request.adFormat,
+                expectedSize
+            ]
+        )
+    }
+
+    func testSendsNilIfRequestedSizeisNilInLogAuctionCompleted() {
+        let request = HeliumAdLoadRequest.test(adSize: nil, loadID: loadID)
+        let viewController = UIViewController()
+        let delegate = PartnerAdDelegateMock()
+        let bids = [
+            Bid.makeMock()
+        ]
+        let winningBid = bids[0]
+        let partnerAd = PartnerAdMock()
+        let expectedLoadEvents = [MetricsEvent.test()]
+        let expectedAuctionID = "some auction ID"
+        let expectedRawMetrics: [String: Any] = ["hello": 23, "babab": "asdasfd"]
+        mocks.metrics.setReturnValue(expectedRawMetrics, for: .logLoad)
+
+        // Load ad
+        let loadExpectation = expectation(description: "Successful load")
+        adRepository.loadAd(request: request, viewController: viewController, delegate: delegate) { result in
+            loadExpectation.fulfill()
+        }
+
+        var auctionCompletion: (AdAuctionResponse) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionService, .startAuction, parameters: [request, XCTMethodCaptureParameter { auctionCompletion = $0 }])
+
+        // Make auction complete with success
+        auctionCompletion(AdAuctionResponse(result: .success(bids), auctionID: expectedAuctionID))
+
+        var fulfillCompletion: ((BidFulfillOperationResult) -> Void) = { _ in }
+        XCTAssertMethodCalls(mocks.bidFulfillOperationFactory, .makeBidFulfillOperation, parameters: [bids, request, viewController, delegate])
+        let fulfillOperation = mocks.bidFulfillOperationFactory.returnValue(for: .makeBidFulfillOperation) as BidFulfillOperationMock
+        XCTAssertMethodCalls(fulfillOperation, .run, parameters: [XCTMethodCaptureParameter { fulfillCompletion = $0 }])
+
+        // Make fulfill complete successfully
+        fulfillCompletion(BidFulfillOperationResult(result: .success((winningBid, partnerAd, nil)), loadEvents: expectedLoadEvents))
+
+        waitForExpectations(timeout: 1.0)
+
+        // Check metrics are logged
+        XCTAssertMethodCalls(mocks.metrics, .logLoad, .logAuctionCompleted, parameters:
+            [
+                expectedAuctionID,
+                loadID,
+                XCTMethodSomeParameter<[MetricsEvent]> {
+                    self.assertEqual($0, expectedLoadEvents)
+                },
+                nil,
+                request.adFormat,
+                request.adSize?.size,
+            ], [
+                bids,
+                winningBid,
+                loadID,
+                request.adFormat,
+                nil
+            ]
+        )
+    }
+
+    // MARK: - Helpers
     func assertEqual(_ ad1: PartnerAd, _ ad2: PartnerAd) {
         XCTAssertIdentical(ad1.inlineView, ad2.inlineView)
         XCTAssertEqual(ad1.request, ad2.request)
