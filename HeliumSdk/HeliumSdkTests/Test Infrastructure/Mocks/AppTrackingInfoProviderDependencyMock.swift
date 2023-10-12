@@ -11,7 +11,7 @@ final class AppTrackingInfoProviderDependencyMock: AppTrackingInfoProviderDepend
 
     /// This is needed because `appTransparencyAuthStatus` cannot be a stored property.
     /// From the compiler: `Stored properties cannot be marked potentially unavailable with '@available'`.
-    enum AuthStatusOverride: UInt {
+    enum AuthStatusOverride: UInt, CaseIterable {
         case notDetermined
         case restricted
         case denied

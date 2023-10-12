@@ -79,7 +79,7 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
     /// A timeout task that fires if a partner takes too long to show an ad.
     private var showTimeoutTask: DispatchTask?
     /// The fully-loaded ad ready to be shown, if any.
-    private var loadedAd: HeliumAd?
+    private var loadedAd: (ad: HeliumAd, metrics: RawMetrics?)?
     /// The currently showing ad, if any. Becomes nil when the ad is dismissed.
     private var showingAd: HeliumAd?
     // TODO: Remove when InterstitialAd and RewardedAd are removed on 5.0
@@ -95,8 +95,8 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
         // Invalidate loaded ad to free its allocated memory.
         // Note that as of now, for banner and fullscreen ads (not so for interstitial nor rewarded), loaded ads that have not been shown are discarded
         // and we don't reuse them for new ad instances with the same placement.
-        if let loadedAd = loadedAd {
-            partnerController.routeInvalidate(loadedAd.partnerAd) { _ in }
+        if let (ad, _) = loadedAd {
+            partnerController.routeInvalidate(ad.partnerAd) { _ in }
         }
     }
     
@@ -141,10 +141,23 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
                 return
             }
             // If already loaded finish successfully
-            if let ad = loadedAd {
+            if let (ad, metrics) = loadedAd {
                 logger.info("Ad already loaded with placement \(request.heliumPlacement)")
-                completion(AdLoadResult(result: .success(ad), metrics: nil))
+                completion(AdLoadResult(result: .success(ad), metrics: metrics))
                 return
+            }
+            // When loading a banner, validate the size.
+            if let size = request.adSize {
+                guard size.isValid else {
+                    logger.error("Invalid banner size specified: \(size.size)")
+                    completion(
+                        AdLoadResult(
+                            result: .failure(ChartboostMediationError(code: .loadFailureInvalidBannerSize)),
+                            metrics: nil
+                        )
+                    )
+                    return
+                }
             }
             // Otherwise load ad
             isLoading = true
@@ -156,7 +169,7 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
                     switch result.result {
                     case .success(let ad):
                         logger.info("Load succeeded for \(request.adFormat) ad with placement \(request.heliumPlacement) and load ID \(request.loadID)")
-                        self.loadedAd = ad
+                        self.loadedAd = (ad, result.metrics)
                     case .failure(let error):
                         logger.error("Load failed for \(request.adFormat) ad with placement \(request.heliumPlacement) and load ID \(request.loadID) and error: \(error)")
                     }
@@ -169,7 +182,7 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
     func clearLoadedAd() {
         taskDispatcher.sync(on: .background) { [self] in
             // If no loaded ad fail early
-            guard let ad = loadedAd else {
+            guard let (ad, _) = loadedAd else {
                 return
             }
             logger.debug("Invalidating \(ad.request.adFormat) ad with placement \(ad.request.heliumPlacement)")
@@ -200,14 +213,14 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
         // We strongly capture the delegate in this closure so it doesn't get deallocated before it gets assigned to the `retainedDelegate` property.
         taskDispatcher.async(on: .background) { [self, delegate] in
             // If not loaded ad fail early
-            guard let ad = loadedAd else {
+            guard let (ad, _) = loadedAd else {
                 logger.error("Show failed due to ad not loaded")
                 completion(
                     AdShowResult(error: ChartboostMediationError(code: .showFailureAdNotReady), metrics: nil)
                 )
                 return
             }
-            assert(ad.request.adFormat != .banner, "Calling this for banner ads is a programmer error")
+            assert(!ad.request.adFormat.isBanner, "Calling this for banner ads is a programmer error")
             
             logger.debug("Show started for \(ad.request.adFormat) ad with placement \(ad.request.heliumPlacement) and load ID \(ad.request.loadID)")
             
@@ -274,11 +287,11 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
     func markLoadedAdAsShown() {
         taskDispatcher.async(on: .background) { [self] in
             // If not loaded ad fail early
-            guard let ad = loadedAd else {
+            guard let (ad, _) = loadedAd else {
                 logger.warning("No loaded ad found to mark as shown")
                 return
             }
-            assert(ad.request.adFormat == .banner, "Calling this for non-banner ads is a programmer error")
+            assert(ad.request.adFormat.isBanner, "Calling this for non-banner ads is a programmer error")
             
             // Remove loadedAd since it's now used.
             loadedAd = nil
@@ -362,7 +375,7 @@ extension SingleAdStorageAdController {
             // Remove showing ad
             showingAd = nil
             // Notify full-screen ad show observer
-            if ad.request.format != .banner {
+            if !ad.request.format.isBanner {
                 fullScreenAdShowObserver.didCloseFullScreenAd()
             }
             // Tell the partner to remove the ad on their side

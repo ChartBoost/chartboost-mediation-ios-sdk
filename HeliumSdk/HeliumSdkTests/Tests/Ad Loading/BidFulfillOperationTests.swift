@@ -16,8 +16,8 @@ class BidFulfillOperationTests: HeliumTestCase {
     )
     
     var bids: [Bid] = []
-    let request = HeliumAdLoadRequest(
-        adSize: CGSize(width: 23, height: 45),
+    var request = HeliumAdLoadRequest(
+        adSize: .init(size: CGSize(width: 23, height: 45), type: .fixed),
         adFormat: .interstitial,
         keywords: ["asd": "fgh"],
         heliumPlacement: "some helium placement",
@@ -25,6 +25,11 @@ class BidFulfillOperationTests: HeliumTestCase {
     )
     let viewController = UIViewController()
     let delegate = PartnerAdDelegateMock()
+
+    override func setUp() {
+        super.setUp()
+        mocks.environment.sdkSettings.discardOversizedAds = false
+    }
     
     /// Validates that the bid fulfiller returns immediately if an empty list of bids is passed in the fulfill() call.
     func testFulfillWithNoBids() {
@@ -105,16 +110,16 @@ class BidFulfillOperationTests: HeliumTestCase {
         // Check that we have not completed yet, since the fulfiller should be waiting for the partner controller load response
         XCTAssertFalse(completed)
         // Check that partner controller was asked to load for the first bid
-        var partnerLoadCompletion: (Result<PartnerAd, ChartboostMediationError>) -> Void = { _ in }
+        var partnerLoadCompletion: (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeLoad, parameters: [expectedRequest1, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion = $0 }])
         
         // Make partner controller finish the load
-        partnerLoadCompletion(.success(expectedPartnerAd1))
+        partnerLoadCompletion(.success((expectedPartnerAd1, [:])))
         
         // Check that bid fulfiller has finished successfuly
         XCTAssertTrue(completed)
     }
-    
+
     /// Validates that the bid fulfiller finishes when the second bid load succeeds after the first one failed.
     func testFulfillWhenFirstBidLoadFailsAndSecondBidLoadSucceeds() {
         let bid1 = Bid.makeMock()
@@ -144,7 +149,7 @@ class BidFulfillOperationTests: HeliumTestCase {
         // Check that we have not completed yet, since the fulfiller should be waiting for the partner controller load response
         XCTAssertFalse(completed)
         // Check that partner controller was asked to load for the first bid
-        var partnerLoadCompletion: (Result<PartnerAd, ChartboostMediationError>) -> Void = { _ in }
+        var partnerLoadCompletion: (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeLoad, parameters: [expectedRequest1, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion = $0 }])
         
         // Make partner controller finish the load with a failure
@@ -152,11 +157,11 @@ class BidFulfillOperationTests: HeliumTestCase {
         
         // Check that we have not completed yet and the partner controller was asked to load the second bid
         XCTAssertFalse(completed)
-        var partnerLoadCompletion2: (Result<PartnerAd, ChartboostMediationError>) -> Void = { _ in }
+        var partnerLoadCompletion2: (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeLoad, parameters: [expectedRequest2, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion2 = $0 }])
 
         // Make partner controller finish the second load successfuly
-        partnerLoadCompletion2(.success(expectedPartnerAd2))
+        partnerLoadCompletion2(.success((expectedPartnerAd2, [:])))
         
         // Check that bid fulfiller has finished successfuly
         XCTAssertTrue(completed)
@@ -196,7 +201,7 @@ class BidFulfillOperationTests: HeliumTestCase {
         // Check that we have not completed yet, since the fulfiller should be waiting for the partner controller load response
         XCTAssertFalse(completed)
         // Check that partner controller was asked to load for the first bid
-        var partnerLoadCompletion: (Result<PartnerAd, ChartboostMediationError>) -> Void = { _ in }
+        var partnerLoadCompletion: (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeLoad, parameters: [expectedRequest1, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion = $0 }])
         
         // Make partner controller finish the load with a failure
@@ -211,7 +216,7 @@ class BidFulfillOperationTests: HeliumTestCase {
 
         // Check that we have not completed yet and the partner controller was asked to cancel the previous load and load the third bid
         XCTAssertFalse(completed)
-        var partnerLoadCompletion3: (Result<PartnerAd, ChartboostMediationError>) -> Void = { _ in }
+        var partnerLoadCompletion3: (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .cancelLoad, .routeLoad, parameters: [], [expectedRequest3, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion3 = $0 }])
         
         // Make partner controller finish the load with a failure
@@ -219,11 +224,11 @@ class BidFulfillOperationTests: HeliumTestCase {
         
         // Check that we have not completed yet and the partner controller was asked to load the fourth bid
         XCTAssertFalse(completed)
-        var partnerLoadCompletion4: (Result<PartnerAd, ChartboostMediationError>) -> Void = { _ in }
+        var partnerLoadCompletion4: (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeLoad, parameters: [expectedRequest4, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion4 = $0 }])
         
         // Make partner controller finish the fourth load successfuly
-        partnerLoadCompletion4(.success(expectedPartnerAd4))
+        partnerLoadCompletion4(.success((expectedPartnerAd4, [:])))
         
         // Check that bid fulfiller has finished successfuly
         XCTAssertTrue(completed)
@@ -261,7 +266,7 @@ class BidFulfillOperationTests: HeliumTestCase {
         // Check that we have not completed yet, since the fulfiller should be waiting for the partner controller load response
         XCTAssertFalse(completed)
         // Check that partner controller was asked to load for the first bid
-        var partnerLoadCompletion: (Result<PartnerAd, ChartboostMediationError>) -> Void = { _ in }
+        var partnerLoadCompletion: (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeLoad, parameters: [expectedRequest1, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion = $0 }])
         
         // Make partner controller finish the load with a failure
@@ -276,7 +281,7 @@ class BidFulfillOperationTests: HeliumTestCase {
 
         // Check that we have not completed yet and the partner controller was asked to cancel the previous load and load the third bid
         XCTAssertFalse(completed)
-        var partnerLoadCompletion3: (Result<PartnerAd, ChartboostMediationError>) -> Void = { _ in }
+        var partnerLoadCompletion3: (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .cancelLoad, .routeLoad, parameters: [], [expectedRequest3, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion3 = $0 }])
         
         // Make partner controller finish the load with a failure
@@ -284,7 +289,7 @@ class BidFulfillOperationTests: HeliumTestCase {
         
         // Check that we have not completed yet and the partner controller was asked to load the fourth bid
         XCTAssertFalse(completed)
-        var partnerLoadCompletion4: (Result<PartnerAd, ChartboostMediationError>) -> Void = { _ in }
+        var partnerLoadCompletion4: (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeLoad, parameters: [expectedRequest4, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion4 = $0 }])
         
         // Make partner controller finish the fourth load with a failure
@@ -369,7 +374,7 @@ class BidFulfillOperationTests: HeliumTestCase {
         // Check that we have not completed yet, since the fulfiller should be waiting for the partner controller load response
         XCTAssertFalse(completed)
         // Check that partner controller was asked to load for the first bid
-        var partnerLoadCompletion: (Result<PartnerAd, ChartboostMediationError>) -> Void = { _ in }
+        var partnerLoadCompletion: (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeLoad, parameters: [expectedRequest1, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion = $0 }])
         
         // Make fulfiller's time out task fire immediately, so it moves on to the next bid
@@ -377,17 +382,17 @@ class BidFulfillOperationTests: HeliumTestCase {
         
         // Check that we have not completed yet and the partner controller was asked to cancel the previous load and load the second bid
         XCTAssertFalse(completed)
-        var partnerLoadCompletion2: (Result<PartnerAd, ChartboostMediationError>) -> Void = { _ in }
+        var partnerLoadCompletion2: (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .cancelLoad, .routeLoad, parameters: [], [expectedRequest2, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion2 = $0 }])
         
         // Make first bid load finish now, which should be too late!
-        partnerLoadCompletion(.success(expectedPartnerAd1))
+        partnerLoadCompletion(.success((expectedPartnerAd1, [:])))
         
         // Check that we have not completed yet, since the fulfiller should be waiting for the second partner controller load response
         XCTAssertFalse(completed)
         
         // Make partner controller finish the second load successfuly
-        partnerLoadCompletion2(.success(expectedPartnerAd2))
+        partnerLoadCompletion2(.success((expectedPartnerAd2, [:])))
         
         // Check that bid fulfiller has finished successfuly
         XCTAssertTrue(completed)
@@ -416,7 +421,7 @@ class BidFulfillOperationTests: HeliumTestCase {
         // Check that we have not completed yet, since the fulfiller should be waiting for the partner controller load response
         XCTAssertFalse(completed)
         // Check that partner controller was asked to load for the first bid
-        var partnerLoadCompletion: (Result<PartnerAd, ChartboostMediationError>) -> Void = { _ in }
+        var partnerLoadCompletion: (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeLoad, parameters: [expectedRequest1, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion = $0 }])
         
         // Make partner controller finish the load with a failure
@@ -459,7 +464,7 @@ class BidFulfillOperationTests: HeliumTestCase {
         // Check that we have not completed yet, since the fulfiller should be waiting for the partner controller load response
         XCTAssertFalse(completed)
         // Check that partner controller was asked to load for the first bid
-        var partnerLoadCompletion: (Result<PartnerAd, ChartboostMediationError>) -> Void = { _ in }
+        var partnerLoadCompletion: (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeLoad, parameters: [expectedRequest1, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion = $0 }])
         
         // Make partner controller finish the load with a failure after 1 second
@@ -479,14 +484,610 @@ class BidFulfillOperationTests: HeliumTestCase {
         
         // Check that we have not completed yet and the partner controller was asked to cancel the previous load and load the third bid
         XCTAssertFalse(completed)
-        var partnerLoadCompletion3: (Result<PartnerAd, ChartboostMediationError>) -> Void = { _ in }
+        var partnerLoadCompletion3: (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .cancelLoad, .routeLoad, parameters: [], [expectedRequest3, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion3 = $0 }])
         
         // Make partner controller finish the load with success after 0 seconds
-        partnerLoadCompletion3(.success(expectedPartnerAd3))
+        partnerLoadCompletion3(.success((expectedPartnerAd3, [:])))
         
         // Check that bid fulfiller has finished successfuly
         XCTAssertTrue(completed)
+    }
+
+    func testRoutesLoadWithBannerSizeFromBid() throws {
+        request = HeliumAdLoadRequest.test(adSize: .standard, adFormat: .banner)
+        bids = [Bid.makeMock(size: CGSize(width: 400.0, height: 100.0))]
+        operation.run { _ in }
+        try assertRoutesLoad(bid: bids[0])
+    }
+
+    func testRoutesLoadWithRequestedSizeIfBidSizeIsNil() throws {
+        request = HeliumAdLoadRequest.test(adSize: .standard, adFormat: .banner)
+        bids = [Bid.makeMock()]
+        operation.run { _ in }
+        try assertRoutesLoad(bid: bids[0])
+    }
+
+    // MARK: - Banner Size
+    func testAdSizeIsNilWhenPartnerDetailsDoesNotContainSizeAndRequestedAdSizeIsNil() throws {
+        request = HeliumAdLoadRequest.test(adSize: nil, adFormat: .interstitial)
+        bids = [Bid.makeMock()]
+        let partnerDetails: [String: String] = [:]
+
+        let loadExpectation = expectation(description: "Successful load")
+        operation.run { result in
+            if case .success(let response) = result.result {
+                XCTAssertNil(response.adSize)
+            } else {
+                XCTFail("Received unexpected result")
+            }
+            loadExpectation.fulfill()
+        }
+
+        let completion = try assertRoutesLoad(bid: bids[0])
+        // Make partner controller finish the load
+        completion(.success((PartnerAdMock(), partnerDetails)))
+        waitForExpectations(timeout: 1.0)
+    }
+
+
+    func testAdSizeIsRequestedAdSizeWhenPartnerDetailsDoesNotContainSize() throws {
+        request = HeliumAdLoadRequest.test(adSize: .standard, adFormat: .banner)
+        bids = [Bid.makeMock()]
+        let partnerAd = PartnerAdMock(inlineView: UIView())
+        let partnerDetails: [String: String] = [:]
+
+        let loadExpectation = expectation(description: "Successful load")
+        operation.run { result in
+            if case .success(let response) = result.result {
+                XCTAssertEqual(response.adSize?.type, .fixed)
+                XCTAssertEqual(response.adSize?.size.width, 320)
+                XCTAssertEqual(response.adSize?.size.height, 50)
+            } else {
+                XCTFail("Received unexpected result")
+            }
+            loadExpectation.fulfill()
+        }
+
+        let completion = try assertRoutesLoad(bid: bids[0])
+        // Make partner controller finish the load
+        completion(.success((partnerAd, partnerDetails)))
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func testAdaptiveAdSizeIsParsedFromPartnerDetails() throws {
+        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 500.0), adFormat: .banner)
+        bids = [Bid.makeMock()]
+        let partnerAd = PartnerAdMock(inlineView: UIView())
+        let partnerDetails = [
+            "bannerType": "1",
+            "bannerWidth": "400.0",
+            "bannerHeight": "100.0",
+        ]
+
+        let loadExpectation = expectation(description: "Successful load")
+        operation.run { result in
+            if case .success(let response) = result.result {
+                XCTAssertEqual(response.adSize?.type, .adaptive)
+                XCTAssertEqual(response.adSize?.size.width, 400)
+                XCTAssertEqual(response.adSize?.size.height, 100)
+            } else {
+                XCTFail("Received unexpected result")
+            }
+            loadExpectation.fulfill()
+        }
+
+        let completion = try assertRoutesLoad(bid: bids[0])
+        // Make partner controller finish the load
+        completion(.success((partnerAd, partnerDetails)))
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func testFixedAdSizeIsParsedFromPartnerDetails() throws {
+        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 500.0), adFormat: .banner)
+        bids = [Bid.makeMock()]
+        let partnerAd = PartnerAdMock(inlineView: UIView())
+        let partnerDetails = [
+            "bannerType": "0",
+            "bannerWidth": "320.0",
+            "bannerHeight": "50.0",
+        ]
+
+        // Load ad
+        let loadExpectation = expectation(description: "Successful load")
+        operation.run { result in
+            if case .success(let response) = result.result {
+                XCTAssertEqual(response.adSize?.type, .fixed)
+                XCTAssertEqual(response.adSize?.size.width, 320)
+                XCTAssertEqual(response.adSize?.size.height, 50)
+            } else {
+                XCTFail("Received unexpected result")
+            }
+            loadExpectation.fulfill()
+        }
+
+        let completion = try assertRoutesLoad(bid: bids[0])
+        // Make partner controller finish the load
+        completion(.success((partnerAd, partnerDetails)))
+        waitForExpectations(timeout: 1.0)
+    }
+
+    // MARK: - Discard oversized ads
+    func testDoesNotDiscardAdWhenRequestedHeightIsZero() throws {
+        mocks.environment.sdkSettings.discardOversizedAds = true
+
+        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 500.0), adFormat: .banner)
+        bids = [Bid.makeMock()]
+        let partnerAd = PartnerAdMock(inlineView: UIView())
+        let partnerDetails = [
+            "bannerType": "1",
+            "bannerWidth": "400.0",
+            "bannerHeight": "100.0",
+        ]
+
+        // Load ad
+        let loadExpectation = expectation(description: "Successful load")
+        operation.run { result in
+            if case .success(let response) = result.result {
+                XCTAssertEqual(response.adSize?.type, .adaptive)
+                XCTAssertEqual(response.adSize?.size.width, 400)
+                XCTAssertEqual(response.adSize?.size.height, 100)
+            } else {
+                XCTFail("Received unexpected result")
+            }
+            loadExpectation.fulfill()
+        }
+
+        let completion = try assertRoutesLoad(bid: bids[0])
+        // Make partner controller finish the load
+        completion(.success((partnerAd, partnerDetails)))
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func testDoesNotDiscardAdaptiveSizeAdWhenAdSizeMatchesRequestedSize() throws {
+        mocks.environment.sdkSettings.discardOversizedAds = true
+
+        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 400.0, maxHeight: 50.0), adFormat: .banner)
+        bids = [Bid.makeMock()]
+        let partnerAd = PartnerAdMock(inlineView: UIView())
+        let partnerDetails = [
+            "bannerType": "1",
+            "bannerWidth": "400.0",
+            "bannerHeight": "50.0",
+        ]
+
+        // Load ad
+        let loadExpectation = expectation(description: "Successful load")
+        operation.run { result in
+            if case .success(let response) = result.result {
+                XCTAssertEqual(response.adSize?.type, .adaptive)
+                XCTAssertEqual(response.adSize?.size.width, 400)
+                XCTAssertEqual(response.adSize?.size.height, 50)
+            } else {
+                XCTFail("Received unexpected result")
+            }
+            loadExpectation.fulfill()
+        }
+
+        let completion = try assertRoutesLoad(bid: bids[0])
+        // Make partner controller finish the load
+        completion(.success((partnerAd, partnerDetails)))
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func testDoesNotDiscardFixedSizeAdWhenAdSizeMatchesRequestedSize() throws {
+        mocks.environment.sdkSettings.discardOversizedAds = true
+
+        request = HeliumAdLoadRequest.test(adSize: .standard, adFormat: .banner)
+        bids = [Bid.makeMock()]
+        let partnerAd = PartnerAdMock(inlineView: UIView())
+        let partnerDetails = [
+            "bannerType": "0",
+            "bannerWidth": "320.0",
+            "bannerHeight": "50.0",
+        ]
+
+        // Load ad
+        let loadExpectation = expectation(description: "Successful load")
+        operation.run { result in
+            if case .success(let response) = result.result {
+                XCTAssertEqual(response.adSize?.type, .fixed)
+                XCTAssertEqual(response.adSize?.size.width, 320)
+                XCTAssertEqual(response.adSize?.size.height, 50)
+            } else {
+                XCTFail("Received unexpected result")
+            }
+            loadExpectation.fulfill()
+        }
+
+        let completion = try assertRoutesLoad(bid: bids[0])
+        // Make partner controller finish the load
+        completion(.success((partnerAd, partnerDetails)))
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func testDoesNotDiscardAdIfWidthIsTooLargeButDiscardOversizedAdsIsFalse() throws {
+        mocks.environment.sdkSettings.discardOversizedAds = false
+
+        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
+        bids = [Bid.makeMock()]
+        let partnerAd = PartnerAdMock(inlineView: UIView())
+        let partnerDetails = [
+            "bannerType": "1",
+            "bannerWidth": "400.0",
+            "bannerHeight": "100.0",
+        ]
+
+        // Load ad
+        let loadExpectation = expectation(description: "Successful load")
+        operation.run { result in
+            if case .success(let response) = result.result {
+                XCTAssertEqual(response.adSize?.type, .adaptive)
+                XCTAssertEqual(response.adSize?.size.width, 400)
+                XCTAssertEqual(response.adSize?.size.height, 100)
+            } else {
+                XCTFail("Received unexpected result")
+            }
+            loadExpectation.fulfill()
+        }
+
+        let completion = try assertRoutesLoad(bid: bids[0])
+        // Make partner controller finish the load
+        completion(.success((partnerAd, partnerDetails)))
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func testDoesNotDiscardAdIfHeightIsTooLargeButDiscardOversizedAdsIsFalse() throws {
+        mocks.environment.sdkSettings.discardOversizedAds = false
+
+        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 500.0, maxHeight: 50.0), adFormat: .banner)
+        bids = [Bid.makeMock()]
+        let partnerAd = PartnerAdMock(inlineView: UIView())
+        let partnerDetails = [
+            "bannerType": "1",
+            "bannerWidth": "400.0",
+            "bannerHeight": "100.0",
+        ]
+
+        // Load ad
+        let loadExpectation = expectation(description: "Successful load")
+        operation.run { result in
+            if case .success(let response) = result.result {
+                XCTAssertEqual(response.adSize?.type, .adaptive)
+                XCTAssertEqual(response.adSize?.size.width, 400)
+                XCTAssertEqual(response.adSize?.size.height, 100)
+            } else {
+                XCTFail("Received unexpected result")
+            }
+            loadExpectation.fulfill()
+        }
+
+        let completion = try assertRoutesLoad(bid: bids[0])
+        // Make partner controller finish the load
+        completion(.success((partnerAd, partnerDetails)))
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func testDiscardsAdWhenWidthIsTooLarge() throws {
+        mocks.environment.sdkSettings.discardOversizedAds = true
+
+        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
+        bids = [Bid.makeMock()]
+        let partnerAd = PartnerAdMock(inlineView: UIView())
+        let partnerDetails = [
+            "bannerType": "1",
+            "bannerWidth": "400.0",
+            "bannerHeight": "100.0",
+        ]
+
+        // Load ad
+        let loadExpectation = expectation(description: "Successful load")
+        operation.run { result in
+            if case .failure(let error) = result.result {
+                if #available(iOS 14.5, *) {
+                    let underlyingError = try? XCTUnwrap(error.underlyingErrors.first as? ChartboostMediationError)
+                    XCTAssertEqual(underlyingError?.code, ChartboostMediationError.Code.loadFailureAdTooLarge.rawValue)
+                }
+            } else {
+                XCTFail("Received unexpected result")
+            }
+            loadExpectation.fulfill()
+        }
+
+        let completion = try assertRoutesLoad(bid: bids[0])
+        // Make partner controller finish the load
+        completion(.success((partnerAd, partnerDetails)))
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func testDiscardsAdWhenHeightIsTooLarge() throws {
+        mocks.environment.sdkSettings.discardOversizedAds = true
+
+        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 500.0, maxHeight: 50.0), adFormat: .banner)
+        bids = [Bid.makeMock()]
+        let partnerAd = PartnerAdMock(inlineView: UIView())
+        let partnerDetails = [
+            "bannerType": "1",
+            "bannerWidth": "400.0",
+            "bannerHeight": "100.0",
+        ]
+
+        // Load ad
+        let loadExpectation = expectation(description: "Successful load")
+        operation.run { result in
+            if case .failure(let error) = result.result {
+                if #available(iOS 14.5, *) {
+                    let underlyingError = try? XCTUnwrap(error.underlyingErrors.first as? ChartboostMediationError)
+                    XCTAssertEqual(underlyingError?.code, ChartboostMediationError.Code.loadFailureAdTooLarge.rawValue)
+                }
+            } else {
+                XCTFail("Received unexpected result")
+            }
+            loadExpectation.fulfill()
+        }
+
+        let completion = try assertRoutesLoad(bid: bids[0])
+        // Make partner controller finish the load
+        completion(.success((partnerAd, partnerDetails)))
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func testDoesNotDiscardAdIfRequestedSizeIsNil() throws {
+        mocks.environment.sdkSettings.discardOversizedAds = true
+
+        request = HeliumAdLoadRequest.test(adSize: nil, adFormat: .banner)
+        bids = [Bid.makeMock()]
+        let partnerAd = PartnerAdMock(inlineView: UIView())
+        let partnerDetails: [String: String] = [:]
+
+        // Load ad
+        let loadExpectation = expectation(description: "Successful load")
+        operation.run { result in
+            if case .success(let response) = result.result {
+                XCTAssertNil(response.adSize)
+            } else {
+                XCTFail("Received unexpected result")
+            }
+            loadExpectation.fulfill()
+        }
+
+        let completion = try assertRoutesLoad(bid: bids[0])
+        // Make partner controller finish the load
+        completion(.success((partnerAd, partnerDetails)))
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func testDoesNotDiscardAdIfReturnedSizeIsNil() throws {
+        mocks.environment.sdkSettings.discardOversizedAds = true
+
+        request = HeliumAdLoadRequest.test(adSize: nil, adFormat: .banner)
+        bids = [Bid.makeMock()]
+        let partnerAd = PartnerAdMock(inlineView: UIView())
+        let partnerDetails: [String: String] = [:]
+
+        // Load ad
+        let loadExpectation = expectation(description: "Successful load")
+        operation.run { result in
+            if case .success(let response) = result.result {
+                XCTAssertNil(response.adSize)
+            } else {
+                XCTFail("Received unexpected result")
+            }
+            loadExpectation.fulfill()
+        }
+
+        let completion = try assertRoutesLoad(bid: bids[0])
+        // Make partner controller finish the load
+        completion(.success((partnerAd, partnerDetails)))
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func testDiscardsAdForAdaptiveBannerFormat() throws {
+        mocks.environment.sdkSettings.discardOversizedAds = true
+
+        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 500.0, maxHeight: 50.0), adFormat: .adaptiveBanner)
+        bids = [Bid.makeMock()]
+        let partnerAd = PartnerAdMock(inlineView: UIView())
+        let partnerDetails = [
+            "bannerType": "1",
+            "bannerWidth": "400.0",
+            "bannerHeight": "100.0",
+        ]
+
+        // Load ad
+        let loadExpectation = expectation(description: "Successful load")
+        operation.run { result in
+            if case .failure(let error) = result.result {
+                if #available(iOS 14.5, *) {
+                    let underlyingError = try? XCTUnwrap(error.underlyingErrors.first as? ChartboostMediationError)
+                    XCTAssertEqual(underlyingError?.code, ChartboostMediationError.Code.loadFailureAdTooLarge.rawValue)
+                }
+            } else {
+                XCTFail("Received unexpected result")
+            }
+            loadExpectation.fulfill()
+        }
+
+        let completion = try assertRoutesLoad(bid: bids[0])
+        // Make partner controller finish the load
+        completion(.success((partnerAd, partnerDetails)))
+        waitForExpectations(timeout: 1.0)
+    }
+
+    // MARK: Continuing Waterfall
+    func testDoesNotContinueWaterfallIfSizeIsTooLargeButDiscardOversizedAdsIsFalse() throws {
+        mocks.environment.sdkSettings.discardOversizedAds = false
+
+        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
+        bids = [
+            Bid.makeMock(),
+            Bid.makeMock()
+        ]
+        let partnerAd = PartnerAdMock(inlineView: UIView())
+        let partnerDetails = [
+            "bannerType": "1",
+            "bannerWidth": "400.0",
+            "bannerHeight": "100.0",
+        ]
+
+        // Load ad
+        let loadExpectation = expectation(description: "Successful load")
+        operation.run { result in
+            if case .success(let response) = result.result {
+                XCTAssertEqual(response.adSize?.type, .adaptive)
+                XCTAssertEqual(response.adSize?.size.width, 400)
+                XCTAssertEqual(response.adSize?.size.height, 100)
+            } else {
+                XCTFail("Received unexpected result")
+            }
+            loadExpectation.fulfill()
+        }
+
+        let completion = try assertRoutesLoad(bid: bids[0])
+        // Make partner controller finish the load
+        completion(.success((partnerAd, partnerDetails)))
+        XCTAssertNoMethodCalls(mocks.partnerController)
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func testDoesNotContinueWaterfallIfSizeFitsAndDiscardOversizedAdsIsTrue() throws {
+        mocks.environment.sdkSettings.discardOversizedAds = true
+
+        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
+        bids = [
+            Bid.makeMock(),
+            Bid.makeMock()
+        ]
+        let partnerAd = PartnerAdMock(inlineView: UIView())
+        let partnerDetails = [
+            "bannerType": "1",
+            "bannerWidth": "300.0",
+            "bannerHeight": "100.0",
+        ]
+
+        // Load ad
+        let loadExpectation = expectation(description: "Successful load")
+        operation.run { result in
+            if case .success(let response) = result.result {
+                XCTAssertEqual(response.adSize?.type, .adaptive)
+                XCTAssertEqual(response.adSize?.size.width, 300)
+                XCTAssertEqual(response.adSize?.size.height, 100)
+            } else {
+                XCTFail("Received unexpected result")
+            }
+            loadExpectation.fulfill()
+        }
+
+        let completion = try assertRoutesLoad(bid: bids[0])
+        // Make partner controller finish the load
+        completion(.success((partnerAd, partnerDetails)))
+        XCTAssertNoMethodCalls(mocks.partnerController)
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func testContinuesWaterfallAndSucceedsIfSizeIsTooLargeAndDiscardOversizedAdsIsTrue() throws {
+        mocks.environment.sdkSettings.discardOversizedAds = true
+
+        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
+        bids = [
+            Bid.makeMock(),
+            Bid.makeMock()
+        ]
+        let partnerAd = PartnerAdMock(inlineView: UIView())
+        let partnerDetails = [
+            "bannerType": "1",
+            "bannerWidth": "400.0",
+            "bannerHeight": "100.0",
+        ]
+
+        // Load ad
+        let loadExpectation = expectation(description: "Successful load")
+        operation.run { result in
+            if case .success(let response) = result.result {
+                XCTAssertEqual(response.adSize?.type, .adaptive)
+                XCTAssertEqual(response.adSize?.size.width, 250.0)
+                XCTAssertEqual(response.adSize?.size.height, 100)
+            } else {
+                XCTFail("Received unexpected result")
+            }
+            loadExpectation.fulfill()
+        }
+
+        let completion = try assertRoutesLoad(bid: bids[0])
+        // Make partner controller finish the load
+        completion(.success((partnerAd, partnerDetails)))
+        assertRoutesInvalidate(ad: partnerAd)
+
+        let partnerAd2 = PartnerAdMock(inlineView: UIView())
+        let partnerDetails2 = [
+            "bannerType": "1",
+            "bannerWidth": "250.0",
+            "bannerHeight": "100.0",
+        ]
+        let completion2 = try assertRoutesLoad(bid: bids[1])
+        completion2(.success((partnerAd2, partnerDetails2)))
+        // The second ad succeeds, so there should be no more calls to partner controller.
+        XCTAssertNoMethodCalls(mocks.partnerController)
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func testFailsIfSizeIsTooLargeMultipleTimesAndDiscardOversizedAdsIsTrue() throws {
+        mocks.environment.sdkSettings.discardOversizedAds = true
+
+        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
+        bids = [
+            Bid.makeMock(),
+            Bid.makeMock()
+        ]
+        let partnerAd = PartnerAdMock(inlineView: UIView())
+        let partnerDetails = [
+            "bannerType": "1",
+            "bannerWidth": "400.0",
+            "bannerHeight": "100.0",
+        ]
+
+        // Load ad
+        let loadExpectation = expectation(description: "Successful load")
+        operation.run { result in
+            if case .failure(let error) = result.result {
+                if #available(iOS 14.5, *) {
+                    let underlyingError = try? XCTUnwrap(error.underlyingErrors.first as? ChartboostMediationError)
+                    XCTAssertEqual(underlyingError?.code, ChartboostMediationError.Code.loadFailureAdTooLarge.rawValue)
+                }
+            } else {
+                XCTFail("Received unexpected result")
+            }
+            loadExpectation.fulfill()
+        }
+
+        let completion = try assertRoutesLoad(bid: bids[0])
+        // Make partner controller finish the load
+        completion(.success((partnerAd, partnerDetails)))
+        assertRoutesInvalidate(ad: partnerAd)
+
+        let partnerAd2 = PartnerAdMock(inlineView: UIView())
+        let partnerDetails2 = [
+            "bannerType": "1",
+            "bannerWidth": "500.0",
+            "bannerHeight": "150.0",
+        ]
+        let completion2 = try assertRoutesLoad(bid: bids[1])
+        completion2(.success((partnerAd2, partnerDetails2)))
+        assertRoutesInvalidate(ad: partnerAd2)
+        waitForExpectations(timeout: 1.0)
+    }
+
+    // MARK: - Configuration
+    func testBidFullfillConfigurationLoadTimeout() {
+        let config = BidFulfillOperationConfigurationMock()
+        config.fullscreenLoadTimeout = 10
+        config.bannerLoadTimeout = 20
+
+        XCTAssertEqual(config.loadTimeout(for: .interstitial), 10)
+        XCTAssertEqual(config.loadTimeout(for: .rewarded), 10)
+        XCTAssertEqual(config.loadTimeout(for: .rewardedInterstitial), 10)
+        XCTAssertEqual(config.loadTimeout(for: .banner), 20)
+        XCTAssertEqual(config.loadTimeout(for: .adaptiveBanner), 20)
     }
 }
 
@@ -500,7 +1101,7 @@ private extension BidFulfillOperationTests {
             chartboostPlacement: request.heliumPlacement,
             partnerPlacement: bid.partnerPlacement,
             format: request.adFormat,
-            size: request.adSize,
+            size: bid.size ?? request.adSize?.size,
             adm: bid.adm,
             partnerSettings: bid.partnerDetails ?? [:],
             identifier: request.loadID,
@@ -524,5 +1125,37 @@ private extension BidFulfillOperationTests {
             XCTAssertGreaterThanOrEqual(expected.duration, 0)
             XCTAssertLessThanOrEqual(abs(observed.duration - expected.duration), loadTimeErrorMargin)
         }
+    }
+
+    @discardableResult
+    func assertRoutesLoad(
+        bid: Bid
+    ) throws -> (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void {
+        // Check we have not finished yet and AuctionService has been called
+        var result: ((Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void)?
+
+        let expectedRequest = partnerLoadRequest(for: bid)
+
+        let captureExpectation = expectation(description: "Capture completion block")
+        XCTAssertMethodCallPop(
+            mocks.partnerController,
+            .routeLoad,
+            parameters: [
+                expectedRequest,
+                viewController,
+                delegate,
+                XCTMethodCaptureParameter {
+                    result = $0
+                    captureExpectation.fulfill()
+                }
+            ]
+        )
+
+        wait(for: [captureExpectation], timeout: 1.0)
+        return try XCTUnwrap(result)
+    }
+
+    func assertRoutesInvalidate(ad: PartnerAd) {
+        XCTAssertMethodCallPop(mocks.partnerController, .routeInvalidate, parameters: [ad, XCTMethodIgnoredParameter()])
     }
 }

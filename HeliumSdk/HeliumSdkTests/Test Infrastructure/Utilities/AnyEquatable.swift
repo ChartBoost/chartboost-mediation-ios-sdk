@@ -46,9 +46,11 @@ extension NSObject: AnyEquatable {
 extension Bool: AnyEquatable {}
 extension Int: AnyEquatable {}
 extension Double: AnyEquatable {}
+extension Decimal: AnyEquatable {}
 extension String: AnyEquatable {}
 extension Set: AnyEquatable {}
 extension BannerController: AnyEquatable {}
+extension BannerSwapController: AnyEquatable {}
 
 extension PartnerConfiguration: AnyEquatable {
     func isEqual(to other: AnyEquatable) -> Bool {
@@ -218,5 +220,6 @@ extension URL: AnyEquatable {}
 extension URLRequest: AnyEquatable {}
 extension Data: AnyEquatable {}
 extension FullscreenAd: AnyEquatable {}
+extension CGSize: AnyEquatable {}
 
 // We should add here any conformance for new types that need it.

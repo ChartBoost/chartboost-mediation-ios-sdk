@@ -12,8 +12,10 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     lazy var service = NetworkAdAuctionService()
     private lazy var networkManager = mocks.networkManager
 
-    private static let auctionsURLString = "https://helium-rtb.chartboost.com/v3/auctions"
-    private static let auctionsURL = URL(string: auctionsURLString)!
+    private static let nonTracking_auctionsURLString = "https://non-tracking.auction.mediation-sdk.chartboost.com/v3/auctions"
+    private static let nonTracking_auctionsURL = URL(unsafeString: nonTracking_auctionsURLString)!
+    private static let tracking_auctionsURLString = "https://tracking.auction.mediation-sdk.chartboost.com/v3/auctions"
+    private static let tracking_auctionsURL = URL(unsafeString: tracking_auctionsURLString)!
     static let loadID = "some load ID"
     static let auctionID = "some auction ID"
     static let rateLimitReset = "5"
@@ -1270,10 +1272,25 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
             data = nil
         }
 
-        URLProtocolMock.registerRequestHandler(httpMethod: "POST", urlString: Self.auctionsURLString) { request in
+        URLProtocolMock.registerRequestHandler(httpMethod: "POST", urlString: Self.nonTracking_auctionsURLString) { request in
             (
                 response: HTTPURLResponse(
-                    url: Self.auctionsURL,
+                    url: Self.nonTracking_auctionsURL,
+                    statusCode: statusCode,
+                    httpVersion: nil,
+                    headerFields: [
+                        "x-helium-ratelimit-reset": Self.rateLimitReset,
+                        "X-Mediation-Auction-ID": Self.auctionID
+                    ]
+                ),
+                data: data
+            )
+        }
+
+        URLProtocolMock.registerRequestHandler(httpMethod: "POST", urlString: Self.tracking_auctionsURLString) { request in
+            (
+                response: HTTPURLResponse(
+                    url: Self.tracking_auctionsURL,
                     statusCode: statusCode,
                     httpVersion: nil,
                     headerFields: [

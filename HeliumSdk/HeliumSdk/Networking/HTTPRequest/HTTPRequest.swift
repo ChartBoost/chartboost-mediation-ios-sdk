@@ -68,11 +68,11 @@ extension HTTPRequest {
         true
     }
 
-    func makeURL(backendAPI: BackendAPI, path: String) throws -> URL {
+    func makeURL(endpoint: BackendAPI.Endpoint, extraPathComponents: [String] = []) throws -> URL {
         var urlComponents = URLComponents()
-        urlComponents.scheme = backendAPI.scheme
-        urlComponents.host = backendAPI.host
-        urlComponents.path = path
+        urlComponents.scheme = endpoint.scheme
+        urlComponents.host = endpoint.host
+        urlComponents.path = ([endpoint.basePath] + extraPathComponents).joined(separator: "/")
 
         guard let url = urlComponents.url else {
             throw HTTPRequestError.createURLWithComponentsError(urlComponents: urlComponents)

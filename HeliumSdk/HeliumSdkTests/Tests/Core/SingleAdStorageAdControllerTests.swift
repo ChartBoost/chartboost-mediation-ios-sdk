@@ -139,6 +139,42 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
         XCTAssertTrue(completed)
         XCTAssertTrue(adController.isReadyToShowAd)
     }
+
+    func testLoadAdMultipleTimesReturnsSameResult() {
+        // Setup: start
+        mocks.initializationStatusProvider.isInitialized = true
+        let request = HeliumAdLoadRequest.test(loadID: "id1")
+        let expectedLoadResult = AdLoadResult(
+            result: .success(HeliumAd.test(request: request)),
+            metrics: ["hello": 23, "babab": "asdasfd"]
+        )
+
+        // Load ad
+        let loadExpectation1 = expectation(description: "Successful load")
+        adController.loadAd(request: request, viewController: viewController) { result in
+            // Check result
+            XCTAssertAnyEqual(result, expectedLoadResult)
+            loadExpectation1.fulfill()
+        }
+
+        var completion: (AdLoadResult) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.adRepository, .loadAd, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { completion = $0 }])
+
+        // Finish AdRepository load
+        completion(expectedLoadResult)
+        waitForExpectations(timeout: 1.0)
+
+        // Load ad the second time, the result should be the same.
+        let loadExpectation2 = expectation(description: "Successful load")
+        adController.loadAd(request: request, viewController: viewController) { result in
+            // Check result
+            XCTAssertAnyEqual(result, expectedLoadResult)
+            loadExpectation2.fulfill()
+        }
+
+        // We don't need to call the completion since it returns immediately when the ad is cached.
+        waitForExpectations(timeout: 1.0)
+    }
     
     /// Validates the AdController finishes with failure on loadAd() if the AdRepository fails in returning an ad.
     func testLoadAdFailsIfAdRepositoryFails() {
@@ -503,6 +539,24 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
         XCTAssertMethodCalls(mocks.impressionTracker, .trackImpression, parameters: [ad.request.adFormat])
         XCTAssertFalse(adController.isReadyToShowAd)
     }
+
+    func testMarkLoadAdAsShownAdaptiveBanner() {
+        // Setup: a loaded adaptive banner ad
+        mocks.initializationStatusProvider.isInitialized = true
+        let ad = HeliumAd.test(request: .test(adFormat: .adaptiveBanner))
+        setUpAdControllerWithLoadedAd(ad)
+        adController.addObserver(observer: mocks.adControllerDelegate)
+
+        // Show ad
+        adController.markLoadedAdAsShown()
+
+        // Check impression is logged and delegate method called
+        XCTAssertMethodCalls(mocks.metrics, .logHeliumImpression, parameters: [ad.partnerAd])
+        XCTAssertMethodCalls(mocks.adControllerDelegate, .didTrackImpression)
+        XCTAssertNoMethodCalls(mocks.fullScreenAdShowObserver)
+        XCTAssertMethodCalls(mocks.impressionTracker, .trackImpression, parameters: [ad.request.adFormat])
+        XCTAssertFalse(adController.isReadyToShowAd)
+    }
     
     /// Validates the AdController can load a new ad after showing the previous one.
     func testLoadAdSucceedsAfterMarkingLoadAdAsShown() {
@@ -669,6 +723,46 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
         
         // Check that the ad got invalidated on deinit
         XCTAssertMethodCalls(mocks.partnerController, .routeInvalidate, parameters: [loadedAd.partnerAd, XCTMethodIgnoredParameter()])
+    }
+
+    // MARK: - BannerSize
+    func testLoadSucceedsWithValidBannerSize() {
+        mocks.initializationStatusProvider.isInitialized = true
+        let firstRequest = HeliumAdLoadRequest.test(adSize: .adaptive(width: 50, maxHeight: 50), loadID: "id1")
+        let expectedLoadResult = AdLoadResult(
+            result: .success(HeliumAd.test(request: firstRequest)),
+            metrics: ["hello": 23, "babab": "asdasfd"]
+        )
+
+        let loadExpectation = expectation(description: "Successful load")
+        adController.loadAd(request: firstRequest, viewController: viewController) { result in
+            XCTAssertAnyEqual(result, expectedLoadResult)
+            loadExpectation.fulfill()
+        }
+
+        var completion: (AdLoadResult) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.adRepository, .loadAd, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { completion = $0 }])
+        completion(expectedLoadResult)
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func testLoadFailsWithInvalidAdSize() {
+        mocks.initializationStatusProvider.isInitialized = true
+        let firstRequest = HeliumAdLoadRequest.test(adSize: .adaptive(width: 0), loadID: "id1")
+        let expectedLoadResult = AdLoadResult(
+            result: .failure(.init(code: .loadFailureInvalidBannerSize)),
+            metrics: nil
+        )
+
+        let loadExpectation = expectation(description: "Failed load")
+        adController.loadAd(request: firstRequest, viewController: viewController) { result in
+            XCTAssertAnyEqual(result, expectedLoadResult)
+            loadExpectation.fulfill()
+        }
+        waitForExpectations(timeout: 1.0)
+
+        // No calls should be made to the adRepository in this case.
+        XCTAssertNoMethodCalls(mocks.adRepository)
     }
 }
 

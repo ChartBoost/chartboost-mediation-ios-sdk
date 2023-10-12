@@ -13,6 +13,7 @@ protocol EnvironmentProviding {
     var impressionCounter: ImpressionCounter { get }
     var screen: ScreenInfoProviding { get }
     var sdk: SDKInfoProviding { get }
+    var sdkSettings: SDKSettingsProviding { get }
     var session: SessionInfoProviding { get }
     var skAdNetwork: SKAdNetworkInfoProviding { get }
     var telephonyNetwork: TelephonyNetworkInfoProviding { get }
@@ -29,6 +30,7 @@ struct Environment: EnvironmentProviding {
     let device: DeviceInfoProviding = DeviceInfoProvider()
     let screen: ScreenInfoProviding = ScreenInfoProvider()
     let sdk: SDKInfoProviding = SDKInfoProvider()
+    let sdkSettings: SDKSettingsProviding = SDKSettingsProvider()
     let session: SessionInfoProviding = SessionInfoProvider()
     let skAdNetwork: SKAdNetworkInfoProviding = SKAdNetworkInfoProvider()
     let telephonyNetwork: TelephonyNetworkInfoProviding = TelephonyNetworkInfoProvider()

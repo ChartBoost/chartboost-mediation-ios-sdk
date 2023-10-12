@@ -37,7 +37,7 @@ extension OpenRTB.Bid {
     /// Bidder generated bid ID to assist with logging/tracking.
     var auctionIdentifier: String { id }
     /// Bid price expressed as CPM although the actual transaction is for a unit impression only.
-    var clearingPrice: Double? { price }
+    var clearingPrice: Decimal? { price }
     /// Indicates if the bid is programmatic or not.
     var isProgrammatic: Bool { id != "MEDIATION" }
     /// Win notice URL called by the exchange if the bid wins

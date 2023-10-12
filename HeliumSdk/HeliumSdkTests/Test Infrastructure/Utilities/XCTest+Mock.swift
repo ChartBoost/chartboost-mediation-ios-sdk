@@ -99,6 +99,39 @@ func XCTAssertMethodCalls<Method>(_ mock: Mock<Method>, _ methods: Method..., pa
     }
 }
 
+/// Asserts that the method call and parameters are at the top of the given mocks recorded method/parameter stack.
+/// Note that the `parameters` parameter is optional. It is possible to check only for method calls regardless of the parameters passed.
+///
+/// Example where we check that `someMethod()` is called, with `false` and `"hello"` as parameters:
+/// ```
+/// XCTAssertMethodCallPop(mock, .someMethod, parameters: [false, "hello"])
+/// ```
+func XCTAssertMethodCallPop<Method>(_ mock: Mock<Method>, _ method: Method, parameters: [Any?], file: StaticString = #file, line: UInt = #line) {
+    // Remove mock records so on next calls to XCTAssertMethodCallPop() we validate only the method calls made after this point.
+    defer {
+        mock.popRecord()
+    }
+
+    // Ensure a method call was made.
+    guard let recordedMethod = mock.recordedMethods.first else {
+        XCTFail("Expected \(method) but no method calls were made", file: file, line: line)
+        return
+    }
+
+    // Check that the method call matches.
+    guard recordedMethod == method else {
+        XCTFail("Expected \(method) but got \(recordedMethod)", file: file, line: line)
+        return
+    }
+
+    // Finish if the expected parameters list is empty, which means we don't want to do any parameter check.
+    guard !parameters.isEmpty else {
+        return  // no parameters check
+    }
+
+    assertParametersEqual(recorded: mock.recordedParameters.first ?? [], expected: parameters, file: file, line: line)
+}
+
 /// Asserts the call count for a specific method in a given mock.
 ///
 /// Example where we check that `someMethod()` is called 3 times, regardless if other methods where called too:

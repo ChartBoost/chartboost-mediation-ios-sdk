@@ -212,7 +212,7 @@ class PartnerAdapterControllerTests: HeliumTestCase {
         // load ad
         var completed = false
         _ = partnerController.routeLoad(request: request, viewController: viewController, delegate: delegate) { result in
-            if case .success(let returnedAd) = result {
+            if case .success((let returnedAd, _)) = result {
                 XCTAssertIdentical(returnedAd, ad)
             } else {
                 XCTFail("Unexpected failure result")

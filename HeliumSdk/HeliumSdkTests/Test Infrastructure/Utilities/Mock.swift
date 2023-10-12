@@ -105,6 +105,12 @@ class Mock<Method: Equatable & Hashable>: NSObject {
         recordedMethods.append(method)
         recordedParameters.append(parameters)
     }
+
+    /// Removes the first recorded method call and set of parameters.
+    func popRecord() {
+        recordedMethods.removeFirst()
+        recordedParameters.removeFirst()
+    }
     
     /// Removes all recorded method calls and parameters.
     /// Generally you should not need to call this directly, since XCTAssertMethodCalls() takes care of that after validating method calls.

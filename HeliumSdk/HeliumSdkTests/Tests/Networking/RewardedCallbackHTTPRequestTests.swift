@@ -132,7 +132,7 @@ final class RewardedCallbackHTTPRequestTests: HeliumTestCase {
     func testRequestGenerationWithInvalidInputs() throws {
         XCTAssertThrowsError(try Self.makeRewardedCallbackHTTPRequest(
             from: [
-                "url": "bad URL",
+                "url": "", // bad URL
                 "method": "POST"
             ]
         ))
@@ -334,17 +334,17 @@ private extension RewardedCallbackHTTPRequestTests {
 
     static func makeRewardedCallback(
         from dictionary: [String: Any],
-        adRevenue: Double? = nil,
-        cpmPrice: Double? = nil,
+        adRevenue: Decimal? = nil,
+        cpmPrice: Decimal? = nil,
         partnerIdentifier: PartnerIdentifier = Bid.defaultPartnerIdentifierMock
     ) throws -> RewardedCallback {
         let data = try JSONSerialization.data(withJSONObject: dictionary)
         let decoder = JSONDecoder()
         let rewardedCallbackData = try decoder.decode(RewardedCallbackData.self, from: data)
         let bid = Bid.makeMock(
+            partnerIdentifier: partnerIdentifier,
             adRevenue: adRevenue,
             cpmPrice: cpmPrice,
-            partnerIdentifier: partnerIdentifier,
             rewardedCallbackData: rewardedCallbackData
         )
         let rewardedCallback = bid.rewardedCallback
@@ -356,8 +356,8 @@ private extension RewardedCallbackHTTPRequestTests {
 
     static func makeRewardedCallbackHTTPRequest(
         from dictionary: [String: Any],
-        adRevenue: Double? = nil,
-        cpmPrice: Double? = nil,
+        adRevenue: Decimal? = nil,
+        cpmPrice: Decimal? = nil,
         partnerIdentifier: PartnerIdentifier = Bid.defaultPartnerIdentifierMock,
         customData: String? = nil,
         timestampMs: Int = Int(Date().timeIntervalSince1970 * 1000)

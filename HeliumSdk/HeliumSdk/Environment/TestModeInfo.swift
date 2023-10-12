@@ -8,14 +8,12 @@ import Foundation
 protocol TestModeInfoProviding {
     var isTestModeEnabled: Bool { get }
     var isRateLimitingEnabled: Bool { get }
-    var rtbAPIHostOverride: String? { get }
     var sdkAPIHostOverride: String? { get }
 }
 
 struct TestModeInfo: TestModeInfoProviding {
     var isTestModeEnabled: Bool { TestModeHelper.isTestModeEnabled }
     var isRateLimitingEnabled: Bool { TestModeHelper.isRateLimitingEnabled }
-    var rtbAPIHostOverride: String? { TestModeHelper.rtbAPIHostOverride }
     var sdkAPIHostOverride: String? { TestModeHelper.sdkAPIHostOverride }
 }
 
@@ -53,11 +51,8 @@ fileprivate final class TestModeHelper: NSObject {
     /// `true`, but it's toggleable for testing purposes.
     private(set) static var isRateLimitingEnabled = true
 
-    /// Override the RTB API host.
-    /// The provided string has to include the URL scheme to represent a valid URL.
-    private(set) static var rtbAPIHostOverride: String?
-
     /// Override the SDK API host.
-    /// The provided string has to include the URL scheme to represent a valid URL.
+    /// The provided string should not include the URL scheme.
+    /// Example: "subdomain.chartboost.com", "localhost"
     private(set) static var sdkAPIHostOverride: String?
 }

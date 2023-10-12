@@ -72,7 +72,18 @@ extension OpenRTB.Device {
             mccmnc = "\(mobileCountryCode)-\(mobileNetworkCode)"
         }
 
-        let utcoffset = NSTimeZone.local.secondsFromGMT(for: Date()) / 60
+        let utcoffset: Int?
+        if #available(iOS 17.0, *) {
+            @Injected(\.privacyConfiguration) var privacyConfig
+            if privacyConfig.privacyBanList.contains(.timeZone) {
+                utcoffset = nil
+            } else {
+                utcoffset = NSTimeZone.local.secondsFromGMT(for: Date()) / 60
+            }
+        } else {
+            utcoffset = NSTimeZone.local.secondsFromGMT(for: Date()) / 60
+        }
+
         let geo = Geo(utcoffset: utcoffset)
 
         return OpenRTB.Device(
@@ -103,7 +114,7 @@ extension OpenRTB.Impression {
 
     static func make(request: HeliumAdLoadRequest) -> Self {
 
-        let size = request.adSize ?? CGSize(
+        let size = request.adSize?.size ?? CGSize(
             width: environment.screen.screenWidth,
             height: environment.screen.screenHeight
         )
@@ -112,8 +123,8 @@ extension OpenRTB.Impression {
             mimes: ["video/mp4"],
             w: Int(size.width),
             h: Int(size.height),
-            placement: request.adFormat == .banner ? .inBanner : .interstitialSliderOrFloating,
-            pos: request.adFormat == .banner ? .footer : .fullScreen,
+            placement: request.adFormat.isBanner ? .inBanner : .interstitialSliderOrFloating,
+            pos: request.adFormat.isBanner ? .footer : .fullScreen,
             companiontype: [.staticResource, .htmlResource],
             ext: Video.Extension(placementtype: request.adFormat.rawValue)
         )
@@ -121,7 +132,7 @@ extension OpenRTB.Impression {
         let banner = Banner(
             w: Int(size.width),
             h: Int(size.height),
-            pos: request.adFormat == .banner ? .footer : .fullScreen,
+            pos: request.adFormat.isBanner ? .footer : .fullScreen,
             topframe: 1, // 1 == top
             ext: Banner.Extension(placementtype: request.adFormat.rawValue)
         )
@@ -129,7 +140,7 @@ extension OpenRTB.Impression {
         return OpenRTB.Impression(
             displaymanager: environment.sdk.sdkName,
             displaymanagerver: environment.sdk.sdkVersion,
-            instl: (request.adFormat != .banner).intValue,
+            instl: (!request.adFormat.isBanner).intValue,
             tagid: request.heliumPlacement,
             secure: true.intValue,
             video: video,
@@ -164,7 +175,7 @@ extension OpenRTB.User {
 
         let impdepth: Int
         switch request.adFormat {
-        case .banner:
+        case .banner, .adaptiveBanner:
             impdepth = environment.impressionCounter.bannerImpressionCount
         case .interstitial:
             impdepth = environment.impressionCounter.interstitialImpressionCount

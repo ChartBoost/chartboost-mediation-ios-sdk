@@ -42,6 +42,8 @@ final class CurrentSessionImpressionTracker: ImpressionTracker & ImpressionCount
     }
     
     var bannerImpressionCount: Int {
-        impressionCount[.banner] ?? 0
+        // Since we track impressions based on the requested ad format, we need to add impressions
+        // for both banner types to get the total impression count for banners.
+        (impressionCount[.banner] ?? 0) + (impressionCount[.adaptiveBanner] ?? 0)
     }
 }

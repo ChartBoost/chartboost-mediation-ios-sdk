@@ -116,6 +116,10 @@
 		B98635D829E0C5970061205B /* RewardedCallbackHTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B98635D729E0C5960061205B /* RewardedCallbackHTTPRequest.swift */; };
 		B99AD43629FC4BC100FE8381 /* SDKInfoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99AD43529FC4BC100FE8381 /* SDKInfoProvider.swift */; };
 		B99B0CA42992D83F00A5FC3A /* SecTrust+Chartboost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99B0CA32992D83F00A5FC3A /* SecTrust+Chartboost.swift */; };
+		B9A2DCCB2ABB814C00B76C76 /* PrivacyConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9A2DCCA2ABB814C00B76C76 /* PrivacyConfiguration.swift */; };
+		B9A2DCCD2ABB901300B76C76 /* PrivacyConfigurationDependencyMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9A2DCCC2ABB901300B76C76 /* PrivacyConfigurationDependencyMock.swift */; };
+		B9B678632AB412BA0000F9E7 /* URL+Chartboost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9B678622AB412BA0000F9E7 /* URL+Chartboost.swift */; };
+		B9B678672AB4CBB10000F9E7 /* AuctionsHTTPRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9B678662AB4CBB10000F9E7 /* AuctionsHTTPRequestTests.swift */; };
 		B9B7B3FD29A6872700E7D3A7 /* BackendAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9B7B3FC29A6872700E7D3A7 /* BackendAPI.swift */; };
 		B9BBC2A429FC90BB002ABB87 /* AudioInfoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9BBC2A329FC90BB002ABB87 /* AudioInfoProvider.swift */; };
 		B9BBC2A829FCB1B3002ABB87 /* DeviceInfoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9BBC2A729FCB1B3002ABB87 /* DeviceInfoProvider.swift */; };
@@ -126,6 +130,7 @@
 		B9D4A69F29C0303700876C2B /* HTTPRequestWithRawDataResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9D4A69E29C0303700876C2B /* HTTPRequestWithRawDataResponse.swift */; };
 		B9D4A6A729C0483A00876C2B /* JSONSerialization+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9D4A6A529C0479300876C2B /* JSONSerialization+Test.swift */; };
 		B9D4A6A929C0FD5B00876C2B /* BackendAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9D4A6A829C0FD5B00876C2B /* BackendAPITests.swift */; };
+		B9FFE3CB2AB3A084007BBA37 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B9FFE3CA2AB3A084007BBA37 /* PrivacyInfo.xcprivacy */; };
 		E60289A828BD2A93003AC43E /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60289A728BD2A93003AC43E /* Reachability.swift */; };
 		E60BB45029CA07330005762E /* bid_response_interstitial_real.json in Resources */ = {isa = PBXBuildFile; fileRef = E60BB44D29CA07320005762E /* bid_response_interstitial_real.json */; };
 		E60BB45129CA07330005762E /* bid_response_rewarded_real.json in Resources */ = {isa = PBXBuildFile; fileRef = E60BB44E29CA07330005762E /* bid_response_rewarded_real.json */; };
@@ -344,8 +349,33 @@
 		EAF9616028BCF0360023E32E /* InterstitialAd.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF9615F28BCF0360023E32E /* InterstitialAd.swift */; };
 		EAF9616228BCFB090023E32E /* RewardedAd.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF9616128BCFB090023E32E /* RewardedAd.swift */; };
 		EAF9616628BD0B110023E32E /* HeliumBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF9616528BD0B110023E32E /* HeliumBannerView.swift */; };
+		EC0735A72A98250C00A23133 /* BackendEncodableSizeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0735A62A98250C00A23133 /* BackendEncodableSizeTests.swift */; };
+		EC1A26EF2A5F208200472E3C /* ChartboostMediationBannerLoadRequest+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1A26EE2A5F208200472E3C /* ChartboostMediationBannerLoadRequest+Test.swift */; };
+		EC1A26F12A5F23A300472E3C /* BannerControllerDelegateMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1A26F02A5F23A300472E3C /* BannerControllerDelegateMock.swift */; };
 		EC2100802A1D794900706AE8 /* Documentation.docc in Sources */ = {isa = PBXBuildFile; fileRef = EC21007F2A1D794900706AE8 /* Documentation.docc */; };
+		EC2F952D2A55FC98002839BE /* ChartboostMediationBannerSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2F952C2A55FC98002839BE /* ChartboostMediationBannerSize.swift */; };
+		EC2F952F2A5600E9002839BE /* ChartboostMediationBannerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2F952E2A5600E9002839BE /* ChartboostMediationBannerType.swift */; };
+		EC2F95312A56027A002839BE /* ChartboostMediationBannerHorizontalAlignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2F95302A56027A002839BE /* ChartboostMediationBannerHorizontalAlignment.swift */; };
+		EC2F95332A560291002839BE /* ChartboostMediationBannerVerticalAlignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2F95322A560291002839BE /* ChartboostMediationBannerVerticalAlignment.swift */; };
+		EC2F95352A56033F002839BE /* ChartboostMediationBannerViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2F95342A56033F002839BE /* ChartboostMediationBannerViewDelegate.swift */; };
+		EC2F95372A5603B7002839BE /* ChartboostMediationBannerLoadRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2F95362A5603B7002839BE /* ChartboostMediationBannerLoadRequest.swift */; };
+		EC2F95392A5604DF002839BE /* ChartboostMediationBannerLoadResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2F95382A5604DF002839BE /* ChartboostMediationBannerLoadResult.swift */; };
+		EC2F953B2A56054C002839BE /* ChartboostMediationBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2F953A2A56054C002839BE /* ChartboostMediationBannerView.swift */; };
+		EC3242E42A743A3A00C4B8D2 /* ChartboostMediationBannerLoadResult+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3242E32A743A3A00C4B8D2 /* ChartboostMediationBannerLoadResult+Test.swift */; };
+		EC3242E62A74755700C4B8D2 /* BannerSwapControllerDelegateMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3242E52A74755700C4B8D2 /* BannerSwapControllerDelegateMock.swift */; };
+		EC344C662A73103C0068388C /* ChartboostMediationBannerSizeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC344C652A73103C0068388C /* ChartboostMediationBannerSizeTests.swift */; };
+		EC344C682A7316260068388C /* ChartboostMediationBannerLoadRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC344C672A7316260068388C /* ChartboostMediationBannerLoadRequestTests.swift */; };
+		EC344C6A2A7317B30068388C /* ChartboostMediationBannerViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC344C692A7317B30068388C /* ChartboostMediationBannerViewTests.swift */; };
+		EC344C6C2A7326740068388C /* ChartboostMediationBannerViewDelegateMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC344C6B2A7326740068388C /* ChartboostMediationBannerViewDelegateMock.swift */; };
+		EC344C6E2A7430730068388C /* BannerSwapControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC344C6D2A7430730068388C /* BannerSwapControllerTests.swift */; };
+		EC38FBE92A7052E3007D1EB8 /* BannerSwapControllerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC38FBE82A7052E3007D1EB8 /* BannerSwapControllerMock.swift */; };
+		EC3B28232A96BC0B007821CF /* OpenRTBMocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3B28222A96BC0B007821CF /* OpenRTBMocks.swift */; };
+		EC3B694C2A67342D00C2A32C /* BannerSwapController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3B694B2A67342D00C2A32C /* BannerSwapController.swift */; };
 		EC5EC0A929805C1E0004BE25 /* HeliumAdapterInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EC0A829805C1E0004BE25 /* HeliumAdapterInfo.swift */; };
+		ECCACC392A98025C00D256B9 /* BackendEncodableSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCACC382A98025C00D256B9 /* BackendEncodableSize.swift */; };
+		ECD41F912A940E4B0083E87D /* AdaptiveBannerSizeHTTPRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD41F902A940E4B0083E87D /* AdaptiveBannerSizeHTTPRequestTests.swift */; };
+		ECD705142A7C6FA2000E22CA /* AdaptiveBannerSizeHTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD705132A7C6FA2000E22CA /* AdaptiveBannerSizeHTTPRequest.swift */; };
+		ECE86EFB2A7AD71E005A30F6 /* SDKSettingsProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE86EFA2A7AD71E005A30F6 /* SDKSettingsProviding.swift */; };
 		F103493828FA1289005473FF /* PartnerIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = F103493728FA1289005473FF /* PartnerIdentifier.swift */; };
 		F10587C727F514A000A38955 /* BidResponseRewardedCallbackNullGET.json in Resources */ = {isa = PBXBuildFile; fileRef = F10587C627F514A000A38955 /* BidResponseRewardedCallbackNullGET.json */; };
 		F11FC4BA2790C91300D7C53C /* BidResponseILRD.json in Resources */ = {isa = PBXBuildFile; fileRef = F11FC4B92790C91300D7C53C /* BidResponseILRD.json */; };
@@ -499,6 +529,10 @@
 		B98635D729E0C5960061205B /* RewardedCallbackHTTPRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RewardedCallbackHTTPRequest.swift; sourceTree = "<group>"; };
 		B99AD43529FC4BC100FE8381 /* SDKInfoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKInfoProvider.swift; sourceTree = "<group>"; };
 		B99B0CA32992D83F00A5FC3A /* SecTrust+Chartboost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SecTrust+Chartboost.swift"; sourceTree = "<group>"; };
+		B9A2DCCA2ABB814C00B76C76 /* PrivacyConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyConfiguration.swift; sourceTree = "<group>"; };
+		B9A2DCCC2ABB901300B76C76 /* PrivacyConfigurationDependencyMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyConfigurationDependencyMock.swift; sourceTree = "<group>"; };
+		B9B678622AB412BA0000F9E7 /* URL+Chartboost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Chartboost.swift"; sourceTree = "<group>"; };
+		B9B678662AB4CBB10000F9E7 /* AuctionsHTTPRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuctionsHTTPRequestTests.swift; sourceTree = "<group>"; };
 		B9B7B3FC29A6872700E7D3A7 /* BackendAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendAPI.swift; sourceTree = "<group>"; };
 		B9BBC2A329FC90BB002ABB87 /* AudioInfoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioInfoProvider.swift; sourceTree = "<group>"; };
 		B9BBC2A729FCB1B3002ABB87 /* DeviceInfoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoProvider.swift; sourceTree = "<group>"; };
@@ -509,6 +543,7 @@
 		B9D4A69E29C0303700876C2B /* HTTPRequestWithRawDataResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPRequestWithRawDataResponse.swift; sourceTree = "<group>"; };
 		B9D4A6A529C0479300876C2B /* JSONSerialization+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSONSerialization+Test.swift"; sourceTree = "<group>"; };
 		B9D4A6A829C0FD5B00876C2B /* BackendAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendAPITests.swift; sourceTree = "<group>"; };
+		B9FFE3CA2AB3A084007BBA37 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		E60289A728BD2A93003AC43E /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		E60BB44D29CA07320005762E /* bid_response_interstitial_real.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = bid_response_interstitial_real.json; sourceTree = "<group>"; };
 		E60BB44E29CA07330005762E /* bid_response_rewarded_real.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = bid_response_rewarded_real.json; sourceTree = "<group>"; };
@@ -727,8 +762,33 @@
 		EAF9615F28BCF0360023E32E /* InterstitialAd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterstitialAd.swift; sourceTree = "<group>"; };
 		EAF9616128BCFB090023E32E /* RewardedAd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardedAd.swift; sourceTree = "<group>"; };
 		EAF9616528BD0B110023E32E /* HeliumBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeliumBannerView.swift; sourceTree = "<group>"; };
+		EC0735A62A98250C00A23133 /* BackendEncodableSizeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendEncodableSizeTests.swift; sourceTree = "<group>"; };
+		EC1A26EE2A5F208200472E3C /* ChartboostMediationBannerLoadRequest+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChartboostMediationBannerLoadRequest+Test.swift"; sourceTree = "<group>"; };
+		EC1A26F02A5F23A300472E3C /* BannerControllerDelegateMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerControllerDelegateMock.swift; sourceTree = "<group>"; };
 		EC21007F2A1D794900706AE8 /* Documentation.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Documentation.docc; sourceTree = "<group>"; };
+		EC2F952C2A55FC98002839BE /* ChartboostMediationBannerSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartboostMediationBannerSize.swift; sourceTree = "<group>"; };
+		EC2F952E2A5600E9002839BE /* ChartboostMediationBannerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartboostMediationBannerType.swift; sourceTree = "<group>"; };
+		EC2F95302A56027A002839BE /* ChartboostMediationBannerHorizontalAlignment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartboostMediationBannerHorizontalAlignment.swift; sourceTree = "<group>"; };
+		EC2F95322A560291002839BE /* ChartboostMediationBannerVerticalAlignment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartboostMediationBannerVerticalAlignment.swift; sourceTree = "<group>"; };
+		EC2F95342A56033F002839BE /* ChartboostMediationBannerViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartboostMediationBannerViewDelegate.swift; sourceTree = "<group>"; };
+		EC2F95362A5603B7002839BE /* ChartboostMediationBannerLoadRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartboostMediationBannerLoadRequest.swift; sourceTree = "<group>"; };
+		EC2F95382A5604DF002839BE /* ChartboostMediationBannerLoadResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartboostMediationBannerLoadResult.swift; sourceTree = "<group>"; };
+		EC2F953A2A56054C002839BE /* ChartboostMediationBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartboostMediationBannerView.swift; sourceTree = "<group>"; };
+		EC3242E32A743A3A00C4B8D2 /* ChartboostMediationBannerLoadResult+Test.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ChartboostMediationBannerLoadResult+Test.swift"; sourceTree = "<group>"; };
+		EC3242E52A74755700C4B8D2 /* BannerSwapControllerDelegateMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerSwapControllerDelegateMock.swift; sourceTree = "<group>"; };
+		EC344C652A73103C0068388C /* ChartboostMediationBannerSizeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartboostMediationBannerSizeTests.swift; sourceTree = "<group>"; };
+		EC344C672A7316260068388C /* ChartboostMediationBannerLoadRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartboostMediationBannerLoadRequestTests.swift; sourceTree = "<group>"; };
+		EC344C692A7317B30068388C /* ChartboostMediationBannerViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartboostMediationBannerViewTests.swift; sourceTree = "<group>"; };
+		EC344C6B2A7326740068388C /* ChartboostMediationBannerViewDelegateMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartboostMediationBannerViewDelegateMock.swift; sourceTree = "<group>"; };
+		EC344C6D2A7430730068388C /* BannerSwapControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerSwapControllerTests.swift; sourceTree = "<group>"; };
+		EC38FBE82A7052E3007D1EB8 /* BannerSwapControllerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerSwapControllerMock.swift; sourceTree = "<group>"; };
+		EC3B28222A96BC0B007821CF /* OpenRTBMocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenRTBMocks.swift; sourceTree = "<group>"; };
+		EC3B694B2A67342D00C2A32C /* BannerSwapController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerSwapController.swift; sourceTree = "<group>"; };
 		EC5EC0A829805C1E0004BE25 /* HeliumAdapterInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeliumAdapterInfo.swift; sourceTree = "<group>"; };
+		ECCACC382A98025C00D256B9 /* BackendEncodableSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendEncodableSize.swift; sourceTree = "<group>"; };
+		ECD41F902A940E4B0083E87D /* AdaptiveBannerSizeHTTPRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveBannerSizeHTTPRequestTests.swift; sourceTree = "<group>"; };
+		ECD705132A7C6FA2000E22CA /* AdaptiveBannerSizeHTTPRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveBannerSizeHTTPRequest.swift; sourceTree = "<group>"; };
+		ECE86EFA2A7AD71E005A30F6 /* SDKSettingsProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKSettingsProviding.swift; sourceTree = "<group>"; };
 		F103493728FA1289005473FF /* PartnerIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerIdentifier.swift; sourceTree = "<group>"; };
 		F10587C627F514A000A38955 /* BidResponseRewardedCallbackNullGET.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = BidResponseRewardedCallbackNullGET.json; sourceTree = "<group>"; };
 		F11FC4B92790C91300D7C53C /* BidResponseILRD.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = BidResponseILRD.json; sourceTree = "<group>"; };
@@ -877,17 +937,22 @@
 				B96568062A0081A200BC61D1 /* AppTrackingInfoProviderDependencyMock.swift */,
 				B9540C662A043375004A5D97 /* AppTrackingInfoProviderMock.swift */,
 				EAF5F2F729BB4A2E00C82F3C /* BannerControllerConfigurationMock.swift */,
+				EC1A26F02A5F23A300472E3C /* BannerControllerDelegateMock.swift */,
 				EA3D7DF52880445700B4F667 /* BannerControllerMock.swift */,
+				EC3242E52A74755700C4B8D2 /* BannerSwapControllerDelegateMock.swift */,
+				EC38FBE82A7052E3007D1EB8 /* BannerSwapControllerMock.swift */,
 				EA6976D828D0DD9300306C8E /* BidFulfillOperationConfigurationMock.swift */,
 				EAF5F30D29D1CE2E00C82F3C /* BidFulfillOperationFactoryMock.swift */,
 				EAB507A128B90DF4001427A0 /* BidFulfillOperationMock.swift */,
 				EA61A6DF28AFB09300BE051C /* BidMock.swift */,
 				B9540C5E2A032AE4004A5D97 /* BundleInfoProviderMock.swift */,
 				B9540C682A04368E004A5D97 /* ChartboostIDProviderMock.swift */,
+				EC344C6B2A7326740068388C /* ChartboostMediationBannerViewDelegateMock.swift */,
 				EA40EEF229B784B4002E5342 /* ChartboostMediationFullscreenAdDelegateMock.swift */,
 				EA40EEEC29B77C8C002E5342 /* ChartboostMediationFullscreenAdMock.swift */,
 				EADF00C129F6F4BC0025AA63 /* ConsentSettingsDelegateMock.swift */,
 				E6B9A2E029C2641400AEC225 /* ConsentSettingsMock.swift */,
+				E6C4DD582A449F56006F6249 /* ConsoleLoggerConfigurationDependencyMock.swift */,
 				EA3D7DE628803EDF00B4F667 /* DependenciesContainerMock.swift */,
 				EA4DDDCB28A2CCF600C5C7B7 /* DispatchTaskGroupMock.swift */,
 				EA5EBEDE2876C2D9007381EF /* DispatchTaskMock.swift */,
@@ -914,12 +979,14 @@
 				EAEE1F3C2954B13E00DECC5E /* MocksContainer.swift */,
 				B93443FB29E8A0B0006E4546 /* NetworkManagerMock.swift */,
 				E63D48F629084FC900E12298 /* NetworkStatusProviderMock.swift */,
+				EC3B28222A96BC0B007821CF /* OpenRTBMocks.swift */,
 				EA4DDDE528A547F300C5C7B7 /* PartnerAdapterFactoryMock.swift */,
 				EA4DDDE728A548F600C5C7B7 /* PartnerAdapterMock.swift */,
 				EAF5F30429CDFC5A00C82F3C /* PartnerAdDelegateMock.swift */,
 				EA145AEF28F8684900137C76 /* PartnerAdMock.swift */,
 				EA4DDDE928A549EA00C5C7B7 /* PartnerControllerConfigurationMock.swift */,
 				EA3D7E152886E3A700B4F667 /* PartnerControllerMock.swift */,
+				B9A2DCCC2ABB901300B76C76 /* PrivacyConfigurationDependencyMock.swift */,
 				E6ED4E4C28BEAB4800C70AFE /* ReachabilityMock.swift */,
 				EA13F80B28C1004E000E2B21 /* SDKCredentialsValidatorMock.swift */,
 				EA6976DE28D0E04E00306C8E /* SDKInitializerConfigurationMock.swift */,
@@ -929,7 +996,6 @@
 				EA13BBB82902EB2600AF0864 /* UserDefaultsStorageMock.swift */,
 				EA6976DC28D0DF3100306C8E /* VisibilityTrackerConfigurationMock.swift */,
 				EA3D7E0D2881932600B4F667 /* VisibilityTrackerMock.swift */,
-				E6C4DD582A449F56006F6249 /* ConsoleLoggerConfigurationDependencyMock.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -996,6 +1062,9 @@
 		11FBBD8521ACD71700F9650C /* HeliumSdk */ = {
 			isa = PBXGroup;
 			children = (
+				F12725712894165A00D4D538 /* ChartboostMediationSDK.h */,
+				F12725732894175E00D4D538 /* ChartboostMediationSDK.modulemap */,
+				B9FFE3CA2AB3A084007BBA37 /* PrivacyInfo.xcprivacy */,
 				EA523B7028EDC2D8008DEA4B /* Ad Loading */,
 				EA5B132E29474B3D0022D6BD /* Ad Showing */,
 				EA523B8128EDC9C7008DEA4B /* Configuration */,
@@ -1003,8 +1072,6 @@
 				EA996639287C65C200BE4178 /* Dependency Injection */,
 				EA523B7428EDC38E008DEA4B /* Environment */,
 				EADF8E2B2954B57C00479DB7 /* Factories */,
-				F12725712894165A00D4D538 /* ChartboostMediationSDK.h */,
-				F12725732894175E00D4D538 /* ChartboostMediationSDK.modulemap */,
 				EA523B7928EDC6C8008DEA4B /* Initialization */,
 				EA523B7F28EDC864008DEA4B /* Logging */,
 				EA523B7828EDC558008DEA4B /* Networking */,
@@ -1032,6 +1099,7 @@
 		B9CE784B298C4BB9003D457F /* HTTPRequest */ = {
 			isa = PBXGroup;
 			children = (
+				ECD705132A7C6FA2000E22CA /* AdaptiveBannerSizeHTTPRequest.swift */,
 				B97534CA29E4FC5D00450EBD /* AuctionsHTTPRequest.swift */,
 				B981524B29C9631E009ED0E7 /* HTTPConstants.swift */,
 				B9C19984298B8DFD000FCF7B /* HTTPRequest.swift */,
@@ -1115,6 +1183,14 @@
 				EA40EED729B74BC1002E5342 /* ChartboostMediationAdLoadRequest.swift */,
 				EA40EED929B74EFE002E5342 /* ChartboostMediationAdLoadResult.swift */,
 				EA40EEDD29B750F8002E5342 /* ChartboostMediationAdShowResult.swift */,
+				EC2F953A2A56054C002839BE /* ChartboostMediationBannerView.swift */,
+				EC2F95342A56033F002839BE /* ChartboostMediationBannerViewDelegate.swift */,
+				EC2F95302A56027A002839BE /* ChartboostMediationBannerHorizontalAlignment.swift */,
+				EC2F95362A5603B7002839BE /* ChartboostMediationBannerLoadRequest.swift */,
+				EC2F95382A5604DF002839BE /* ChartboostMediationBannerLoadResult.swift */,
+				EC2F952C2A55FC98002839BE /* ChartboostMediationBannerSize.swift */,
+				EC2F952E2A5600E9002839BE /* ChartboostMediationBannerType.swift */,
+				EC2F95322A560291002839BE /* ChartboostMediationBannerVerticalAlignment.swift */,
 				F1608F7D289349D500463F60 /* ChartboostMediationError.swift */,
 				EA398B6A296C405800FE052A /* ChartboostMediationError+Cause.swift */,
 				EA54D9AE2A15809C00C9CBBE /* ChartboostMediationError+Code.swift */,
@@ -1175,6 +1251,7 @@
 				EA940E27294B2F360072C4A2 /* Result+Error.swift */,
 				B99B0CA32992D83F00A5FC3A /* SecTrust+Chartboost.swift */,
 				B930DC8529B7A13A005B5540 /* String+Chartboost.swift */,
+				B9B678622AB412BA0000F9E7 /* URL+Chartboost.swift */,
 				EAF9612D28BCC3850023E32E /* WeakReferences.swift */,
 				EA5EBEE22876C78B007381EF /* Concurrency */,
 				EA523B7728EDC513008DEA4B /* JSON */,
@@ -1191,6 +1268,7 @@
 				EAF5F2FB29BF234500C82F3C /* AdLoadResult.swift */,
 				EAF5F2FD29BF239700C82F3C /* AdShowResult.swift */,
 				EA6CDE6B287C52B300F13FCF /* BannerController.swift */,
+				EC3B694B2A67342D00C2A32C /* BannerSwapController.swift */,
 				EA40EEE329B75FB1002E5342 /* FullscreenAd.swift */,
 				EA9A869C28B647BD0065918F /* HeliumAd.swift */,
 				EA4DDDFA28AE781600C5C7B7 /* HeliumAdLoadRequest.swift */,
@@ -1215,6 +1293,7 @@
 				B93F66352A01746B00162D3C /* SessionInfoProvider.swift */,
 				B96567EF29FCD27D00BC61D1 /* ScreenInfoProvider.swift */,
 				B99AD43529FC4BC100FE8381 /* SDKInfoProvider.swift */,
+				ECE86EFA2A7AD71E005A30F6 /* SDKSettingsProviding.swift */,
 				B96567EB29FCC13100BC61D1 /* SKAdNetworkInfoProvider.swift */,
 				B90398E129F9AD72009A4261 /* TelephonyNetworkInfoProvider.swift */,
 				B9D326F6299CB8F100AA94BD /* TestModeInfo.swift */,
@@ -1248,6 +1327,7 @@
 			isa = PBXGroup;
 			children = (
 				B9B7B3FC29A6872700E7D3A7 /* BackendAPI.swift */,
+				ECCACC382A98025C00D256B9 /* BackendEncodableSize.swift */,
 				B9CE784B298C4BB9003D457F /* HTTPRequest */,
 				B97DD25B29A9758D00A42AF5 /* NetworkActivityConsoleLogger.swift */,
 				B9C19982298B33AF000FCF7B /* NetworkManager.swift */,
@@ -1269,6 +1349,7 @@
 			isa = PBXGroup;
 			children = (
 				EACF401A28BF5FC30035D8C0 /* ConsentSettings.swift */,
+				B9A2DCCA2ABB814C00B76C76 /* PrivacyConfiguration.swift */,
 			);
 			path = Privacy;
 			sourceTree = "<group>";
@@ -1386,6 +1467,7 @@
 			isa = PBXGroup;
 			children = (
 				EACF403828BF9B3B0035D8C0 /* BannerControllerTests.swift */,
+				EC344C6D2A7430730068388C /* BannerSwapControllerTests.swift */,
 				EA40EEF029B7815D002E5342 /* FullscreenAdTests.swift */,
 				B97534CC29E6242E00450EBD /* HeliumAdLoadRequestTests.swift */,
 				EAB5079728B8E1E2001427A0 /* SingleAdStorageAdControllerTests.swift */,
@@ -1438,7 +1520,10 @@
 		EA523B9028EDD146008DEA4B /* Networking */ = {
 			isa = PBXGroup;
 			children = (
+				ECD41F902A940E4B0083E87D /* AdaptiveBannerSizeHTTPRequestTests.swift */,
+				B9B678662AB4CBB10000F9E7 /* AuctionsHTTPRequestTests.swift */,
 				B9D4A6A829C0FD5B00876C2B /* BackendAPITests.swift */,
+				EC0735A62A98250C00A23133 /* BackendEncodableSizeTests.swift */,
 				B934039629C41AB200319E1B /* HTTPRequestTests.swift */,
 				B981524D29CB87D1009ED0E7 /* MetricsHTTPRequestTests.swift */,
 				B940157229AFF258004682F4 /* NetworkManagerTests.swift */,
@@ -1479,7 +1564,10 @@
 				EA40EEF429B7869F002E5342 /* ChartboostMediationAdLoadRequestTests.swift */,
 				EA40EEF629B786FB002E5342 /* ChartboostMediationAdLoadResultTests.swift */,
 				EA40EEF829B787C6002E5342 /* ChartboostMediationAdShowResultTests.swift */,
+				EC344C672A7316260068388C /* ChartboostMediationBannerLoadRequestTests.swift */,
+				EC344C652A73103C0068388C /* ChartboostMediationBannerSizeTests.swift */,
 				EA40EEFA29B78804002E5342 /* ChartboostMediationFullscreenAdLoadResultTests.swift */,
+				EC344C692A7317B30068388C /* ChartboostMediationBannerViewTests.swift */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -1585,6 +1673,8 @@
 		EA9A869528B62E100065918F /* SDK Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				EC1A26EE2A5F208200472E3C /* ChartboostMediationBannerLoadRequest+Test.swift */,
+				EC3242E32A743A3A00C4B8D2 /* ChartboostMediationBannerLoadResult+Test.swift */,
 				EAF9613328BCCEF30023E32E /* HeliumAd+Test.swift */,
 				EAF9613128BCCEE90023E32E /* HeliumAdLoadRequest+Test.swift */,
 				B9D4A6A529C0479300876C2B /* JSONSerialization+Test.swift */,
@@ -1752,6 +1842,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B9FFE3CB2AB3A084007BBA37 /* PrivacyInfo.xcprivacy in Resources */,
 				EA9FC59B28DB1AEF009BF2C2 /* CHANGELOG.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1826,6 +1917,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EA40EEDC29B7506E002E5342 /* ChartboostMediationFullscreenAdLoadResult.swift in Sources */,
+				EC3B694C2A67342D00C2A32C /* BannerSwapController.swift in Sources */,
 				F1409CA828930864009731E1 /* HeliumKeywords.swift in Sources */,
 				EAC53CDE28C0B294001A6DAF /* ApplicationConfigurationController.swift in Sources */,
 				EAF5F2FC29BF234500C82F3C /* AdLoadResult.swift in Sources */,
@@ -1836,6 +1928,7 @@
 				EAD3278C28CA0AC700CE7514 /* UpdatableApplicationConfiguration.swift in Sources */,
 				B9C19983298B33AF000FCF7B /* NetworkManager.swift in Sources */,
 				B99B0CA42992D83F00A5FC3A /* SecTrust+Chartboost.swift in Sources */,
+				ECE86EFB2A7AD71E005A30F6 /* SDKSettingsProviding.swift in Sources */,
 				B96567F229FCD45E00BC61D1 /* BundleInfoProvider.swift in Sources */,
 				B93F663D2A01E62800162D3C /* UserIDProvider.swift in Sources */,
 				B9533CF729EE14A00097C3F7 /* SDKInitHTTPRequest.swift in Sources */,
@@ -1846,11 +1939,13 @@
 				EA9A869D28B647BD0065918F /* HeliumAd.swift in Sources */,
 				B90398CF29F73E99009A4261 /* ChartboostIDProvider.swift in Sources */,
 				EAEE1F352954A28F00DECC5E /* Injected.swift in Sources */,
+				EC2F952F2A5600E9002839BE /* ChartboostMediationBannerType.swift in Sources */,
 				EA145AE428F835AA00137C76 /* MutablePartnerAdapterStorage.swift in Sources */,
 				B940156F29AE86C2004682F4 /* HTTPRequestWithDecodableResponse.swift in Sources */,
 				E69904502A41F7D1003BC6D5 /* LogHandler.swift in Sources */,
 				E6CA5B9C28AEAE2000CB80FD /* InstanceIdentifierProvider.swift in Sources */,
 				EA4DDDF728AE76ED00C5C7B7 /* BidFulfillOperation.swift in Sources */,
+				ECCACC392A98025C00D256B9 /* BackendEncodableSize.swift in Sources */,
 				EA9A869F28B648DB0065918F /* RewardedCallback.swift in Sources */,
 				EAF9615A28BCEC460023E32E /* HeliumInterstitialAd.swift in Sources */,
 				EAEE1F392954A64100DECC5E /* OptionalInjected.swift in Sources */,
@@ -1858,14 +1953,17 @@
 				EA65991C286F2F3600182CD7 /* TaskDispatcher.swift in Sources */,
 				B97534CB29E4FC5D00450EBD /* AuctionsHTTPRequest.swift in Sources */,
 				EA5EBED928758171007381EF /* GCDTaskDispatcher.swift in Sources */,
+				EC2F953B2A56054C002839BE /* ChartboostMediationBannerView.swift in Sources */,
 				E682465828F0A5ED0073B5AB /* MetricsEvent.swift in Sources */,
 				EAF9612E28BCC3850023E32E /* WeakReferences.swift in Sources */,
 				EA398B6D296C406100FE052A /* ChartboostMediationError+Resolution.swift in Sources */,
 				EA13BBB72902DAEA00AF0864 /* JSON.swift in Sources */,
 				B9BBC2A829FCB1B3002ABB87 /* DeviceInfoProvider.swift in Sources */,
+				B9A2DCCB2ABB814C00B76C76 /* PrivacyConfiguration.swift in Sources */,
 				EA99663B287C65D900BE4178 /* AdControllerFactory.swift in Sources */,
 				EA40EEE429B75FB1002E5342 /* FullscreenAd.swift in Sources */,
 				EAD3278628C79FE700CE7514 /* PartnerAdapter+Models.swift in Sources */,
+				EC2F95352A56033F002839BE /* ChartboostMediationBannerViewDelegate.swift in Sources */,
 				EA5EBED328741B26007381EF /* PartnerAdapter.swift in Sources */,
 				EA3D7E1A2886F9BE00B4F667 /* ApplicationConfiguration.swift in Sources */,
 				B96339722A120E6F00B8E995 /* HeliumDelegate.swift in Sources */,
@@ -1888,6 +1986,7 @@
 				B9BBC2A429FC90BB002ABB87 /* AudioInfoProvider.swift in Sources */,
 				B9540C632A04232E004A5D97 /* UserAgentProvider.swift in Sources */,
 				B96567F029FCD27D00BC61D1 /* ScreenInfoProvider.swift in Sources */,
+				B9B678632AB412BA0000F9E7 /* URL+Chartboost.swift in Sources */,
 				EA5EBEDD2876C0FB007381EF /* TimerDispatchTask.swift in Sources */,
 				EA40EEDE29B750F8002E5342 /* ChartboostMediationAdShowResult.swift in Sources */,
 				EAC53CE028C0B77E001A6DAF /* SDKCredentialsValidator.swift in Sources */,
@@ -1920,12 +2019,15 @@
 				EAF9616628BD0B110023E32E /* HeliumBannerView.swift in Sources */,
 				EA909F482899365E003E5F6C /* FullScreenAdShowCoordinator.swift in Sources */,
 				EA145AE628F8545D00137C76 /* PartnerAd.swift in Sources */,
+				EC2F95372A5603B7002839BE /* ChartboostMediationBannerLoadRequest.swift in Sources */,
 				F1379297286A5B3F0077983A /* ResumableTimer.swift in Sources */,
 				EC5EC0A929805C1E0004BE25 /* HeliumAdapterInfo.swift in Sources */,
 				EA5EBED7287458A1007381EF /* PartnerAdapterFactory.swift in Sources */,
 				EA909F5228998FF3003E5F6C /* HeliumImpressionData.swift in Sources */,
 				EA9A86A728B789920065918F /* AdAuctionService.swift in Sources */,
+				EC2F95332A560291002839BE /* ChartboostMediationBannerVerticalAlignment.swift in Sources */,
 				EAF9616028BCF0360023E32E /* InterstitialAd.swift in Sources */,
+				EC2F952D2A55FC98002839BE /* ChartboostMediationBannerSize.swift in Sources */,
 				EA978D0228B39B7E00E3371B /* PartnerAdapter+Error.swift in Sources */,
 				EAF5F2FE29BF239700C82F3C /* AdShowResult.swift in Sources */,
 				E6DD93AF29BF6101000B962E /* OpenRTB.swift in Sources */,
@@ -1937,6 +2039,8 @@
 				EA4DDDFB28AE781600C5C7B7 /* HeliumAdLoadRequest.swift in Sources */,
 				EA40EEE029B75138002E5342 /* ChartboostMediationFullscreenAd.swift in Sources */,
 				E6B9A2E529C380F400AEC225 /* OpenRTB+Request+Extras.swift in Sources */,
+				EC2F95392A5604DF002839BE /* ChartboostMediationBannerLoadResult.swift in Sources */,
+				ECD705142A7C6FA2000E22CA /* AdaptiveBannerSizeHTTPRequest.swift in Sources */,
 				EA7B92E028BE502300D783A6 /* AdControllerRepository.swift in Sources */,
 				EA40EED829B74BC1002E5342 /* ChartboostMediationAdLoadRequest.swift in Sources */,
 				B93956AB29F7280D009729D5 /* InfoPlist.swift in Sources */,
@@ -1945,6 +2049,7 @@
 				F1A88E6128F88E1700CC2FB7 /* HeliumInitializationOptions.swift in Sources */,
 				EAF9615C28BCEDF00023E32E /* HeliumRewardedAd.swift in Sources */,
 				F19DDABF286B65FC00A84203 /* VisibilityTracker.swift in Sources */,
+				EC2F95312A56027A002839BE /* ChartboostMediationBannerHorizontalAlignment.swift in Sources */,
 				EAF5F30C29D1B28300C82F3C /* BidFulfillOperationFactory.swift in Sources */,
 				EA13F80E28C262E1000E2B21 /* JSONStringSerializer.swift in Sources */,
 				EAD3278E28CA0D6500CE7514 /* FileStorage.swift in Sources */,
@@ -1994,9 +2099,11 @@
 				EA6976DD28D0DF3100306C8E /* VisibilityTrackerConfigurationMock.swift in Sources */,
 				EA65991E286F4D2A00182CD7 /* TaskDispatcherMock.swift in Sources */,
 				E63D48F729084FC900E12298 /* NetworkStatusProviderMock.swift in Sources */,
+				B9A2DCCD2ABB901300B76C76 /* PrivacyConfigurationDependencyMock.swift in Sources */,
 				B93443FC29E8A0B0006E4546 /* NetworkManagerMock.swift in Sources */,
 				EA3D7E1C2886FB9000B4F667 /* ApplicationConfigurationMock.swift in Sources */,
 				B940157329AFF258004682F4 /* NetworkManagerTests.swift in Sources */,
+				EC344C682A7316260068388C /* ChartboostMediationBannerLoadRequestTests.swift in Sources */,
 				EA6976E528D0E6B400306C8E /* PersistingApplicationConfigurationControllerTests.swift in Sources */,
 				B9540C6B2A045E15004A5D97 /* EnvironementMock.swift in Sources */,
 				EADF00C229F6F4BC0025AA63 /* ConsentSettingsDelegateMock.swift in Sources */,
@@ -2004,6 +2111,7 @@
 				EA3D7DFD2880493700B4F667 /* JSONLoader.swift in Sources */,
 				EAF9613028BCC6480023E32E /* WeakReferencesTests.swift in Sources */,
 				EAB507A028B90D9E001427A0 /* AuctionAdRepositoryTests.swift in Sources */,
+				EC344C6E2A7430730068388C /* BannerSwapControllerTests.swift in Sources */,
 				EA659915286F2B0400182CD7 /* ResumableTimer+Testing.swift in Sources */,
 				EACF402128BF6C450035D8C0 /* AdControllerRepositoryMock.swift in Sources */,
 				B9540C6F2A049ABD004A5D97 /* ImpressionCounterMock.swift in Sources */,
@@ -2013,13 +2121,16 @@
 				B96339782A12A5F300B8E995 /* APIStabilityTests_Swift.swift in Sources */,
 				B98635D029E0B5C00061205B /* BidTests.swift in Sources */,
 				EA145AF228F869FF00137C76 /* PartnerAdTests.swift in Sources */,
+				B9B678672AB4CBB10000F9E7 /* AuctionsHTTPRequestTests.swift in Sources */,
 				E6ED4E4D28BEAB4800C70AFE /* ReachabilityMock.swift in Sources */,
 				EA40EEF929B787C6002E5342 /* ChartboostMediationAdShowResultTests.swift in Sources */,
 				EA13F80C28C1004E000E2B21 /* SDKCredentialsValidatorMock.swift in Sources */,
 				EA13F80228C0FBA7000E2B21 /* SDKInitializerMock.swift in Sources */,
 				EA13BBC42902F64500AF0864 /* HeliumUserDefaultsStorageTests.swift in Sources */,
+				EC344C6C2A7326740068388C /* ChartboostMediationBannerViewDelegateMock.swift in Sources */,
 				B934039729C41AB200319E1B /* HTTPRequestTests.swift in Sources */,
 				EA659916286F2B1700182CD7 /* ResumableTimerTests.swift in Sources */,
+				EC38FBE92A7052E3007D1EB8 /* BannerSwapControllerMock.swift in Sources */,
 				EA99B66628992413002736E0 /* HeliumRewardedAdDelegateMock.swift in Sources */,
 				EA40EEF729B786FB002E5342 /* ChartboostMediationAdLoadResultTests.swift in Sources */,
 				EA145AF028F8684900137C76 /* PartnerAdMock.swift in Sources */,
@@ -2036,10 +2147,12 @@
 				E650651428A4343D00C2FBEA /* LoadRateLimiterTests.swift in Sources */,
 				EA3D7DF62880445700B4F667 /* BannerControllerMock.swift in Sources */,
 				EA648EB0289A6A8A0006FBD4 /* HeliumImpressionDataTests.swift in Sources */,
+				EC1A26F12A5F23A300472E3C /* BannerControllerDelegateMock.swift in Sources */,
 				EAD3279028CA0D9400CE7514 /* FileSystemStorageTests.swift in Sources */,
 				B940157529AFF28C004682F4 /* URLProtocolMock.swift in Sources */,
 				B9D4A6A729C0483A00876C2B /* JSONSerialization+Test.swift in Sources */,
 				F1608F7A2893145300463F60 /* HeliumKeywordsTests.swift in Sources */,
+				EC344C6A2A7317B30068388C /* ChartboostMediationBannerViewTests.swift in Sources */,
 				EA648EB2289A6B710006FBD4 /* NotificationCenterILRDEventPublisherTests.swift in Sources */,
 				EA145AF428F8737E00137C76 /* XCTAssert+AnyEquatable.swift in Sources */,
 				EA3D7DF4288043B900B4F667 /* HeliumBannerViewTests.swift in Sources */,
@@ -2058,7 +2171,9 @@
 				B9D4A6A929C0FD5B00876C2B /* BackendAPITests.swift in Sources */,
 				B96339762A12A5E900B8E995 /* APIStabilityTests_ObjectiveC.m in Sources */,
 				EACF403328BF7A830035D8C0 /* InterstitialAdTests.swift in Sources */,
+				EC3242E42A743A3A00C4B8D2 /* ChartboostMediationBannerLoadResult+Test.swift in Sources */,
 				EA3D7E162886E3A700B4F667 /* PartnerControllerMock.swift in Sources */,
+				ECD41F912A940E4B0083E87D /* AdaptiveBannerSizeHTTPRequestTests.swift in Sources */,
 				EAB7F3C0288AC5A1007DB64F /* XCTest+Mock.swift in Sources */,
 				EACF403528BF99480035D8C0 /* RewardedAdTests.swift in Sources */,
 				EA40EEF129B7815D002E5342 /* FullscreenAdTests.swift in Sources */,
@@ -2069,6 +2184,7 @@
 				EACF402728BF6D360035D8C0 /* AdFactoryMock.swift in Sources */,
 				B93F663B2A01D1F200162D3C /* UserSettingsProviderTests.swift in Sources */,
 				EA909F4C2899493A003E5F6C /* FullScreenAdShowCoordinatorMock.swift in Sources */,
+				EC3B28232A96BC0B007821CF /* OpenRTBMocks.swift in Sources */,
 				EAF5F2F829BB4A2E00C82F3C /* BannerControllerConfigurationMock.swift in Sources */,
 				EA99B66428992392002736E0 /* HeliumInterstitialAdDelegateMock.swift in Sources */,
 				B963397A2A12B39D00B8E995 /* HeliumSdkDelegateMock.swift in Sources */,
@@ -2077,6 +2193,7 @@
 				EA5B13352947550B0022D6BD /* CurrentSessionImpressionTrackerTests.swift in Sources */,
 				EA7259D129FC9D1A00D1B9BA /* SafeJSONSerializerTests.swift in Sources */,
 				B96568072A0081A200BC61D1 /* AppTrackingInfoProviderDependencyMock.swift in Sources */,
+				EC1A26EF2A5F208200472E3C /* ChartboostMediationBannerLoadRequest+Test.swift in Sources */,
 				EAEC309C286C61D100B6C120 /* JSONObject.swift in Sources */,
 				E6E2E86D29C8C0D500A64350 /* LoadRateLimiterMock.swift in Sources */,
 				EA3D7E0E2881932600B4F667 /* VisibilityTrackerMock.swift in Sources */,
@@ -2091,6 +2208,7 @@
 				E6CA5B9F28AED05000CB80FD /* InstanceIdentifierProviderTests.swift in Sources */,
 				EA4DDDCC28A2CCF600C5C7B7 /* DispatchTaskGroupMock.swift in Sources */,
 				EAB5079E28B90537001427A0 /* AdControllerDelegateMock.swift in Sources */,
+				EC3242E62A74755700C4B8D2 /* BannerSwapControllerDelegateMock.swift in Sources */,
 				EA3D7E0A2881904600B4F667 /* ApplicationTests.swift in Sources */,
 				EAF5F30E29D1CE2E00C82F3C /* BidFulfillOperationFactoryMock.swift in Sources */,
 				EA3D7DF22880426C00B4F667 /* HeliumBannerAdDelegateMock.swift in Sources */,
@@ -2114,7 +2232,9 @@
 				EA40EEEB29B77C21002E5342 /* FullscreenAdLoaderMock.swift in Sources */,
 				EA6976D928D0DD9300306C8E /* BidFulfillOperationConfigurationMock.swift in Sources */,
 				B90398DE29F789BD009A4261 /* InfoPlistTests.swift in Sources */,
+				EC0735A72A98250C00A23133 /* BackendEncodableSizeTests.swift in Sources */,
 				EA40EEE829B77883002E5342 /* AdLoaderTests.swift in Sources */,
+				EC344C662A73103C0068388C /* ChartboostMediationBannerSizeTests.swift in Sources */,
 				EA9CECEE288AEA680050EE6F /* AnyEquatable.swift in Sources */,
 				EA13F80828C0FE1A000E2B21 /* LengthSDKCredentialsValidatorTests.swift in Sources */,
 				EA9A869928B62E450065918F /* PartnerAdLoadRequest+Test.swift in Sources */,

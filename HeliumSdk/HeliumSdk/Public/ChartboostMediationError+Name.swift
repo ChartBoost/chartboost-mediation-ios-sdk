@@ -144,7 +144,9 @@ extension ChartboostMediationError.Code {
             codeString = "INVALID_CREDENTIALS"
         case .loadFailureWaterfallExhaustedNoFill:
             codeString = "WATERFALL_EXHAUSTED_NO_FILL"
-        
+        case .loadFailureAdTooLarge:
+            codeString = "AD_TOO_LARGE"
+
         // 400
         case .showFailureUnknown:
             codeString = "UNKNOWN"

@@ -35,8 +35,8 @@ class MetricsEventLoggerMock: Mock<MetricsEventLoggerMock.Method>, MetricsEventL
         record(.logPrebid, parameters: [loadID, events])
     }
     
-    func logLoad(auctionID: AuctionID, loadID: LoadID, events: [MetricsEvent], error: ChartboostMediationError?) -> RawMetrics? {
-        record(.logLoad, parameters: [auctionID, loadID, events, error])
+    func logLoad(auctionID: ChartboostMediationSDK.AuctionID, loadID: ChartboostMediationSDK.LoadID, events: [ChartboostMediationSDK.MetricsEvent], error: ChartboostMediationSDK.ChartboostMediationError?, adFormat: ChartboostMediationSDK.AdFormat, size: CGSize?) -> ChartboostMediationSDK.RawMetrics? {
+        record(.logLoad, parameters: [auctionID, loadID, events, error, adFormat, size])
     }
     
     func logShow(auctionID: AuctionID, loadID: LoadID, event: MetricsEvent) -> RawMetrics? {
@@ -62,9 +62,9 @@ class MetricsEventLoggerMock: Mock<MetricsEventLoggerMock.Method>, MetricsEventL
     func logReward(for ad: PartnerAd) {
         record(.logReward, parameters: [ad])
     }
-    
-    func logAuctionCompleted(with bids: [Bid], winner: Bid, loadID: LoadID) {
-        record(.logAuctionCompleted, parameters: [bids, winner, loadID])
+
+    func logAuctionCompleted(with bids: [ChartboostMediationSDK.Bid], winner: ChartboostMediationSDK.Bid, loadID: ChartboostMediationSDK.LoadID, adFormat: ChartboostMediationSDK.AdFormat, size: CGSize?) {
+        record(.logAuctionCompleted, parameters: [bids, winner, loadID, adFormat, size])
     }
     
     func logRewardedCallback(_ rewardedCallback: RewardedCallback, customData: String?) {

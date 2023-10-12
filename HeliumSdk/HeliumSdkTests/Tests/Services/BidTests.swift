@@ -27,4 +27,65 @@ final class BidTests: HeliumTestCase {
         let bid = Bid.makeMock(rewardedCallbackData: rewardedCallbackData)
         XCTAssertNil(bid.rewardedCallback)
     }
+
+    func testConsumesWidthAndHeightFromRTBBidResponse() throws {
+        let bidResponse = OpenRTB.BidResponse.mock(
+            seatbid: [
+                .mock(
+                    bid: [
+                        .mock(w: 400, h: 100)
+                    ]
+                )
+            ]
+        )
+        let bids = Bid.makeBids(response: bidResponse, request: .test(adFormat: .adaptiveBanner))
+        let bid = try XCTUnwrap(bids.first)
+        XCTAssertEqual(bid.size?.width, 400.0)
+        XCTAssertEqual(bid.size?.height, 100.0)
+    }
+
+    func testBidSizeIsNilWhenWidthIsNil() throws {
+        let bidResponse = OpenRTB.BidResponse.mock(
+            seatbid: [
+                .mock(
+                    bid: [
+                        .mock(w: nil, h: 100)
+                    ]
+                )
+            ]
+        )
+        let bids = Bid.makeBids(response: bidResponse, request: .test(adFormat: .adaptiveBanner))
+        let bid = try XCTUnwrap(bids.first)
+        XCTAssertNil(bid.size)
+    }
+
+    func testBidSizeIsNilWhenHeightIsNil() throws {
+        let bidResponse = OpenRTB.BidResponse.mock(
+            seatbid: [
+                .mock(
+                    bid: [
+                        .mock(w: 400, h: nil)
+                    ]
+                )
+            ]
+        )
+        let bids = Bid.makeBids(response: bidResponse, request: .test(adFormat: .adaptiveBanner))
+        let bid = try XCTUnwrap(bids.first)
+        XCTAssertNil(bid.size)
+    }
+
+    func testBidSizeIsNilWhenAdFormatIsNotAdaptiveBanner() throws {
+        let bidResponse = OpenRTB.BidResponse.mock(
+            seatbid: [
+                .mock(
+                    bid: [
+                        .mock(w: 400, h: 100)
+                    ]
+                )
+            ]
+        )
+        let bids = Bid.makeBids(response: bidResponse, request: .test(adFormat: .banner))
+        let bid = try XCTUnwrap(bids.first)
+        XCTAssertNil(bid.size)
+    }
 }

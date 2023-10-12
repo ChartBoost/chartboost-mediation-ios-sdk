@@ -11,9 +11,7 @@ class AppTrackingInfoProviderTests: HeliumTestCase {
     private static let zeroUUID = AppTrackingInfoProvider.Constant.zeroUUID // "00000000-0000-0000-0000-000000000000"
     private static let validUUID = "12300000-0000-0000-0000-000000000789"
     private static let possibleValuesOfIsSubjectToCOPPA = [true, false, nil]
-    private static let possibleValuesOfAuthStatus: [AppTrackingInfoProviderDependencyMock.AuthStatusOverride] = [
-        .notDetermined, .restricted, .denied, .authorized
-    ]
+    private static let possibleValuesOfAuthStatus = AppTrackingInfoProviderDependencyMock.AuthStatusOverride.allCases
     private static let possibleValuesOfIDFADependency = [validUUID, zeroUUID] // Apple IDFA is never nil
     private static let possibleValuesOfIDFVDependency = [validUUID, zeroUUID, nil]
     private static let possibleValuesOfIsAdvertisingTrackingEnabled = [true, false]

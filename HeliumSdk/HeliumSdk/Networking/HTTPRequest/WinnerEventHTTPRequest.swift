@@ -16,11 +16,13 @@ struct WinnerEventHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawD
         let bidders: [Bidder]
         let lineItemID: String?
         let partnerPlacement: String?
-        let price: Double
+        let price: Decimal
         let type: String
         let winner: String
+        let placementType: AdFormat
+        let size: BackendEncodableSize?
 
-        init(winner: Bid, of bids: [Bid]) {
+        init(winner: Bid, of bids: [Bid], adFormat: AdFormat, size: CGSize?) {
             auctionID = winner.auctionIdentifier
             bidders = bids.map { Bidder(bid: $0) }
             lineItemID = winner.lineItemIdentifier
@@ -28,12 +30,23 @@ struct WinnerEventHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawD
             price = winner.clearingPrice ?? -1
             type = winner.isProgrammatic ? "bidding" : "mediation"
             self.winner = winner.partnerIdentifier
+
+            placementType = adFormat
+
+            // Size can be omitted if the format is not `adaptiveBanner`.
+            if adFormat == .adaptiveBanner {
+                // If size is nil for some reason, we need to send 0s, or else the server will
+                // return a 400 error.
+                self.size = size?.backendEncodableSize ?? CGSize.zero.backendEncodableSize
+            } else {
+                self.size = nil
+            }
         }
 
         struct Bidder: Encodable {
             let lurl: String?
             let nurl: String?
-            let price: Double
+            let price: Decimal
             let seat: String
 
             init(bid: Bid) {
@@ -52,12 +65,12 @@ struct WinnerEventHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawD
 
     var url: URL {
         get throws {
-            try makeURL(backendAPI: .sdk, path: BackendAPI.Path.SDK.Event.winner)
+            try makeURL(endpoint: .winner)
         }
     }
 
-    init(winner: Bid, of bids: [Bid], loadID: LoadID) {
-        body = .init(winner: winner, of: bids)
+    init(winner: Bid, of bids: [Bid], loadID: LoadID, adFormat: AdFormat, size: CGSize?) {
+        body = .init(winner: winner, of: bids, adFormat: adFormat, size: size)
         customHeaders = [HTTP.HeaderKey.loadID.rawValue: loadID]
     }
 }

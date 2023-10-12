@@ -229,6 +229,9 @@ extension ChartboostMediationError {
         /// All waterfall entries have resulted in an error or no fill.
         case loadFailureWaterfallExhaustedNoFill = 335
 
+        /// The returned ad was larger than the requested size.
+        case loadFailureAdTooLarge = 336
+
         // MARK: - 400: Show
 
         /// There was an error that was not accounted for.

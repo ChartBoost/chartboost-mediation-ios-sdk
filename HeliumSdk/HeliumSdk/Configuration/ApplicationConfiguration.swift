@@ -22,3 +22,4 @@ typealias AllConfigurations =
     & PartnerControllerConfiguration
     & MetricsEventLoggerConfiguration
     & ConsoleLoggerConfiguration
+    & PrivacyConfiguration

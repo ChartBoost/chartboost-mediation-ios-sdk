@@ -7,34 +7,57 @@ For more information on the Chartboost Mediation SDK, see [Chartboost Developers
 ### Initializing the SDK
 
 - ``Helium``
+- ``HeliumSdkDelegate``
 - ``HeliumInitializationOptions``
 - ``HeliumAdapterInfo``
 - ``PartnerIdentifier``
 
-### Ad Objects
+### Ad Request and Response
 
-- ``HeliumBannerAd``
-- ``HeliumBannerView``
-- ``HeliumInterstitialAd``
-- ``HeliumRewardedAd``
-- ``ChartboostMediationFullscreenAd``
+Objects used for request and response of both banner and fullscreen ads.
 
-### Loading and Showing Ads
-
-- ``CHBHBannerSize``
 - ``HeliumKeywords``
 - ``ChartboostMediationAdLoadRequest``
 - ``ChartboostMediationAdLoadResult``
+
+### Banner Ads
+
+- ``ChartboostMediationBannerView``
+- ``ChartboostMediationBannerViewDelegate``
+- ``ChartboostMediationBannerSize``
+- ``ChartboostMediationBannerType``
+- ``ChartboostMediationBannerLoadRequest``
+- ``ChartboostMediationBannerLoadResult``
+- ``ChartboostMediationBannerHorizontalAlignment``
+- ``ChartboostMediationBannerVerticalAlignment``
+
+### Legacy Banner Ads
+
+The legacy interfaces for banner ads. These will be removed in a future release.
+
+- ``HeliumBannerAd``
+- ``HeliumBannerAdDelegate``
+- ``HeliumBannerView``
+- ``CHBHBannerSize``
+
+### Fullscreen Ads
+
+- ``ChartboostMediationFullscreenAd``
+- ``ChartboostMediationFullscreenAdDelegate``
 - ``ChartboostMediationFullscreenAdLoadResult``
 - ``ChartboostMediationAdShowResult``
 
-### Delegates and Notifications
+### Interstial and Rewarded Ads
 
-- ``HeliumSdkDelegate``
-- ``HeliumBannerAdDelegate``
+The legacy interfaces for interstitial and rewarded ads. These will be removed in a future release.
+
+- ``HeliumInterstitialAd``
 - ``CHBHeliumInterstitialAdDelegate``
+- ``HeliumRewardedAd``
 - ``CHBHeliumRewardedAdDelegate``
-- ``ChartboostMediationFullscreenAdDelegate``
+
+### Notifications
+
 - ``HeliumImpressionData``
 
 ### Handling Errors

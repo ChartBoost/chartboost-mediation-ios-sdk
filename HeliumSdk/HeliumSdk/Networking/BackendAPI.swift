@@ -6,74 +6,105 @@
 import Foundation
 
 private enum Constant {
-    static let defaultURLScheme = "https"
-    static let defaultRTBHost = "helium-rtb.chartboost.com"
-    static let defaultSDKHost = "helium-sdk.chartboost.com"
+    static let sdkHost = "mediation-sdk.chartboost.com"
 }
 
 enum BackendAPI {
-    enum Path {
-        enum RTB {
-            static let auctions = "/v3/auctions"
+    enum Endpoint {
+        case auction_nonTracking
+        case auction_tracking
+        case bannerSize
+        case click
+        case config // previously known as `sdk_init`
+        case expiration
+        case initialization
+        case load
+        case mediationImpression
+        case partnerImpression
+        case prebid
+        case reward
+        case show
+        case winner
+
+        var scheme: String {
+            "https"
         }
-        enum SDK {
-            enum Event {
-                static let click = "/v2/event/click"
-                static let expiration = "/v1/event/expiration"
-                static let heliumImpression = "/v1/event/helium_impression"
-                static let initialization = "/v1/event/initialization"
-                static let load = "/v1/event/load"
-                static let partnerImpression = "/v1/event/partner_impression"
-                static let prebid = "/v1/event/prebid"
-                static let reward = "/v2/event/reward"
-                static let show = "/v1/event/show"
-                static let winner = "/v2/event/winner"
+
+        var host: String {
+            var subdomainPrefix: String {
+                switch self {
+                case .auction_nonTracking:
+                    return "non-tracking.auction"
+                case .auction_tracking:
+                    return "tracking.auction"
+                case .bannerSize:
+                    return "banner-size"
+                case .click:
+                    return "click"
+                case .config:
+                    return "config"
+                case .expiration:
+                    return "expiration"
+                case .initialization:
+                    return "initialization"
+                case .load:
+                    return "load"
+                case .mediationImpression:
+                    return "mediation-impression"
+                case .partnerImpression:
+                    return "partner-impression"
+                case .prebid:
+                    return "prebid"
+                case .reward:
+                    return "reward"
+                case .show:
+                    return "show"
+                case .winner:
+                    return "winner"
+                }
             }
 
-            static let sdkInit = "/v1/sdk_init"
+            @Injected(\.environment) var environment
+            let baseHost: String
+            if let hostOverride = environment.testMode.sdkAPIHostOverride {
+                baseHost = hostOverride.isEmpty ? Constant.sdkHost : hostOverride
+            } else {
+                baseHost = Constant.sdkHost
+            }
+            return [subdomainPrefix, baseHost].joined(separator: ".")
         }
-    }
 
-    case rtb
-    case sdk
-
-    var scheme: String {
-        @Injected(\.environment) var environment
-
-        switch self {
-        case .rtb:
-            return Self.scheme(withHostOverride: environment.testMode.rtbAPIHostOverride)
-        case .sdk:
-            return Self.scheme(withHostOverride: environment.testMode.sdkAPIHostOverride)
-        }
-    }
-
-    var host: String {
-        @Injected(\.environment) var environment
-
-        switch self {
-        case .rtb:
-            return Self.host(withHostOverride: environment.testMode.rtbAPIHostOverride, defaultHost: Constant.defaultRTBHost)
-        case .sdk:
-            return Self.host(withHostOverride: environment.testMode.sdkAPIHostOverride, defaultHost: Constant.defaultSDKHost)
-        }
-    }
-}
-
-extension BackendAPI {
-    static func scheme(withHostOverride override: String?, defaultURLScheme: String = Constant.defaultURLScheme) -> String {
-        if let override = override, let scheme = URL(string: override)?.scheme {
-            return scheme
-        } else {
-            return defaultURLScheme
-        }
-    }
-
-    static func host(withHostOverride override: String?, defaultHost: String) -> String {
-        if let override = override, let host = URL(string: override)?.host {
-            return host
-        } else {
-            return defaultHost
+        var basePath: String {
+            switch self {
+            case .auction_nonTracking:
+                return "/v3/auctions"
+            case .auction_tracking:
+                return "/v3/auctions"
+            case .bannerSize:
+                return "/v1/event/banner_size"
+            case .click:
+                return "/v2/event/click"
+            case .config:
+                return "/v1/sdk_init"
+            case .expiration:
+                return "/v1/event/expiration"
+            case .initialization:
+                return "/v1/event/initialization"
+            case .load:
+                return "/v2/event/load"
+            case .mediationImpression:
+                return "/v1/event/helium_impression"
+            case .partnerImpression:
+                return "/v1/event/partner_impression"
+            case .prebid:
+                return "/v1/event/prebid"
+            case .reward:
+                return "/v2/event/reward"
+            case .show:
+                return "/v1/event/show"
+            case .winner:
+                return "/v3/event/winner"
+            }
         }
     }
 }

@@ -1,0 +1,376 @@
+// Copyright 2022-2023 Chartboost, Inc.
+//
+// Use of this source code is governed by an MIT-style
+// license that can be found in the LICENSE file.
+
+import Foundation
+
+/// A view that can load and display a Chartboost Mediation banner ad.
+@objc
+public class ChartboostMediationBannerView: UIView {
+    // MARK: - Public Settable
+    /// The delegate of this banner view.
+    @objc public weak var delegate: ChartboostMediationBannerViewDelegate?
+
+    /// Optional keywords that can be associated with the advertisement placement.
+    ///
+    /// The value of this property should be set, and not modified directly:
+    ///
+    /// **Swift**
+    /// ```swift
+    /// let keywords = ["key": "value"]
+    /// banner.keywords = keywords
+    /// ```
+    ///
+    /// **Objective-C**
+    /// ```objc
+    /// NSDictionary *keywords = @{ @"key": @"value" };
+    /// banner.keywords = keywords;
+    /// ```
+    @objc public var keywords: [String: String]? {
+        get { controller.keywords }
+        set { controller.keywords = newValue }
+    }
+
+    /// The horizontal alignment of the banner ad within this view, if the size of this view is made larger than the banner ad.
+    ///
+    /// Defaults to ``ChartboostMediationBannerHorizontalAlignment/center``.
+    @objc public var horizontalAlignment: ChartboostMediationBannerHorizontalAlignment = .center {
+        didSet {
+            setNeedsLayout()
+        }
+    }
+
+    /// The vertical alignment of the banner ad within this view, if the size of this view is made larger than the banner ad.
+    ///
+    /// Defaults to ``ChartboostMediationBannerVerticalAlignment/center``.
+    @objc public var verticalAlignment: ChartboostMediationBannerVerticalAlignment = .center {
+        didSet {
+            setNeedsLayout()
+        }
+    }
+
+    // MARK: - Public Readonly
+    /// The original `request` that ``load(with:viewController:completion:)`` was called with, or `nil` if a
+    /// banner is not loaded.
+    ///
+    /// When ``load(with:viewController:completion:)`` is called, this value will be available when `completion`
+    /// is called. If ``load(with:viewController:completion:)`` is called with a new request, this value will reflect the
+    /// previous value until the new request has successfully loaded.
+    @objc public var request: ChartboostMediationBannerLoadRequest? {
+        controller.request
+    }
+
+    /// The load metrics for the most recent successful load operation, or `nil` if a banner is not loaded.
+    ///
+    /// If auto-refresh is enabled, this value will change over time. The
+    /// ``ChartboostMediationBannerViewDelegate/willAppear(bannerView:)`` delegate method will be called after
+    /// this value changes.
+    @objc public var loadMetrics: [String: Any]? {
+        controller.showingBannerLoadResult?.metrics
+    }
+
+    /// The actual size of the ad that has been loaded, or `nil` if a banner is not loaded.
+    ///
+    /// If auto-refresh is enabled, this value will change over time. The
+    /// ``ChartboostMediationBannerViewDelegate/willAppear(bannerView:)`` delegate method will be called after
+    /// this value changes.
+    @objc public var size: ChartboostMediationBannerSize? {
+        ad?.adSize
+    }
+
+    /// Information about the winning bid, or `nil` if a banner is not loaded.
+    ///
+    /// If auto-refresh is enabled, this value will change over time. The
+    /// ``ChartboostMediationBannerViewDelegate/willAppear(bannerView:)`` delegate method will be called after
+    /// this value changes.
+    @objc public var winningBidInfo: [String: Any]? {
+        ad?.bidInfo
+    }
+
+    // MARK: - Private Variables
+    // Marked static so that we can initialize `controller` before calling `super.init`.
+    @Injected(\.adFactory) private static var adFactory
+    @Injected(\.bannerControllerConfiguration) private var configuration
+    @Injected(\.networkManager) private var networkManager
+    @Injected(\.taskDispatcher) private var taskDispatcher
+    private let controller: BannerSwapControllerProtocol
+
+    /// Convenience to get the loaded ad from the controller, or `nil` if an ad is not loaded.
+    private var ad: HeliumAd? {
+        try? controller.showingBannerLoadResult?.result.get()
+    }
+
+    // MARK: - Public Methods
+    public override init(frame: CGRect) {
+        self.controller = Self.adFactory.makeBannerSwapController()
+        super.init(frame: frame)
+
+        controller.delegate = self
+
+        self.backgroundColor = .clear
+        sendVisibilityStateToController()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    /// Loads a banner ad using the information provided in the request.
+    ///
+    /// When this banner view is visible in the app's view hierarchy it will automatically present the loaded ad.
+    /// Calling this method will start the banner auto-refresh process.
+    ///
+    /// - Parameter request: A request containing the information used to load the ad.
+    /// - Parameter viewController: View controller used to present the ad.
+    /// - Parameter completion: A closure executed when the load operation is done.
+    ///
+    /// - Note: Calling `load` a second time before `completion` has been called for a previous load will result in the previous
+    /// `completion` not being called.
+    @objc
+    public func load(
+        with request: ChartboostMediationBannerLoadRequest,
+        viewController: UIViewController,
+        completion: @escaping (ChartboostMediationBannerLoadResult) -> Void
+    ) {
+        controller.loadAd(request: request, viewController: viewController, completion: completion)
+    }
+
+    /// Clears the loaded ad, removes the currently presented ad if any, and stops the auto-refresh process.
+    ///
+    /// - Note: Calling `reset` after calling `load`, but before the load's `completion` has been called, will result in
+    /// `completion` not being called.
+    @objc
+    public func reset() {
+        controller.clearAd()
+    }
+
+    // MARK: - UIView
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+
+        guard let bannerView = ad?.partnerAd.inlineView,
+              let size = ad?.adSize else {
+            return
+        }
+
+        bannerView.frame = bannerFrame(for: size)
+    }
+
+    public override var intrinsicContentSize: CGSize {
+        return ad?.adSize?.size ??
+            CGSize(width: UIView.noIntrinsicMetric, height: UIView.noIntrinsicMetric)
+    }
+
+    public override var isHidden: Bool {
+        didSet {
+            sendVisibilityStateToController()
+        }
+    }
+
+    public override func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        sendVisibilityStateToController()
+    }
+
+    private func sendVisibilityStateToController() {
+        // The view is considered not visible if it's removed from the view hierarchy or if it's hidden.
+        let visible = !isHidden && superview != nil
+        controller.viewVisibilityDidChange(on: self, to: visible)
+    }
+}
+
+// MARK: - BannerSwapControllerDelegate
+extension ChartboostMediationBannerView: BannerSwapControllerDelegate {
+    func bannerSwapController(
+        _ bannerController: BannerSwapControllerProtocol,
+        displayBannerView bannerView: UIView
+    ) {
+        // The value of `shownAd` has been updated on `controller`, so we need to call `willAppear`
+        // before actually adding the ad to the view heirarchy.
+        delegate?.willAppear?(bannerView: self)
+
+        self.addSubview(bannerView)
+        self.setNeedsLayout()
+        self.invalidateIntrinsicContentSize()
+    }
+
+    func bannerSwapController(
+        _ bannerController: BannerSwapControllerProtocol,
+        clearBannerView bannerView: UIView
+    ) {
+        // Make sure to use the `ad` passed in the delegate method, since the this call could be
+        // made during a controller swap, and may possibly be made after an ad from the new
+        // controller has already been displayed.
+        bannerView.removeFromSuperview()
+        self.invalidateIntrinsicContentSize()
+    }
+
+    func bannerSwapControllerDidRecordImpression(_ bannerController: BannerSwapControllerProtocol) {
+        delegate?.didRecordImpression?(bannerView: self)
+
+        logContainerTooSmallWarningIfNeeded()
+    }
+
+    func bannerSwapControllerDidClick(_ bannerController: BannerSwapControllerProtocol) {
+        delegate?.didClick?(bannerView: self)
+    }
+}
+
+// MARK: - Layout Helpers
+extension ChartboostMediationBannerView {
+    /// Returns the frame for the given `ChartboostMediationBannerSize`.
+    private func bannerFrame(for size: ChartboostMediationBannerSize) -> CGRect {
+        guard bounds.size.height > 0.0, size.aspectRatio > 0.0 else {
+            return .zero
+        }
+
+        let cgSize = bannerCGSize(for: size)
+        let origin = bannerOrigin(for: cgSize)
+        return CGRect(origin: origin, size: cgSize)
+    }
+
+    /// Returns the `CGSize` for the given `ChartboostMediationBannerSize`.
+    private func bannerCGSize(for size: ChartboostMediationBannerSize) -> CGSize {
+        switch size.type {
+        case .fixed:
+            return size.size
+        case .adaptive:
+            // Determine if the banner needs to be pinned to the top or the sizes of the bounds
+            // by comparing the aspect ratio of the bounds to the aspect ratio of the banner.
+            var bannerWidth: CGFloat
+            var bannerHeight: CGFloat
+            let boundsAspectRatio = bounds.width / bounds.height
+
+            if boundsAspectRatio > size.aspectRatio {
+                // Bounds are wider than the aspect ratio of the banner, so we constrain the size
+                // of the ad based on the height.
+                bannerHeight = bounds.height
+                bannerWidth = bannerHeight * size.aspectRatio
+            } else {
+                // Bounds are taller than the aspect ratio of the banner, so we constrain the size
+                // of the ad based on the width. This also covers the case where the aspect ratios
+                // are equal, and it doesn't matter which dimension we pick.
+                bannerWidth = bounds.width
+                bannerHeight = bannerWidth / size.aspectRatio
+            }
+
+            let minSize = minSize(for: size)
+
+            // If one dimension is smaller than the minimum, then we need to adjust both that
+            // dimension and the other dimension based on the aspect ratio.
+            if bannerWidth < minSize.width {
+                bannerWidth = minSize.width
+                bannerHeight = bannerWidth / size.aspectRatio
+            }
+
+            if bannerHeight < minSize.height {
+                bannerHeight = minSize.height
+                bannerWidth = bannerHeight * size.aspectRatio
+            }
+
+            return CGSize(width: bannerWidth, height: bannerHeight)
+        }
+    }
+
+    /// Determine the min width and height for the banner based on the aspect ratio of the banner.
+    private func minSize(for size: ChartboostMediationBannerSize) -> CGSize {
+        let minWidth: CGFloat
+        let minHeight: CGFloat
+
+        if size.aspectRatio == 1.0 {
+            minWidth = Constants.minSizeFor1x1Tile
+            minHeight = Constants.minSizeFor1x1Tile
+        } else if size.aspectRatio > 1.0 {
+            minWidth = 0
+            minHeight = Constants.minHeightForHorizontal
+        } else {
+            minWidth = Constants.minWidthForVertical
+            minHeight = 0
+        }
+
+        return CGSize(width: minWidth, height: minHeight)
+    }
+
+    /// Determine the origin of the banner view within the bounds.
+    private func bannerOrigin(for cgSize: CGSize) -> CGPoint {
+        let x: CGFloat
+        let y: CGFloat
+
+        switch horizontalAlignment {
+        case .left: x = 0.0
+        case .center: x = (bounds.width - cgSize.width) / 2.0
+        case .right: x = bounds.width - cgSize.width
+        }
+
+        switch verticalAlignment {
+        case .top: y = 0.0
+        case .center: y = (bounds.height - cgSize.height) / 2.0
+        case .bottom: y = bounds.height - cgSize.height
+        }
+
+        return CGPoint(x: x, y: y)
+    }
+}
+
+// MARK: - Other
+extension ChartboostMediationBannerView {
+    private func logContainerTooSmallWarningIfNeeded() {
+        guard let ad, let bannerView = ad.partnerAd.inlineView, let size = ad.adSize else {
+            return
+        }
+
+        // We will wait a bit to ensure the pub has adequate time after both the will appear and
+        // impression delegate callbacks to size the view correctly.
+        taskDispatcher.async(on: .main, after: configuration.bannerSizeEventDelay) { [weak self] in
+            guard let self else {
+                return
+            }
+
+            // Ensure the same banner is being displayed after the delay.
+            guard let currentBannerView = self.ad?.partnerAd.inlineView, bannerView === currentBannerView else {
+                return
+            }
+
+            let cgSize = self.bannerCGSize(for: size)
+
+            if cgSize.width > self.frame.width || cgSize.height > self.frame.height {
+                logger.warning("ChartboostMediationBannerView (\(self.frame.size.pretty)) is smaller than minimum creative size (\(cgSize.pretty))")
+
+                var requestSize: BackendEncodableSize?
+
+                if let requestCGSize = self.request?.size.size {
+                    requestSize = BackendEncodableSize(cgSize: requestCGSize)
+                }
+
+                let data = AdaptiveBannerSizeData(
+                    auctionID: ad.bid.auctionIdentifier,
+                    // Send the size that the ad will be rendered at.
+                    creativeSize: BackendEncodableSize(cgSize: cgSize),
+                    containerSize: BackendEncodableSize(cgSize: self.frame.size),
+                    requestSize: requestSize
+                )
+                let request = AdaptiveBannerSizeHTTPRequest(
+                    data: data,
+                    loadID: ad.request.loadID
+                )
+                self.networkManager.send(request) { _ in }
+            }
+        }
+    }
+}
+
+// MARK: - Constants
+extension ChartboostMediationBannerView {
+    private struct Constants {
+        static let minHeightForHorizontal: CGFloat = 50.0
+        static let minWidthForVertical: CGFloat = 160.0
+        static let minSizeFor1x1Tile: CGFloat = 300.0
+    }
+}
+
+extension CGSize {
+    fileprivate var pretty: String {
+        return "\(width)x\(height)"
+    }
+}

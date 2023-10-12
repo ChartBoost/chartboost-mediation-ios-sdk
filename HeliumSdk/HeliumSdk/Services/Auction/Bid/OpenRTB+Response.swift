@@ -55,7 +55,7 @@ extension OpenRTB {
         let id: String
 
         /// Bid price expressed as CPM although the actual transaction is for a unit impression only.
-        let price: Double?
+        let price: Decimal?
 
         /// Win notice URL called by the exchange if the bid wins (not necessarily indicative of a delivered, viewed, or billable ad);
         /// optional means of serving ad markup. Substitution macros (Section 4.4) may be included in both the URL and optionally returned markup.
@@ -73,10 +73,16 @@ extension OpenRTB {
         /// Extention (implementation-specific) data
         let ext: Extension
 
+        /// Width of the creative in device independent pixels.
+        let w: Int?
+
+        /// Height of the creative in device independent pixels.
+        let h: Int?
+
         struct Extension: Decodable {
-            let ad_revenue: Double?
+            let ad_revenue: Decimal?
             let line_item_id: String?
-            let cpm_price: Double?
+            let cpm_price: Decimal?
             let partner_placement: String?
             let bidder: JSON<[String: Any]>?
 

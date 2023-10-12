@@ -12,6 +12,7 @@ final class EnvironmentMock: EnvironmentProviding {
     lazy var device: DeviceInfoProviding = DeviceInfoProviderMock()
     lazy var screen: ScreenInfoProviding = ScreenInfoProviderMock()
     lazy var sdk: SDKInfoProviding = SDKInfoProviderMock()
+    lazy var sdkSettings: SDKSettingsProviding = SDKSettingsProviderMock()
     lazy var session: SessionInfoProviding = SessionInfoProviderMock()
     lazy var skAdNetwork: SKAdNetworkInfoProviding = SKAdNetworkInfoProviderMock()
     lazy var telephonyNetwork: TelephonyNetworkInfoProviding = TelephonyNetworkInfoProviderMock()
@@ -140,6 +141,10 @@ extension EnvironmentMock {
         }
     }
 
+    fileprivate final class SDKSettingsProviderMock: SDKSettingsProviding {
+        var discardOversizedAds = false
+    }
+
     fileprivate final class SessionInfoProviderMock: SessionInfoProviding {
         var elapsedSessionDuration: TimeInterval = 0
         var sessionID = UUID()
@@ -179,7 +184,6 @@ extension EnvironmentMock {
     final class TestModeInfoProviderMock: TestModeInfoProviding {
         var isTestModeEnabled = false
         var isRateLimitingEnabled = true
-        var rtbAPIHostOverride: String? = nil
         var sdkAPIHostOverride: String? = nil
 
         func randomizeAll() {

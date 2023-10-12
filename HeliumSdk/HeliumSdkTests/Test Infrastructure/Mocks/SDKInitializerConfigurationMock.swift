@@ -10,4 +10,5 @@ class SDKInitializerConfigurationMock: SDKInitializerConfiguration {
     var initTimeout: TimeInterval = 1
     var partnerCredentials: [PartnerIdentifier : [String : Any]] = [:]
     var partnerAdapterClassNames: Set<String> = ["one", "two"]
+    var privacyBanList: [PrivacyBanListCandidate] = [.languageAndLocale]
 }

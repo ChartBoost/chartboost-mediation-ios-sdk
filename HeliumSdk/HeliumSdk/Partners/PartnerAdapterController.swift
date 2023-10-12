@@ -195,7 +195,7 @@ final class PartnerAdapterController: PartnerController {
         }
     }
     
-    func routeLoad(request: PartnerAdLoadRequest, viewController: UIViewController?, delegate: PartnerAdDelegate, completion: @escaping (Result<PartnerAd, ChartboostMediationError>) -> Void) -> CancelAction {
+    func routeLoad(request: PartnerAdLoadRequest, viewController: UIViewController?, delegate: PartnerAdDelegate, completion: @escaping (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void) -> CancelAction {
         taskDispatcher.sync(on: .background) { [self] in    // sync operation so we can return the cancel action with info about the created ad
             logger.debug("Routing load to \(request.partnerIdentifier) for \(request.format) ad with placement \(request.partnerPlacement)")
             // Fail early if adapter is not initialized
@@ -207,13 +207,13 @@ final class PartnerAdapterController: PartnerController {
             do {
                 // Create partner ad and store it. Banners are handled on the main thread since they generally make use of UIKit
                 let makeAd = { try adapter.makeAd(request: request, delegate: delegate) }
-                let ad = request.format == .banner
+                let ad = request.format.isBanner
                     ? try taskDispatcher.sync(on: .main, execute: makeAd)
                     : try makeAd()
                 addToStorage(ad)
                 
                 // Partner load. Banners are handled on the main thread since they generally make use of UIKit
-                taskDispatcher.async(on: request.format == .banner ? .main : .background) {     // here we switch to async to make sure we are not clogging the UI thread with the previous sync
+                taskDispatcher.async(on: request.format.isBanner ? .main : .background) {     // here we switch to async to make sure we are not clogging the UI thread with the previous sync
                     ad.load(with: viewController) { [weak self, weak ad] result in
                         self?.taskDispatcher.async(on: .background) {
                             // If ad is nil or not in storage that means it was invalidated and the load result should be ignored
@@ -222,10 +222,10 @@ final class PartnerAdapterController: PartnerController {
                                 return
                             }
                             switch result {
-                            case .success(_):   // We ignore the details parameter for now
+                            case .success(let partnerDetails):
                                 // On success report back with a loaded partner ad
                                 logger.info("Received load success from \(request.partnerIdentifier) for \(request.format) ad with placement \(request.partnerPlacement)")
-                                completion(.success(ad))
+                                completion(.success((ad, partnerDetails)))
                             case .failure(let error):
                                 // On failure we dispose of the partner ad and report back with error
                                 logger.error("Received load failure from \(request.partnerIdentifier) for \(request.format) ad with placement \(request.partnerPlacement) and error: \(error)")

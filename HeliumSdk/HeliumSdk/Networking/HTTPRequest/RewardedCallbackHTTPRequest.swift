@@ -102,7 +102,7 @@ private extension RewardedCallback {
         urlString = urlString.replacingCustomData(customData ?? "", uriEncode: true)
         urlString = urlString.replacingNetworkName(partnerIdentifier, uriEncode: true)
         urlString = urlString.replacingSDKTimestamp(timestampMs)
-        return URL(string: urlString)
+        return URL(unsafeString: urlString)
     }
 
     func bodyData(customData: String?, timestampMs: Int) -> Data? {
@@ -139,11 +139,11 @@ private extension String {
         return secondPass
     }
 
-    func replacingAdRevenue(_ adRevenue: Double?, defaultValue: String) -> String {
+    func replacingAdRevenue(_ adRevenue: Decimal?, defaultValue: String) -> String {
         replacing(macro: .adRevenue, with: adRevenue.map { "\($0)" } ?? defaultValue)
     }
 
-    func replacingCPMPrice(_ cpmPrice: Double?, defaultValue: String) -> String {
+    func replacingCPMPrice(_ cpmPrice: Decimal?, defaultValue: String) -> String {
         replacing(macro: .cpmPrice, with: cpmPrice.map { "\($0)" } ?? defaultValue)
     }
 

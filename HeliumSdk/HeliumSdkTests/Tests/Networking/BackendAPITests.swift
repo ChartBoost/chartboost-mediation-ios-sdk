@@ -8,55 +8,97 @@ import XCTest
 
 class BackendAPITests: HeliumTestCase {
 
+    static let allEndpoints: [BackendAPI.Endpoint] = [
+        .auction_nonTracking,
+        .auction_tracking,
+        .bannerSize,
+        .click,
+        .config,
+        .expiration,
+        .initialization,
+        .load,
+        .mediationImpression,
+        .partnerImpression,
+        .prebid,
+        .reward,
+        .show,
+        .winner
+    ]
+
+    func testEndpointValues() {
+        Self.allEndpoints.forEach { endpoint in
+            XCTAssertEqual(endpoint.scheme, "https")
+
+            switch endpoint {
+            case .auction_nonTracking:
+                XCTAssertEqual(endpoint.host, "non-tracking.auction.mediation-sdk.chartboost.com")
+                XCTAssertEqual(endpoint.basePath, "/v3/auctions")
+            case .auction_tracking:
+                XCTAssertEqual(endpoint.host, "tracking.auction.mediation-sdk.chartboost.com")
+                XCTAssertEqual(endpoint.basePath, "/v3/auctions")
+            case .bannerSize:
+                XCTAssertEqual(endpoint.host, "banner-size.mediation-sdk.chartboost.com")
+                XCTAssertEqual(endpoint.basePath, "/v1/event/banner_size")
+            case .click:
+                XCTAssertEqual(endpoint.host, "click.mediation-sdk.chartboost.com")
+                XCTAssertEqual(endpoint.basePath, "/v2/event/click")
+            case .config:
+                XCTAssertEqual(endpoint.host, "config.mediation-sdk.chartboost.com")
+                XCTAssertEqual(endpoint.basePath, "/v1/sdk_init")
+            case .expiration:
+                XCTAssertEqual(endpoint.host, "expiration.mediation-sdk.chartboost.com")
+                XCTAssertEqual(endpoint.basePath, "/v1/event/expiration")
+            case .initialization:
+                XCTAssertEqual(endpoint.host, "initialization.mediation-sdk.chartboost.com")
+                XCTAssertEqual(endpoint.basePath, "/v1/event/initialization")
+            case .load:
+                XCTAssertEqual(endpoint.host, "load.mediation-sdk.chartboost.com")
+                XCTAssertEqual(endpoint.basePath, "/v2/event/load")
+            case .mediationImpression:
+                XCTAssertEqual(endpoint.host, "mediation-impression.mediation-sdk.chartboost.com")
+                XCTAssertEqual(endpoint.basePath, "/v1/event/helium_impression")
+            case .partnerImpression:
+                XCTAssertEqual(endpoint.host, "partner-impression.mediation-sdk.chartboost.com")
+                XCTAssertEqual(endpoint.basePath, "/v1/event/partner_impression")
+            case .prebid:
+                XCTAssertEqual(endpoint.host, "prebid.mediation-sdk.chartboost.com")
+                XCTAssertEqual(endpoint.basePath, "/v1/event/prebid")
+            case .reward:
+                XCTAssertEqual(endpoint.host, "reward.mediation-sdk.chartboost.com")
+                XCTAssertEqual(endpoint.basePath, "/v2/event/reward")
+            case .show:
+                XCTAssertEqual(endpoint.host, "show.mediation-sdk.chartboost.com")
+                XCTAssertEqual(endpoint.basePath, "/v1/event/show")
+            case .winner:
+                XCTAssertEqual(endpoint.host, "winner.mediation-sdk.chartboost.com")
+                XCTAssertEqual(endpoint.basePath, "/v3/event/winner")
+            }
+        }
+    }
+
     func testAPIHostOverride() throws {
-        let testModeInfoMock = mocks.environment.testMode as! EnvironmentMock.TestModeInfoProviderMock
+        let testModeInfoMock = try XCTUnwrap(mocks.environment.testMode as? EnvironmentMock.TestModeInfoProviderMock)
 
-        // Reset with nil
-        testModeInfoMock.rtbAPIHostOverride = nil
-        testModeInfoMock.sdkAPIHostOverride = nil
-        XCTAssertEqual(BackendAPI.rtb.scheme, "https")
-        XCTAssertEqual(BackendAPI.sdk.scheme, "https")
-        XCTAssertEqual(BackendAPI.rtb.host, "helium-rtb.chartboost.com")
-        XCTAssertEqual(BackendAPI.sdk.host, "helium-sdk.chartboost.com")
+        Self.allEndpoints.forEach { endpoint in
+            // Reset with nil
+            testModeInfoMock.sdkAPIHostOverride = nil
+            XCTAssertEqual(endpoint.scheme, "https")
+            XCTAssert(endpoint.host.hasSuffix("mediation-sdk.chartboost.com"))
 
-        // Reset with empty string
-        testModeInfoMock.rtbAPIHostOverride = ""
-        testModeInfoMock.sdkAPIHostOverride = ""
-        XCTAssertEqual(BackendAPI.rtb.scheme, "https")
-        XCTAssertEqual(BackendAPI.sdk.scheme, "https")
-        XCTAssertEqual(BackendAPI.rtb.host, "helium-rtb.chartboost.com")
-        XCTAssertEqual(BackendAPI.sdk.host, "helium-sdk.chartboost.com")
+            // Reset with empty string
+            testModeInfoMock.sdkAPIHostOverride = ""
+            XCTAssertEqual(endpoint.scheme, "https")
+            XCTAssert(endpoint.host.hasSuffix("mediation-sdk.chartboost.com"))
 
-        // Failure: required scheme missing
-        testModeInfoMock.rtbAPIHostOverride = "rtb.com"
-        testModeInfoMock.sdkAPIHostOverride = "sdk.com"
-        XCTAssertEqual(BackendAPI.rtb.scheme, "https")
-        XCTAssertEqual(BackendAPI.sdk.scheme, "https")
-        XCTAssertEqual(BackendAPI.rtb.host, "helium-rtb.chartboost.com")
-        XCTAssertEqual(BackendAPI.sdk.host, "helium-sdk.chartboost.com")
+            // Success: URL scheme is HTTPS by default
+            testModeInfoMock.sdkAPIHostOverride = "sdk.com"
+            XCTAssertEqual(endpoint.scheme, "https")
+            XCTAssert(endpoint.host.hasSuffix("sdk.com"))
 
-        // Success
-        testModeInfoMock.rtbAPIHostOverride = "https://rtb.com"
-        testModeInfoMock.sdkAPIHostOverride = "https://sdk.com"
-        XCTAssertEqual(BackendAPI.rtb.scheme, "https")
-        XCTAssertEqual(BackendAPI.sdk.scheme, "https")
-        XCTAssertEqual(BackendAPI.rtb.host, "rtb.com")
-        XCTAssertEqual(BackendAPI.sdk.host, "sdk.com")
-
-        // Success: HTTP localhost
-        testModeInfoMock.rtbAPIHostOverride = "http://localhost"
-        testModeInfoMock.sdkAPIHostOverride = "http://localhost"
-        XCTAssertEqual(BackendAPI.rtb.scheme, "http")
-        XCTAssertEqual(BackendAPI.sdk.scheme, "http")
-        XCTAssertEqual(BackendAPI.rtb.host, "localhost")
-        XCTAssertEqual(BackendAPI.sdk.host, "localhost")
-
-        // Reset with nil
-        testModeInfoMock.rtbAPIHostOverride = nil
-        testModeInfoMock.sdkAPIHostOverride = nil
-        XCTAssertEqual(BackendAPI.rtb.scheme, "https")
-        XCTAssertEqual(BackendAPI.sdk.scheme, "https")
-        XCTAssertEqual(BackendAPI.rtb.host, "helium-rtb.chartboost.com")
-        XCTAssertEqual(BackendAPI.sdk.host, "helium-sdk.chartboost.com")
+            // Reset with nil
+            testModeInfoMock.sdkAPIHostOverride = nil
+            XCTAssertEqual(endpoint.scheme, "https")
+            XCTAssert(endpoint.host.hasSuffix("mediation-sdk.chartboost.com"))
+        }
     }
 }

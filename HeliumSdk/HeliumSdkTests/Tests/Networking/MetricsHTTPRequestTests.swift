@@ -9,15 +9,15 @@ import XCTest
 final class MetricsHTTPRequestTests: HeliumTestCase {
 
     private enum TestURL {
-        static let initialization = URL(string: "https://helium-sdk.chartboost.com/v1/event/initialization")!
-        static let prebid = URL(string: "https://helium-sdk.chartboost.com/v1/event/prebid")!
-        static let load = URL(string: "https://helium-sdk.chartboost.com/v1/event/load")!
-        static let show = URL(string: "https://helium-sdk.chartboost.com/v1/event/show")!
-        static let click = URL(string: "https://helium-sdk.chartboost.com/v2/event/click")!
-        static let expiration = URL(string: "https://helium-sdk.chartboost.com/v1/event/expiration")!
-        static let heliumImpression = URL(string: "https://helium-sdk.chartboost.com/v1/event/helium_impression")!
-        static let partnerImpression = URL(string: "https://helium-sdk.chartboost.com/v1/event/partner_impression")!
-        static let reward = URL(string: "https://helium-sdk.chartboost.com/v2/event/reward")!
+        static let initialization = URL(unsafeString: "https://initialization.mediation-sdk.chartboost.com/v1/event/initialization")!
+        static let prebid = URL(unsafeString: "https://prebid.mediation-sdk.chartboost.com/v1/event/prebid")!
+        static let load = URL(unsafeString: "https://load.mediation-sdk.chartboost.com/v2/event/load")!
+        static let show = URL(unsafeString: "https://show.mediation-sdk.chartboost.com/v1/event/show")!
+        static let click = URL(unsafeString: "https://click.mediation-sdk.chartboost.com/v2/event/click")!
+        static let expiration = URL(unsafeString: "https://expiration.mediation-sdk.chartboost.com/v1/event/expiration")!
+        static let heliumImpression = URL(unsafeString: "https://mediation-impression.mediation-sdk.chartboost.com/v1/event/helium_impression")!
+        static let partnerImpression = URL(unsafeString: "https://partner-impression.mediation-sdk.chartboost.com/v1/event/partner_impression")!
+        static let reward = URL(unsafeString: "https://reward.mediation-sdk.chartboost.com/v2/event/reward")!
     }
 
     private static let auctionID = "some auction ID"
@@ -194,20 +194,23 @@ final class MetricsHTTPRequestTests: HeliumTestCase {
     }
 
     func testLoadWithOnlyAuctionID() throws {
-        let request = MetricsHTTPRequest.load(auctionID: Self.auctionID, loadID: Self.loadID, events: [], error: nil)
+        let request = MetricsHTTPRequest.load(auctionID: Self.auctionID, loadID: Self.loadID, events: [], error: nil, adFormat: .banner, size: nil)
         let json = try JSONSerialization.jsonDictionary(with: request.bodyData)
         XCTAssertEqual(request.eventType, .load)
         XCTAssertEqual(try request.url, TestURL.load)
         XCTAssertEqual(request.method, .post)
         XCTAssert(request.isSDKInitializationRequired)
         XCTAssertAnyEqual(request.customHeaders, Self.loadIDJSON)
-        XCTAssertAnyEqual(json, Dictionary.merge(Self.auctionIDJSON, Self.emptyMetricsEventsJSON))
+        var expectedJSON = Dictionary.merge(Self.auctionIDJSON, Self.emptyMetricsEventsJSON)
+        expectedJSON = Dictionary.merge(expectedJSON, ["placement_type": "banner"])
+        XCTAssertAnyEqual(json, expectedJSON)
     }
 
     func testLoad() throws {
-        let request = MetricsHTTPRequest.load(auctionID: Self.auctionID, loadID: Self.loadID, events: Self.metricsEvents, error: nil)
+        let request = MetricsHTTPRequest.load(auctionID: Self.auctionID, loadID: Self.loadID, events: Self.metricsEvents, error: nil, adFormat: .banner, size: nil)
         let json = try JSONSerialization.jsonDictionary(with: request.bodyData)
-        let expectedJSON = Dictionary.merge(Self.auctionIDJSON, Self.metricsEventsJSON)
+        var expectedJSON = Dictionary.merge(Self.auctionIDJSON, Self.metricsEventsJSON)
+        expectedJSON = Dictionary.merge(expectedJSON, ["placement_type": "banner"])
         XCTAssertEqual(request.eventType, .load)
         XCTAssertEqual(try request.url, TestURL.load)
         XCTAssertEqual(request.method, .post)
@@ -217,15 +220,67 @@ final class MetricsHTTPRequestTests: HeliumTestCase {
     }
     
     func testLoadWithError() throws {
-        let request = MetricsHTTPRequest.load(auctionID: Self.auctionID, loadID: Self.loadID, events: Self.metricsEvents, error: Self.nestedCMError)
+        let request = MetricsHTTPRequest.load(auctionID: Self.auctionID, loadID: Self.loadID, events: Self.metricsEvents, error: Self.nestedCMError, adFormat: .banner, size: nil)
         let json = try JSONSerialization.jsonDictionary(with: request.bodyData)
-        let expectedJSON = Dictionary.merge(Self.auctionIDJSON, Self.metricsEventsJSON, Self.nestedCMErrorJSON)
+        var expectedJSON = Dictionary.merge(Self.auctionIDJSON, Self.metricsEventsJSON, Self.nestedCMErrorJSON)
+        expectedJSON = Dictionary.merge(expectedJSON, ["placement_type": "banner"])
         XCTAssertEqual(request.eventType, .load)
         XCTAssertEqual(try request.url, TestURL.load)
         XCTAssertEqual(request.method, .post)
         XCTAssert(request.isSDKInitializationRequired)
         XCTAssertAnyEqual(request.customHeaders, Self.loadIDJSON)
         XCTAssertAnyEqual(json, expectedJSON)
+    }
+
+    func testLoadAdaptiveBannerSize() throws {
+        let request = MetricsHTTPRequest.load(
+            auctionID: Self.auctionID,
+            loadID: Self.loadID,
+            events: Self.metricsEvents,
+            error: Self.nestedCMError,
+            adFormat: .adaptiveBanner,
+            size: CGSize(width: 400.0, height: 100.0)
+        )
+        let jsonDict = try XCTUnwrap(request.bodyJSON)
+        XCTAssertEqual(jsonDict["placement_type"] as? String, "adaptive_banner")
+        let sizeDict = try XCTUnwrap(jsonDict["size"] as? [String: Any])
+        let width = try XCTUnwrap(sizeDict["w"] as? Int)
+        let height = try XCTUnwrap(sizeDict["h"] as? Int)
+        XCTAssertEqual(width, 400)
+        XCTAssertEqual(height, 100)
+    }
+
+    func testLoadAdaptiveBannerWhenSizeIsNil() throws {
+        let request = MetricsHTTPRequest.load(
+            auctionID: Self.auctionID,
+            loadID: Self.loadID,
+            events: Self.metricsEvents,
+            error: Self.nestedCMError,
+            adFormat: .adaptiveBanner,
+            size: nil
+        )
+        let jsonDict = try XCTUnwrap(request.bodyJSON)
+        XCTAssertEqual(jsonDict["placement_type"] as? String, "adaptive_banner")
+        // Size should be included, but it should be 0.
+        let sizeDict = try XCTUnwrap(jsonDict["size"] as? [String: Any])
+        let width = try XCTUnwrap(sizeDict["w"] as? Int)
+        let height = try XCTUnwrap(sizeDict["h"] as? Int)
+        XCTAssertEqual(width, 0)
+        XCTAssertEqual(height, 0)
+    }
+
+    func testLoadSizeIsNilWhenAdFormatIsNotAdaptiveBanner() throws {
+        let request = MetricsHTTPRequest.load(
+            auctionID: Self.auctionID,
+            loadID: Self.loadID,
+            events: Self.metricsEvents,
+            error: Self.nestedCMError,
+            adFormat: .banner,
+            size: nil
+        )
+        let jsonDict = try XCTUnwrap(request.bodyJSON)
+        XCTAssertEqual(jsonDict["placement_type"] as? String, "banner")
+        XCTAssertNil(jsonDict["size"])
     }
 
     func testShow() throws {

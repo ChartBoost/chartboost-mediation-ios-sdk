@@ -138,6 +138,8 @@ extension ChartboostMediationError.Code {
             return "Invalid/empty credentials were supplied to load the ad."
         case .loadFailureWaterfallExhaustedNoFill:
             return "All waterfall entries have resulted in an error or no fill."
+        case .loadFailureAdTooLarge:
+            return "The partner ad dimension size is too large."
 
         // 400
         case .showFailureUnknown:

@@ -29,6 +29,7 @@ final class UpdatableApplicationConfiguration: ApplicationConfiguration {
         let prebidFetchTimeout: UInt?
         let bannerImpressionMinVisibleDips: UInt?   // it's in "dips" but it's OK to just use it as "points"
         let bannerImpressionMinVisibleDurationMs: UInt?
+        let bannerSizeEventDelayMs: UInt?
         let visibilityTrackerPollIntervalMs: UInt?
         let visibilityTrackerTraversalLimit: UInt?
         let adapterClasses: [String]?
@@ -38,6 +39,7 @@ final class UpdatableApplicationConfiguration: ApplicationConfiguration {
         let initMetricsPostTimeout: UInt?
         let placements: [Placement]
         let logLevel: LogLevel?
+        let privacyBanList: [String]? // use `String` instead of `PrivacyBanListCandidate` to avoid discarding the whole response when Codable parsing errors happen (unrecognized / misspelled value)
     }
     
     /// Default configuration values to use when a backend value is not available.
@@ -48,6 +50,7 @@ final class UpdatableApplicationConfiguration: ApplicationConfiguration {
         static let prebidFetchTimeout: UInt = 5
         static let bannerImpressionMinVisibleDips: UInt = 1
         static let bannerImpressionMinVisibleDurationMs: UInt = 0
+        static let bannerSizeEventDelayMs: UInt = 1000
         static let visibilityTrackerPollIntervalMs: UInt = 100
         static let visibilityTrackerTraversalLimit: UInt = 25
         static let initTimeout: UInt = 1
@@ -211,6 +214,10 @@ extension UpdatableApplicationConfiguration: BannerControllerConfiguration {
     var penaltyLoadRetryCount: UInt {
         DefaultValues.bannerPenaltyLoadRetryCount
     }
+
+    var bannerSizeEventDelay: TimeInterval {
+        TimeInterval(values?.bannerSizeEventDelayMs ?? DefaultValues.bannerSizeEventDelayMs) / 1000
+    }
 }
 
 extension UpdatableApplicationConfiguration: ConsoleLoggerConfiguration {
@@ -219,4 +226,10 @@ extension UpdatableApplicationConfiguration: ConsoleLoggerConfiguration {
         values?.logLevel
     }
     
+}
+
+extension UpdatableApplicationConfiguration: PrivacyConfiguration {
+    var privacyBanList: [PrivacyBanListCandidate] {
+        (values?.privacyBanList ?? []).compactMap { .init(rawValue: $0) }
+    }
 }

@@ -41,17 +41,34 @@ final class AuctionAdRepository: AdRepository {
                         auctionID: response.auctionID ?? "",
                         loadID: request.loadID,
                         events: result.loadEvents,
-                        error: result.result.error
+                        error: result.result.error,
+                        adFormat: request.adFormat,
+                        size: request.adSize?.size
                     )
                     assert(response.auctionID != nil)   // in a success path, the auctionID is always available from the response header, or from the bid json content
                     
                     // Return with a Helium ad or an error
                     switch result.result {
-                    case .success((let winningBid, let loadedAd)):
+                    case .success((let winningBid, let loadedAd, let adSize)):
                         // Log auction complete
-                        self.metrics.logAuctionCompleted(with: bids, winner: winningBid, loadID: request.loadID)
+                        self.metrics.logAuctionCompleted(
+                            with: bids,
+                            winner: winningBid,
+                            loadID: request.loadID,
+                            adFormat: request.adFormat,
+                            // The size should be the ad size returned by the adapter, not the size
+                            // that was returned in the bid.
+                            // Fall back to the requested size if the size returned by the adapter
+                            // is nil.
+                            size: adSize?.size ?? request.adSize?.size
+                        )
                         // Finish successfully
-                        let heliumAd = self.makeHeliumAd(bid: winningBid, partnerAd: loadedAd, request: request)
+                        let heliumAd = self.makeHeliumAd(
+                            bid: winningBid,
+                            partnerAd: loadedAd,
+                            adSize: adSize,
+                            request: request
+                        )
                         completion(AdLoadResult(result: .success(heliumAd), metrics: rawMetrics))
                     case .failure(let error):
                         // Finish with failure
@@ -62,7 +79,14 @@ final class AuctionAdRepository: AdRepository {
                 // Log metrics, unless the error happened before the sending of the auctions request (we don't want to spam backend with these events)
                 let rawMetrics: RawMetrics?
                 if let auctionID = response.auctionID {
-                    rawMetrics = self.metrics.logLoad(auctionID: auctionID, loadID: request.loadID, events: [], error: error)
+                    rawMetrics = self.metrics.logLoad(
+                        auctionID: auctionID,
+                        loadID: request.loadID,
+                        events: [],
+                        error: error,
+                        adFormat: request.adFormat,
+                        size: request.adSize?.size
+                    )
                 } else {
                     rawMetrics = nil
                 }
@@ -80,11 +104,17 @@ private extension AuctionAdRepository {
     
     // Mappings from bid information into HeliumAd and related models
     
-    func makeHeliumAd(bid: Bid, partnerAd: PartnerAd, request: HeliumAdLoadRequest) -> HeliumAd {
+    func makeHeliumAd(
+        bid: Bid,
+        partnerAd: PartnerAd,
+        adSize: ChartboostMediationBannerSize?,
+        request: HeliumAdLoadRequest
+    ) -> HeliumAd {
         HeliumAd(
             bid: bid,
             bidInfo: makeBidInfo(bid: bid),
             partnerAd: partnerAd,
+            adSize: adSize,
             request: request
         )
     }

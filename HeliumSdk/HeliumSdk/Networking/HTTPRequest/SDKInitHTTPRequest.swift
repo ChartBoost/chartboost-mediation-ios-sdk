@@ -14,7 +14,7 @@ struct SDKInitHTTPRequest: HTTPRequest, HTTPRequestWithRawDataResponse {
 
     var url: URL {
         get throws {
-            try makeURL(backendAPI: .sdk, path: [BackendAPI.Path.SDK.sdkInit, appID].joined(separator: "/"))
+            try makeURL(endpoint: .config, extraPathComponents: [appID])
         }
     }
 

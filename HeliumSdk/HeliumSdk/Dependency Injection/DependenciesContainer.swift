@@ -56,6 +56,7 @@ protocol DependenciesContainer {
     var userDefaultsStorage: UserDefaultsStorage { get }
     var visibilityTrackerConfiguration: VisibilityTrackerConfiguration { get }
     var consoleLoggerConfiguration: ConsoleLoggerConfiguration { get }
+    var privacyConfiguration: PrivacyConfiguration { get }
 }
 
 /// Dependencies container for Helium SDK objects.
@@ -122,5 +123,5 @@ final class HeliumDependenciesContainer: DependenciesContainer {
     var sdkInitializerConfiguration: SDKInitializerConfiguration { configuration }
     var visibilityTrackerConfiguration: VisibilityTrackerConfiguration { configuration }
     var consoleLoggerConfiguration: ConsoleLoggerConfiguration { configuration }
-
+    var privacyConfiguration: PrivacyConfiguration { configuration }
 }

@@ -29,4 +29,6 @@ class BannerControllerConfigurationMock: Mock<BannerControllerConfigurationMock.
     var penaltyLoadRetryRate: TimeInterval = 14.5
     
     var penaltyLoadRetryCount: UInt = 3
+
+    var bannerSizeEventDelay: TimeInterval = 1
 }

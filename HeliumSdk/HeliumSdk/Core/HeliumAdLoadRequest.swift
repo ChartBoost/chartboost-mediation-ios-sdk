@@ -13,7 +13,7 @@ struct HeliumAdLoadRequest: Equatable {
     }
 
     /// Ad size. Nil for full-screen ads.
-    let adSize: CGSize?
+    let adSize: ChartboostMediationBannerSize?
     /// Ad format.
     let adFormat: AdFormat
     /// Keywords to be sent in API load requests.
@@ -24,7 +24,7 @@ struct HeliumAdLoadRequest: Equatable {
     let loadID: String
 
     init(
-        adSize: CGSize?,
+        adSize: ChartboostMediationBannerSize?,
         adFormat: AdFormat,
         keywords: [String : String]?,
         heliumPlacement: String,

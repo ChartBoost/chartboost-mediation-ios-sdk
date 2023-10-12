@@ -19,7 +19,31 @@ struct AuctionsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithDecodab
 
     var url: URL {
         get throws {
-            try makeURL(backendAPI: .rtb, path: BackendAPI.Path.RTB.auctions)
+            // iOS 17 introduces Privacy Manifests with Tracking Domains, thus we need to split the
+            // /auction endpoint into a tracking version and a non-tracking version.
+            if #available(iOS 17, *) {
+                @Injected(\.appTrackingInfoDependency) var appTrackingInfoDependency
+                switch appTrackingInfoDependency.appTransparencyAuthStatus {
+                case .authorized:
+                    // Requests sent to this endpoint might contain privacy tracking data such as IDFA.
+                    // The privacy tracking data might be erased due to non-Apple compliance requirements
+                    // such as GDPR and COPPA.
+                    return try makeURL(endpoint: .auction_tracking)
+
+                case .notDetermined, .restricted, .denied:
+                    // Requests sent to this endpoint must not contain any privacy tracking data.
+                    return try makeURL(endpoint: .auction_nonTracking)
+
+                @unknown default:
+                    // Same as the not-authorized case.
+                    assertionFailure("Unknown `appTransparencyAuthStatus`: \(appTrackingInfoDependency.appTransparencyAuthStatus)")
+                    return try makeURL(endpoint: .auction_nonTracking)
+                }
+            } else {
+                // Use the tracking version of the auction endpoint because only iOS 17+ might block
+                // it as a Tracking Domain reported in the Privacy Manifest.
+                return try makeURL(endpoint: .auction_tracking)
+            }
         }
     }
 
