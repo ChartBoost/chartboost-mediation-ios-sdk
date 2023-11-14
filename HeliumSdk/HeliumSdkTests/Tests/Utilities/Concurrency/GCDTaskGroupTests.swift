@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class GCDTaskGroupTests: HeliumTestCase {
+class GCDTaskGroupTests: ChartboostMediationTestCase {
 
     /// Validates that the completion handler is executed immediately if onAllFinished is called when no tasks were added.
     func testOnAllFinishedExecutedImmediatelyIfCalledBeforeAnyTaskAdded() {

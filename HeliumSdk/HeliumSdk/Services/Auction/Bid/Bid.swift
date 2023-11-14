@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -60,7 +60,7 @@ struct Bid {
 extension Bid {
     @Injected(\.environment) private static var environment
 
-    static func makeBids(response: OpenRTB.BidResponse, request: HeliumAdLoadRequest) -> [Bid] {
+    static func makeBids(response: OpenRTB.BidResponse, request: AdLoadRequest) -> [Bid] {
         guard let seatbids = response.seatbid else {
             return []
         }

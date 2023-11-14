@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -33,12 +33,10 @@ public final class Helium: NSObject {
     /// Initializes the Helium SDK.
     /// This method must be called before ads can be served.
     /// - Parameter appId: Application identifier from the Chartboost dashboard.
-    /// - Parameter appSignature: Application signature from the Chartboost dashboard.
     /// - Parameter options: Optional initialization options.
     /// - Parameter delegate: Optional delegate used to listen for the SDK initialization callback.
     public func start(
         withAppId appId: String,
-        andAppSignature appSignature: String,
         options: HeliumInitializationOptions?,
         delegate: HeliumSdkDelegate?
     ) {
@@ -49,7 +47,6 @@ public final class Helium: NSObject {
         // It will take care of edge cases like SDK already initialized or initializing.
         sdkInitializer.initialize(
             appIdentifier: appId,
-            appSignature: appSignature,
             partnerIdentifiersToSkipInitialization: options?.skippedPartnerIdentifiers ?? []
         ) { [weak self] cmError in
             // Make no assumption on `sdkInitializer` and ensure the delegate is called on main thread
@@ -57,6 +54,23 @@ public final class Helium: NSObject {
                 self?.delegate?.heliumDidStartWithError(cmError)
             }
         }
+    }
+
+    /// Deprecated.
+    /// Initializes the Helium SDK.
+    /// This method must be called before ads can be served.
+    /// - Parameter appId: Application identifier from the Chartboost dashboard.
+    /// - Parameter appSignature: Application signature from the Chartboost dashboard.
+    /// - Parameter options: Optional initialization options.
+    /// - Parameter delegate: Optional delegate used to listen for the SDK initialization callback.
+    @available(*, deprecated, message: "Use start(withAppId:options:delegate:) instead.")
+    public func start(
+        withAppId appId: String,
+        andAppSignature appSignature: String,
+        options: HeliumInitializationOptions?,
+        delegate: HeliumSdkDelegate?
+    ) {
+        start(withAppId: appId, options: options, delegate: delegate)
     }
 
     // MARK: - Logging
@@ -175,6 +189,20 @@ public final class Helium: NSObject {
     /// - Parameter hasGivenConsent: CCPA-applicable user has granted consent.
     public func setCCPAConsent(_ hasGivenConsent: Bool) {
         consentSettings.ccpaConsent = hasGivenConsent
+    }
+
+    /// Allows to set user consent for a specific partner.
+    ///
+    /// Use this when you want to inform of a user consent that applies to specific partners instead of to all of them.
+    /// When a consent value for a partner is not present in this dictionary then general signals provided by calls to
+    /// ``setUserHasGivenConsent(_:)`` and ``setCCPAConsent(_:)`` are used as fallback.
+    public var partnerConsents: [PartnerIdentifier: Bool] {
+        get {
+            consentSettings.partnerConsents
+        }
+        set {
+            consentSettings.partnerConsents = newValue
+        }
     }
 
     // MARK: - User Information

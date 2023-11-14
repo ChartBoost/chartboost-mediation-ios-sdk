@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -7,7 +7,7 @@ import Foundation
 @testable import ChartboostMediationSDK
 
 /// A wrapper over all the possible mocks.
-/// Any new mock used by a test should be added here and accessed through the `HeliumTestCase.mocks` property.
+/// Any new mock used by a test should be added here and accessed through the `ChartboostMediationTestCase.mocks` property.
 /// This will ensure that the mock value is used for dependency injection on Helium SDK classes.
 class MocksContainer {
     var bidFulfillOperationConfiguration = BidFulfillOperationConfigurationMock()

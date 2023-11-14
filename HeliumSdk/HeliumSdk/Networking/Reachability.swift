@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -122,7 +122,7 @@ final class ReachabilityMonitor: Reachability {
     // MARK: - Private
 
     private let networkReachability: SCNetworkReachability?
-    private let queue = DispatchQueue(label: "com.chartboost.helium.ReachabilityMonitor.queue")
+    private let queue = DispatchQueue(label: "com.chartboost.mediation.ReachabilityMonitor.queue")
     private var notifierIsRunning = false
 
     private let reachabilityCallback: SCNetworkReachabilityCallBack = { _, flags, info in

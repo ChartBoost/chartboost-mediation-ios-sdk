@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -62,7 +62,7 @@ final class InterstitialAd: HeliumInterstitialAd, AdControllerDelegate {
     }
     
     func clearLoadedAd() {
-        // Clear ad through controller who is the one that stores HeliumAds.
+        // Clear ad through controller who is the one that stores instances of `LoadedAd`.
         controller.clearLoadedAd()
     }
     
@@ -81,7 +81,7 @@ final class InterstitialAd: HeliumInterstitialAd, AdControllerDelegate {
     }
     
     func readyToShow() -> Bool {
-        // Ad controller knows since it is the one that stores the loaded HeliumAds
+        // Ad controller knows since it is the one that stores instances of `LoadedAd`.
         controller.isReadyToShowAd
     }
 }
@@ -91,8 +91,8 @@ final class InterstitialAd: HeliumInterstitialAd, AdControllerDelegate {
 private extension InterstitialAd {
     
     /// Creates a new load request for the ad controller.
-    func makeLoadRequest() -> HeliumAdLoadRequest {
-        HeliumAdLoadRequest(
+    func makeLoadRequest() -> AdLoadRequest {
+        AdLoadRequest(
             adSize: nil,    // nil means full-screen
             adFormat: .interstitial,
             keywords: keywords?.dictionary,

@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -248,7 +248,7 @@ private extension MetricsEvent {
 
 extension MetricsEventLogging {
     /// A convenience alternative of the formal `logShow()`.
-    func logShow(ad: HeliumAd, start: Date, error: ChartboostMediationError?) -> RawMetrics? {
+    func logShow(ad: LoadedAd, start: Date, error: ChartboostMediationError?) -> RawMetrics? {
         logShow(
             auctionID: ad.partnerAd.request.auctionIdentifier,
             loadID: ad.request.loadID,

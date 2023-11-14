@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -53,5 +53,5 @@ final class LoadRateLimiter: LoadRateLimiting {
     }
 
     private var configurations: [String: Configuration] = .init()
-    private let queue = DispatchQueue(label: "com.chartboost.Helium.LoadRateLimiter")
+    private let queue = DispatchQueue(label: "com.chartboost.mediation.LoadRateLimiter")
 }

@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,14 +6,14 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class OpenRTBRequestTests: HeliumTestCase {
+class OpenRTBRequestTests: ChartboostMediationTestCase {
     
     let utcoffset = NSTimeZone.local.secondsFromGMT(for: Date()) / 60
 
     @Injected(\.environment) private var environment
 
     func testInterstitialBidRequestUsingDefaultMockData() throws {
-        let adLoadRequest = HeliumAdLoadRequest.test(adFormat: .interstitial, keywords: [:])
+        let adLoadRequest = AdLoadRequest.test(adFormat: .interstitial, keywords: [:])
         let request = OpenRTB.BidRequest.make(request: adLoadRequest, bidderInformation: [:])
 
         // imp
@@ -161,7 +161,7 @@ class OpenRTBRequestTests: HeliumTestCase {
                 let keywords = randomKeywords
                 let bidderInformation = randomBidderInformation
 
-                let adLoadRequest = HeliumAdLoadRequest.test(adFormat: adFormat, keywords: keywords)
+                let adLoadRequest = AdLoadRequest.test(adFormat: adFormat, keywords: keywords)
                 let request = OpenRTB.BidRequest.make(request: adLoadRequest, bidderInformation: bidderInformation)
 
                 // imp
@@ -358,7 +358,7 @@ class OpenRTBRequestTests: HeliumTestCase {
     }
 
     func testPrivacyBanList() {
-        let adLoadRequest = HeliumAdLoadRequest.test(adFormat: .interstitial, keywords: [:])
+        let adLoadRequest = AdLoadRequest.test(adFormat: .interstitial, keywords: [:])
         var request: OpenRTB.BidRequest
         
         if #available(iOS 17.0, *) {

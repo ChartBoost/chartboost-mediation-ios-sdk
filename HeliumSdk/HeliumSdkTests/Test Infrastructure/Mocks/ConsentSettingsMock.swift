@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -21,6 +21,8 @@ class ConsentSettingsMock: ConsentSettings {
     var ccpaPrivacyString: String?
 
     var gdprTCString: String?
+
+    var partnerConsents: [PartnerIdentifier : Bool] = [:]
 }
 
 extension ConsentSettingsMock {

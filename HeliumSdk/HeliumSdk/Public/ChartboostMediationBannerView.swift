@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -97,7 +97,7 @@ public class ChartboostMediationBannerView: UIView {
     private let controller: BannerSwapControllerProtocol
 
     /// Convenience to get the loaded ad from the controller, or `nil` if an ad is not loaded.
-    private var ad: HeliumAd? {
+    private var ad: LoadedAd? {
         try? controller.showingBannerLoadResult?.result.get()
     }
 
@@ -176,7 +176,7 @@ public class ChartboostMediationBannerView: UIView {
     private func sendVisibilityStateToController() {
         // The view is considered not visible if it's removed from the view hierarchy or if it's hidden.
         let visible = !isHidden && superview != nil
-        controller.viewVisibilityDidChange(on: self, to: visible)
+        controller.viewVisibilityDidChange(to: visible)
     }
 }
 
@@ -362,7 +362,7 @@ extension ChartboostMediationBannerView {
 
 // MARK: - Constants
 extension ChartboostMediationBannerView {
-    private struct Constants {
+    private enum Constants {
         static let minHeightForHorizontal: CGFloat = 50.0
         static let minWidthForVertical: CGFloat = 160.0
         static let minSizeFor1x1Tile: CGFloat = 300.0

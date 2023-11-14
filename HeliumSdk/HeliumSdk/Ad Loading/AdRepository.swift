@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -8,12 +8,17 @@ import UIKit
 
 /// A repository that provides ads.
 protocol AdRepository: AnyObject {
-    /// Fetches a Helium ad.
+    /// Fetches an ad.
     /// - parameter request: Info about the ad to load.
     /// - parameter viewController: A view controller to load the ad with. Applies to banners.
     /// - parameter delegate: The delegate object that will receive ad life-cycle events.
     /// - parameter completion: A handler to be executed when the operation finishes.
-    func loadAd(request: HeliumAdLoadRequest, viewController: UIViewController?, delegate: PartnerAdDelegate, completion: @escaping (AdLoadResult) -> Void)
+    func loadAd(
+        request: AdLoadRequest,
+        viewController: UIViewController?,
+        delegate: PartnerAdDelegate,
+        completion: @escaping (AdLoadResult) -> Void
+    )
 }
 
 /// A repository that obtains ads through a backend-side auction where the resulting bids are locally fulfilled through partner adapters.
@@ -23,7 +28,12 @@ final class AuctionAdRepository: AdRepository {
     @Injected(\.bidFulfillOperationFactory) private var bidFulfillOperationFactory
     @Injected(\.metrics) private var metrics
     
-    func loadAd(request: HeliumAdLoadRequest, viewController: UIViewController?, delegate: PartnerAdDelegate, completion: @escaping (AdLoadResult) -> Void) {
+    func loadAd(
+        request: AdLoadRequest,
+        viewController: UIViewController?,
+        delegate: PartnerAdDelegate,
+        completion: @escaping (AdLoadResult) -> Void
+    ) {
         // Start backend-side auction
         auctionService.startAuction(request: request) { [weak self] response in
             guard let self = self else { return }
@@ -47,9 +57,9 @@ final class AuctionAdRepository: AdRepository {
                     )
                     assert(response.auctionID != nil)   // in a success path, the auctionID is always available from the response header, or from the bid json content
                     
-                    // Return with a Helium ad or an error
+                    // Return with a loaded ad or an error
                     switch result.result {
-                    case .success((let winningBid, let loadedAd, let adSize)):
+                    case .success((let winningBid, let partnerAd, let adSize)):
                         // Log auction complete
                         self.metrics.logAuctionCompleted(
                             with: bids,
@@ -63,13 +73,13 @@ final class AuctionAdRepository: AdRepository {
                             size: adSize?.size ?? request.adSize?.size
                         )
                         // Finish successfully
-                        let heliumAd = self.makeHeliumAd(
+                        let loadedAd = self.makeLoadedAd(
                             bid: winningBid,
-                            partnerAd: loadedAd,
+                            partnerAd: partnerAd,
                             adSize: adSize,
                             request: request
                         )
-                        completion(AdLoadResult(result: .success(heliumAd), metrics: rawMetrics))
+                        completion(AdLoadResult(result: .success(loadedAd), metrics: rawMetrics))
                     case .failure(let error):
                         // Finish with failure
                         completion(AdLoadResult(result: .failure(error), metrics: rawMetrics))
@@ -102,15 +112,15 @@ final class AuctionAdRepository: AdRepository {
 
 private extension AuctionAdRepository {
     
-    // Mappings from bid information into HeliumAd and related models
-    
-    func makeHeliumAd(
+    // Mappings from bid information into `LoadedAd` and related models
+
+    func makeLoadedAd(
         bid: Bid,
         partnerAd: PartnerAd,
         adSize: ChartboostMediationBannerSize?,
-        request: HeliumAdLoadRequest
-    ) -> HeliumAd {
-        HeliumAd(
+        request: AdLoadRequest
+    ) -> LoadedAd {
+        LoadedAd(
             bid: bid,
             bidInfo: makeBidInfo(bid: bid),
             partnerAd: partnerAd,

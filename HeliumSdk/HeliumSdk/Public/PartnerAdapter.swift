@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -118,16 +118,20 @@ public protocol PartnerAdapterStorage: AnyObject {
     var ads: [PartnerAd] { get }
 }
 
-/// `PartnerAdapter` extension that provides a default implementation for all error mapping methods.
 public extension PartnerAdapter {
-    
+
+    /// Default implementation of `mapSetUpError`.
     func mapSetUpError(_ error: Error) -> ChartboostMediationError.Code? { nil }
-    
+
+    /// Default implementation of `mapPrebidError`.
     func mapPrebidError(_ error: Error) -> ChartboostMediationError.Code? { nil }
-    
+
+    /// Default implementation of `mapLoadError`.
     func mapLoadError(_ error: Error) -> ChartboostMediationError.Code? { nil }
-    
+
+    /// Default implementation of `mapShowError`.
     func mapShowError(_ error: Error) -> ChartboostMediationError.Code? { nil }
-    
+
+    /// Default implementation of `mapInvalidateError`.
     func mapInvalidateError(_ error: Error) -> ChartboostMediationError.Code? { nil }
 }

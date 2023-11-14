@@ -2,6 +2,15 @@ iOS Change Log
 ==================
 Check for the latest Chartboost Mediation SDK at the Chartboost website.
 
+### Version 4.7.0 *(2023-11-16)*
+----------------------------
+Improvements:
+- Removed App Signature as a requirement to initialize the SDK.
+- Added API to set consent on a per-partner basis.
+
+Bug Fixes:
+- Fixed a couple of crashes and memory leaks.
+
 ### Version 4.6.0 *(2023-10-12)*
 ----------------------------
 Improvements:

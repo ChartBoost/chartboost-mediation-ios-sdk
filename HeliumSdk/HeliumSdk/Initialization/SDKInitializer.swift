@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -15,12 +15,10 @@ protocol HeliumInitializationStatusProvider {
 protocol SDKInitializer {
     /// Starts the initialization process.
     /// - parameter appIdentifier: User-provided Helium app identifier.
-    /// - parameter appSignature: User-provided Helium app signature.
     /// - parameter partnerIdentifiersToSkipInitialization: Set of partner adapter identifiers to skip during partner adapter initialization.
     /// - parameter completion: Closure executed by the initializer when the initialization process finishes either successfully or with and error.
     func initialize(
         appIdentifier: String?,
-        appSignature: String?,
         partnerIdentifiersToSkipInitialization: Set<PartnerIdentifier>,
         completion: @escaping (ChartboostMediationError?) -> Void
     )
@@ -68,7 +66,7 @@ final class HeliumSDKInitializer: SDKInitializer, HeliumInitializationStatusProv
     /// Starts the initialization process.
     /// - Note: `completion` is called on the background thread. The caller is responsible for
     /// making calls on the main thread if necessary.
-    func initialize(appIdentifier: String?, appSignature: String?, partnerIdentifiersToSkipInitialization: Set<PartnerIdentifier>, completion: @escaping (ChartboostMediationError?) -> Void) {
+    func initialize(appIdentifier: String?, partnerIdentifiersToSkipInitialization: Set<PartnerIdentifier>, completion: @escaping (ChartboostMediationError?) -> Void) {
 
         taskDispatcher.async(on: .background) { [self] in
             
@@ -89,7 +87,7 @@ final class HeliumSDKInitializer: SDKInitializer, HeliumInitializationStatusProv
             }
             
             // Validate credentials before attempting to initialize
-            if let error = credentialsValidator.validate(appIdentifier: appIdentifier, appSignature: appSignature) {
+            if let error = credentialsValidator.validate(appIdentifier: appIdentifier) {
                 logger.error("Initialization failed with error: \(error)")
                 completion(error)
                 return
@@ -97,7 +95,6 @@ final class HeliumSDKInitializer: SDKInitializer, HeliumInitializationStatusProv
             
             // Save credentials to make them available to other components
             environment.app.appID = appIdentifier
-            environment.app.appSignature = appSignature
 
             // Start fetching the user agent so it's available to pass on load requests when needed
             if environment.userAgent.userAgent == nil {

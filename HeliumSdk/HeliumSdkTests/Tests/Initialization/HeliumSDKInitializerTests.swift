@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class HeliumSDKInitializerTests: HeliumTestCase {
+class HeliumSDKInitializerTests: ChartboostMediationTestCase {
 
     lazy var initializer = HeliumSDKInitializer()
     
@@ -17,7 +17,7 @@ class HeliumSDKInitializerTests: HeliumTestCase {
         
         // Initialize
         var completed = false
-        initializer.initialize(appIdentifier: "hello", appSignature: "bye", partnerIdentifiersToSkipInitialization: []) { error in
+        initializer.initialize(appIdentifier: "hello", partnerIdentifiersToSkipInitialization: []) { error in
             // Check initialization succeeded with a nil error
             XCTAssertNil(error)
             completed = true
@@ -37,7 +37,7 @@ class HeliumSDKInitializerTests: HeliumTestCase {
         
         // Initialize
         var completed = false
-        initializer.initialize(appIdentifier: "hello", appSignature: "bye", partnerIdentifiersToSkipInitialization: []) { error in
+        initializer.initialize(appIdentifier: "hello", partnerIdentifiersToSkipInitialization: []) { error in
             // Check initialization succeeded with a nil error
             XCTAssertNil(error)
             completed = true
@@ -45,7 +45,6 @@ class HeliumSDKInitializerTests: HeliumTestCase {
         
         // Check that the credentials are saved
         XCTAssertEqual(mocks.environment.app.appID, "hello")
-        XCTAssertEqual(mocks.environment.app.appSignature, "bye")
         // Check that the configs are requested to update
         var appConfigCompletion: UpdateAppConfigCompletion = { _, _ in }
         XCTAssertMethodCalls(mocks.appConfigurationController, .updateConfiguration, parameters: [XCTMethodCaptureParameter { appConfigCompletion = $0 }])
@@ -54,7 +53,7 @@ class HeliumSDKInitializerTests: HeliumTestCase {
         
         // Call initialize again
         var completed2 = false
-        initializer.initialize(appIdentifier: "hello", appSignature: "bye", partnerIdentifiersToSkipInitialization: []) { error in
+        initializer.initialize(appIdentifier: "hello", partnerIdentifiersToSkipInitialization: []) { error in
             completed2 = true
         }
         
@@ -90,7 +89,7 @@ class HeliumSDKInitializerTests: HeliumTestCase {
         
         // Initialize
         var completed = false
-        initializer.initialize(appIdentifier: "hello", appSignature: "bye", partnerIdentifiersToSkipInitialization: []) { error in
+        initializer.initialize(appIdentifier: "hello", partnerIdentifiersToSkipInitialization: []) { error in
             // Check initialization failed with an error
             XCTAssertEqual(error?.chartboostMediationCode, .initializationFailureInvalidCredentials)
             completed = true
@@ -159,7 +158,7 @@ class HeliumSDKInitializerTests: HeliumTestCase {
 
         // Initialize
         var completed = false
-        initializer.initialize(appIdentifier: "hello", appSignature: "bye", partnerIdentifiersToSkipInitialization: []) { error in
+        initializer.initialize(appIdentifier: "hello", partnerIdentifiersToSkipInitialization: []) { error in
             // Check initialization succeeded with a nil error
             XCTAssertNil(error)
             completed = true
@@ -167,7 +166,6 @@ class HeliumSDKInitializerTests: HeliumTestCase {
         
         // Check that the credentials are saved
         XCTAssertEqual(mocks.environment.app.appID, "hello")
-        XCTAssertEqual(mocks.environment.app.appSignature, "bye")
         // Check that the configs are requested to update
         var appConfigCompletion: UpdateAppConfigCompletion = { _, _ in }
         XCTAssertMethodCalls(mocks.appConfigurationController, .updateConfiguration, parameters: [XCTMethodCaptureParameter { appConfigCompletion = $0 }])
@@ -198,7 +196,7 @@ class HeliumSDKInitializerTests: HeliumTestCase {
         
         // Initialize
         var completed = false
-        initializer.initialize(appIdentifier: "hello", appSignature: "bye", partnerIdentifiersToSkipInitialization: []) { error in
+        initializer.initialize(appIdentifier: "hello", partnerIdentifiersToSkipInitialization: []) { error in
             // Check initialization failed with an error
             XCTAssertEqual(error?.chartboostMediationCode, .unknown)
             completed = true
@@ -206,7 +204,6 @@ class HeliumSDKInitializerTests: HeliumTestCase {
         
         // Check that the credentials are saved
         XCTAssertEqual(mocks.environment.app.appID, "hello")
-        XCTAssertEqual(mocks.environment.app.appSignature, "bye")
         // Check that the configs are requested to update
         var appConfigCompletion: UpdateAppConfigCompletion = { _, _ in }
         XCTAssertMethodCalls(mocks.appConfigurationController, .updateConfiguration, parameters: [XCTMethodCaptureParameter { appConfigCompletion = $0 }])

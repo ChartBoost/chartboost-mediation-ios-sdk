@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -13,7 +13,7 @@ protocol BidFulfillOperation {
 
 /// The result of a bid fulfill operation.
 struct BidFulfillOperationResult {
-    let result: Result<(winningBid: Bid, loadedAd: PartnerAd, adSize: ChartboostMediationBannerSize?), ChartboostMediationError>
+    let result: Result<(winningBid: Bid, partnerAd: PartnerAd, adSize: ChartboostMediationBannerSize?), ChartboostMediationError>
     let loadEvents: [MetricsEvent]
 }
 
@@ -47,7 +47,7 @@ final class PartnerControllerBidFulfillOperation: BidFulfillOperation {
     /// Load metrics events corresponding to each partner load attempt.
     private var loadEvents: [MetricsEvent] = []
     /// The load request that triggered the fulfill operation.
-    private let request: HeliumAdLoadRequest
+    private let request: AdLoadRequest
     /// The completion to be executed at the end of a fulfill operation.
     private var completion: ((BidFulfillOperationResult) -> Void)?
     /// Indicates if the `run()` method has already been called.
@@ -68,7 +68,7 @@ final class PartnerControllerBidFulfillOperation: BidFulfillOperation {
     /// Partner controller, in charge of forwarding loads to the partners.
     @Injected(\.partnerController) private var partnerController
     
-    init(bids: [Bid], request: HeliumAdLoadRequest, viewController: UIViewController?, delegate: PartnerAdDelegate) {
+    init(bids: [Bid], request: AdLoadRequest, viewController: UIViewController?, delegate: PartnerAdDelegate) {
         self.bids = bids
         self.request = request
         self.viewController = viewController
@@ -184,7 +184,7 @@ final class PartnerControllerBidFulfillOperation: BidFulfillOperation {
         }
     }
     
-    private func finishFulfillment(with result: Result<(winningBid: Bid, loadedAd: PartnerAd, adSize: ChartboostMediationBannerSize?), ChartboostMediationError>) {
+    private func finishFulfillment(with result: Result<(winningBid: Bid, partnerAd: PartnerAd, adSize: ChartboostMediationBannerSize?), ChartboostMediationError>) {
         // Complete
         if let error = result.error {
             logger.error("Bid fulfill operation failed with load ID \(request.loadID) and error: \(error)")
@@ -268,7 +268,7 @@ private extension PartnerControllerBidFulfillOperation {
 
 // MARK: - Constants
 extension PartnerControllerBidFulfillOperation {
-    private struct Constants {
+    private enum Constants {
         static let bannerType = "bannerType"
         static let bannerWidth = "bannerWidth"
         static let bannerHeight = "bannerHeight"

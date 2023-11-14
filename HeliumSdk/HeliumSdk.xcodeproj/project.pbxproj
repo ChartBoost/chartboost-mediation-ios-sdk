@@ -103,7 +103,7 @@
 		B96568072A0081A200BC61D1 /* AppTrackingInfoProviderDependencyMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = B96568062A0081A200BC61D1 /* AppTrackingInfoProviderDependencyMock.swift */; };
 		B96568092A0082D800BC61D1 /* AppTrackingInfoProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B96568082A0082D800BC61D1 /* AppTrackingInfoProviderTests.swift */; };
 		B97534CB29E4FC5D00450EBD /* AuctionsHTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97534CA29E4FC5D00450EBD /* AuctionsHTTPRequest.swift */; };
-		B97534CD29E6242E00450EBD /* HeliumAdLoadRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97534CC29E6242E00450EBD /* HeliumAdLoadRequestTests.swift */; };
+		B97534CD29E6242E00450EBD /* AdLoadRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97534CC29E6242E00450EBD /* AdLoadRequestTests.swift */; };
 		B977AF0729DB7EE6005F3984 /* WinnerEventHTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B977AF0629DB7EE6005F3984 /* WinnerEventHTTPRequest.swift */; };
 		B977AF0929DB87C4005F3984 /* WinnerEventHTTPRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B977AF0829DB87C4005F3984 /* WinnerEventHTTPRequestTests.swift */; };
 		B97DD25829A96FF700A42AF5 /* HTTPRequestWithEncodableBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97DD25729A96FF700A42AF5 /* HTTPRequestWithEncodableBody.swift */; };
@@ -239,7 +239,7 @@
 		EA4DDDEA28A549EA00C5C7B7 /* PartnerControllerConfigurationMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4DDDE928A549EA00C5C7B7 /* PartnerControllerConfigurationMock.swift */; };
 		EA4DDDF528ABA7A100C5C7B7 /* NSError+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4DDDF428ABA7A100C5C7B7 /* NSError+Test.swift */; };
 		EA4DDDF728AE76ED00C5C7B7 /* BidFulfillOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4DDDF628AE76ED00C5C7B7 /* BidFulfillOperation.swift */; };
-		EA4DDDFB28AE781600C5C7B7 /* HeliumAdLoadRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4DDDFA28AE781600C5C7B7 /* HeliumAdLoadRequest.swift */; };
+		EA4DDDFB28AE781600C5C7B7 /* AdLoadRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4DDDFA28AE781600C5C7B7 /* AdLoadRequest.swift */; };
 		EA54D9AF2A15809C00C9CBBE /* ChartboostMediationError+Code.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA54D9AE2A15809C00C9CBBE /* ChartboostMediationError+Code.swift */; };
 		EA5B133029474BA80022D6BD /* ImpressionTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5B132F29474BA80022D6BD /* ImpressionTracker.swift */; };
 		EA5B13322947521A0022D6BD /* ImpressionTrackerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5B13312947521A0022D6BD /* ImpressionTrackerMock.swift */; };
@@ -292,7 +292,7 @@
 		EA99B66628992413002736E0 /* HeliumRewardedAdDelegateMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA99B66528992413002736E0 /* HeliumRewardedAdDelegateMock.swift */; };
 		EA9A869928B62E450065918F /* PartnerAdLoadRequest+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA9A869828B62E450065918F /* PartnerAdLoadRequest+Test.swift */; };
 		EA9A869B28B641070065918F /* AdController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA9A869A28B641070065918F /* AdController.swift */; };
-		EA9A869D28B647BD0065918F /* HeliumAd.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA9A869C28B647BD0065918F /* HeliumAd.swift */; };
+		EA9A869D28B647BD0065918F /* LoadedAd.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA9A869C28B647BD0065918F /* LoadedAd.swift */; };
 		EA9A869F28B648DB0065918F /* RewardedCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA9A869E28B648DB0065918F /* RewardedCallback.swift */; };
 		EA9A86A128B65B5D0065918F /* AdRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA9A86A028B65B5D0065918F /* AdRepository.swift */; };
 		EA9A86A728B789920065918F /* AdAuctionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA9A86A628B789920065918F /* AdAuctionService.swift */; };
@@ -340,7 +340,7 @@
 		EAF5F30E29D1CE2E00C82F3C /* BidFulfillOperationFactoryMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF5F30D29D1CE2E00C82F3C /* BidFulfillOperationFactoryMock.swift */; };
 		EAF9612E28BCC3850023E32E /* WeakReferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF9612D28BCC3850023E32E /* WeakReferences.swift */; };
 		EAF9613028BCC6480023E32E /* WeakReferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF9612F28BCC6480023E32E /* WeakReferencesTests.swift */; };
-		EAF9613228BCCEE90023E32E /* HeliumAdLoadRequest+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF9613128BCCEE90023E32E /* HeliumAdLoadRequest+Test.swift */; };
+		EAF9613228BCCEE90023E32E /* AdLoadRequest+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF9613128BCCEE90023E32E /* AdLoadRequest+Test.swift */; };
 		EAF9613428BCCEF30023E32E /* HeliumAd+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF9613328BCCEF30023E32E /* HeliumAd+Test.swift */; };
 		EAF9613628BCCEFE0023E32E /* RewardedCallback+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF9613528BCCEFE0023E32E /* RewardedCallback+Test.swift */; };
 		EAF9615A28BCEC460023E32E /* HeliumInterstitialAd.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF9615928BCEC460023E32E /* HeliumInterstitialAd.swift */; };
@@ -516,7 +516,7 @@
 		B96568062A0081A200BC61D1 /* AppTrackingInfoProviderDependencyMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTrackingInfoProviderDependencyMock.swift; sourceTree = "<group>"; };
 		B96568082A0082D800BC61D1 /* AppTrackingInfoProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTrackingInfoProviderTests.swift; sourceTree = "<group>"; };
 		B97534CA29E4FC5D00450EBD /* AuctionsHTTPRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuctionsHTTPRequest.swift; sourceTree = "<group>"; };
-		B97534CC29E6242E00450EBD /* HeliumAdLoadRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeliumAdLoadRequestTests.swift; sourceTree = "<group>"; };
+		B97534CC29E6242E00450EBD /* AdLoadRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdLoadRequestTests.swift; sourceTree = "<group>"; };
 		B977AF0629DB7EE6005F3984 /* WinnerEventHTTPRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinnerEventHTTPRequest.swift; sourceTree = "<group>"; };
 		B977AF0829DB87C4005F3984 /* WinnerEventHTTPRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinnerEventHTTPRequestTests.swift; sourceTree = "<group>"; };
 		B97DD25729A96FF700A42AF5 /* HTTPRequestWithEncodableBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPRequestWithEncodableBody.swift; sourceTree = "<group>"; };
@@ -652,7 +652,7 @@
 		EA4DDDE928A549EA00C5C7B7 /* PartnerControllerConfigurationMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerControllerConfigurationMock.swift; sourceTree = "<group>"; };
 		EA4DDDF428ABA7A100C5C7B7 /* NSError+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSError+Test.swift"; sourceTree = "<group>"; };
 		EA4DDDF628AE76ED00C5C7B7 /* BidFulfillOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidFulfillOperation.swift; sourceTree = "<group>"; };
-		EA4DDDFA28AE781600C5C7B7 /* HeliumAdLoadRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeliumAdLoadRequest.swift; sourceTree = "<group>"; };
+		EA4DDDFA28AE781600C5C7B7 /* AdLoadRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdLoadRequest.swift; sourceTree = "<group>"; };
 		EA54D9AE2A15809C00C9CBBE /* ChartboostMediationError+Code.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChartboostMediationError+Code.swift"; sourceTree = "<group>"; };
 		EA5B132F29474BA80022D6BD /* ImpressionTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionTracker.swift; sourceTree = "<group>"; };
 		EA5B13312947521A0022D6BD /* ImpressionTrackerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionTrackerMock.swift; sourceTree = "<group>"; };
@@ -700,7 +700,7 @@
 		EA99B66528992413002736E0 /* HeliumRewardedAdDelegateMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeliumRewardedAdDelegateMock.swift; sourceTree = "<group>"; };
 		EA9A869828B62E450065918F /* PartnerAdLoadRequest+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PartnerAdLoadRequest+Test.swift"; sourceTree = "<group>"; };
 		EA9A869A28B641070065918F /* AdController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdController.swift; sourceTree = "<group>"; };
-		EA9A869C28B647BD0065918F /* HeliumAd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeliumAd.swift; sourceTree = "<group>"; };
+		EA9A869C28B647BD0065918F /* LoadedAd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadedAd.swift; sourceTree = "<group>"; };
 		EA9A869E28B648DB0065918F /* RewardedCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardedCallback.swift; sourceTree = "<group>"; };
 		EA9A86A028B65B5D0065918F /* AdRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdRepository.swift; sourceTree = "<group>"; };
 		EA9A86A628B789920065918F /* AdAuctionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdAuctionService.swift; sourceTree = "<group>"; };
@@ -753,7 +753,7 @@
 		EAF5F30D29D1CE2E00C82F3C /* BidFulfillOperationFactoryMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidFulfillOperationFactoryMock.swift; sourceTree = "<group>"; };
 		EAF9612D28BCC3850023E32E /* WeakReferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeakReferences.swift; sourceTree = "<group>"; };
 		EAF9612F28BCC6480023E32E /* WeakReferencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeakReferencesTests.swift; sourceTree = "<group>"; };
-		EAF9613128BCCEE90023E32E /* HeliumAdLoadRequest+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HeliumAdLoadRequest+Test.swift"; sourceTree = "<group>"; };
+		EAF9613128BCCEE90023E32E /* AdLoadRequest+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AdLoadRequest+Test.swift"; sourceTree = "<group>"; };
 		EAF9613328BCCEF30023E32E /* HeliumAd+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HeliumAd+Test.swift"; sourceTree = "<group>"; };
 		EAF9613528BCCEFE0023E32E /* RewardedCallback+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RewardedCallback+Test.swift"; sourceTree = "<group>"; };
 		EAF9615928BCEC460023E32E /* HeliumInterstitialAd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeliumInterstitialAd.swift; sourceTree = "<group>"; };
@@ -1265,14 +1265,14 @@
 			children = (
 				EA9A869A28B641070065918F /* AdController.swift */,
 				EA7B92DF28BE502300D783A6 /* AdControllerRepository.swift */,
+				EA4DDDFA28AE781600C5C7B7 /* AdLoadRequest.swift */,
 				EAF5F2FB29BF234500C82F3C /* AdLoadResult.swift */,
 				EAF5F2FD29BF239700C82F3C /* AdShowResult.swift */,
 				EA6CDE6B287C52B300F13FCF /* BannerController.swift */,
 				EC3B694B2A67342D00C2A32C /* BannerSwapController.swift */,
 				EA40EEE329B75FB1002E5342 /* FullscreenAd.swift */,
-				EA9A869C28B647BD0065918F /* HeliumAd.swift */,
-				EA4DDDFA28AE781600C5C7B7 /* HeliumAdLoadRequest.swift */,
 				EAF9615F28BCF0360023E32E /* InterstitialAd.swift */,
+				EA9A869C28B647BD0065918F /* LoadedAd.swift */,
 				EAF9616128BCFB090023E32E /* RewardedAd.swift */,
 				EA9A869E28B648DB0065918F /* RewardedCallback.swift */,
 			);
@@ -1466,10 +1466,10 @@
 		EA523B8A28EDD126008DEA4B /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				B97534CC29E6242E00450EBD /* AdLoadRequestTests.swift */,
 				EACF403828BF9B3B0035D8C0 /* BannerControllerTests.swift */,
 				EC344C6D2A7430730068388C /* BannerSwapControllerTests.swift */,
 				EA40EEF029B7815D002E5342 /* FullscreenAdTests.swift */,
-				B97534CC29E6242E00450EBD /* HeliumAdLoadRequestTests.swift */,
 				EAB5079728B8E1E2001427A0 /* SingleAdStorageAdControllerTests.swift */,
 			);
 			path = Core;
@@ -1673,10 +1673,10 @@
 		EA9A869528B62E100065918F /* SDK Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				EAF9613128BCCEE90023E32E /* AdLoadRequest+Test.swift */,
 				EC1A26EE2A5F208200472E3C /* ChartboostMediationBannerLoadRequest+Test.swift */,
 				EC3242E32A743A3A00C4B8D2 /* ChartboostMediationBannerLoadResult+Test.swift */,
 				EAF9613328BCCEF30023E32E /* HeliumAd+Test.swift */,
-				EAF9613128BCCEE90023E32E /* HeliumAdLoadRequest+Test.swift */,
 				B9D4A6A529C0479300876C2B /* JSONSerialization+Test.swift */,
 				EAF5F2F229B9F97300C82F3C /* MetricsEvent+Test.swift */,
 				EA4DDDF428ABA7A100C5C7B7 /* NSError+Test.swift */,
@@ -1936,7 +1936,7 @@
 				EA4DDDC828A2B07600C5C7B7 /* GCDTaskGroup.swift in Sources */,
 				EAF9615E28BCEECA0023E32E /* HeliumBannerAd.swift in Sources */,
 				EA7B92DE28BE4ED900D783A6 /* AdFactory.swift in Sources */,
-				EA9A869D28B647BD0065918F /* HeliumAd.swift in Sources */,
+				EA9A869D28B647BD0065918F /* LoadedAd.swift in Sources */,
 				B90398CF29F73E99009A4261 /* ChartboostIDProvider.swift in Sources */,
 				EAEE1F352954A28F00DECC5E /* Injected.swift in Sources */,
 				EC2F952F2A5600E9002839BE /* ChartboostMediationBannerType.swift in Sources */,
@@ -2036,7 +2036,7 @@
 				E699044C2A41F742003BC6D5 /* LogLevel.swift in Sources */,
 				B9533CF529EE0BDF0097C3F7 /* AppConfigurationService.swift in Sources */,
 				EA398B6B296C405800FE052A /* ChartboostMediationError+Cause.swift in Sources */,
-				EA4DDDFB28AE781600C5C7B7 /* HeliumAdLoadRequest.swift in Sources */,
+				EA4DDDFB28AE781600C5C7B7 /* AdLoadRequest.swift in Sources */,
 				EA40EEE029B75138002E5342 /* ChartboostMediationFullscreenAd.swift in Sources */,
 				E6B9A2E529C380F400AEC225 /* OpenRTB+Request+Extras.swift in Sources */,
 				EC2F95392A5604DF002839BE /* ChartboostMediationBannerLoadResult.swift in Sources */,
@@ -2091,7 +2091,7 @@
 				EAB5079A28B8E246001427A0 /* AdRepositoryMock.swift in Sources */,
 				B9540C672A043375004A5D97 /* AppTrackingInfoProviderMock.swift in Sources */,
 				E62D59312964D439009A121C /* ChartboostMediationErrorCodeTests.swift in Sources */,
-				B97534CD29E6242E00450EBD /* HeliumAdLoadRequestTests.swift in Sources */,
+				B97534CD29E6242E00450EBD /* AdLoadRequestTests.swift in Sources */,
 				EAB5079828B8E1E2001427A0 /* SingleAdStorageAdControllerTests.swift in Sources */,
 				B98635D429E0C56D0061205B /* RewardedCallbackHTTPRequestTests.swift in Sources */,
 				EACF402328BF6C910035D8C0 /* AdControllerMock.swift in Sources */,
@@ -2204,7 +2204,7 @@
 				EA648EAE289A69480006FBD4 /* ILRDEventPublisherMock.swift in Sources */,
 				B977AF0929DB87C4005F3984 /* WinnerEventHTTPRequestTests.swift in Sources */,
 				EA659917286F2B2300182CD7 /* UIView+ViewVisibilityTests.swift in Sources */,
-				EAF9613228BCCEE90023E32E /* HeliumAdLoadRequest+Test.swift in Sources */,
+				EAF9613228BCCEE90023E32E /* AdLoadRequest+Test.swift in Sources */,
 				E6CA5B9F28AED05000CB80FD /* InstanceIdentifierProviderTests.swift in Sources */,
 				EA4DDDCC28A2CCF600C5C7B7 /* DispatchTaskGroupMock.swift in Sources */,
 				EAB5079E28B90537001427A0 /* AdControllerDelegateMock.swift in Sources */,

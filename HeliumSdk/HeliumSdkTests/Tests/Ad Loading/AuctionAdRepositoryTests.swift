@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class AuctionAdRepositoryTests: HeliumTestCase {
+class AuctionAdRepositoryTests: ChartboostMediationTestCase {
     
     lazy var adRepository = AuctionAdRepository()
     
@@ -14,7 +14,7 @@ class AuctionAdRepositoryTests: HeliumTestCase {
     
     /// Validates that loadAd() fails if the AuctionService completes with a failure
     func testLoadAdFailsIfAuctionServiceFails() {
-        let request = HeliumAdLoadRequest.test()
+        let request = AdLoadRequest.test()
         let viewController = UIViewController()
         let delegate = PartnerAdDelegateMock()
         let expectedError = ChartboostMediationError(code: .loadFailureAuctionNoBid)
@@ -48,7 +48,7 @@ class AuctionAdRepositoryTests: HeliumTestCase {
     
     /// Validates that loadAd() logs load metrics if the auction service fails but provides an auctionID, which means the error happened after the auctions request was sent
     func testLoadMetricsAreLoggedIfAuctionServiceFailsButAnAuctionIDIsAvailable() {
-        let request = HeliumAdLoadRequest.test()
+        let request = AdLoadRequest.test()
         let viewController = UIViewController()
         let delegate = PartnerAdDelegateMock()
         let expectedError = ChartboostMediationError(code: .loadFailureAuctionNoBid)
@@ -84,7 +84,7 @@ class AuctionAdRepositoryTests: HeliumTestCase {
     
     /// Validates that loadAd() fails if the BidFulfiller completes with a failure
     func testLoadAdFailsIfBidFulfillerFails() {
-        let request = HeliumAdLoadRequest.test(loadID: loadID)
+        let request = AdLoadRequest.test(loadID: loadID)
         let viewController = UIViewController()
         let delegate = PartnerAdDelegateMock()
         let bids = [Bid.makeMock(), Bid.makeMock(), Bid.makeMock()]
@@ -141,7 +141,7 @@ class AuctionAdRepositoryTests: HeliumTestCase {
     
     /// Validates that loadAd() succeeds if the BidFulfiller completes successfully
     func testLoadAdSucceedsIfBidFulfillerSucceeds() {
-        let request = HeliumAdLoadRequest.test(loadID: loadID)
+        let request = AdLoadRequest.test(loadID: loadID)
         let viewController = UIViewController()
         let delegate = PartnerAdDelegateMock()
         let bids = [
@@ -226,7 +226,7 @@ class AuctionAdRepositoryTests: HeliumTestCase {
     }
 
     func testSendsCorrectSizeInLogAuctionCompleted() {
-        let request = HeliumAdLoadRequest.test(loadID: loadID)
+        let request = AdLoadRequest.test(loadID: loadID)
         let viewController = UIViewController()
         let delegate = PartnerAdDelegateMock()
         let bids = [
@@ -288,7 +288,7 @@ class AuctionAdRepositoryTests: HeliumTestCase {
     func testFallsBackToRequestedSizeIfSizeReturnedByAdapterIsNilInLogAuctionCompleted() {
         let expectedSize = CGSize(width: 400.0, height: 100.0)
         let size = ChartboostMediationBannerSize(size: expectedSize, type: .adaptive)
-        let request = HeliumAdLoadRequest.test(adSize: size, loadID: loadID)
+        let request = AdLoadRequest.test(adSize: size, loadID: loadID)
         let viewController = UIViewController()
         let delegate = PartnerAdDelegateMock()
         let bids = [
@@ -345,7 +345,7 @@ class AuctionAdRepositoryTests: HeliumTestCase {
     }
 
     func testSendsNilIfRequestedSizeisNilInLogAuctionCompleted() {
-        let request = HeliumAdLoadRequest.test(adSize: nil, loadID: loadID)
+        let request = AdLoadRequest.test(adSize: nil, loadID: loadID)
         let viewController = UIViewController()
         let delegate = PartnerAdDelegateMock()
         let bids = [

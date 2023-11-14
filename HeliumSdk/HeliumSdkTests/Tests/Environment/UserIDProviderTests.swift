@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class UserIDProviderTests: HeliumTestCase {
+class UserIDProviderTests: ChartboostMediationTestCase {
     private static let zeroUUID = AppTrackingInfoProvider.Constant.zeroUUID
     private static let validUUID = "12300000-0000-0000-0000-000000000789"
     private static let idfa_testValues = [nil, zeroUUID, validUUID]

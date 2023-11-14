@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class BidFulfillOperationTests: HeliumTestCase {
+class BidFulfillOperationTests: ChartboostMediationTestCase {
 
     lazy var operation = PartnerControllerBidFulfillOperation(
         bids: bids,
@@ -16,7 +16,7 @@ class BidFulfillOperationTests: HeliumTestCase {
     )
     
     var bids: [Bid] = []
-    var request = HeliumAdLoadRequest(
+    var request = AdLoadRequest(
         adSize: .init(size: CGSize(width: 23, height: 45), type: .fixed),
         adFormat: .interstitial,
         keywords: ["asd": "fgh"],
@@ -99,7 +99,7 @@ class BidFulfillOperationTests: HeliumTestCase {
             // Check that first bid won
             if case .success(let response) = result.result {
                 XCTAssertAnyEqual(response.winningBid, bid1)
-                assertEqual(response.loadedAd, expectedPartnerAd1)
+                assertEqual(response.partnerAd, expectedPartnerAd1)
             } else {
                 XCTFail("Received unexpected failure result")
             }
@@ -138,7 +138,7 @@ class BidFulfillOperationTests: HeliumTestCase {
             // Check that second bid won
             if case .success(let response) = result.result {
                 XCTAssertAnyEqual(response.winningBid, bid2)
-                assertEqual(response.loadedAd, expectedPartnerAd2)
+                assertEqual(response.partnerAd, expectedPartnerAd2)
             } else {
                 XCTFail("Received unexpected failure result")
             }
@@ -190,7 +190,7 @@ class BidFulfillOperationTests: HeliumTestCase {
             // Check that last bid won
             if case .success(let response) = result.result {
                 XCTAssertAnyEqual(response.winningBid, bid4)
-                assertEqual(response.loadedAd, expectedPartnerAd4)
+                assertEqual(response.partnerAd, expectedPartnerAd4)
             } else {
                 XCTFail("Received unexpected failure result")
             }
@@ -363,7 +363,7 @@ class BidFulfillOperationTests: HeliumTestCase {
             // Check that second bid won
             if case .success(let response) = result.result {
                 XCTAssertAnyEqual(response.winningBid, bid2)
-                assertEqual(response.loadedAd, expectedPartnerAd2)
+                assertEqual(response.partnerAd, expectedPartnerAd2)
             } else {
                 XCTFail("Received unexpected failure result")
             }
@@ -453,7 +453,7 @@ class BidFulfillOperationTests: HeliumTestCase {
             // Check that third bid won
             if case .success(let response) = result.result {
                 XCTAssertAnyEqual(response.winningBid, bid3)
-                assertEqual(response.loadedAd, expectedPartnerAd3)
+                assertEqual(response.partnerAd, expectedPartnerAd3)
             } else {
                 XCTFail("Received unexpected failure result")
             }
@@ -495,14 +495,14 @@ class BidFulfillOperationTests: HeliumTestCase {
     }
 
     func testRoutesLoadWithBannerSizeFromBid() throws {
-        request = HeliumAdLoadRequest.test(adSize: .standard, adFormat: .banner)
+        request = AdLoadRequest.test(adSize: .standard, adFormat: .banner)
         bids = [Bid.makeMock(size: CGSize(width: 400.0, height: 100.0))]
         operation.run { _ in }
         try assertRoutesLoad(bid: bids[0])
     }
 
     func testRoutesLoadWithRequestedSizeIfBidSizeIsNil() throws {
-        request = HeliumAdLoadRequest.test(adSize: .standard, adFormat: .banner)
+        request = AdLoadRequest.test(adSize: .standard, adFormat: .banner)
         bids = [Bid.makeMock()]
         operation.run { _ in }
         try assertRoutesLoad(bid: bids[0])
@@ -510,7 +510,7 @@ class BidFulfillOperationTests: HeliumTestCase {
 
     // MARK: - Banner Size
     func testAdSizeIsNilWhenPartnerDetailsDoesNotContainSizeAndRequestedAdSizeIsNil() throws {
-        request = HeliumAdLoadRequest.test(adSize: nil, adFormat: .interstitial)
+        request = AdLoadRequest.test(adSize: nil, adFormat: .interstitial)
         bids = [Bid.makeMock()]
         let partnerDetails: [String: String] = [:]
 
@@ -532,7 +532,7 @@ class BidFulfillOperationTests: HeliumTestCase {
 
 
     func testAdSizeIsRequestedAdSizeWhenPartnerDetailsDoesNotContainSize() throws {
-        request = HeliumAdLoadRequest.test(adSize: .standard, adFormat: .banner)
+        request = AdLoadRequest.test(adSize: .standard, adFormat: .banner)
         bids = [Bid.makeMock()]
         let partnerAd = PartnerAdMock(inlineView: UIView())
         let partnerDetails: [String: String] = [:]
@@ -556,7 +556,7 @@ class BidFulfillOperationTests: HeliumTestCase {
     }
 
     func testAdaptiveAdSizeIsParsedFromPartnerDetails() throws {
-        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 500.0), adFormat: .banner)
+        request = AdLoadRequest.test(adSize: .adaptive(width: 500.0), adFormat: .banner)
         bids = [Bid.makeMock()]
         let partnerAd = PartnerAdMock(inlineView: UIView())
         let partnerDetails = [
@@ -584,7 +584,7 @@ class BidFulfillOperationTests: HeliumTestCase {
     }
 
     func testFixedAdSizeIsParsedFromPartnerDetails() throws {
-        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 500.0), adFormat: .banner)
+        request = AdLoadRequest.test(adSize: .adaptive(width: 500.0), adFormat: .banner)
         bids = [Bid.makeMock()]
         let partnerAd = PartnerAdMock(inlineView: UIView())
         let partnerDetails = [
@@ -616,7 +616,7 @@ class BidFulfillOperationTests: HeliumTestCase {
     func testDoesNotDiscardAdWhenRequestedHeightIsZero() throws {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
-        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 500.0), adFormat: .banner)
+        request = AdLoadRequest.test(adSize: .adaptive(width: 500.0), adFormat: .banner)
         bids = [Bid.makeMock()]
         let partnerAd = PartnerAdMock(inlineView: UIView())
         let partnerDetails = [
@@ -647,7 +647,7 @@ class BidFulfillOperationTests: HeliumTestCase {
     func testDoesNotDiscardAdaptiveSizeAdWhenAdSizeMatchesRequestedSize() throws {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
-        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 400.0, maxHeight: 50.0), adFormat: .banner)
+        request = AdLoadRequest.test(adSize: .adaptive(width: 400.0, maxHeight: 50.0), adFormat: .banner)
         bids = [Bid.makeMock()]
         let partnerAd = PartnerAdMock(inlineView: UIView())
         let partnerDetails = [
@@ -678,7 +678,7 @@ class BidFulfillOperationTests: HeliumTestCase {
     func testDoesNotDiscardFixedSizeAdWhenAdSizeMatchesRequestedSize() throws {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
-        request = HeliumAdLoadRequest.test(adSize: .standard, adFormat: .banner)
+        request = AdLoadRequest.test(adSize: .standard, adFormat: .banner)
         bids = [Bid.makeMock()]
         let partnerAd = PartnerAdMock(inlineView: UIView())
         let partnerDetails = [
@@ -709,7 +709,7 @@ class BidFulfillOperationTests: HeliumTestCase {
     func testDoesNotDiscardAdIfWidthIsTooLargeButDiscardOversizedAdsIsFalse() throws {
         mocks.environment.sdkSettings.discardOversizedAds = false
 
-        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
+        request = AdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
         bids = [Bid.makeMock()]
         let partnerAd = PartnerAdMock(inlineView: UIView())
         let partnerDetails = [
@@ -740,7 +740,7 @@ class BidFulfillOperationTests: HeliumTestCase {
     func testDoesNotDiscardAdIfHeightIsTooLargeButDiscardOversizedAdsIsFalse() throws {
         mocks.environment.sdkSettings.discardOversizedAds = false
 
-        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 500.0, maxHeight: 50.0), adFormat: .banner)
+        request = AdLoadRequest.test(adSize: .adaptive(width: 500.0, maxHeight: 50.0), adFormat: .banner)
         bids = [Bid.makeMock()]
         let partnerAd = PartnerAdMock(inlineView: UIView())
         let partnerDetails = [
@@ -771,7 +771,7 @@ class BidFulfillOperationTests: HeliumTestCase {
     func testDiscardsAdWhenWidthIsTooLarge() throws {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
-        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
+        request = AdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
         bids = [Bid.makeMock()]
         let partnerAd = PartnerAdMock(inlineView: UIView())
         let partnerDetails = [
@@ -803,7 +803,7 @@ class BidFulfillOperationTests: HeliumTestCase {
     func testDiscardsAdWhenHeightIsTooLarge() throws {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
-        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 500.0, maxHeight: 50.0), adFormat: .banner)
+        request = AdLoadRequest.test(adSize: .adaptive(width: 500.0, maxHeight: 50.0), adFormat: .banner)
         bids = [Bid.makeMock()]
         let partnerAd = PartnerAdMock(inlineView: UIView())
         let partnerDetails = [
@@ -835,7 +835,7 @@ class BidFulfillOperationTests: HeliumTestCase {
     func testDoesNotDiscardAdIfRequestedSizeIsNil() throws {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
-        request = HeliumAdLoadRequest.test(adSize: nil, adFormat: .banner)
+        request = AdLoadRequest.test(adSize: nil, adFormat: .banner)
         bids = [Bid.makeMock()]
         let partnerAd = PartnerAdMock(inlineView: UIView())
         let partnerDetails: [String: String] = [:]
@@ -860,7 +860,7 @@ class BidFulfillOperationTests: HeliumTestCase {
     func testDoesNotDiscardAdIfReturnedSizeIsNil() throws {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
-        request = HeliumAdLoadRequest.test(adSize: nil, adFormat: .banner)
+        request = AdLoadRequest.test(adSize: nil, adFormat: .banner)
         bids = [Bid.makeMock()]
         let partnerAd = PartnerAdMock(inlineView: UIView())
         let partnerDetails: [String: String] = [:]
@@ -885,7 +885,7 @@ class BidFulfillOperationTests: HeliumTestCase {
     func testDiscardsAdForAdaptiveBannerFormat() throws {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
-        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 500.0, maxHeight: 50.0), adFormat: .adaptiveBanner)
+        request = AdLoadRequest.test(adSize: .adaptive(width: 500.0, maxHeight: 50.0), adFormat: .adaptiveBanner)
         bids = [Bid.makeMock()]
         let partnerAd = PartnerAdMock(inlineView: UIView())
         let partnerDetails = [
@@ -918,7 +918,7 @@ class BidFulfillOperationTests: HeliumTestCase {
     func testDoesNotContinueWaterfallIfSizeIsTooLargeButDiscardOversizedAdsIsFalse() throws {
         mocks.environment.sdkSettings.discardOversizedAds = false
 
-        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
+        request = AdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
         bids = [
             Bid.makeMock(),
             Bid.makeMock()
@@ -953,7 +953,7 @@ class BidFulfillOperationTests: HeliumTestCase {
     func testDoesNotContinueWaterfallIfSizeFitsAndDiscardOversizedAdsIsTrue() throws {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
-        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
+        request = AdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
         bids = [
             Bid.makeMock(),
             Bid.makeMock()
@@ -988,7 +988,7 @@ class BidFulfillOperationTests: HeliumTestCase {
     func testContinuesWaterfallAndSucceedsIfSizeIsTooLargeAndDiscardOversizedAdsIsTrue() throws {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
-        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
+        request = AdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
         bids = [
             Bid.makeMock(),
             Bid.makeMock()
@@ -1034,7 +1034,7 @@ class BidFulfillOperationTests: HeliumTestCase {
     func testFailsIfSizeIsTooLargeMultipleTimesAndDiscardOversizedAdsIsTrue() throws {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
-        request = HeliumAdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
+        request = AdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
         bids = [
             Bid.makeMock(),
             Bid.makeMock()

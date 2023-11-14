@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -86,7 +86,7 @@ public class HeliumBannerView: UIView, HeliumBannerAd {
     private func sendVisibilityStateToController() {
         // The view is considered not visible if it's removed from the view hierarchy or if it's hidden.
         let visible = !isHidden && superview != nil
-        controller.viewVisibilityDidChange(on: self, to: visible)
+        controller.viewVisibilityDidChange(to: visible)
     }
 }
 

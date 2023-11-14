@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -43,7 +43,7 @@ struct DeviceInfoProvider: DeviceInfoProviding {
         sysctlbyname("hw.machine", nil, &size, nil, 0)
         var deviceModel = [CChar](repeating: 0, count: size)
         sysctlbyname("hw.machine", &deviceModel, &size, nil, 0)
-        return deviceModel.count > 0 ? String(cString: deviceModel) : UIDevice.current.model
+        return !deviceModel.isEmpty ? String(cString: deviceModel) : UIDevice.current.model
     }
 
     var deviceType: DeviceType {

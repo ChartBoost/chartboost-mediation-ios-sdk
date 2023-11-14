@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class SingleAdStorageAdControllerTests: HeliumTestCase {
+class SingleAdStorageAdControllerTests: ChartboostMediationTestCase {
 
     lazy var adController = SingleAdStorageAdController()
 
@@ -42,9 +42,9 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
     func testLoadAdReturnsSilentlyWhenAlreadyLoading() {
         // Setup: Start an ad load
         mocks.initializationStatusProvider.isInitialized = true
-        let firstRequest = HeliumAdLoadRequest.test(loadID: "id1")
+        let firstRequest = AdLoadRequest.test(loadID: "id1")
         let expectedLoadResult = AdLoadResult(
-            result: .success(HeliumAd.test(request: firstRequest)),
+            result: .success(LoadedAd.test(request: firstRequest)),
             metrics: ["hello": 23, "babab": "asdasfd"]
         )
         
@@ -65,7 +65,7 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
         XCTAssertMethodCalls(mocks.adRepository, .loadAd, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { firstLoadCompletion = $0 }])
         
         // Load ad again
-        let secondRequest = HeliumAdLoadRequest.test(loadID: "id2")
+        let secondRequest = AdLoadRequest.test(loadID: "id2")
         adController.loadAd(request: secondRequest, viewController: viewController) { result in
             XCTFail("Should never get called")
         }
@@ -86,17 +86,17 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
     func testLoadAdSucceedsEarlyIfAlreadyLoaded() {
         // Setup: Start and finish an ad load successfully
         mocks.initializationStatusProvider.isInitialized = true
-        let firstRequest = HeliumAdLoadRequest.test(loadID: "id1")
-        let expectedHeliumAd = HeliumAd.test(request: firstRequest)
+        let firstRequest = AdLoadRequest.test(loadID: "id1")
+        let expectedMediationAd = LoadedAd.test(request: firstRequest)
         let expectedLoadResult = AdLoadResult(
-            result: .success(expectedHeliumAd),
+            result: .success(expectedMediationAd),
             metrics: nil
         )
-        setUpAdControllerWithLoadedAd(expectedHeliumAd)
+        setUpAdControllerWithLoadedAd(expectedMediationAd)
         
         // Load ad again
         var completed = false
-        let secondRequest = HeliumAdLoadRequest.test(loadID: "id2")
+        let secondRequest = AdLoadRequest.test(loadID: "id2")
         adController.loadAd(request: secondRequest, viewController: viewController) { result in
             // Check result has same info as in first load
             XCTAssertAnyEqual(result, expectedLoadResult)
@@ -113,9 +113,9 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
     func testLoadAdSucceedsIfAdRepositorySucceeds() {
         // Setup: start
         mocks.initializationStatusProvider.isInitialized = true
-        let request = HeliumAdLoadRequest.test(loadID: "id1")
+        let request = AdLoadRequest.test(loadID: "id1")
         let expectedLoadResult = AdLoadResult(
-            result: .success(HeliumAd.test(request: request)),
+            result: .success(LoadedAd.test(request: request)),
             metrics: ["hello": 23, "babab": "asdasfd"]
         )
         
@@ -143,9 +143,9 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
     func testLoadAdMultipleTimesReturnsSameResult() {
         // Setup: start
         mocks.initializationStatusProvider.isInitialized = true
-        let request = HeliumAdLoadRequest.test(loadID: "id1")
+        let request = AdLoadRequest.test(loadID: "id1")
         let expectedLoadResult = AdLoadResult(
-            result: .success(HeliumAd.test(request: request)),
+            result: .success(LoadedAd.test(request: request)),
             metrics: ["hello": 23, "babab": "asdasfd"]
         )
 
@@ -224,7 +224,7 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
     /// Validates that AdController finishes with success on clearLoadedAd() if an ad was loaded.
     func testClearLoadedAdSucceedsIfLoadedAd() {
         // Setup: load ad
-        let ad = HeliumAd.test()
+        let ad = LoadedAd.test()
         setUpAdControllerWithLoadedAd(ad)
         
         // Clear loaded ad
@@ -270,7 +270,7 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
     /// Validates that AdController finishes with success on clearShowingAd() if an ad was showing.
     func testClearShowingAdSucceedsIfPartnerSucceeds() {
         // Setup: load ad
-        let ad = HeliumAd.test()
+        let ad = LoadedAd.test()
         setUpAdControllerWithLoadedAd(ad)
         setUpAdControllerWithShowingAd(ad)
         
@@ -294,10 +294,10 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
     /// Validates that AdController can show a new ad after clearing a previously showing ad.
     func testShowAdSucceedsAfterClearShowingAd() {
         // Setup: load ad and show it
-        let ad = HeliumAd.test()
+        let ad = LoadedAd.test()
         setUpAdControllerWithLoadedAd(ad)
         setUpAdControllerWithShowingAd(ad)
-        let secondAd = HeliumAd.test()
+        let secondAd = LoadedAd.test()
         setUpAdControllerWithLoadedAd(secondAd)
         
         // Clear showing ad
@@ -338,7 +338,7 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
     func testShowAdSucceedsIfPartnerControllerSucceeds() {
         // Setup: a loaded interstitial ad
         mocks.initializationStatusProvider.isInitialized = false
-        let ad = HeliumAd.test()
+        let ad = LoadedAd.test()
         setUpAdControllerWithLoadedAd(ad)
         adController.addObserver(observer: mocks.adControllerDelegate)
         let expectedShowResult = AdShowResult(
@@ -388,7 +388,7 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
     func testShowAdFailsIfPartnerControllerFails() {
         // Setup: a loaded interstitial ad
         mocks.initializationStatusProvider.isInitialized = false
-        let ad = HeliumAd.test()
+        let ad = LoadedAd.test()
         setUpAdControllerWithLoadedAd(ad)
         adController.addObserver(observer: mocks.adControllerDelegate)
         let expectedShowResult = AdShowResult(
@@ -444,7 +444,7 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
         // Setup: a loaded interstitial ad
         mocks.initializationStatusProvider.isInitialized = false
         let ilrd = ["?": "sasdf", "2": "3"]
-        let ad = HeliumAd.test(ilrd: ilrd)
+        let ad = LoadedAd.test(ilrd: ilrd)
         setUpAdControllerWithLoadedAd(ad)
         
         // Show ad
@@ -462,7 +462,7 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
     /// Validates the AdController fails on showAd() if the PartnerController does not finish showing the ad on a timely manner.
     func testShowAdFailsIfPartnerControllerTimesOut() {
         // Setup: a loaded interstitial ad
-        let ad = HeliumAd.test()
+        let ad = LoadedAd.test()
         setUpAdControllerWithLoadedAd(ad)
         adController.addObserver(observer: mocks.adControllerDelegate)
         let expectedShowResult = AdShowResult(
@@ -525,7 +525,7 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
     func testMarkLoadAdAsShown() {
         // Setup: a loaded banner ad
         mocks.initializationStatusProvider.isInitialized = true
-        let ad = HeliumAd.test(request: .test(adFormat: .banner))
+        let ad = LoadedAd.test(request: .test(adFormat: .banner))
         setUpAdControllerWithLoadedAd(ad)
         adController.addObserver(observer: mocks.adControllerDelegate)
         
@@ -543,7 +543,7 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
     func testMarkLoadAdAsShownAdaptiveBanner() {
         // Setup: a loaded adaptive banner ad
         mocks.initializationStatusProvider.isInitialized = true
-        let ad = HeliumAd.test(request: .test(adFormat: .adaptiveBanner))
+        let ad = LoadedAd.test(request: .test(adFormat: .adaptiveBanner))
         setUpAdControllerWithLoadedAd(ad)
         adController.addObserver(observer: mocks.adControllerDelegate)
 
@@ -617,17 +617,17 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
         adController.addObserver(observer: mocks.adControllerDelegate)
         adController.customData = "some data"
         let rewardedCallback = RewardedCallback.test()
-        let heliumAd = HeliumAd.test(rewardedCallback: rewardedCallback)
-        setUpAdControllerWithLoadedAd(heliumAd)
-        setUpAdControllerWithShowingAd(heliumAd)
-        
+        let mediationAd = LoadedAd.test(rewardedCallback: rewardedCallback)
+        setUpAdControllerWithLoadedAd(mediationAd)
+        setUpAdControllerWithShowingAd(mediationAd)
+
         // Call didReward
-        adController.didReward(heliumAd.partnerAd, details: [:])
-        
+        adController.didReward(mediationAd.partnerAd, details: [:])
+
         // Check delegate method is called
         XCTAssertMethodCalls(mocks.adControllerDelegate, .didReward, parameters: [])
         // Check that reward is tracked passing the callback and the customData
-        XCTAssertMethodCalls(mocks.metrics, .logReward, .logRewardedCallback, parameters: [heliumAd.partnerAd], [rewardedCallback, "some data"])
+        XCTAssertMethodCalls(mocks.metrics, .logReward, .logRewardedCallback, parameters: [mediationAd.partnerAd], [rewardedCallback, "some data"])
     }
     
     /// Validates that AdController handles a didDismiss event properly when no error
@@ -668,10 +668,10 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
     /// Validates that AdController can show a new ad after the previous one has been dismissed.
     func testShowAdSucceedsAfterDismiss() {
         // Setup
-        let ad = HeliumAd.test()
+        let ad = LoadedAd.test()
         setUpAdControllerWithLoadedAd(ad)
         setUpAdControllerWithShowingAd(ad)
-        let ad2 = HeliumAd.test()
+        let ad2 = LoadedAd.test()
         setUpAdControllerWithLoadedAd(ad2)
         
         // Call didDismiss
@@ -703,7 +703,7 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
     func testLoadedAdIsInvalidatedOnDeinit() {
         // Setup
         mocks.initializationStatusProvider.isInitialized = true
-        let loadedAd = HeliumAd.test()
+        let loadedAd = LoadedAd.test()
         
         autoreleasepool {
             // Instantiate controller inside an autoreleasepool so it gets deallocated at the end of its scope
@@ -728,9 +728,9 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
     // MARK: - BannerSize
     func testLoadSucceedsWithValidBannerSize() {
         mocks.initializationStatusProvider.isInitialized = true
-        let firstRequest = HeliumAdLoadRequest.test(adSize: .adaptive(width: 50, maxHeight: 50), loadID: "id1")
+        let firstRequest = AdLoadRequest.test(adSize: .adaptive(width: 50, maxHeight: 50), loadID: "id1")
         let expectedLoadResult = AdLoadResult(
-            result: .success(HeliumAd.test(request: firstRequest)),
+            result: .success(LoadedAd.test(request: firstRequest)),
             metrics: ["hello": 23, "babab": "asdasfd"]
         )
 
@@ -748,7 +748,7 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
 
     func testLoadFailsWithInvalidAdSize() {
         mocks.initializationStatusProvider.isInitialized = true
-        let firstRequest = HeliumAdLoadRequest.test(adSize: .adaptive(width: 0), loadID: "id1")
+        let firstRequest = AdLoadRequest.test(adSize: .adaptive(width: 0), loadID: "id1")
         let expectedLoadResult = AdLoadResult(
             result: .failure(.init(code: .loadFailureInvalidBannerSize)),
             metrics: nil
@@ -771,7 +771,7 @@ class SingleAdStorageAdControllerTests: HeliumTestCase {
 extension SingleAdStorageAdControllerTests {
     
     /// Convenience method to put the AdController in a state where it has loaded an ad successfully.
-    func setUpAdControllerWithLoadedAd(_ ad: HeliumAd = .test()) {
+    func setUpAdControllerWithLoadedAd(_ ad: LoadedAd = .test()) {
         // Set up
         mocks.initializationStatusProvider.isInitialized = true
         // Load ad
@@ -797,7 +797,7 @@ extension SingleAdStorageAdControllerTests {
     
     /// Convenience method to put the AdController in a state where it is showing an ad.
     /// We assume that an ad has been previously loaded.
-    func setUpAdControllerWithShowingAd(_ ad: HeliumAd = .test()) {
+    func setUpAdControllerWithShowingAd(_ ad: LoadedAd = .test()) {
         XCTAssertTrue(adController.isReadyToShowAd, "Before calling this method make sure to load an ad")
         // Show ad
         var completed = false

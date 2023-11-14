@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -142,7 +142,7 @@ extension Result: AnyEquatable where Success: AnyEquatable, Failure: AnyEquatabl
     }
 }
 
-extension HeliumAd: AnyEquatable {
+extension LoadedAd: AnyEquatable {
     func isEqual(to other: AnyEquatable) -> Bool {
         guard let other = other as? Self else {
             return false
@@ -212,7 +212,7 @@ extension Bid: AnyEquatable {
 }
 
 extension RewardedCallback: AnyEquatable {}
-extension HeliumAdLoadRequest: AnyEquatable {}
+extension AdLoadRequest: AnyEquatable {}
 extension AdFormat: AnyEquatable {}
 extension InterstitialAd: AnyEquatable {}
 extension RewardedAd: AnyEquatable {}

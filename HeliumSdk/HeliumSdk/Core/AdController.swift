@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import Foundation
 import UIKit
 
-/// Manages Helium ad loading and showing, keeping track of loading state, loaded and showing ads.
+/// Manages ad loading and showing, keeping track of loading state, loaded and showing ads.
 protocol AdController: AnyObject {
     /// The delegate that receives ad life-cycle event callbacks.
     var delegate: AdControllerDelegate? { get set }
@@ -18,7 +18,7 @@ protocol AdController: AnyObject {
     /// - parameter request: Info about the ad to load.
     /// - parameter viewController: A view controller to load the ad with. Applies to banners.
     /// - completion: A closure to be executed at the end of the load operation.
-    func loadAd(request: HeliumAdLoadRequest, viewController: UIViewController?, completion: @escaping (AdLoadResult) -> Void)
+    func loadAd(request: AdLoadRequest, viewController: UIViewController?, completion: @escaping (AdLoadResult) -> Void)
     /// Removes the loaded ad freeing up any associated internal and partner storage.
     func clearLoadedAd()
     /// Removes the showing ad freeing up any associated internal and partner storage.
@@ -61,7 +61,7 @@ protocol AdControllerConfiguration {
 /// Trying to load again when an ad is already loaded will return immediately with success.
 /// It is possible to load another ad when the previous one is already shown.
 /// - note: With the current architecture there is one AdController instance per Helium placement.
-/// Currently multiple Helium ads for the same placement can be created and used, but this is discouraged as they will share the same state. This is the reason AdController needs to know about multiple observers and not just a single delegate.
+/// Currently multiple ads for the same placement can be created and used, but this is discouraged as they will share the same state. This is the reason AdController needs to know about multiple observers and not just a single delegate.
 final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
     
     @Injected(\.adRepository) private var adRepository
@@ -79,9 +79,9 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
     /// A timeout task that fires if a partner takes too long to show an ad.
     private var showTimeoutTask: DispatchTask?
     /// The fully-loaded ad ready to be shown, if any.
-    private var loadedAd: (ad: HeliumAd, metrics: RawMetrics?)?
+    private var loadedAd: (ad: LoadedAd, metrics: RawMetrics?)?
     /// The currently showing ad, if any. Becomes nil when the ad is dismissed.
-    private var showingAd: HeliumAd?
+    private var showingAd: LoadedAd?
     // TODO: Remove when InterstitialAd and RewardedAd are removed on 5.0
     /// List of added observers. We use WeakReferenceSet to avoid holding strong references to the observers, which would lead to strong reference cycles.
     private var observers = WeakReferences<AdControllerDelegate>()
@@ -89,7 +89,7 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
     /// We keep this reference while the ad is showing to make sure it is kept alive even if the publisher discards it
     /// (e.g. by loading a new ad and assigning the previous reference to the new instance, before the old ad is dismissed),
     /// so we can still send delegate callbacks to the user.
-    private var retainedDelegate: AdControllerDelegate?
+    private var retainedDelegate: AdControllerDelegate? // swiftlint:disable:this weak_delegate
     
     deinit {
         // Invalidate loaded ad to free its allocated memory.
@@ -120,7 +120,7 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
         }
     }
     
-    func loadAd(request: HeliumAdLoadRequest, viewController: UIViewController?, completion: @escaping (AdLoadResult) -> Void) {
+    func loadAd(request: AdLoadRequest, viewController: UIViewController?, completion: @escaping (AdLoadResult) -> Void) {
         taskDispatcher.async(on: .background) { [self] in
             
             logger.debug("Load started for \(request.adFormat) ad with placement \(request.heliumPlacement) and load ID \(request.loadID)")
@@ -180,7 +180,7 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
     }
     
     func clearLoadedAd() {
-        taskDispatcher.sync(on: .background) { [self] in
+        taskDispatcher.async(on: .background) { [self] in
             // If no loaded ad fail early
             guard let (ad, _) = loadedAd else {
                 return
@@ -301,7 +301,7 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
         }
     }
     
-    private func recordAdImpression(for ad: HeliumAd) {
+    private func recordAdImpression(for ad: LoadedAd) {
         // Mark the ad as showing
         showingAd = ad
         

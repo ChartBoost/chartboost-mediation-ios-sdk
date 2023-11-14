@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -243,7 +243,7 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
 
     // MARK: -
     
-    private func loadAdAndShowIfNeeded(with request: HeliumAdLoadRequest) {
+    private func loadAdAndShowIfNeeded(with request: AdLoadRequest) {
         // Load through ad controller
         // Note that multiple calls will be ignored by the ad controller if a load is already ongoing
         adController.loadAd(request: request, viewController: viewController) { [weak self] result in
@@ -272,7 +272,7 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
     
     private func callLoadCompletionIfNeeded(
         with adLoadResult: AdLoadResult?,
-        request: HeliumAdLoadRequest
+        request: AdLoadRequest
     ) {
         guard let completion = loadCompletion else { return }
 
@@ -321,7 +321,7 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
         self.loadCompletion = nil
     }
     
-    private func showAd(_ ad: HeliumAd, bannerView: UIView, result: AdLoadResult) {
+    private func showAd(_ ad: LoadedAd, bannerView: UIView, result: AdLoadResult) {
         taskDispatcher.async(on: .main) { [self] in
             // Clean up previously showing ad
             visibilityTracker.stopTracking()
@@ -425,8 +425,8 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
     }
     
     /// Creates a new load request for the ad controller.
-    private func makeLoadRequest() -> HeliumAdLoadRequest {
-        HeliumAdLoadRequest(
+    private func makeLoadRequest() -> AdLoadRequest {
+        AdLoadRequest(
             adSize: request.size,
             adFormat: (request.size.type == .adaptive ? .adaptiveBanner : .banner),
             keywords: keywords,
@@ -447,7 +447,7 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
     
     // MARK: - ViewVisibilityObserver
     
-    func viewVisibilityDidChange(on view: UIView, to visible: Bool) {
+    func viewVisibilityDidChange(to visible: Bool) {
         // If view becomes hidden we stop the refresh and load retry processes, since we don't
         // want ad load requests to happen constantly for an unused banner.
         isBannerContainerVisible = visible

@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -100,8 +100,8 @@ final class AdLoader: FullscreenAdLoader {
     }
     
     /// Creates a new load request for the ad controller.
-    private func makeLoadRequest(request: ChartboostMediationAdLoadRequest, adFormat: AdFormat) -> HeliumAdLoadRequest {
-        HeliumAdLoadRequest(
+    private func makeLoadRequest(request: ChartboostMediationAdLoadRequest, adFormat: AdFormat) -> AdLoadRequest {
+        AdLoadRequest(
             adSize: nil,    // nil means full-screen
             adFormat: adFormat,
             keywords: request.keywords,

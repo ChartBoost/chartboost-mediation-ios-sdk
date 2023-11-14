@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -34,7 +34,7 @@ final class ResumableTimer  {
     
     /// Queue used to synchronize access to `timer` since it is not thread-safe.
     /// This will allow concurrent reads, but synchronous writes.
-    private let synchronizationQueue = DispatchQueue(label: "com.chartboost.helium-ios-sdk.resumabletimer.queue", attributes: .concurrent)
+    private let synchronizationQueue = DispatchQueue(label: "com.chartboost.mediation.resumabletimer.queue", attributes: .concurrent)
     
     /// Underlying timer.
     /// - Note: This timer is optional so that it can be set to `nil` which will guarantee that it is removed from the main run loop.

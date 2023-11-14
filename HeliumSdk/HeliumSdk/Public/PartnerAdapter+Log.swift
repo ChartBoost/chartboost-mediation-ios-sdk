@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -48,6 +48,8 @@ public enum PartnerLogEvent: ExpressibleByStringInterpolation {
     
     // This init allows us to create custom events from string interpolations.
     public init(stringInterpolation: DefaultStringInterpolation) {
-        self = .custom(String(stringInterpolation: stringInterpolation))
+        // The documentation states to not use String(stringInterpolation:) directly. Instead,
+        // we can use String(describing:) or String interpolation, both seem to work the same.
+        self = .custom(String(describing: stringInterpolation))
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -7,7 +7,7 @@
 import Foundation
 import XCTest
 
-class ChartboostMediationBannerLoadRequestTests: HeliumTestCase {
+class ChartboostMediationBannerLoadRequestTests: ChartboostMediationTestCase {
     func testIsEqual() {
         var request1: ChartboostMediationBannerLoadRequest = .test(placement: "placement", size: .adaptive(width: 100.0, maxHeight: 50.0))
         var request2: ChartboostMediationBannerLoadRequest = .test(placement: "placement", size: .adaptive(width: 100, maxHeight: 50))

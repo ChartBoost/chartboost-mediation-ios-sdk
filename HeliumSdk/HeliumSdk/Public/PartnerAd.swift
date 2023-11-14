@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -67,9 +67,9 @@ public protocol PartnerAdDelegate: AnyObject {
     func didExpire(_ ad: PartnerAd, details: PartnerEventDetails)
 }
 
-/// `PartnerAd` extension that provides a default implementation of `invalidate()` that does nothing.
 public extension PartnerAd {
-    
+
+    /// Default implementation of `invalidate()` that does nothing.
     func invalidate() throws {
         // Do nothing
         log(.invalidateSucceeded)

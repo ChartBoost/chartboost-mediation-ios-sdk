@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class ConsentSettingsManagerTests: HeliumTestCase {
+class ConsentSettingsManagerTests: ChartboostMediationTestCase {
 
     lazy var manager = ConsentSettingsManager()
     let userDefaults = UserDefaults.standard
@@ -109,5 +109,51 @@ class ConsentSettingsManagerTests: HeliumTestCase {
 
         userDefaults.set(nil, forKey: tcStringKey)
         XCTAssertNil(manager.gdprTCString)
+    }
+
+    func testCCPAPrivacyStringForCCPAConsent() {
+        XCTAssertEqual(manager.ccpaPrivacyString(forCCPAConsent: true), "1YN-")
+        XCTAssertEqual(manager.ccpaPrivacyString(forCCPAConsent: false), "1YY-")
+    }
+
+    func testPartnerConsents() {
+        // Default value
+        mocks.userDefaultsStorage.values["partnerConsents"] = nil
+        XCTAssertAnyEqual(manager.partnerConsents, [:])
+
+        // Set to some value
+        var expectedValue = ["partnerID 1": true, "partnerID 2": false]
+        manager.partnerConsents = expectedValue
+        XCTAssertAnyEqual(mocks.userDefaultsStorage.values["partnerConsents"] as? [String: Bool], expectedValue)
+        XCTAssertAnyEqual(manager.partnerConsents, expectedValue)
+        XCTAssertMethodCalls(mocks.consentSettingsDelegate, .didChangeGDPR, .didChangeCCPA)
+
+        // Update existing value
+        manager.partnerConsents["partnerID 2"] = true
+        expectedValue = ["partnerID 1": true, "partnerID 2": true]
+        XCTAssertAnyEqual(mocks.userDefaultsStorage.values["partnerConsents"] as? [String: Bool], expectedValue)
+        XCTAssertAnyEqual(manager.partnerConsents, expectedValue)
+        XCTAssertMethodCalls(mocks.consentSettingsDelegate, .didChangeGDPR, .didChangeCCPA)
+
+        // Add new value
+        manager.partnerConsents["partnerID 3"] = false
+        expectedValue = ["partnerID 1": true, "partnerID 2": true, "partnerID 3": false]
+        XCTAssertAnyEqual(mocks.userDefaultsStorage.values["partnerConsents"] as? [String: Bool], expectedValue)
+        XCTAssertAnyEqual(manager.partnerConsents, expectedValue)
+        XCTAssertMethodCalls(mocks.consentSettingsDelegate, .didChangeGDPR, .didChangeCCPA)
+
+        // Remove value
+        manager.partnerConsents["partnerID 1"] = nil
+        expectedValue = ["partnerID 2": true, "partnerID 3": false]
+        XCTAssertAnyEqual(mocks.userDefaultsStorage.values["partnerConsents"] as? [String: Bool], expectedValue)
+        XCTAssertAnyEqual(manager.partnerConsents, expectedValue)
+        XCTAssertMethodCalls(mocks.consentSettingsDelegate, .didChangeGDPR, .didChangeCCPA)
+
+        // Remove all values
+        manager.partnerConsents = [:]
+        expectedValue = [:]
+        XCTAssertAnyEqual(mocks.userDefaultsStorage.values["partnerConsents"] as? [String: Bool], expectedValue)
+        XCTAssertAnyEqual(manager.partnerConsents, expectedValue)
+        XCTAssertMethodCalls(mocks.consentSettingsDelegate, .didChangeGDPR, .didChangeCCPA)
     }
 }

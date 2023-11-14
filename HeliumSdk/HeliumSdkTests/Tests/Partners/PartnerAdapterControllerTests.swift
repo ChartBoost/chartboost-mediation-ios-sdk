@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class PartnerAdapterControllerTests: HeliumTestCase {
+class PartnerAdapterControllerTests: ChartboostMediationTestCase {
 
     lazy var partnerController = PartnerAdapterController()
 
@@ -884,6 +884,42 @@ class PartnerAdapterControllerTests: HeliumTestCase {
         XCTAssertMethodCalls(adapter1, .setCOPPA, parameters: [true])
         XCTAssertMethodCalls(adapter2, .setCOPPA, parameters: [true])
         XCTAssertMethodCalls(adapter3, .setCOPPA, parameters: [true])
+    }
+
+    /// Validates that a call to `didChangeGDPR()` forwards the current consent info to all the adapters, passing
+    /// partner-specific signals when available, and falling back to the general signals when not.
+    func testDidChangeGDPRWithPartnerConsents() {
+        setUp3Adapters()
+
+        // Set partner-specific consent for adapter 1 and 2
+        mocks.consentSettings.isSubjectToGDPR = true
+        mocks.consentSettings.gdprConsent = .denied
+        mocks.consentSettings.partnerConsents[adapter1.partnerIdentifier] = true
+        mocks.consentSettings.partnerConsents[adapter2.partnerIdentifier] = false
+        partnerController.didChangeGDPR()
+
+        // Check the expected consent signals where communicated to the adapters
+        XCTAssertMethodCalls(adapter1, .setGDPR, parameters: [true, GDPRConsentStatus.granted]) // partner-specific
+        XCTAssertMethodCalls(adapter2, .setGDPR, parameters: [true, GDPRConsentStatus.denied])  // partner-specific
+        XCTAssertMethodCalls(adapter3, .setGDPR, parameters: [true, GDPRConsentStatus.denied])  // general
+    }
+
+    /// Validates that a call to `didChangeCCPA()` forwards the current consent info to all the adapters, passing
+    /// partner-specific signals when available, and falling back to the general signals when not.
+    func testDidChangeCCPAWithPartnerConsents() {
+        setUp3Adapters()
+
+        // Set partner-specific consent for adapter 1 and 2
+        mocks.consentSettings.ccpaConsent = false
+        mocks.consentSettings.ccpaPrivacyString = "13k2o"
+        mocks.consentSettings.partnerConsents[adapter1.partnerIdentifier] = false
+        mocks.consentSettings.partnerConsents[adapter2.partnerIdentifier] = true
+        partnerController.didChangeCCPA()
+
+        // Check the expected consent signals where communicated to the adapters
+        XCTAssertMethodCalls(adapter1, .setCCPA, parameters: [false, "1YY-"])   // partner-specific
+        XCTAssertMethodCalls(adapter2, .setCCPA, parameters: [true, "1YN-"])    // partner-specific
+        XCTAssertMethodCalls(adapter3, .setCCPA, parameters: [false, "13k2o"])  // general
     }
 }
 

@@ -1,13 +1,15 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
 
 import Foundation
 
+/// Legacy error type. Use `ChartboostMediationError` instead.
 @available(*, deprecated, message: "Use `ChartboostMediationError` instead.")
 public typealias HeliumError = ChartboostMediationError
 
+/// Legacy error code type. Use `ChartboostMediationError.Code` instead.
 @available(*, deprecated, message: "Use `ChartboostMediationError.Code` instead.")
 public typealias HeliumErrorCode = ChartboostMediationError.Code
 

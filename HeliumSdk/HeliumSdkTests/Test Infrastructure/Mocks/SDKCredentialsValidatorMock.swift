@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -16,7 +16,7 @@ class SDKCredentialsValidatorMock: Mock<SDKCredentialsValidatorMock.Method>, SDK
         [.validate: nil]
     }
     
-    func validate(appIdentifier: String?, appSignature: String?) -> ChartboostMediationError? {
-        record(.validate, parameters: [appIdentifier, appSignature])
+    func validate(appIdentifier: String?) -> ChartboostMediationError? {
+        record(.validate, parameters: [appIdentifier])
     }
 }

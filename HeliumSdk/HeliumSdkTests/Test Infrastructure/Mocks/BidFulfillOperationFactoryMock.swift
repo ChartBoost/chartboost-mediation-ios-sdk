@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -16,7 +16,12 @@ class BidFulfillOperationFactoryMock: Mock<BidFulfillOperationFactoryMock.Method
         [.makeBidFulfillOperation: BidFulfillOperationMock()]
     }
     
-    func makeBidFulfillOperation(bids: [Bid], request: HeliumAdLoadRequest, viewController: UIViewController?, delegate: PartnerAdDelegate) -> BidFulfillOperation {
+    func makeBidFulfillOperation(
+        bids: [Bid],
+        request: AdLoadRequest,
+        viewController: UIViewController?,
+        delegate: PartnerAdDelegate
+    ) -> BidFulfillOperation {
         record(.makeBidFulfillOperation, parameters: [bids, request, viewController, delegate])
     }
 }

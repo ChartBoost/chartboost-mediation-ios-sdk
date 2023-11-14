@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -37,7 +37,7 @@ class BannerControllerMock: Mock<BannerControllerMock.Method>, BannerControllerP
         record(.clearAd, parameters: [])
     }
     
-    func viewVisibilityDidChange(on view: UIView, to visible: Bool) {
-        record(.viewVisibilityDidChange, parameters: [view, visible])
+    func viewVisibilityDidChange(to visible: Bool) {
+        record(.viewVisibilityDidChange, parameters: [visible])
     }
 }

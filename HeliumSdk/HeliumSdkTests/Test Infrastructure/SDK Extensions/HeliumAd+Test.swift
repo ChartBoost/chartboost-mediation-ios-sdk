@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import Foundation
 @testable import ChartboostMediationSDK
 
-extension HeliumAd {
+extension LoadedAd {
     /// A convenience factory method to obtain an instance with minimum boilerplate code.
     static func test(
         ilrd: [String: Any]? = nil,
@@ -14,7 +14,7 @@ extension HeliumAd {
         rewardedCallback: RewardedCallback? = .test(),
         partnerAd: PartnerAd = PartnerAdMock(),
         adSize: ChartboostMediationBannerSize = .init(size: .zero, type: .fixed),
-        request: HeliumAdLoadRequest = .test()
+        request: AdLoadRequest = .test()
     ) -> Self {
         let bid = Bid(
             identifier: "some identifier \(Int.random(in: 1...99999))",
@@ -35,7 +35,7 @@ extension HeliumAd {
             size: nil
         )
 
-        return HeliumAd(
+        return LoadedAd(
             bid: bid,
             bidInfo: bidInfo,
             partnerAd: partnerAd,

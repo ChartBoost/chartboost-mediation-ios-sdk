@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class HeliumBannerViewTests: HeliumTestCase {
+class HeliumBannerViewTests: ChartboostMediationTestCase {
     
     lazy var banner: HeliumBannerView = {
         let banner = HeliumBannerView(controller: mocks.bannerController, delegate: mocks.bannerDelegate)
@@ -68,17 +68,17 @@ class HeliumBannerViewTests: HeliumTestCase {
         // Banner needs to be inside a container, otherwise it will never become visible
         let container = UIView()
         container.addSubview(banner)
-        XCTAssertMethodCalls(mocks.bannerController, .viewVisibilityDidChange, parameters: [banner, true])
+        XCTAssertMethodCalls(mocks.bannerController, .viewVisibilityDidChange, parameters: [true])
         
         // if hidden controller should be notified
         banner.isHidden = true
         
-        XCTAssertMethodCalls(mocks.bannerController, .viewVisibilityDidChange, parameters: [banner, false])
+        XCTAssertMethodCalls(mocks.bannerController, .viewVisibilityDidChange, parameters: [false])
         
         // if unhidden controller should be notified
         banner.isHidden = false
         
-        XCTAssertMethodCalls(mocks.bannerController, .viewVisibilityDidChange, parameters: [banner, true])
+        XCTAssertMethodCalls(mocks.bannerController, .viewVisibilityDidChange, parameters: [true])
     }
     
     func testMoveAndRemoveFromSuperview() {
@@ -87,12 +87,12 @@ class HeliumBannerViewTests: HeliumTestCase {
         // when adding to superview controller should be notified
         container.addSubview(banner)
         
-        XCTAssertMethodCalls(mocks.bannerController, .viewVisibilityDidChange, parameters: [banner, true])
+        XCTAssertMethodCalls(mocks.bannerController, .viewVisibilityDidChange, parameters: [true])
 
         // when removing from superview controller should be notified
         banner.removeFromSuperview()
         
-        XCTAssertMethodCalls(mocks.bannerController, .viewVisibilityDidChange, parameters: [banner, false])
+        XCTAssertMethodCalls(mocks.bannerController, .viewVisibilityDidChange, parameters: [false])
     }
     
     func testMoveAndRemoveFromSuperviewWhenHidden() {
@@ -101,24 +101,24 @@ class HeliumBannerViewTests: HeliumTestCase {
         // if hidden controller should be notified
         banner.isHidden = true
         
-        XCTAssertMethodCalls(mocks.bannerController, .viewVisibilityDidChange, parameters: [banner, false])
+        XCTAssertMethodCalls(mocks.bannerController, .viewVisibilityDidChange, parameters: [false])
         
         // when adding to superview controller should be notified
         container.addSubview(banner)
         
-        XCTAssertMethodCalls(mocks.bannerController, .viewVisibilityDidChange, parameters: [banner, false])
+        XCTAssertMethodCalls(mocks.bannerController, .viewVisibilityDidChange, parameters: [false])
         
         // when removing from superview controller should be notified
         banner.removeFromSuperview()
         
-        XCTAssertMethodCalls(mocks.bannerController, .viewVisibilityDidChange, parameters: [banner, false])
+        XCTAssertMethodCalls(mocks.bannerController, .viewVisibilityDidChange, parameters: [false])
     }
     
     /// Validates that a fresh banner that hasn't been added to a view hierarchy yet notifies the controller of its initial state
     func testVisibilityStateOnInit() {
         let banner = HeliumBannerView(controller: mocks.bannerController, delegate: nil)
         
-        XCTAssertMethodCalls(mocks.bannerController, .viewVisibilityDidChange, parameters: [banner, false])
+        XCTAssertMethodCalls(mocks.bannerController, .viewVisibilityDidChange, parameters: [false])
     }
 
     // MARK: - Ad View

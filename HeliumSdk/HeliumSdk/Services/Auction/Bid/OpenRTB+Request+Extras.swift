@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -8,7 +8,7 @@ import Foundation
 extension OpenRTB.BidRequest {
     @Injected(\.environment) private static var environment
 
-    static func make(request: HeliumAdLoadRequest, bidderInformation: BidderInformation) -> Self {
+    static func make(request: AdLoadRequest, bidderInformation: BidderInformation) -> Self {
         .init(
             imp: [.make(request: request)],
             app: .make(),
@@ -112,7 +112,7 @@ extension OpenRTB.Impression {
     @Injected(\.environment) private static var environment
     @Injected(\.consentSettings) private static var consentSettings
 
-    static func make(request: HeliumAdLoadRequest) -> Self {
+    static func make(request: AdLoadRequest) -> Self {
 
         let size = request.adSize?.size ?? CGSize(
             width: environment.screen.screenWidth,
@@ -171,7 +171,7 @@ extension OpenRTB.User {
     @Injected(\.environment) private static var environment
     @Injected(\.consentSettings) private static var consentSettings
 
-    static func make(request: HeliumAdLoadRequest) -> Self {
+    static func make(request: AdLoadRequest) -> Self {
 
         let impdepth: Int
         switch request.adFormat {
@@ -210,7 +210,7 @@ extension OpenRTB.BidRequest.Extension {
     @Injected(\.environment) private static var environment
     @Injected(\.consentSettings) private static var consentSettings
 
-    static func make(request: HeliumAdLoadRequest, bidderInformation: BidderInformation) -> Self {
+    static func make(request: AdLoadRequest, bidderInformation: BidderInformation) -> Self {
         let skadn = OpenRTB.BidRequest.StoreKitAdNetworks(
             version: environment.skAdNetwork.skAdNetworkVersion,
             skadnetids: environment.skAdNetwork.skAdNetworkIDs

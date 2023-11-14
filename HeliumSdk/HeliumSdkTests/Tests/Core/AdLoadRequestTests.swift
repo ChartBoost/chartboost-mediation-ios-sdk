@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-final class HeliumAdLoadRequestTests: HeliumTestCase {
+final class AdLoadRequestTests: ChartboostMediationTestCase {
 
     func testKeywordsMaxLength() throws {
         let maxKeywordKeyLength = 64
@@ -21,7 +21,7 @@ final class HeliumAdLoadRequestTests: HeliumTestCase {
         let key_3_too_long  = String(repeating: "3", count: maxKeywordKeyLength + 1)
         let value_3_too_long  = String(repeating: "3", count: maxKeywordValueLength + 1)
 
-        let request = HeliumAdLoadRequest(
+        let request = AdLoadRequest(
             adSize: nil,
             adFormat: .banner,
             keywords: [

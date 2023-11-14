@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -14,10 +14,6 @@ protocol UserSettingsProviding {
 
 final class UserSettingsProvider: UserSettingsProviding {
 
-    /// A stand alone `taskDispatcher` is needed here because `inputLanguages` needs to make a `sync`
-    /// call, and we want to avoid being called on the same background queue and causes dead lock.
-    private lazy var taskDispatcher = GCDTaskDispatcher.serialBackgroundQueue(name: "user-settings")
-
     var inputLanguages: [String] {
         if #available(iOS 17.0, *) {
             // Stop using `UITextInputMode.activeInputModes` on iOS 17+ because it's a Required
@@ -26,8 +22,14 @@ final class UserSettingsProvider: UserSettingsProviding {
         } else {
             // HB-4356 revealed that multiple threads using the `inputLanguages` getter resulted in crashes.
             // To alleviate the crash, always access `activeInputModes` in the same serial queue.
-            return taskDispatcher.sync(on: .background) {
+            // On HB-6701 we found that the main queue must be used.
+            func fetchValue() -> [String] {
                 UITextInputMode.activeInputModes.compactMap(\.primaryLanguage)
+            }
+            if Thread.isMainThread {
+                return fetchValue()
+            } else {
+                return DispatchQueue.main.sync { fetchValue() }
             }
         }
     }

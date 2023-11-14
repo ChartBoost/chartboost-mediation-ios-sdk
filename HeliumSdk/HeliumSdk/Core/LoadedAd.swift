@@ -1,12 +1,12 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
 
 import Foundation
 
-/// A fully loaded Helium ad.
-struct HeliumAd {
+/// A fully loaded ad.
+struct LoadedAd {
     /// The bid
     let bid: Bid
     /// Information about the winning bid that may be of interest to the publisher.
@@ -16,7 +16,7 @@ struct HeliumAd {
     /// The size of the loaded banner, or `nil` for old adapter versions and fullscreen ads.
     let adSize: ChartboostMediationBannerSize?
     /// The request that triggered the load process.
-    let request: HeliumAdLoadRequest
+    let request: AdLoadRequest
 
     /// Optional Impression level revenue data (ILRD) associated with the bid that won the auction.
     var ilrd: [String: Any]? { bid.ilrd }

@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -52,7 +52,7 @@ public class HeliumKeywords: NSObject {
     /// `value` exceed the maximum allowable characters.
     @objc(setKeyword:value:)
     @discardableResult public func set(keyword: String, value: String) -> Bool {
-        guard keyword.count > 0 && keyword.count <= Self.maxKeywordLength else { return false }
+        guard !keyword.isEmpty && keyword.count <= Self.maxKeywordLength else { return false }
         guard value.count <= Self.maxValueLength else { return false }
         
         self.dictionary[keyword] = value

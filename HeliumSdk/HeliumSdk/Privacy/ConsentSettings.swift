@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -30,12 +30,30 @@ protocol ConsentSettings: AnyObject {
     /// The GDPR TCFv2 value.
     /// https://github.com/InteractiveAdvertisingBureau/GDPR-Transparency-and-Consent-Framework
     var gdprTCString: String? { get }
+
+    /// Per-partner user consent signals.
+    var partnerConsents: [PartnerIdentifier: Bool] { get set }
+}
+
+extension ConsentSettings {
+
+    /// Convenience method to obtain the US Privacy string associated to a boolean-like opt-in/opt-out CCPA consent flag.
+    func ccpaPrivacyString(forCCPAConsent ccpaConsent: Bool) -> String {
+        ccpaConsent ? USPrivacyString.optIn : USPrivacyString.optOut
+    }
 }
 
 protocol ConsentSettingsDelegate: AnyObject {
     func didChangeGDPR()
     func didChangeCOPPA()
     func didChangeCCPA()
+}
+
+/// Constants for IAB's US Privacy String to indicate conformance to CCPA laws.
+/// See https://github.com/InteractiveAdvertisingBureau/USPrivacy/blob/master/CCPA/US%20Privacy%20String.md
+private enum USPrivacyString {
+    static let optIn = "1YN-"
+    static let optOut = "1YY-"
 }
 
 /// Stores consent settings and notifies delegate of updates.
@@ -48,13 +66,7 @@ final class ConsentSettingsManager: ConsentSettings {
         static let gdpr = "gdpr"
         static let gdprConsent = "gdprconsent"
         static let tcString = "IABTCF_TCString"
-    }
-    
-    /// Constants for IAB's US Privacy String to indicate conformance to CCPA laws.
-    /// See https://github.com/InteractiveAdvertisingBureau/USPrivacy/blob/master/CCPA/US%20Privacy%20String.md
-    private enum USPrivacyString {
-        static let optIn = "1YN-"
-        static let optOut = "1YY-"
+        static let partnerConsents = "partnerConsents"
     }
     
     // We use a cbUserDefaultsStorage instead of the standard userDefaultsStorage for compatibility with previous versions
@@ -115,10 +127,10 @@ final class ConsentSettingsManager: ConsentSettings {
     
     var ccpaPrivacyString: String? {
         // HE SDK does not provide a public API to set a custom privacy string yet, so infer it from the boolean consent
-        switch ccpaConsent {
-        case true?: return USPrivacyString.optIn
-        case false?: return USPrivacyString.optOut
-        case nil: return nil
+        if let ccpaConsent = ccpaConsent {
+            return ccpaPrivacyString(forCCPAConsent: ccpaConsent)
+        } else {
+            return nil
         }
     }
 
@@ -129,6 +141,19 @@ final class ConsentSettingsManager: ConsentSettings {
             return nil
         }
         return tcString
+    }
+
+    var partnerConsents: [PartnerIdentifier : Bool] {
+        get {
+            userDefaults[Keys.partnerConsents] ?? [:]
+        }
+        set {
+            logger.debug("Set partner consents to \(newValue)")
+            userDefaults[Keys.partnerConsents] = newValue
+            // Per-partner consent boolean signals are mapped to both GDPR and CCPA signals for the adapters.
+            delegate?.didChangeGDPR()
+            delegate?.didChangeCCPA()
+        }
     }
 }
 

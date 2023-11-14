@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -336,13 +336,32 @@ private extension PartnerAdapterController {
     }
     
     func setGDPRConsent(on adapter: PartnerAdapter) {
-        if consentSettings.isSubjectToGDPR != nil || consentSettings.gdprConsent != .unknown {
-            adapter.setGDPR(applies: consentSettings.isSubjectToGDPR, status: consentSettings.gdprConsent)
+        if consentSettings.isSubjectToGDPR != nil
+            || consentSettings.gdprConsent != .unknown
+            || consentSettings.partnerConsents[adapter.partnerIdentifier] != nil {
+            // Partner-specific GDPR consent is used if available, otherwise we fall back to the general signal
+            let consentStatus: GDPRConsentStatus
+            if let partnerConsent = consentSettings.partnerConsents[adapter.partnerIdentifier] {
+                consentStatus = partnerConsent ? .granted : .denied
+            } else {
+                consentStatus = consentSettings.gdprConsent
+            }
+            adapter.setGDPR(applies: consentSettings.isSubjectToGDPR, status: consentStatus)
         }
     }
     
     func setCCPAConsent(on adapter: PartnerAdapter) {
-        if let ccpaConsent = consentSettings.ccpaConsent, let ccpaPrivacyString = consentSettings.ccpaPrivacyString {
+        // Partner-specific CCPA consent is used if available, otherwise we fall back to the general signal
+        let ccpaConsent: Bool?
+        let ccpaPrivacyString: String?
+        if let partnerConsent = consentSettings.partnerConsents[adapter.partnerIdentifier] {
+            ccpaConsent = partnerConsent
+            ccpaPrivacyString = consentSettings.ccpaPrivacyString(forCCPAConsent: partnerConsent)
+        } else {
+            ccpaConsent = consentSettings.ccpaConsent
+            ccpaPrivacyString = consentSettings.ccpaPrivacyString
+        }
+        if let ccpaConsent = ccpaConsent, let ccpaPrivacyString = ccpaPrivacyString {
             adapter.setCCPA(hasGivenConsent: ccpaConsent, privacyString: ccpaPrivacyString)
         }
     }

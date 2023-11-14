@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -7,7 +7,7 @@ import Foundation
 import XCTest
 @testable import ChartboostMediationSDK
 
-class NetworkAdAuctionServiceTests: HeliumTestCase {
+class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
 
     lazy var service = NetworkAdAuctionService()
     private lazy var networkManager = mocks.networkManager
@@ -19,7 +19,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     static let loadID = "some load ID"
     static let auctionID = "some auction ID"
     static let rateLimitReset = "5"
-    static let interstitialRequest = HeliumAdLoadRequest.test(adFormat: .interstitial, keywords: nil, loadID: loadID)
+    static let interstitialRequest = AdLoadRequest.test(adFormat: .interstitial, keywords: nil, loadID: loadID)
     let bidderInfo = ["partner1": ["1": "2"], "partner2": ["1": "2", "a": "b"], "partner3": ["1234": "2423", "asdf ": "fsdfsdf", "asdf-o-": "sdfj"]]
 
     override func setUp() {
@@ -941,7 +941,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
 
     // Test the parsing of a completely backend realistically generated response for rewarded.
     func testRealRewardedResponse() throws {
-        let request = HeliumAdLoadRequest.test(adFormat: .rewarded, keywords: nil, loadID: Self.loadID)
+        let request = AdLoadRequest.test(adFormat: .rewarded, keywords: nil, loadID: Self.loadID)
         Self.registerResponseJSON(.bid_response_rewarded_real)
 
         // Start the auction
@@ -987,7 +987,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
 
     // Test the parsing of a completely backend realistically generated response for banners.
     func testRealBannerResponse() throws {
-        let request = HeliumAdLoadRequest.test(adFormat: .banner, keywords: nil, loadID: Self.loadID)
+        let request = AdLoadRequest.test(adFormat: .banner, keywords: nil, loadID: Self.loadID)
         Self.registerResponseJSON(.bid_response_banner_real)
 
         // Start the auction
@@ -1036,7 +1036,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testEmptyDataWithDifferentHTTPStatusCodes() {
         [200, 204, 404, 500].forEach { httpResponseStatusCode in
             Self.registerResponseJSON(nil, statusCode: httpResponseStatusCode)
-            let request = HeliumAdLoadRequest.test(adFormat: .interstitial, keywords: nil)
+            let request = AdLoadRequest.test(adFormat: .interstitial, keywords: nil)
             let expectation = XCTestExpectation(description: "auction")
             service.startAuction(request: request) { response in
                 if httpResponseStatusCode == 204 {
@@ -1059,7 +1059,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testValidDataWithDifferentHTTPStatusCodes() {
         [200, 204, 404, 500].forEach { httpResponseStatusCode in
             Self.registerResponseJSON(.Test_BidResp_OnlyProg, statusCode: httpResponseStatusCode)
-            let request = HeliumAdLoadRequest.test(adFormat: .interstitial, keywords: nil)
+            let request = AdLoadRequest.test(adFormat: .interstitial, keywords: nil)
             let expectation = XCTestExpectation(description: "auction")
             service.startAuction(request: request) { response in
                 if httpResponseStatusCode == 200 {
@@ -1136,7 +1136,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testAuctionIDIsNotIncludedIfAuctionFailsEarly() {
         // Setup: load rate limiter rejects the load
         mocks.loadRateLimiter.setReturnValue(9.0, for: .timeUntilNextLoadIsAllowed)
-        let request = HeliumAdLoadRequest.test(adFormat: .interstitial, keywords: nil)
+        let request = AdLoadRequest.test(adFormat: .interstitial, keywords: nil)
 
         // Start the auction
         var completed = false
@@ -1157,7 +1157,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     /// Validates that the auction ID in the response header is returned even in a failure path.
     func testAuctionIDIsIncludedIfNetworkFails() {
         // Setup: network manager fails with a response that includes auction ID
-        let request = HeliumAdLoadRequest.test(adFormat: .interstitial, keywords: nil)
+        let request = AdLoadRequest.test(adFormat: .interstitial, keywords: nil)
         Self.registerResponseJSON(nil, statusCode: 500)
         
         // Start the auction
@@ -1183,7 +1183,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     /// Validates that the auction ID in the response header is returned in a success path.
     func testAuctionIDIsIncludedIfNetworkSucceeds() {
         // Setup: network manager succeeds with a response that includes auction ID
-        let request = HeliumAdLoadRequest.test(adFormat: .interstitial, keywords: nil)
+        let request = AdLoadRequest.test(adFormat: .interstitial, keywords: nil)
         Self.registerResponseJSON(.Test_BidResp_OnlyProg)
         
         // Start the auction

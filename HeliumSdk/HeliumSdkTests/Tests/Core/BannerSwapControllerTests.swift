@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -7,7 +7,7 @@
 import Foundation
 import XCTest
 
-class BannerSwapControllerTests: HeliumTestCase {
+class BannerSwapControllerTests: ChartboostMediationTestCase {
 
     lazy var bannerSwapController = setUpBannerSwapController()
 
@@ -208,9 +208,8 @@ class BannerSwapControllerTests: HeliumTestCase {
         let completion = try assertLoad(controller: controller)
         completion(.testSuccess())
 
-        let view = UIView()
-        bannerSwapController.viewVisibilityDidChange(on: view, to: true)
-        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [view, true])
+        bannerSwapController.viewVisibilityDidChange(to: true)
+        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [true])
     }
 
     func testViewVisibilityWithSwappingController() throws {
@@ -226,10 +225,9 @@ class BannerSwapControllerTests: HeliumTestCase {
         try assertLoad(controller: controllerB)
         // Keep controllerB loading so we are in the swapping state.
 
-        let view = UIView()
-        bannerSwapController.viewVisibilityDidChange(on: view, to: true)
-        XCTAssertMethodCalls(controllerA, .viewVisibilityDidChange, parameters: [view, true])
-        XCTAssertMethodCalls(controllerB, .viewVisibilityDidChange, parameters: [view, true])
+        bannerSwapController.viewVisibilityDidChange(to: true)
+        XCTAssertMethodCalls(controllerA, .viewVisibilityDidChange, parameters: [true])
+        XCTAssertMethodCalls(controllerB, .viewVisibilityDidChange, parameters: [true])
     }
 
     func testDoesNotPassViewVisibilityWhenControllerHasBeenCleared() throws {
@@ -238,14 +236,13 @@ class BannerSwapControllerTests: HeliumTestCase {
         let completion = try assertLoad(controller: controller)
         completion(.testSuccess())
 
-        let view = UIView()
-        bannerSwapController.viewVisibilityDidChange(on: view, to: true)
-        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [view, true])
+        bannerSwapController.viewVisibilityDidChange(to: true)
+        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [true])
 
         bannerSwapController.clearAd()
         XCTAssertMethodCalls(controller, .clearAd, parameters: [])
 
-        bannerSwapController.viewVisibilityDidChange(on: view, to: false)
+        bannerSwapController.viewVisibilityDidChange(to: false)
         XCTAssertNoMethodCalls(controller)
     }
 
@@ -256,12 +253,11 @@ class BannerSwapControllerTests: HeliumTestCase {
     }
 
     func testCallsViewVisibilityWhenCreatingControllerIfViewVisibilityWasCalledBeforeLoad() throws {
-        let view = UIView()
-        bannerSwapController.viewVisibilityDidChange(on: view, to: true)
+        bannerSwapController.viewVisibilityDidChange(to: true)
 
         bannerSwapController.loadAd(request: .test(), viewController: viewController) { result in }
         let controller = try assertCreatesController()
-        try assertLoad(controller: controller, viewVisibility: (view, true))
+        try assertLoad(controller: controller, viewVisibility: true)
     }
 
     // MARK: - Load
@@ -785,12 +781,12 @@ extension BannerSwapControllerTests {
     @discardableResult
     private func assertLoad(
         controller: BannerControllerMock,
-        viewVisibility: (view: UIView, isVisible: Bool)? = nil
+        viewVisibility: Bool? = nil
     ) throws -> ((ChartboostMediationBannerLoadResult) -> Void) {
         var result: ((ChartboostMediationBannerLoadResult) -> Void)?
 
         if let viewVisibility {
-            XCTAssertMethodCallsContains(controller, .viewVisibilityDidChange, parameters: [viewVisibility.view, viewVisibility.isVisible])
+            XCTAssertMethodCallsContains(controller, .viewVisibilityDidChange, parameters: [viewVisibility])
         } else {
             XCTAssertNoMethodCall(controller, to: .viewVisibilityDidChange)
         }

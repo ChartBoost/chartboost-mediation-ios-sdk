@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-final class FullscreenAdTests: HeliumTestCase {
+final class FullscreenAdTests: ChartboostMediationTestCase {
 
     lazy var ad = FullscreenAd(request: request, winningBidInfo: winningBidInfo, controller: mocks.adController)
     let request = ChartboostMediationAdLoadRequest(placement: "some placement", keywords: ["some": "keywords"])

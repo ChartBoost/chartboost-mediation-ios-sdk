@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2023 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -16,7 +16,7 @@ struct AdAuctionResponse {
 /// A service to make ad auctions.
 protocol AdAuctionService {
     /// Starts an auction obtaining a list of sorted bids.
-    func startAuction(request: HeliumAdLoadRequest, completion: @escaping (AdAuctionResponse) -> Void)
+    func startAuction(request: AdLoadRequest, completion: @escaping (AdAuctionResponse) -> Void)
 }
 
 /// A server-backed ad auction service.
@@ -28,7 +28,7 @@ final class NetworkAdAuctionService: AdAuctionService {
     @Injected(\.loadRateLimiter) private var loadRateLimiter
     
     /// Starts an auction obtaining a list of sorted bids from our server.
-    func startAuction(request: HeliumAdLoadRequest, completion: @escaping (AdAuctionResponse) -> Void) {
+    func startAuction(request: AdLoadRequest, completion: @escaping (AdAuctionResponse) -> Void) {
         // Fail immediately if the load should be rate limited
         if environment.testMode.isRateLimitingEnabled {
             let timeUntilNextLoadIsAllowed = loadRateLimiter.timeUntilNextLoadIsAllowed(placement: request.heliumPlacement)
@@ -59,7 +59,7 @@ final class NetworkAdAuctionService: AdAuctionService {
         }
     }
     
-    private func requestBid(loadRequest: HeliumAdLoadRequest, bidderTokens: BidderTokens, completion: @escaping (AdAuctionResponse) -> Void) {
+    private func requestBid(loadRequest: AdLoadRequest, bidderTokens: BidderTokens, completion: @escaping (AdAuctionResponse) -> Void) {
         let auctionsRequest = AuctionsHTTPRequest(
             bidRequest: makeBidRequest(request: loadRequest, bidderTokens: bidderTokens),
             loadRateLimit: Int(loadRateLimiter.loadRateLimit(placement: loadRequest.heliumPlacement)),
@@ -87,7 +87,7 @@ final class NetworkAdAuctionService: AdAuctionService {
 
 private extension NetworkAdAuctionService {
 
-    func makeBidRequest(request: HeliumAdLoadRequest, bidderTokens: BidderTokens) -> OpenRTB.BidRequest {
+    func makeBidRequest(request: AdLoadRequest, bidderTokens: BidderTokens) -> OpenRTB.BidRequest {
         let bidderInformation = makeBiddersInformation(tokens: bidderTokens, adaptersInfo: partnerController.initializedAdapterInfo)
         let bidRequest = OpenRTB.BidRequest.make(request: request, bidderInformation: bidderInformation)
         return bidRequest
@@ -166,7 +166,7 @@ extension NetworkManager.RequestError {
 }
 
 extension NetworkManager.JSONResponse where T == OpenRTB.BidResponse {
-    fileprivate func asAdAuctionResponse(request: HeliumAdLoadRequest) -> AdAuctionResponse {
+    fileprivate func asAdAuctionResponse(request: AdLoadRequest) -> AdAuctionResponse {
         switch httpURLResponse.statusCode {
         case 200:
             guard let responseData = responseData else {

@@ -1,0 +1,11 @@
+only_rules:
+  # Enable only test related rules.
+  - empty_xctest_method
+  - private_unit_test
+# We need to explicitly specify our custom test case class for a few rules.
+empty_xctest_method:
+  test_parent_classes:
+    - "ChartboostMediationTestCase"
+private_unit_test:
+  test_parent_classes:
+    - "ChartboostMediationTestCase"
