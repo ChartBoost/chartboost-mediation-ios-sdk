@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -17,10 +17,9 @@ import Foundation
 /// Add this view to the view hierarchy before showing the banner ad.
 @objc
 public class HeliumBannerView: UIView, HeliumBannerAd {
-
     private let controller: BannerControllerProtocol
     public weak var delegate: HeliumBannerAdDelegate?
-    
+
     init(
         controller: BannerControllerProtocol,
         delegate: HeliumBannerAdDelegate?
@@ -32,11 +31,12 @@ public class HeliumBannerView: UIView, HeliumBannerAd {
         self.controller.delegate = self
         sendVisibilityStateToController()
     }
-    
+
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: - HeliumBannerAd
 
     /// Optional keywords that can be associated with the advertisement placement.
@@ -68,17 +68,17 @@ public class HeliumBannerView: UIView, HeliumBannerAd {
     }
 
     // MARK: - UIView
-    public override var intrinsicContentSize: CGSize {
+    override public var intrinsicContentSize: CGSize {
         controller.request.size.size
     }
 
-    public override var isHidden: Bool {
+    override public var isHidden: Bool {
         didSet {
             sendVisibilityStateToController()
         }
     }
 
-    public override func didMoveToSuperview() {
+    override public func didMoveToSuperview() {
         super.didMoveToSuperview()
         sendVisibilityStateToController()
     }
@@ -86,7 +86,7 @@ public class HeliumBannerView: UIView, HeliumBannerAd {
     private func sendVisibilityStateToController() {
         // The view is considered not visible if it's removed from the view hierarchy or if it's hidden.
         let visible = !isHidden && superview != nil
-        controller.viewVisibilityDidChange(on: self, to: visible)
+        controller.viewVisibilityDidChange(to: visible)
     }
 }
 

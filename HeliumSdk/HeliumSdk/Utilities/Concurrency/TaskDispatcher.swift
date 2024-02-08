@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -14,7 +14,8 @@ enum TaskDispatcherQueue: Int {
 }
 
 /// Flags for extra configuration when dispatching a task on with a task dispatcher.
-/// An enum just because it's easier than exposing an OptionSet class to Obj-C at this moment. We should reconsider this decision if in the future we need a combination of flags.
+/// An enum just because it's easier than exposing an OptionSet class to Obj-C at this moment. We should reconsider this decision if in the
+/// future we need a combination of flags.
 enum TaskDispatcherExecutionFlag: Int {
     /// No flag.
     case none
@@ -58,10 +59,10 @@ protocol DispatchTaskGroup {
 
 /// A task dispatcher takes care of executing code on different threads asynchronously, optionally with a delay and repetition.
 /// It is intended to replace direct uses of DispatchQueue and NSTimer.
-/// It provides a unified and simplified concurrency solution which can be easily mocked, avoiding cumbersome asynchronous code in unit tests and allowing them to run SDK code synchronously and fast.
-/// Note in order to dispatch code synchronously you will need to use `TaskDispatcher`.
-/// `AsynchronousTaskDispatcher` is intentionally limited to only async operations so it can be safely used by multiple components without the risk
-/// of causing deadlocks.
+/// It provides a unified and simplified concurrency solution which can be easily mocked, avoiding cumbersome asynchronous code in unit
+/// tests and allowing them to run SDK code synchronously and fast. Note in order to dispatch code synchronously you will need to use
+/// `TaskDispatcher`. `AsynchronousTaskDispatcher` is intentionally limited to only async operations so it can be safely used by
+/// multiple components without the risk of causing deadlocks.
 protocol AsynchronousTaskDispatcher {
     /// Executes code asynchronously on the chosen queue. Use this instead of DispatchQueue.async()
     func async(on queue: TaskDispatcherQueue, flags: TaskDispatcherExecutionFlag, execute work: @escaping () -> Void)
@@ -73,9 +74,10 @@ protocol AsynchronousTaskDispatcher {
     func group(on queue: TaskDispatcherQueue) -> DispatchTaskGroup
 }
 
-/// A task dispatcher takes care of executing code on different threads, synchronously or asynchronously, optionally with a delay and repetition.
-/// It is intended to replace direct uses of DispatchQueue and NSTimer.
-/// It provides a unified and simplified concurrency solution which can be easily mocked, avoiding cumbersome asynchronous code in unit tests and allowing them to run SDK code synchronously and fast.
+/// A task dispatcher takes care of executing code on different threads, synchronously or asynchronously, optionally with a delay and
+/// repetition. It is intended to replace direct uses of DispatchQueue and NSTimer.
+/// It provides a unified and simplified concurrency solution which can be easily mocked, avoiding cumbersome asynchronous code in unit
+/// tests and allowing them to run SDK code synchronously and fast.
 /// - warning: Programmers beware that dispatching code synchronously can lead to deadlocks when doing so from and to the same queue.
 /// For safety, always use `AsynchronousTaskDispatcher` when possible, and be mindful when using `TaskDispatcher`: do not reuse instances
 /// on multiple classes, and make sure that no recursive calls to `sync(on:flags:execute:)` can happen within that class.
@@ -86,7 +88,6 @@ protocol TaskDispatcher: AsynchronousTaskDispatcher {
 
 // Extension that provides a default implementation with default values for some parameters.
 extension AsynchronousTaskDispatcher {
-    
     func async(on queue: TaskDispatcherQueue, execute work: @escaping () -> Void) {
         async(on: queue, flags: .none, execute: work)
     }
@@ -98,7 +99,6 @@ extension AsynchronousTaskDispatcher {
 
 // Extension that provides a default implementation with default values for some parameters.
 extension TaskDispatcher {
-
     func sync<T>(on queue: TaskDispatcherQueue, execute work: @escaping () throws -> T) rethrows -> T {
         try sync(on: queue, flags: .none, execute: work)
     }

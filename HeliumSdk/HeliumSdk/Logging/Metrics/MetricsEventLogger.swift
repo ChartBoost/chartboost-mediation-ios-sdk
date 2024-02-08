@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -10,40 +10,49 @@ typealias LoadID = String
 typealias RawMetrics = [String: Any]
 
 protocol MetricsEventLogging {
-    
     /// Logs a initialization event.
     func logInitialization(_ events: [MetricsEvent], result: SDKInitResult, error: ChartboostMediationError?)
-    
+
     /// Logs a prebid event.
     func logPrebid(loadID: LoadID, events: [MetricsEvent])
-    
+
     /// Logs a load event.
     /// - returns: Raw metrics dictionary sent to our backend.
-    func logLoad(auctionID: AuctionID, loadID: LoadID, events: [MetricsEvent], error: ChartboostMediationError?, adFormat: AdFormat, size: CGSize?) -> RawMetrics?
-    
+    func logLoad(
+        auctionID: AuctionID,
+        loadID: LoadID,
+        events: [MetricsEvent],
+        error: ChartboostMediationError?,
+        adFormat: AdFormat,
+        size: CGSize?,
+        backgroundDuration: TimeInterval
+    ) -> RawMetrics?
+
     /// Logs a show event.
     func logShow(auctionID: AuctionID, loadID: LoadID, event: MetricsEvent) -> RawMetrics?
-    
+
     /// Logs a click event.
     func logClick(auctionID: AuctionID, loadID: LoadID)
-    
+
     /// Logs an expiration event.
     func logExpiration(auctionID: AuctionID, loadID: LoadID)
-    
+
     /// Logs a Helium ad impression.
-    /// This is when we consider that the ad is visible, which may not be the same as when the partner that shows the ad considers the ad is visible.
+    /// This is when we consider that the ad is visible, which may not be the same as when the partner that shows the ad considers the
+    /// ad is visible.
     /// - parameter ad: The partner ad affected.
     func logHeliumImpression(for ad: PartnerAd)
-    
+
     /// Logs a partner ad impression.
-    /// This is when the partner that shows the ad considers that the ad is visible, which may not be the same as when we consider the ad is visible.
+    /// This is when the partner that shows the ad considers that the ad is visible, which may not be the same as when we consider the
+    /// ad is visible.
     /// - parameter ad: The partner ad affected.
     func logPartnerImpression(for ad: PartnerAd)
-    
+
     /// Logs a reward event.
     /// - parameter ad: The partner ad affected.
     func logReward(for ad: PartnerAd)
-    
+
     /// Logs that the ad auction is finished.
     /// - parameter bids: The participating bids in the auction.
     func logAuctionCompleted(
@@ -53,9 +62,10 @@ protocol MetricsEventLogging {
         adFormat: AdFormat,
         size: CGSize?
     )
-    
+
     /// Asynchronously notifies the endpoint specified at the rewarded callback URL that the user has earned a reward.
-    /// This method will retry the callback attempt the number of times as specified in `RewardedCallback.maxRetries` property before giving up.
+    /// This method will retry the callback attempt the number of times as specified in `RewardedCallback.maxRetries` property before
+    /// giving up.
     /// - parameter rewardedCallback: The rewarded callback model containing all the info needed to make the HTTP request.
     /// - parameter customData: Extra info passed programmatically by the publisher to be sent in the rewarded callback request.
     func logRewardedCallback(_ rewardedCallback: RewardedCallback, customData: String?)
@@ -73,12 +83,11 @@ protocol MetricsEventLoggerConfiguration {
 /// A `MetricsEventLogging` implementation for logging to the backend to the appropriate endpoint as dicated by the
 /// event type.
 final class MetricsEventLogger: MetricsEventLogging {
-
     @Injected(\.metricsConfiguration) private var configuration
-    /// Indicates Helium SDK initialization status.
+    /// Indicates Mediation SDK initialization status.
     @Injected(\.initializationStatusProvider) private var initializationStatusProvider
     @Injected(\.networkManager) private var networkManager
-    
+
     func logInitialization(_ events: [MetricsEvent], result: SDKInitResult, error: ChartboostMediationError?) {
         guard configuration.filter.contains(.initialization) else { return }
 
@@ -89,18 +98,19 @@ final class MetricsEventLogger: MetricsEventLogging {
     func logPrebid(loadID: LoadID, events: [MetricsEvent]) {
         guard !events.isEmpty else { return }
         guard configuration.filter.contains(.prebid) else { return }
-        
+
         send(MetricsHTTPRequest.prebid(loadID: loadID, events: events))
         logToConsole(.prebid, events: events)
     }
-    
+
     func logLoad(
         auctionID: AuctionID,
         loadID: LoadID,
         events: [MetricsEvent],
         error: ChartboostMediationError?,
         adFormat: AdFormat,
-        size: CGSize?
+        size: CGSize?,
+        backgroundDuration: TimeInterval
     ) -> RawMetrics? {
         guard configuration.filter.contains(.load) else { return nil }
 
@@ -110,7 +120,8 @@ final class MetricsEventLogger: MetricsEventLogging {
             events: events,
             error: error,
             adFormat: adFormat,
-            size: size
+            size: size,
+            backgroundDuration: backgroundDuration
         )
         var metrics = send(request)
         logToConsole(.load, auctionID: auctionID, loadID: loadID, events: events)
@@ -123,7 +134,7 @@ final class MetricsEventLogger: MetricsEventLogging {
 
     func logShow(auctionID: AuctionID, loadID: LoadID, event: MetricsEvent) -> RawMetrics? {
         guard configuration.filter.contains(.show) else { return nil }
-        
+
         let metrics = send(MetricsHTTPRequest.show(auctionID: auctionID, loadID: loadID, event: event))
         logToConsole(.show, auctionID: auctionID, loadID: loadID, events: [event])
         return metrics
@@ -131,18 +142,18 @@ final class MetricsEventLogger: MetricsEventLogging {
 
     func logClick(auctionID: AuctionID, loadID: LoadID) {
         guard configuration.filter.contains(.click) else { return }
-        
+
         send(MetricsHTTPRequest.click(auctionID: auctionID, loadID: loadID))
         logToConsole(.click, auctionID: auctionID, loadID: loadID)
     }
 
     func logExpiration(auctionID: AuctionID, loadID: LoadID) {
         guard configuration.filter.contains(.expiration) else { return }
-        
+
         send(MetricsHTTPRequest.expiration(auctionID: auctionID, loadID: loadID))
         logToConsole(.expiration, auctionID: auctionID, loadID: loadID)
     }
-    
+
     func logHeliumImpression(for ad: PartnerAd) {
         send(MetricsHTTPRequest.heliumImpression(
             auctionID: ad.request.auctionIdentifier,
@@ -150,7 +161,7 @@ final class MetricsEventLogger: MetricsEventLogging {
         ))
         logToConsole(.heliumImpression, auctionID: ad.request.auctionIdentifier, loadID: ad.request.loadID)
     }
-    
+
     func logPartnerImpression(for ad: PartnerAd) {
         send(MetricsHTTPRequest.partnerImpression(
             auctionID: ad.request.auctionIdentifier,
@@ -158,7 +169,7 @@ final class MetricsEventLogger: MetricsEventLogging {
         ))
         logToConsole(.partnerImpression, auctionID: ad.request.auctionIdentifier, loadID: ad.request.loadID)
     }
-    
+
     func logReward(for ad: PartnerAd) {
         send(MetricsHTTPRequest.reward(
             auctionID: ad.request.auctionIdentifier,
@@ -166,7 +177,7 @@ final class MetricsEventLogger: MetricsEventLogging {
         ))
         logToConsole(.reward, auctionID: ad.request.auctionIdentifier, loadID: ad.request.loadID)
     }
-    
+
     func logAuctionCompleted(
         with bids: [Bid],
         winner: Bid,
@@ -183,14 +194,14 @@ final class MetricsEventLogger: MetricsEventLogging {
         )
         networkManager.send(request) { _ in }
     }
-    
+
     func logRewardedCallback(_ rewardedCallback: RewardedCallback, customData: String?) {
         guard let request = RewardedCallbackHTTPRequest(rewardedCallback: rewardedCallback, customData: customData) else {
             return
         }
         networkManager.send(request) { _ in }
     }
-    
+
     private func logToConsole(
         _ eventType: MetricsEvent.EventType,
         auctionID: AuctionID? = nil,
@@ -201,7 +212,7 @@ final class MetricsEventLogger: MetricsEventLogging {
         let auctionIDInfo = auctionID.map { "auction_id = \($0)" } ?? ""
         let loadIDInfo = loadID.map { "load ID = \($0)" } ?? ""
         let errorInfo = error.map { "error = \($0)" } ?? ""
-        if let events = events {
+        if let events {
             events.forEach {
                 logger.trace("Metrics data for \(eventType): [\(auctionIDInfo)][\(loadIDInfo)] \($0.logString), \(errorInfo)")
             }
@@ -213,30 +224,29 @@ final class MetricsEventLogger: MetricsEventLogging {
 
 // MARK: - Helpers
 
-private extension MetricsEvent {
-    
-    var logString: String {
+extension MetricsEvent {
+    fileprivate var logString: String {
         var parts = [String]()
         parts.append("partner = \(partnerIdentifier)")
-        if let lineItemIdentifier = lineItemIdentifier {
+        if let lineItemIdentifier {
             parts.append("lineItemId = \(lineItemIdentifier)")
         }
-        if let partnerSDKVersion = partnerSDKVersion {
+        if let partnerSDKVersion {
             parts.append("partnerSDKVersion = \(partnerSDKVersion)")
         }
-        if let partnerAdapterVersion = partnerAdapterVersion {
+        if let partnerAdapterVersion {
             parts.append("partnerAdapterVersion = \(partnerAdapterVersion)")
         }
-        if let networkType = networkType {
+        if let networkType {
             parts.append("networkType = \(networkType.rawValue)")
         }
-        if let partnerPlacement = partnerPlacement {
+        if let partnerPlacement {
             parts.append("partnerPlacement = \(partnerPlacement)")
         }
         parts.append("start = \(start.unixTimestamp)")
         parts.append("end = \(end.unixTimestamp)")
         parts.append("duration = \(Int64(duration * 1000))")
-        if let error = error {
+        if let error {
             parts.append("chartboostMediationError = \(error.chartboostMediationCode.name)")
             parts.append("chartboostMediationErrorCode = \(error.chartboostMediationCode.string)")
             parts.append("errorMessage = \(error.chartboostMediationCode.message)")
@@ -248,7 +258,7 @@ private extension MetricsEvent {
 
 extension MetricsEventLogging {
     /// A convenience alternative of the formal `logShow()`.
-    func logShow(ad: HeliumAd, start: Date, error: ChartboostMediationError?) -> RawMetrics? {
+    func logShow(ad: LoadedAd, start: Date, error: ChartboostMediationError?) -> RawMetrics? {
         logShow(
             auctionID: ad.partnerAd.request.auctionIdentifier,
             loadID: ad.request.loadID,
@@ -261,10 +271,9 @@ extension MetricsEventLogging {
     }
 }
 
-private extension MetricsEventLogger {
-
+extension MetricsEventLogger {
     @discardableResult
-    func send(_ request: MetricsHTTPRequest) -> RawMetrics? {
+    private func send(_ request: MetricsHTTPRequest) -> RawMetrics? {
         networkManager.send(request) { _ in }
 
         switch request.eventType {

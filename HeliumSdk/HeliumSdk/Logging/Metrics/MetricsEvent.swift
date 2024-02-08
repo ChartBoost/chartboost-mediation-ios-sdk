@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -7,13 +7,13 @@ import Foundation
 
 /// An event with metrics and other relevant info intended to be logged to our servers and on console.
 struct MetricsEvent: Encodable {
-    
     enum NetworkType: String {
         case bidding
         case mediation
     }
-    
-    // WARNING: The name of each case of this enum must match the strings passed by the backend on app config "metricsEvents". They should not be renamed!
+
+    // WARNING: The name of each case of this enum must match the strings passed by the backend on app config "metricsEvents".
+    // They should not be renamed!
     enum EventType: String, CaseIterable {
         case initialization
         case prebid
@@ -27,21 +27,21 @@ struct MetricsEvent: Encodable {
         case winner
         case bannerSize = "banner_size"
     }
-    
+
     /// Start time the event started.
     let start: Date
-    
+
     /// Start time the event ended.
     let end: Date
-    
+
     /// The total duration of the event.
     var duration: TimeInterval {
         end.timeIntervalSince1970 - start.timeIntervalSince1970
     }
-    
+
     /// Error for the operation the event refers to. If nil it is assumed that the operation was successful.
     let error: ChartboostMediationError?
-    
+
     /// The identifier of the partner associated to this event.
     let partnerIdentifier: PartnerIdentifier
 
@@ -50,25 +50,27 @@ struct MetricsEvent: Encodable {
 
     /// Version number of the PartnerAdapter this event came from
     let partnerAdapterVersion: String?
-    
+
     /// The partner placement associated to this event.
     let partnerPlacement: String?
-    
+
     /// The network type of the partner associated to this event.
     let networkType: NetworkType?
-    
+
     /// The line item identifier associated to this event.
     let lineItemIdentifier: String?
 
-    init(start: Date,
-         end: Date = Date(),
-         error: ChartboostMediationError? = nil,
-         partnerIdentifier: PartnerIdentifier,
-         partnerSDKVersion: String? = nil,
-         partnerAdapterVersion: String? = nil,
-         partnerPlacement: String? = nil,
-         networkType: NetworkType? = nil,
-         lineItemIdentifier: String? = nil) {
+    init(
+        start: Date,
+        end: Date = Date(),
+        error: ChartboostMediationError? = nil,
+        partnerIdentifier: PartnerIdentifier,
+        partnerSDKVersion: String? = nil,
+        partnerAdapterVersion: String? = nil,
+        partnerPlacement: String? = nil,
+        networkType: NetworkType? = nil,
+        lineItemIdentifier: String? = nil
+    ) {
         self.start = start
         self.end = end
         self.error = error
@@ -79,9 +81,9 @@ struct MetricsEvent: Encodable {
         self.networkType = networkType
         self.lineItemIdentifier = lineItemIdentifier
     }
-    
+
     // MARK: - Encodable
-    
+
     enum CodingKeys: String, CodingKey {
         case start
         case end
@@ -97,7 +99,7 @@ struct MetricsEvent: Encodable {
         case networkType = "network_type"
         case lineItemIdentifer = "line_item_id"
     }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(partnerIdentifier, forKey: .partnerIdentifier)
@@ -106,22 +108,21 @@ struct MetricsEvent: Encodable {
         try container.encode(start.unixTimestamp, forKey: .start)
         try container.encode(end.unixTimestamp, forKey: .end)
         try container.encode(Int(duration * 1000), forKey: .duration)
-        if let error = error {
+        if let error {
             try container.encode(error.chartboostMediationCode.name, forKey: .error)
             try container.encode(error.chartboostMediationCode.string, forKey: .errorCode)
             try container.encode(error.chartboostMediationCode.message, forKey: .errorMessage)
             try container.encode(false, forKey: .isSuccess)
-        }
-        else {
+        } else {
             try container.encode(true, forKey: .isSuccess)
         }
-        if let networkType = networkType {
+        if let networkType {
             try container.encode(networkType.rawValue, forKey: .networkType)
         }
         if let lineItemIdentifer = lineItemIdentifier {
             try container.encode(lineItemIdentifer, forKey: .lineItemIdentifer)
         }
-        if let partnerPlacement = partnerPlacement {
+        if let partnerPlacement {
             try container.encode(partnerPlacement, forKey: .partnerPlacement)
         }
     }

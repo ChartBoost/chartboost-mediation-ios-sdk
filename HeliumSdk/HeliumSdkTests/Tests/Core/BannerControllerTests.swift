@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class BannerControllerTests: HeliumTestCase {
+class BannerControllerTests: ChartboostMediationTestCase {
     
     lazy var controller: BannerController = {
         let controller = BannerController(
@@ -16,7 +16,7 @@ class BannerControllerTests: HeliumTestCase {
         )
         controller.delegate = mocks.bannerControllerDelegate
         // View is arbitrary here.
-        controller.viewVisibilityDidChange(on: UIView(), to: true)
+        controller.viewVisibilityDidChange(to: true)
         // clear records to ignore the AdController addObserver() call made on InterstitialAd init
         // This is just for convenience so we don't need to think about this call on every test
         mocks.adController.removeAllRecords()
@@ -24,14 +24,14 @@ class BannerControllerTests: HeliumTestCase {
     }()
     let placement = "some placement"
     let loadedAdView = UIView()
-    lazy var loadedAd = HeliumAd.test(bidInfo: bidInfo, partnerAd: PartnerAdMock(inlineView: loadedAdView))
+    lazy var loadedAd = LoadedAd.test(bidInfo: bidInfo, partnerAd: PartnerAdMock(inlineView: loadedAdView))
     var adSize = ChartboostMediationBannerSize(
         size: CGSize(width: 23, height: 42),
         type: .fixed
     )
 
     let loadAdError = ChartboostMediationError(code: .loadFailureNoFill)
-    var lastLoadAdCompletion: ((Result<HeliumAd, ChartboostMediationError>) -> Void)?
+    var lastLoadAdCompletion: ((Result<LoadedAd, ChartboostMediationError>) -> Void)?
     var lastVisibilityTrackerCompletion: (() -> Void)?
     let viewController = UIViewController()
     let bidInfo = ["ello": "h1234", "fasdp-": ")_O.o-2.dxq2"]
@@ -217,7 +217,7 @@ class BannerControllerTests: HeliumTestCase {
         // finishing second load should do nothing since auto-refresh timer hasn't fired yet
         let view2 = UIView()
         let requestID2 = "some_id_2"
-        let ad2 = HeliumAd.test(partnerAd: PartnerAdMock(inlineView: view2), request: .test(loadID: requestID2))
+        let ad2 = LoadedAd.test(partnerAd: PartnerAdMock(inlineView: view2), request: .test(loadID: requestID2))
         lastLoadAdCompletion?(.success(ad2))
         
         assertNoDelegateCalls()
@@ -417,12 +417,12 @@ class BannerControllerTests: HeliumTestCase {
         
         controller.loadAd(viewController: viewController, completion: { _ in })
 
-        let firstRequest = mocks.adController.recordedParameters.first?.first as? HeliumAdLoadRequest
+        let firstRequest = mocks.adController.recordedParameters.first?.first as? AdLoadRequest
         assertAdControllerLoad()    // XCTAssertMethodCalls() call inside removes the mock recorded records
 
         controller.loadAd(viewController: viewController, completion: { _ in })
 
-        let secondRequest = mocks.adController.recordedParameters.first?.first as? HeliumAdLoadRequest
+        let secondRequest = mocks.adController.recordedParameters.first?.first as? AdLoadRequest
         assertAdControllerLoad()    // XCTAssertMethodCalls() call inside removes the mock recorded records
         
         // check that requestID changed
@@ -499,7 +499,7 @@ class BannerControllerTests: HeliumTestCase {
         // finishing second load should do nothing since auto-refresh timer hasn't fired yet
         let view2 = UIView()
         let requestID2 = "some_id_2"
-        let ad2 = HeliumAd.test(partnerAd: PartnerAdMock(inlineView: view2), request: .test(loadID: requestID2))
+        let ad2 = LoadedAd.test(partnerAd: PartnerAdMock(inlineView: view2), request: .test(loadID: requestID2))
 
         // Before calling completion, set another load expectation that should not be called.
         loadExpectation = expectation(description: "Completion should not be called")
@@ -564,7 +564,7 @@ class BannerControllerTests: HeliumTestCase {
         // finishing second load should do nothing since auto-refresh timer hasn't fired yet
         let view2 = UIView()
         let requestID2 = "some_id_2"
-        let ad2 = HeliumAd.test(partnerAd: PartnerAdMock(inlineView: view2), request: .test(loadID: requestID2))
+        let ad2 = LoadedAd.test(partnerAd: PartnerAdMock(inlineView: view2), request: .test(loadID: requestID2))
 
         // Before calling completion, set another load expectation that should not be called.
         loadExpectation = expectation(description: "Completion should not be called")
@@ -642,7 +642,7 @@ class BannerControllerTests: HeliumTestCase {
         // finishing second load should show immediately
         let view2 = UIView()
         let requestID2 = "some_id_2"
-        let ad2 = HeliumAd.test(partnerAd: PartnerAdMock(inlineView: view2), request: .test(loadID: requestID2))
+        let ad2 = LoadedAd.test(partnerAd: PartnerAdMock(inlineView: view2), request: .test(loadID: requestID2))
 
         // Before calling completion, set another load expectation that should not be called.
         loadExpectation = expectation(description: "Completion should not be called")
@@ -711,7 +711,7 @@ class BannerControllerTests: HeliumTestCase {
         // finishing second load should show immediately
         let view2 = UIView()
         let requestID2 = "some_id_2"
-        let ad2 = HeliumAd.test(partnerAd: PartnerAdMock(inlineView: view2), request: .test(loadID: requestID2))
+        let ad2 = LoadedAd.test(partnerAd: PartnerAdMock(inlineView: view2), request: .test(loadID: requestID2))
         lastLoadAdCompletion?(.success(ad2))
         waitForExpectations(timeout: 1.0)
 
@@ -762,7 +762,7 @@ class BannerControllerTests: HeliumTestCase {
         // finishing second load should show immediately
         let view2 = UIView()
         let requestID2 = "some_id_2"
-        let ad2 = HeliumAd.test(partnerAd: PartnerAdMock(inlineView: view2), request: .test(loadID: requestID2))
+        let ad2 = LoadedAd.test(partnerAd: PartnerAdMock(inlineView: view2), request: .test(loadID: requestID2))
         lastLoadAdCompletion?(.success(ad2))
         waitForExpectations(timeout: 1.0)
 
@@ -882,7 +882,7 @@ class BannerControllerTests: HeliumTestCase {
         // finishing second load should do nothing since auto-refresh timer hasn't fired yet
         let view2 = UIView()
         let requestID2 = "some_id_2"
-        let ad2 = HeliumAd.test(partnerAd: PartnerAdMock(inlineView: view2), request: .test(loadID: requestID2))
+        let ad2 = LoadedAd.test(partnerAd: PartnerAdMock(inlineView: view2), request: .test(loadID: requestID2))
 
         loadExpectation = expectation(description: "Completion should not be called")
         loadExpectation.isInverted = true
@@ -1060,7 +1060,7 @@ class BannerControllerTests: HeliumTestCase {
         // Now we finish the load with success
         let view2 = UIView()
         let requestID2 = "some_id_2"
-        let ad2 = HeliumAd.test(partnerAd: PartnerAdMock(inlineView: view2), request: .test(loadID: requestID2))
+        let ad2 = LoadedAd.test(partnerAd: PartnerAdMock(inlineView: view2), request: .test(loadID: requestID2))
 
         loadExpectation = expectation(description: "Completion should not be called")
         loadExpectation.isInverted = true
@@ -1335,11 +1335,11 @@ class BannerControllerTests: HeliumTestCase {
         assertScheduledRefresh()
 
         // changing view visibility should pause/resume the refresh
-        controller.viewVisibilityDidChange(on: UIView(), to: false)
+        controller.viewVisibilityDidChange(to: false)
         
         assertRefreshPaused()
         
-        controller.viewVisibilityDidChange(on:  UIView(), to: true)
+        controller.viewVisibilityDidChange(to: true)
         
         assertRefreshResumed()
     }
@@ -1450,7 +1450,7 @@ class BannerControllerTests: HeliumTestCase {
         assertRefreshPaused()
 
         // Second condition. No calls should be made to the task until it is unpaused.
-        controller.viewVisibilityDidChange(on: UIView(), to: false)
+        controller.viewVisibilityDidChange(to: false)
         XCTAssertNoMethodCalls(mocks.taskDispatcher.returnTask)
 
         // Third condition.
@@ -1460,7 +1460,7 @@ class BannerControllerTests: HeliumTestCase {
         controller.didCloseFullScreenAd()
         XCTAssertNoMethodCalls(mocks.taskDispatcher.returnTask)
 
-        controller.viewVisibilityDidChange(on: UIView(), to: true)
+        controller.viewVisibilityDidChange(to: true)
         XCTAssertNoMethodCalls(mocks.taskDispatcher.returnTask)
 
         // Use a different second condition.
@@ -1501,7 +1501,7 @@ class BannerControllerTests: HeliumTestCase {
         
         // check that requestID changed
         let params = mocks.adController.recordedParameters.count > 1 ? mocks.adController.recordedParameters[1] : nil
-        XCTAssertNotEqual((params?.first as? HeliumAdLoadRequest)?.loadID, loadedAd.request.loadID)
+        XCTAssertNotEqual((params?.first as? AdLoadRequest)?.loadID, loadedAd.request.loadID)
         assertAdControllerMarkedLoadedAdAsShownAndLoadedNext()
         assertNoDelegateCalls()
         assertScheduledRefresh()
@@ -1553,10 +1553,10 @@ class BannerControllerTests: HeliumTestCase {
 
         assertScheduledLoadRetry(withPenaltyRate: false)
 
-        controller.viewVisibilityDidChange(on: UIView(), to: false)
+        controller.viewVisibilityDidChange(to: false)
         assertLoadRetryPaused()
 
-        controller.viewVisibilityDidChange(on: UIView(), to: true)
+        controller.viewVisibilityDidChange(to: true)
         assertLoadRetryResumed()
     }
 
@@ -1611,11 +1611,11 @@ class BannerControllerTests: HeliumTestCase {
         assertLoadRetryPaused()
 
         // No calls since the task was already paused.
-        controller.viewVisibilityDidChange(on: UIView(), to: false)
+        controller.viewVisibilityDidChange(to: false)
         XCTAssertNoMethodCalls(mocks.taskDispatcher.returnTask)
 
         // No calls since the task is still paused by isPaused.
-        controller.viewVisibilityDidChange(on: UIView(), to: true)
+        controller.viewVisibilityDidChange(to: true)
         XCTAssertNoMethodCalls(mocks.taskDispatcher.returnTask)
 
         controller.isPaused = false
@@ -1627,7 +1627,7 @@ class BannerControllerTests: HeliumTestCase {
     /// Validates that if the banner container is not visible when a first load finishes with failure then no load retry is scheduled and the auto-refresh cycle dies.
     func testAFirstFailedLoadForANonVisibleContainerStopsTheAutoRefreshCycle() {
         mocks.bannerControllerConfiguration.setReturnValue(42.0, for: .autoRefreshRate)
-        controller.viewVisibilityDidChange(on: UIView(), to: false)
+        controller.viewVisibilityDidChange(to: false)
         
         // first load
         let loadExpectation = expectation(description: "Failed load")
@@ -1648,7 +1648,7 @@ class BannerControllerTests: HeliumTestCase {
         assertNoAdControllerCalls()
         
         // make container visible just to make sure nothing happens
-        controller.viewVisibilityDidChange(on: UIView(), to: true)
+        controller.viewVisibilityDidChange(to: true)
         
         assertNoScheduledTask()
         assertNoDelegateCalls()
@@ -1692,7 +1692,7 @@ class BannerControllerTests: HeliumTestCase {
         assertAdControllerLoad()    // a new load should start immediately
         
         // finishing load with error should trigger a load retry and pause it since the container is not visible
-        controller.viewVisibilityDidChange(on: UIView(), to: false)
+        controller.viewVisibilityDidChange(to: false)
         lastLoadAdCompletion?(.failure(loadAdError))
         
         assertNoDelegateCalls()
@@ -1702,7 +1702,7 @@ class BannerControllerTests: HeliumTestCase {
         assertLoadRetryPaused()
         
         // make container visible should resume the load retry task
-        controller.viewVisibilityDidChange(on: UIView(), to: true)
+        controller.viewVisibilityDidChange(to: true)
 
         assertLoadRetryResumed()
     }
@@ -1782,6 +1782,67 @@ class BannerControllerTests: HeliumTestCase {
         // Check that the event was not logged
         XCTAssertNoMethodCalls(mocks.metrics)
     }
+
+    func testAdLoadResultSize() {
+        loadedAd = .test(adSize: .adaptive(width: 300, maxHeight: 100))
+        let loadExpectation = expectation(description: "Successful load")
+        controller.loadAd(viewController: viewController, completion: { result in
+            XCTAssertEqual(result.size, .adaptive(width: 300, maxHeight: 100))
+            loadExpectation.fulfill()
+        })
+
+        assertAdControllerLoad()
+        lastLoadAdCompletion?(.success(loadedAd))
+        waitForExpectations(timeout: 1.0)
+    }
+
+    /// Ensure that if an ad has been loaded, but is waiting to become visible, that we will still
+    /// return the loaded ad's size in the load result.
+    func testAdLoadResultSizeWhenWaitingToBecomeVisible() {
+        loadedAd = .test(
+            partnerAd: PartnerAdMock(inlineView: loadedAdView),
+            adSize: .adaptive(width: 300, maxHeight: 100)
+        )
+
+        // Load the ad
+        var loadExpectation = expectation(description: "Successful load")
+        controller.loadAd(viewController: viewController, completion: { result in
+            XCTAssertNil(result.error)
+            loadExpectation.fulfill()
+        })
+
+        assertAdControllerLoad()
+
+        lastLoadAdCompletion?(.success(loadedAd))
+        waitForExpectations(timeout: 1.0)
+
+        assertVisibilityTrackerStart(for: loadedAdView)
+
+        mocks.visibilityTracker.isTracking = true
+
+        // Load the ad a second time. Since the ad is not visible yet, this should pull the size
+        // from the showing result.
+        loadExpectation = expectation(description: "Successful load")
+        controller.loadAd(viewController: viewController, completion: { result in
+            XCTAssertEqual(result.size, .adaptive(width: 300, maxHeight: 100))
+            loadExpectation.fulfill()
+        })
+        lastLoadAdCompletion?(.success(loadedAd))
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func testAdLoadResultSizeNilOnError() {
+        loadedAd = .test(adSize: .adaptive(width: 300, maxHeight: 100))
+        let loadExpectation = expectation(description: "Failed load")
+        controller.loadAd(viewController: viewController, completion: { result in
+            XCTAssertNil(result.size)
+            loadExpectation.fulfill()
+        })
+
+        assertAdControllerLoad()
+        lastLoadAdCompletion?(.failure(loadAdError))
+        waitForExpectations(timeout: 1.0)
+    }
 }
 
 // MARK: - Helpers
@@ -1793,7 +1854,7 @@ extension BannerControllerTests {
         loadID: String = "",
         keywords: [String: String]? = nil
     ) {
-        let expectedRequest = HeliumAdLoadRequest(
+        let expectedRequest = AdLoadRequest(
             adSize: adSize,
             adFormat: format,
             keywords: keywords,
@@ -1801,7 +1862,7 @@ extension BannerControllerTests {
             loadID: loadID
         )
         XCTAssertMethodCalls(mocks.adController, .loadAd, parameters: [
-            XCTMethodSomeParameter<HeliumAdLoadRequest> {
+            XCTMethodSomeParameter<AdLoadRequest> {
                 XCTAssertEqual($0.adSize, expectedRequest.adSize)
                 XCTAssertEqual($0.adFormat, expectedRequest.adFormat)
                 XCTAssertEqual($0.heliumPlacement, expectedRequest.heliumPlacement)

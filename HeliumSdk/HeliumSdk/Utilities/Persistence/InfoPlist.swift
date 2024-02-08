@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -30,12 +30,12 @@ struct InfoPlist: InfoPlistProviding {
     var skAdNetworkIDs: [String] {
         do {
             guard let skAdNetworkItems = try asDictionary["SKAdNetworkItems"] else {
-                assertionFailure("'SKAdNetworkItems' does not exist in Info.plist")
+                logger.error("'SKAdNetworkItems' does not exist in Info.plist")
                 return []
             }
 
             guard let skAdNetworkItemsArray = skAdNetworkItems as? [[String: String]] else {
-                assertionFailure("Info.plist 'SKAdNetworkItems' value is not an array of [String: String]")
+                logger.error("Info.plist 'SKAdNetworkItems' value is not an array of [String: String]")
                 return []
             }
 
@@ -43,11 +43,13 @@ struct InfoPlist: InfoPlistProviding {
             assert(skanIDs.count == skAdNetworkItemsArray.count, "SKAN ID's [\(skanIDs.count)] are less then SKAN item dictionaries [\(skAdNetworkItemsArray.count)]")
             return skanIDs
         } catch {
-            assertionFailure(error.localizedDescription)
+            logger.error("\(error)")
             return []
         }
     }
 
+    // We use an NSDictionary as we can use contentsOf to read a plist file.
+    // swiftlint:disable legacy_objc_type
     private var asDictionary: NSDictionary {
         get throws {
             @Injected(\.bundleInfo) var bundleInfo
@@ -57,4 +59,5 @@ struct InfoPlist: InfoPlistProviding {
             return try NSDictionary(contentsOf: url, error: ())
         }
     }
+    // swiftlint:enable legacy_objc_type
 }

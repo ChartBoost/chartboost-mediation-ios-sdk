@@ -98,9 +98,6 @@
 		},
 		"vungle": {
 			"vungle_app_id": "5dcde5072aa70a0017bcc85c"
-		},
-		"yahoo": {
-			"site_id": "8a809418014d4dba274de5017840037f"
 		}
 	},
 	"banner_load_timeout": 10,

@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class DeviceInfoTests: HeliumTestCase {
+class DeviceInfoTests: ChartboostMediationTestCase {
     func testDeviceInfo() {
         let info = DeviceInfoProvider()
         XCTAssert(
@@ -19,11 +19,11 @@ class DeviceInfoTests: HeliumTestCase {
         XCTAssertEqual(info.osName, "iOS")
         XCTAssertFalse(info.osVersion.isEmpty)
         if #available(iOS 17.0, *) {
-            XCTAssert(info.freeDiskSpace == 0)
-            XCTAssert(info.totalDiskSpace == 0)
+            XCTAssertEqual(info.freeDiskSpace, 0)
+            XCTAssertEqual(info.totalDiskSpace, 0)
         } else {
-            XCTAssert(info.freeDiskSpace > 0)
-            XCTAssert(info.totalDiskSpace > 0)
+            XCTAssertGreaterThan(info.freeDiskSpace, 0)
+            XCTAssertGreaterThan(info.totalDiskSpace, 0)
         }
     }
 

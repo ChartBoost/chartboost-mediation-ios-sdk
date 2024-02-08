@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -21,8 +21,7 @@ struct TestModeInfo: TestModeInfoProviding {
 /// with "reflection", and thus they are `private(set)` and read-only within the SDK.
 @objc(CHBHTestModeHelper)
 @objcMembers
-fileprivate final class TestModeHelper: NSObject {
-
+private final class TestModeHelper: NSObject {
     private enum Constant {
         /// A dictionary key for `setenv()` and `unsetenv` calls to force test mode on and off.
         /// The override priority is lower than `isTestModeEnabled_isForcedOn`.

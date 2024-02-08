@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -7,7 +7,6 @@ import Foundation
 
 /// Privacy related configuration
 protocol PrivacyConfiguration {
-
     /// A list of iOS APIs that Apple might add to the list of Required Reason API and the SDK needs to stop using.
     /// - This is a runtime workaround that might not pass static analysis during app submission review, but at the
     /// minimum app developers has something to appeal against the App Store rejection with this implementation in place.

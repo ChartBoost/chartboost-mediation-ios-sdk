@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -97,12 +97,12 @@ public class ChartboostMediationBannerView: UIView {
     private let controller: BannerSwapControllerProtocol
 
     /// Convenience to get the loaded ad from the controller, or `nil` if an ad is not loaded.
-    private var ad: HeliumAd? {
+    private var ad: LoadedAd? {
         try? controller.showingBannerLoadResult?.result.get()
     }
 
     // MARK: - Public Methods
-    public override init(frame: CGRect) {
+    override public init(frame: CGRect) {
         self.controller = Self.adFactory.makeBannerSwapController()
         super.init(frame: frame)
 
@@ -112,6 +112,7 @@ public class ChartboostMediationBannerView: UIView {
         sendVisibilityStateToController()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -146,7 +147,7 @@ public class ChartboostMediationBannerView: UIView {
     }
 
     // MARK: - UIView
-    public override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
 
         guard let bannerView = ad?.partnerAd.inlineView,
@@ -157,18 +158,18 @@ public class ChartboostMediationBannerView: UIView {
         bannerView.frame = bannerFrame(for: size)
     }
 
-    public override var intrinsicContentSize: CGSize {
+    override public var intrinsicContentSize: CGSize {
         return ad?.adSize?.size ??
             CGSize(width: UIView.noIntrinsicMetric, height: UIView.noIntrinsicMetric)
     }
 
-    public override var isHidden: Bool {
+    override public var isHidden: Bool {
         didSet {
             sendVisibilityStateToController()
         }
     }
 
-    public override func didMoveToSuperview() {
+    override public func didMoveToSuperview() {
         super.didMoveToSuperview()
         sendVisibilityStateToController()
     }
@@ -176,7 +177,7 @@ public class ChartboostMediationBannerView: UIView {
     private func sendVisibilityStateToController() {
         // The view is considered not visible if it's removed from the view hierarchy or if it's hidden.
         let visible = !isHidden && superview != nil
-        controller.viewVisibilityDidChange(on: self, to: visible)
+        controller.viewVisibilityDidChange(to: visible)
     }
 }
 
@@ -362,7 +363,7 @@ extension ChartboostMediationBannerView {
 
 // MARK: - Constants
 extension ChartboostMediationBannerView {
-    private struct Constants {
+    private enum Constants {
         static let minHeightForHorizontal: CGFloat = 50.0
         static let minWidthForVertical: CGFloat = 160.0
         static let minSizeFor1x1Tile: CGFloat = 300.0

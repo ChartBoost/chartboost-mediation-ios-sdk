@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -12,7 +12,7 @@ class AdAuctionServiceMock: Mock<AdAuctionServiceMock.Method>, AdAuctionService 
         case startAuction
     }
     
-    func startAuction(request: HeliumAdLoadRequest, completion: @escaping (AdAuctionResponse) -> Void) {
+    func startAuction(request: AdLoadRequest, completion: @escaping (AdAuctionResponse) -> Void) {
         record(.startAuction, parameters: [request, completion])
     }
 }

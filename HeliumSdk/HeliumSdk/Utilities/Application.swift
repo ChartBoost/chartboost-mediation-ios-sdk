@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -14,6 +14,14 @@ protocol Application {
 
 @objc protocol ApplicationStateObserver {}
 
+@objc protocol ApplicationBackgroundObserver: ApplicationStateObserver {
+    func applicationDidEnterBackground()
+}
+
+@objc protocol ApplicationForegroundObserver: ApplicationStateObserver {
+    func applicationWillEnterForeground()
+}
+
 @objc protocol ApplicationActivationObserver: ApplicationStateObserver {
     func applicationDidBecomeActive()
 }
@@ -26,15 +34,30 @@ protocol Application {
     func applicationWillTerminate()
 }
 
-extension UIApplication : Application {
-    
+extension UIApplication: Application {
     // MARK: - Application
-    
+
     var state: UIApplication.State {
         applicationState
     }
-    
+
     func addObserver(_ observer: ApplicationStateObserver) {
+        if observer is ApplicationBackgroundObserver {
+            NotificationCenter.default.addObserver(
+                observer,
+                selector: #selector(ApplicationBackgroundObserver.applicationDidEnterBackground),
+                name: UIApplication.didEnterBackgroundNotification,
+                object: nil
+            )
+        }
+        if observer is ApplicationForegroundObserver {
+            NotificationCenter.default.addObserver(
+                observer,
+                selector: #selector(ApplicationForegroundObserver.applicationWillEnterForeground),
+                name: UIApplication.willEnterForegroundNotification,
+                object: nil
+            )
+        }
         if observer is ApplicationActivationObserver {
             NotificationCenter.default.addObserver(
                 observer,

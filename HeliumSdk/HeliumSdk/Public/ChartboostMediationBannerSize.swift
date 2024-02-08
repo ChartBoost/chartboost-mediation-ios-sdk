@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -199,7 +199,7 @@ public final class ChartboostMediationBannerSize: NSObject {
         self.type = type
     }
 
-    public override func isEqual(_ object: Any?) -> Bool {
+    override public func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? ChartboostMediationBannerSize else {
             return false
         }
@@ -212,7 +212,7 @@ public final class ChartboostMediationBannerSize: NSObject {
 }
 
 extension ChartboostMediationBannerSize {
-    private struct Constants {
+    private enum Constants {
         // Min/max banner dimensions as per the IAB spec.
         static let minimumBannerDimension = 50.0
         static let maximumBannerDimension = 1800.0

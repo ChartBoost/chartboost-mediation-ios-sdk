@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class ApplicationTests: HeliumTestCase {
+class ApplicationTests: ChartboostMediationTestCase {
     
     let application: Application = UIApplication.shared
     
@@ -31,8 +31,16 @@ class ApplicationTests: HeliumTestCase {
         NotificationCenter.default.post(name: UIApplication.willTerminateNotification, object: nil)
         
         XCTAssertMethodCalls(observer, .applicationWillTerminate)
+
+        NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
+
+        XCTAssertMethodCalls(observer, .applicationWillEnterForeground)
+
+        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
+
+        XCTAssertMethodCalls(observer, .applicationDidEnterBackground)
     }
-    
+
     func testAddApplicationStateObserverTwice() {
         let observer1 = ApplicationStateObserverMock()
         application.addObserver(observer1)

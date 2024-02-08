@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-final class NetworkManagerTests: HeliumTestCase {
+final class NetworkManagerTests: ChartboostMediationTestCase {
 
     private static let mockURLString = "https://mock.com"
     private static let mockURL = URL(unsafeString: "https://mock.com")!

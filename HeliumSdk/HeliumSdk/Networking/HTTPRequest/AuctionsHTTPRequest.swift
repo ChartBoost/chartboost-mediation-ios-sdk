@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -7,7 +7,6 @@ import Foundation
 
 /// Also known as a "bid request".
 struct AuctionsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithDecodableResponse {
-
     typealias Body = OpenRTB.BidRequest
     typealias DecodableResponse = OpenRTB.BidResponse
 
@@ -50,7 +49,7 @@ struct AuctionsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithDecodab
     init(bidRequest: OpenRTB.BidRequest, loadRateLimit: Int, loadID: LoadID) {
         customHeaders = [
             HTTP.HeaderKey.loadID.rawValue: loadID,
-            HTTP.HeaderKey.rateLimitReset.rawValue: "\(loadRateLimit)"
+            HTTP.HeaderKey.rateLimitReset.rawValue: "\(loadRateLimit)",
         ]
         body = bidRequest
     }

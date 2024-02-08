@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,6 @@
 import Foundation
 
 struct SDKInitHTTPRequest: HTTPRequest, HTTPRequestWithRawDataResponse {
-
     let method = HTTP.Method.get
     let customHeaders: HTTP.Headers
     let isSDKInitializationRequired = false

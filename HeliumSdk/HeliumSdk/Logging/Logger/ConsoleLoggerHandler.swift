@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -12,7 +12,7 @@ protocol ConsoleLoggerConfiguration {
     var logLevel: LogLevel? { get }
 }
 
-/// A `LogHandler` that logs to the console.  On iOS 12 and later, logging is performed using `os_log`, otherwise it uses `print`.
+/// A `LogHandler` that logs to the console. On iOS 12 and later, logging is performed using `os_log`, otherwise it uses `print`.
 final class ConsoleLoggerHandler: LogHandler {
     /// The desired log level.
     @Atomic static var logLevel: LogLevel = .info
@@ -48,9 +48,9 @@ final class ConsoleLoggerHandler: LogHandler {
     }
 }
 
-private extension LogLevel {
+extension LogLevel {
     /// Maps `LogLevel` to an appropriate `OSLogType`.
-    var asOSLogType: OSLogType? {
+    fileprivate var asOSLogType: OSLogType? {
         switch self {
         case .none:
             return nil

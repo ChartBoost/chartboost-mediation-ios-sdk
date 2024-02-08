@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -83,8 +83,8 @@ struct RewardedCallbackHTTPRequest: HTTPRequestWithRawDataResponse {
     }
 }
 
-private extension RewardedCallbackHTTPRequest.CustomData {
-    func sanitized(maxLength: Int = Constant.customDataMaxLength) -> RewardedCallbackHTTPRequest.CustomData? {
+extension RewardedCallbackHTTPRequest.CustomData {
+    fileprivate func sanitized(maxLength: Int = Constant.customDataMaxLength) -> RewardedCallbackHTTPRequest.CustomData? {
         // Validate that the incoming custom data string is less than maximum allowed length.
         guard count <= maxLength else {
             logger.error("Failed to set custom data because it exceeds the maximum allowed \(Constant.customDataMaxLength) characters. Setting custom data to nil.")
@@ -94,8 +94,8 @@ private extension RewardedCallbackHTTPRequest.CustomData {
     }
 }
 
-private extension RewardedCallback {
-    func url(customData: String?, timestampMs: Int) -> URL? {
+extension RewardedCallback {
+    fileprivate func url(customData: String?, timestampMs: Int) -> URL? {
         var urlString = urlString
         urlString = urlString.replacingAdRevenue(adRevenue, defaultValue: "")
         urlString = urlString.replacingCPMPrice(cpmPrice, defaultValue: "")
@@ -105,7 +105,7 @@ private extension RewardedCallback {
         return URL(unsafeString: urlString)
     }
 
-    func bodyData(customData: String?, timestampMs: Int) -> Data? {
+    fileprivate func bodyData(customData: String?, timestampMs: Int) -> Data? {
         guard method == .post, var bodyString = body else { return nil }
         bodyString = bodyString.replacingAdRevenue(adRevenue, defaultValue: Constant.nullString)
         bodyString = bodyString.replacingCPMPrice(cpmPrice, defaultValue: Constant.nullString)
@@ -125,8 +125,8 @@ private extension RewardedCallback {
     }
 }
 
-private extension String {
-    private var uriEncoded: String {
+extension String {
+    fileprivate var uriEncoded: String {
         addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
     }
 
@@ -139,23 +139,23 @@ private extension String {
         return secondPass
     }
 
-    func replacingAdRevenue(_ adRevenue: Decimal?, defaultValue: String) -> String {
+    fileprivate func replacingAdRevenue(_ adRevenue: Decimal?, defaultValue: String) -> String {
         replacing(macro: .adRevenue, with: adRevenue.map { "\($0)" } ?? defaultValue)
     }
 
-    func replacingCPMPrice(_ cpmPrice: Decimal?, defaultValue: String) -> String {
+    fileprivate func replacingCPMPrice(_ cpmPrice: Decimal?, defaultValue: String) -> String {
         replacing(macro: .cpmPrice, with: cpmPrice.map { "\($0)" } ?? defaultValue)
     }
 
-    func replacingCustomData(_ customData: String, uriEncode: Bool) -> String {
+    fileprivate func replacingCustomData(_ customData: String, uriEncode: Bool) -> String {
         replacing(macro: .customData, with: uriEncode ? customData.uriEncoded : customData)
     }
 
-    func replacingNetworkName(_ networkName: String, uriEncode: Bool) -> String {
+    fileprivate func replacingNetworkName(_ networkName: String, uriEncode: Bool) -> String {
         replacing(macro: .networkName, with: uriEncode ? networkName.uriEncoded : networkName)
     }
 
-    func replacingSDKTimestamp(_ timestampMs: Int) -> String {
+    fileprivate func replacingSDKTimestamp(_ timestampMs: Int) -> String {
         replacing(macro: .sdkTimestamp, with: "\(timestampMs)")
     }
 }

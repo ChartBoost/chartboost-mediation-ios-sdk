@@ -1,11 +1,11 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
 
 import Foundation
 
-public extension Notification.Name {
+extension Notification.Name {
     /// `Notification.Name` for receiving ILRD events.
     /// To listen for ILRD notification events, register a notification handler using this constant as the notification name.
     ///
@@ -21,10 +21,11 @@ public extension Notification.Name {
     ///     let json = ilrd.jsonData
     /// }
     /// ```
-    static let heliumDidReceiveILRD = Notification.Name("com.chartboost.helium.notification.ilrd")
+    public static let heliumDidReceiveILRD = Notification.Name("com.chartboost.helium.notification.ilrd")
 
     /// `Notification.Name` for receiving initialization result events.
-    /// To listen for initialization result notification events, register a notification handler using this constant as the notification name.
+    /// To listen for initialization result notification events, register a notification handler using this constant as the
+    /// notification name.
     ///
     /// ```
     /// NotificationCenter.default.addObserver(
@@ -36,11 +37,12 @@ public extension Notification.Name {
     ///     guard let dictionary = notification.object as? [String: Any] else { return }
     /// }
     /// ```
-    static let heliumDidReceiveInitResults = Notification.Name(rawValue: "com.chartboost.helium.notification.init")
+    public static let heliumDidReceiveInitResults = Notification.Name(rawValue: "com.chartboost.helium.notification.init")
 }
 
+// swiftlint:disable legacy_objc_type
 @objc
-public extension NSNotification {
+extension NSNotification {
     /// `NSNotification` for receiving ILRD events.
     /// To listen for ILRD notification events, register a notification handler using this constant as the notification name.
     ///
@@ -55,10 +57,11 @@ public extension NSNotification {
     ///     NSDictionary *json = ilrd.jsonData;
     /// }];
     /// ```
-    static let heliumDidReceiveILRD = Notification.Name.heliumDidReceiveILRD
+    public static let heliumDidReceiveILRD = Notification.Name.heliumDidReceiveILRD
 
     /// `NSNotification` for receiving initialization result events.
-    /// To listen for initialization result notification events, register a notification handler using this constant as the notification name.
+    /// To listen for initialization result notification events, register a notification handler using this constant as the
+    /// notification name.
     ///
     /// ```
     /// [NSNotificationCenter.defaultCenter addObserverForName:NSNotification.heliumDidReceiveInitResults
@@ -69,5 +72,6 @@ public extension NSNotification {
     ///     NSDictionary *dictionary = notification.object;
     /// }];
     /// ```
-    static let heliumDidReceiveInitResults = Notification.Name.heliumDidReceiveInitResults
+    public static let heliumDidReceiveInitResults = Notification.Name.heliumDidReceiveInitResults
 }
+// swiftlint:enable legacy_objc_type

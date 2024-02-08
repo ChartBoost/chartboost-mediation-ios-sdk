@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -11,15 +11,14 @@ import Foundation
 /// - note: Injected properties can be mocked in tests by setting `DependenciesContainerStore.container` to a mock value.
 @propertyWrapper
 struct OptionalInjected<Value> {
-    
     /// The key path to the dependencies container property.
     private let keyPath: KeyPath<DependenciesContainer, Value?>
     private let defaultValue: Value
-    
+
     var wrappedValue: Value {
         DependenciesContainerStore.container[keyPath: keyPath] ?? defaultValue
     }
-    
+
     init(_ keyPath: KeyPath<DependenciesContainer, Value?>, `default` defaultValue: Value) {
         self.keyPath = keyPath
         self.defaultValue = defaultValue

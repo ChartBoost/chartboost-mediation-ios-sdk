@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import Foundation
 import UIKit
 
-/// Manages Helium ad loading and showing, keeping track of loading state, loaded and showing ads.
+/// Manages ad loading and showing, keeping track of loading state, loaded and showing ads.
 protocol AdController: AnyObject {
     /// The delegate that receives ad life-cycle event callbacks.
     var delegate: AdControllerDelegate? { get set }
@@ -18,7 +18,7 @@ protocol AdController: AnyObject {
     /// - parameter request: Info about the ad to load.
     /// - parameter viewController: A view controller to load the ad with. Applies to banners.
     /// - completion: A closure to be executed at the end of the load operation.
-    func loadAd(request: HeliumAdLoadRequest, viewController: UIViewController?, completion: @escaping (AdLoadResult) -> Void)
+    func loadAd(request: AdLoadRequest, viewController: UIViewController?, completion: @escaping (AdLoadResult) -> Void)
     /// Removes the loaded ad freeing up any associated internal and partner storage.
     func clearLoadedAd()
     /// Removes the showing ad freeing up any associated internal and partner storage.
@@ -61,9 +61,9 @@ protocol AdControllerConfiguration {
 /// Trying to load again when an ad is already loaded will return immediately with success.
 /// It is possible to load another ad when the previous one is already shown.
 /// - note: With the current architecture there is one AdController instance per Helium placement.
-/// Currently multiple Helium ads for the same placement can be created and used, but this is discouraged as they will share the same state. This is the reason AdController needs to know about multiple observers and not just a single delegate.
+/// Currently multiple ads for the same placement can be created and used, but this is discouraged as they will share the same state.
+/// This is the reason AdController needs to know about multiple observers and not just a single delegate.
 final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
-    
     @Injected(\.adRepository) private var adRepository
     @Injected(\.partnerController) private var partnerController
     @Injected(\.metrics) private var metrics
@@ -73,36 +73,38 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
     @Injected(\.impressionTracker) private var impressionTracker
     @Injected(\.adControllerConfiguration) private var configuration
     @OptionalInjected(\.customTaskDispatcher, default: .serialBackgroundQueue(name: "adController")) private var taskDispatcher
-    
+
     /// Indicates if a load operation is already ongoing.
     private var isLoading = false
     /// A timeout task that fires if a partner takes too long to show an ad.
     private var showTimeoutTask: DispatchTask?
     /// The fully-loaded ad ready to be shown, if any.
-    private var loadedAd: (ad: HeliumAd, metrics: RawMetrics?)?
+    private var loadedAd: (ad: LoadedAd, metrics: RawMetrics?)?
     /// The currently showing ad, if any. Becomes nil when the ad is dismissed.
-    private var showingAd: HeliumAd?
+    private var showingAd: LoadedAd?
     // TODO: Remove when InterstitialAd and RewardedAd are removed on 5.0
-    /// List of added observers. We use WeakReferenceSet to avoid holding strong references to the observers, which would lead to strong reference cycles.
+    /// List of added observers. We use WeakReferenceSet to avoid holding strong references to the observers, which would lead to strong
+    /// reference cycles.
     private var observers = WeakReferences<AdControllerDelegate>()
     /// A strong reference to the delegate (which should be a FullscreenAd instance).
     /// We keep this reference while the ad is showing to make sure it is kept alive even if the publisher discards it
     /// (e.g. by loading a new ad and assigning the previous reference to the new instance, before the old ad is dismissed),
     /// so we can still send delegate callbacks to the user.
-    private var retainedDelegate: AdControllerDelegate?
-    
+    private var retainedDelegate: AdControllerDelegate? // swiftlint:disable:this weak_delegate
+
     deinit {
         // Invalidate loaded ad to free its allocated memory.
-        // Note that as of now, for banner and fullscreen ads (not so for interstitial nor rewarded), loaded ads that have not been shown are discarded
-        // and we don't reuse them for new ad instances with the same placement.
+        // Note that as of now, for banner and fullscreen ads (not so for interstitial nor rewarded), loaded ads that have not been
+        // shown are discarded and we don't reuse them for new ad instances with the same placement.
         if let (ad, _) = loadedAd {
             partnerController.routeInvalidate(ad.partnerAd) { _ in }
         }
     }
-    
+
     // MARK: - AdController
-    
-    // Currently applies to FullscreenAd only. Legacy interstitial and rewarded ads add themselves as observers, because they can share the same controller.
+
+    // Currently applies to FullscreenAd only. Legacy interstitial and rewarded ads add themselves as observers, because they can share the
+    // same controller.
     weak var delegate: AdControllerDelegate? {
         // TODO: Remove when observers are removed on 5.0
         didSet {
@@ -111,25 +113,27 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
             }
         }
     }
-    
+
     var customData: String?
-    
+
     var isReadyToShowAd: Bool {
         taskDispatcher.sync(on: .background) { [self] in
             return loadedAd != nil
         }
     }
-    
-    func loadAd(request: HeliumAdLoadRequest, viewController: UIViewController?, completion: @escaping (AdLoadResult) -> Void) {
+
+    func loadAd(request: AdLoadRequest, viewController: UIViewController?, completion: @escaping (AdLoadResult) -> Void) {
         taskDispatcher.async(on: .background) { [self] in
-            
             logger.debug("Load started for \(request.adFormat) ad with placement \(request.heliumPlacement) and load ID \(request.loadID)")
-            
+
             // If Helium not started fail early
             guard initializationStatusProvider.isInitialized else {
                 logger.error("Load failed due to SDK not being initialized")
                 completion(
-                    AdLoadResult(result: .failure(ChartboostMediationError(code: .loadFailureChartboostMediationNotInitialized)), metrics: nil)
+                    AdLoadResult(
+                        result: .failure(ChartboostMediationError(code: .loadFailureChartboostMediationNotInitialized)),
+                        metrics: nil
+                    )
                 )
                 return
             }
@@ -162,7 +166,7 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
             // Otherwise load ad
             isLoading = true
             adRepository.loadAd(request: request, viewController: viewController, delegate: self) { [weak self] result in
-                guard let self = self else { return }
+                guard let self else { return }
                 self.taskDispatcher.async(on: .background) {
                     // If success save the ad. Notify completion.
                     self.isLoading = false
@@ -178,9 +182,9 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
             }
         }
     }
-    
+
     func clearLoadedAd() {
-        taskDispatcher.sync(on: .background) { [self] in
+        taskDispatcher.async(on: .background) { [self] in
             // If no loaded ad fail early
             guard let (ad, _) = loadedAd else {
                 return
@@ -193,7 +197,7 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
             // Finish successfully. Even if the partner failed to clean up its side, the AdController can in fact load a new ad now.
         }
     }
-    
+
     func clearShowingAd(completion: @escaping (ChartboostMediationError?) -> Void) {
         taskDispatcher.async(on: .background) { [self] in
             // If no showing ad fail early
@@ -208,9 +212,10 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
             partnerController.routeInvalidate(ad.partnerAd, completion: completion)
         }
     }
-    
+
     func showAd(viewController: UIViewController, completion: @escaping (AdShowResult) -> Void) {
-        // We strongly capture the delegate in this closure so it doesn't get deallocated before it gets assigned to the `retainedDelegate` property.
+        // We strongly capture the delegate in this closure so it doesn't get deallocated before it gets assigned to the
+        // `retainedDelegate` property.
         taskDispatcher.async(on: .background) { [self, delegate] in
             // If not loaded ad fail early
             guard let (ad, _) = loadedAd else {
@@ -221,17 +226,18 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
                 return
             }
             assert(!ad.request.adFormat.isBanner, "Calling this for banner ads is a programmer error")
-            
+
             logger.debug("Show started for \(ad.request.adFormat) ad with placement \(ad.request.heliumPlacement) and load ID \(ad.request.loadID)")
-            
-            // Remove loadedAd since it's now used. This prevents multiple user calls to show() to trigger multiple requests to the partnerController for the same ad.
+
+            // Remove loadedAd since it's now used. This prevents multiple user calls to show() to trigger multiple requests to the
+            // partnerController for the same ad.
             loadedAd = nil
-            
+
             let start = Date()
-            
+
             // Schedule a timeout task in case the partner takes too long or never shows the ad so we can move on and show a new one
             showTimeoutTask = taskDispatcher.async(on: .background, delay: configuration.showTimeout) { [weak self] in
-                guard let self = self else { return }
+                guard let self else { return }
                 // Log error
                 let error = ChartboostMediationError(code: .showFailureTimeout)
                 let rawMetrics = self.metrics.logShow(ad: ad, start: start, error: error)
@@ -243,15 +249,15 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
                 logger.error("Show failed for \(ad.request.adFormat) ad with placement \(ad.request.heliumPlacement) and load ID \(ad.request.loadID) and error: \(error)")
                 completion(AdShowResult(error: error, metrics: rawMetrics))
             }
-            
+
             // Retain the delegate so it's alive until the ad gets dismissed.
             // Note this affects only fullscreen ads and not banners, since we don't call showAd() on banners and they do not need
             // to be retained while showing, they already are by their superview.
             retainedDelegate = delegate
-            
+
             // Show ad through partner controller
             partnerController.routeShow(ad.partnerAd, viewController: viewController) { [weak self] error in
-                guard let self = self else { return }
+                guard let self else { return }
                 self.taskDispatcher.async(on: .background) {
                     // If timeout task was already fired then fail early, since the completion was already called.
                     guard self.showTimeoutTask?.state != .complete else {
@@ -259,11 +265,11 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
                     }
                     // Cancel the timeout task
                     self.showTimeoutTask?.cancel()
-                    
+
                     // Log metrics
                     let rawMetrics = self.metrics.logShow(ad: ad, start: start, error: error)
-                    
-                    if let error = error {
+
+                    if let error {
                         // Invalidate partner ad
                         self.partnerController.routeInvalidate(ad.partnerAd) { _ in }
                         // Stop retaining the delegate
@@ -283,7 +289,7 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
             }
         }
     }
-    
+
     func markLoadedAdAsShown() {
         taskDispatcher.async(on: .background) { [self] in
             // If not loaded ad fail early
@@ -292,36 +298,36 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
                 return
             }
             assert(ad.request.adFormat.isBanner, "Calling this for non-banner ads is a programmer error")
-            
+
             // Remove loadedAd since it's now used.
             loadedAd = nil
-            
+
             // Record impression
             recordAdImpression(for: ad)
         }
     }
-    
-    private func recordAdImpression(for ad: HeliumAd) {
+
+    private func recordAdImpression(for ad: LoadedAd) {
         // Mark the ad as showing
         showingAd = ad
-        
+
         // Increase the impression count for this format
         impressionTracker.trackImpression(for: ad.request.adFormat)
-        
+
         // Log a helium impression
         metrics.logHeliumImpression(for: ad.partnerAd)
-        
+
         // Fire ILRD notification for the winning bid, if available.
         if let ilrd = ad.ilrd {
             ilrdEventPublisher.postILRDEvent(forPlacement: ad.request.heliumPlacement, ilrdJSON: ilrd)
         }
-        
+
         // Call impression delegate method
         observers.forEach {
             $0.didTrackImpression()
         }
     }
-    
+
     func addObserver(observer: AdControllerDelegate) {
         taskDispatcher.async(on: .background) { [self] in
             observers.add(observer)
@@ -332,7 +338,6 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
 // MARK: PartnerAdDelegate
 
 extension SingleAdStorageAdController {
-    
     func didTrackImpression(_ ad: PartnerAd, details: PartnerEventDetails) {
         taskDispatcher.async(on: .background) { [self] in
             logger.debug("Tracked impression for \(ad.request.format) ad with placement \(ad.request.chartboostPlacement)")
@@ -340,7 +345,7 @@ extension SingleAdStorageAdController {
             metrics.logPartnerImpression(for: ad)
         }
     }
-    
+
     func didClick(_ ad: PartnerAd, details: PartnerEventDetails) {
         taskDispatcher.async(on: .background) { [self] in
             logger.debug("Clicked \(ad.request.format) ad with placement \(ad.request.chartboostPlacement)")
@@ -352,7 +357,7 @@ extension SingleAdStorageAdController {
             }
         }
     }
-    
+
     func didReward(_ ad: PartnerAd, details: PartnerEventDetails) {
         taskDispatcher.async(on: .background) { [self] in
             logger.debug("Rewarded \(ad.request.format) ad with placement \(ad.request.chartboostPlacement)")
@@ -368,7 +373,7 @@ extension SingleAdStorageAdController {
             }
         }
     }
-    
+
     func didDismiss(_ ad: PartnerAd, details: PartnerEventDetails, error: Error?) {
         taskDispatcher.async(on: .background) { [self] in
             logger.debug("Closed \(ad.request.format) ad with placement \(ad.request.chartboostPlacement)")
@@ -389,7 +394,7 @@ extension SingleAdStorageAdController {
             retainedDelegate = nil
         }
     }
-    
+
     func didExpire(_ ad: PartnerAd, details: PartnerEventDetails) {
         taskDispatcher.async(on: .background) { [self] in
             logger.debug("Expired \(ad.request.format) ad with placement \(ad.request.chartboostPlacement)")

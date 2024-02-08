@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -15,7 +15,7 @@ struct JSONObject: Equatable {
     var value: Any
     
     init?(_ value: Any) {
-        guard value is String || value is Bool || value is Int || value is Double || value is Array<Any> || value is Dictionary<AnyHashable, Any> || value is NSNull else {
+        guard value is String || value is Bool || value is Int || value is Double || value is Decimal || value is Array<Any> || value is Dictionary<AnyHashable, Any> || value is NSNull else {
             return nil
         }
         self.value = value
@@ -62,18 +62,22 @@ struct JSONObject: Equatable {
     
     private static func equalityCheck(lhs: JSONObject, rhs: JSONObject, assert: Bool, key: String?, file: StaticString = #file, line: UInt = #line) -> Bool {
         if let lhs = lhs.value as? String, let rhs = rhs.value as? String {
-            if assert { XCTAssert(lhs == rhs, "JSON not equal: \((key != nil) ? "\"" + key! + "\" " : "")\(lhs) and \(rhs)", file: file, line: line) }
+            if assert { XCTAssertEqual(lhs, rhs, "JSON not equal: \((key != nil) ? "\"" + key! + "\" " : "")\(lhs) and \(rhs)", file: file, line: line) }
             return lhs == rhs
         } else if let lhs = lhs.value as? NSNumber, lhs === kCFBooleanTrue || lhs === kCFBooleanFalse, let rhs = rhs.value as? NSNumber, rhs === kCFBooleanTrue || rhs === kCFBooleanFalse {
-            if assert { XCTAssert(lhs == rhs, "JSON not equal: \((key != nil) ? "\"" + key! + "\" " : "")\(lhs) and \(rhs)", file: file, line: line) }
+            if assert { XCTAssertEqual(lhs, rhs, "JSON not equal: \((key != nil) ? "\"" + key! + "\" " : "")\(lhs) and \(rhs)", file: file, line: line) }
             return lhs == rhs
         } else if let lhs = lhs.value as? NSNumber, lhs !== kCFBooleanTrue && lhs !== kCFBooleanFalse, let rhs = rhs.value as? NSNumber, rhs !== kCFBooleanTrue && rhs !== kCFBooleanFalse {
             if let lhsI = lhs as? Int, let rhsI = rhs as? Int {
-                if assert { XCTAssert(lhsI == rhsI, "JSON not equal: \((key != nil) ? "\"" + key! + "\" " : "")\(lhsI) and \(rhsI)", file: file, line: line) }
+                if assert { XCTAssertEqual(lhsI, rhsI, "JSON not equal: \((key != nil) ? "\"" + key! + "\" " : "")\(lhsI) and \(rhsI)", file: file, line: line) }
+                return lhsI == rhsI
+            }
+            else if let lhsI = lhs as? Decimal, let rhsI = rhs as? Decimal {
+                if assert { XCTAssertEqual(lhsI, rhsI, "JSON not equal: \((key != nil) ? "\"" + key! + "\" " : "")\(lhsI) and \(rhsI)", file: file, line: line) }
                 return lhsI == rhsI
             }
             else if let lhsI = lhs as? Double, let rhsI = rhs as? Double {
-                if assert { XCTAssert(lhsI == rhsI, "JSON not equal: \((key != nil) ? "\"" + key! + "\" " : "")\(lhsI) and \(rhsI)", file: file, line: line) }
+                if assert { XCTAssertEqual(lhsI, rhsI, "JSON not equal: \((key != nil) ? "\"" + key! + "\" " : "")\(lhsI) and \(rhsI)", file: file, line: line) }
                 return lhsI == rhsI
             }
         } else if let lhs = lhs.value as? Array<Any>, let rhs = rhs.value as? Array<Any> {

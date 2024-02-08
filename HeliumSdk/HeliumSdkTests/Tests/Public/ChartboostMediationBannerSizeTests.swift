@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -7,7 +7,7 @@
 import Foundation
 import XCTest
 
-class ChartboostMediationBannerSizeTests: HeliumTestCase {
+class ChartboostMediationBannerSizeTests: ChartboostMediationTestCase {
     func testFixedBannerSizes() {
         var size: ChartboostMediationBannerSize = .standard
         XCTAssertEqual(size.size.width, 320.0)

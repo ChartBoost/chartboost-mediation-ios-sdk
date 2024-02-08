@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -56,7 +56,7 @@ public struct PreBidRequest: Equatable {
     public let chartboostPlacement: String
     /// Ad format.
     public let format: AdFormat
-    /// A unique identifier for the load request, which is the same as the associated `HeliumAdLoadRequest.loadID`.
+    /// A unique identifier for the load request, which is the same as the associated `AdLoadRequest.loadID`.
     let loadID: String
 }
 

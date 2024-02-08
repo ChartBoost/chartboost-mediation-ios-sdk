@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -15,7 +15,7 @@ protocol LoadRateLimiting {
     func loadRateLimit(placement: String) -> TimeInterval
 
     /// Define the rate limit for a specified placement.
-    /// - Parameter value: The rate limit.  0 to indicate no limit.
+    /// - Parameter value: The rate limit. 0 to indicate no limit.
     /// - Parameter placement: The placement in question.
     func setLoadRateLimit(_ value: TimeInterval, placement: String)
 }

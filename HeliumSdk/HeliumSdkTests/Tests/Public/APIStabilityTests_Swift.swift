@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -8,12 +8,15 @@ import XCTest
 
 /// This is a compile time test, not a runtime test.
 /// The tests pass as long as everything compiles without errors.
-class APIStabilityTests_Swift: HeliumTestCase {
+class APIStabilityTests_Swift: ChartboostMediationTestCase {
 
     /// API stability test for `Helium`.
     func stability_Helium() -> Any? {
         let helium = Helium.shared()
         var result: Any?
+
+        helium.start(withAppId: "", options: nil, delegate: nil)
+        helium.start(withAppId: "", options: HeliumInitializationOptions(skippedPartnerIdentifiers: nil), delegate: HeliumSdkDelegateMock())
 
         helium.start(withAppId: "", andAppSignature: "", options: nil, delegate: nil)
         helium.start(withAppId: "", andAppSignature: "", options: HeliumInitializationOptions(skippedPartnerIdentifiers: nil), delegate: HeliumSdkDelegateMock())
@@ -43,6 +46,11 @@ class APIStabilityTests_Swift: HeliumTestCase {
         result = Helium.sdkVersion
 
         result = helium.initializedAdapterInfo
+
+        let _: [PartnerIdentifier: Bool] = helium.partnerConsents
+        helium.partnerConsents["some id"] = true
+        helium.partnerConsents["some id"] = nil
+        helium.partnerConsents = ["some id 1": false, "some id 2": true]
 
         return result // for suppressing the "variable was written to, but never read" warning
     }

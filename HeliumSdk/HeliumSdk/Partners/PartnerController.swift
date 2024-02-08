@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -8,10 +8,9 @@ import UIKit
 
 /// Manages mediated partner networks.
 protocol PartnerController: ConsentSettingsDelegate {
-    
     /// A closure that cancels an ongoing operation.
     typealias CancelAction = () -> Void
-    
+
     /// Information about the successfully initialized partners.
     var initializedAdapterInfo: [PartnerIdentifier: PartnerAdapterInfo] { get }
     /// Initializes all the available partner adapters.
@@ -20,14 +19,24 @@ protocol PartnerController: ConsentSettingsDelegate {
     /// - parameter adapterClasses: Name of all the potentially available partner adapter classes.
     /// - parameter partnerIdentifiersToSkip: Optional set of partner adapter identifiers to skip initializing.
     /// - parameter completion: Report the metrics events back to the caller.
-    func setUpAdapters(configurations: [PartnerIdentifier: PartnerConfiguration], adapterClasses: Set<String>, skipping partnerIdentifiersToSkip: Set<PartnerIdentifier>, completion: @escaping ([MetricsEvent]) -> Void)
+    func setUpAdapters(
+        configurations: [PartnerIdentifier: PartnerConfiguration],
+        adapterClasses: Set<String>,
+        skipping partnerIdentifiersToSkip: Set<PartnerIdentifier>,
+        completion: @escaping ([MetricsEvent]) -> Void
+    )
     /// Forwards a load request to a partner.
     /// - parameter request: Information about the ad load request.
     /// - parameter viewController: The view controller on which the ad will be presented on. Needed on load for some banners.
     /// - parameter delegate: The delegate object that will receive ad life-cycle events.
     /// - parameter completion: A closure to be executed when the load operation ends, including the result with the loaded ad.
     /// - returns: A closure that cancels the load operation if executed, making sure the passed `completion` closure never fires.
-    func routeLoad(request: PartnerAdLoadRequest, viewController: UIViewController?, delegate: PartnerAdDelegate, completion: @escaping (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void) -> CancelAction
+    func routeLoad(
+        request: PartnerAdLoadRequest,
+        viewController: UIViewController?,
+        delegate: PartnerAdDelegate,
+        completion: @escaping (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void
+    ) -> CancelAction
     /// Forwards a show request to a partner.
     /// - parameter ad: A previously loaded ad to show.
     /// - parameter viewController: The view controller on which the ad will be presented on.

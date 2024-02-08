@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -11,20 +11,19 @@ typealias BidderTokens = [PartnerIdentifier: [String: String]]
 protocol PartnerControllerConfiguration {
     /// The amount of seconds to wait for all partner networks to fetch the token used for the ad request auction.
     var prebidFetchTimeout: TimeInterval { get }
-    /// The timeout before posting initialization metrics.  Defaults to 5.0.
+    /// The timeout before posting initialization metrics. Defaults to 5.0.
     var initMetricsPostTimeout: TimeInterval { get }
 }
 
 /// PartnerController implementation that communicates with partner networks via PartnerAdapter objects.
 final class PartnerAdapterController: PartnerController {
-    
     /// Initialized partner adapters.
     private var initializedAdapters: [PartnerIdentifier: PartnerAdapter] = [:]
     /// Indicates if the controller has been set up.
     private var isInitialized = false
     /// Storage objects that hold on to partner ads created by adapters.
     private var adaptersStorage: [PartnerIdentifier: MutablePartnerAdapterStorage] = [:]
-    
+
     /// Factory to obtain partner adapter instances.
     @Injected(\.adapterFactory) private var adapterFactory
     /// Used to dispatch work asynchronously and in a thread-safe way.
@@ -38,15 +37,15 @@ final class PartnerAdapterController: PartnerController {
     @Injected(\.initResultsEventPublisher) private var initResultsEventPublisher
     /// The user privacy consent settings manager
     @Injected(\.consentSettings) private var consentSettings
-    
+
     init() {
         // Start listening to consent changes
         assert(consentSettings.delegate == nil, "there should be only one consent settings delegate")
         consentSettings.delegate = self
     }
-    
+
     // MARK: - PartnerController
-    
+
     var initializedAdapterInfo: [PartnerIdentifier: PartnerAdapterInfo] {
         initializedAdapters.mapValues {
             PartnerAdapterInfo(
@@ -57,7 +56,7 @@ final class PartnerAdapterController: PartnerController {
             )
         }
     }
-    
+
     // We assume this method will be called only once.
     func setUpAdapters(
         configurations: [PartnerIdentifier: PartnerConfiguration],
@@ -73,60 +72,74 @@ final class PartnerAdapterController: PartnerController {
                 return
             }
             isInitialized = true
-            
+
             logger.debug("Initializing partner adapters")
-            
+
             // Create adapters
             let adapters = adapterFactory.adapters(fromClassNames: adapterClasses)
-            
+
             // Create a dispatch group to asynchronously set up adapters and wait until they are all done or the timeout hits.
             let group = taskDispatcher.group(on: .background)
             var initEvents: [MetricsEvent] = []
             let start = Date()
-            
+
             // Set up adapters
             for (adapter, storage) in adapters {
                 guard let configuration = configurations[adapter.partnerIdentifier] else {
                     continue
                 }
-                
+
                 // Intentionally skip initialization of the adapter
                 guard !partnerIdentifiersToSkip.contains(adapter.partnerIdentifier) else {
-                    initEvents.append(MetricsEvent(start: start,
-                                                   error: ChartboostMediationError(code: .initializationSkipped),
-                                                   partnerIdentifier: adapter.partnerIdentifier,
-                                                   partnerSDKVersion: adapter.partnerSDKVersion,
-                                                   partnerAdapterVersion: adapter.adapterVersion))
+                    initEvents.append(
+                        MetricsEvent(
+                            start: start,
+                            error: ChartboostMediationError(code: .initializationSkipped),
+                            partnerIdentifier: adapter.partnerIdentifier,
+                            partnerSDKVersion: adapter.partnerSDKVersion,
+                            partnerAdapterVersion: adapter.adapterVersion
+                        )
+                    )
                     continue
                 }
-                                
+
                 adaptersStorage[adapter.partnerIdentifier] = storage
-                
+
                 group.add { finished in
-                    adapter.setUp(with: configuration) { [weak self, adapter] error in  // the closure itself holds a strong reference to the adapter keeping it alive until it is executed
-                        guard let self = self else { return }
+                    // the closure itself holds a strong reference to the adapter keeping it alive until it is executed
+                    adapter.setUp(with: configuration) { [weak self, adapter] error in
+                        guard let self else { return }
                         self.taskDispatcher.async(on: .background) {
-                            if let error = error {
-                                let chartboostMediationError = error as? ChartboostMediationError ?? .init(code: adapter.mapSetUpError(error) ?? .initializationFailureUnknown, error: error)
-                                initEvents.append(MetricsEvent(start: start,
-                                                               error: chartboostMediationError,
-                                                               partnerIdentifier: adapter.partnerIdentifier,
-                                                               partnerSDKVersion: adapter.partnerSDKVersion,
-                                                               partnerAdapterVersion: adapter.adapterVersion))
+                            if let error {
+                                let chartboostMediationError = error as? ChartboostMediationError
+                                    ?? .init(code: adapter.mapSetUpError(error) ?? .initializationFailureUnknown, error: error)
+                                initEvents.append(
+                                    MetricsEvent(
+                                        start: start,
+                                        error: chartboostMediationError,
+                                        partnerIdentifier: adapter.partnerIdentifier,
+                                        partnerSDKVersion: adapter.partnerSDKVersion,
+                                        partnerAdapterVersion: adapter.adapterVersion
+                                    )
+                                )
                             } else {
                                 self.initializedAdapters[adapter.partnerIdentifier] = adapter
                                 self.setAlreadySetConsents(on: adapter)
-                                initEvents.append(MetricsEvent(start: start,
-                                                               partnerIdentifier: adapter.partnerIdentifier,
-                                                               partnerSDKVersion: adapter.partnerSDKVersion,
-                                                               partnerAdapterVersion: adapter.adapterVersion))
+                                initEvents.append(
+                                    MetricsEvent(
+                                        start: start,
+                                        partnerIdentifier: adapter.partnerIdentifier,
+                                        partnerSDKVersion: adapter.partnerSDKVersion,
+                                        partnerAdapterVersion: adapter.adapterVersion
+                                    )
+                                )
                             }
                             finished()
                         }
                     }
                 }
             }
-            
+
             // Wait for all responses up to the timeout.
             group.onAllFinished(timeout: configuration.initMetricsPostTimeout) { [self] in
                 // Get list of pending adapters
@@ -141,21 +154,25 @@ final class PartnerAdapterController: PartnerController {
                     failure: initEvents.filter { $0.error != nil },
                     inProgress: pendingAdapters.map { .init(partner: $0.partnerIdentifier, start: start) }
                 ))
-                
+
                 // Mark all pending partners as timed out
                 for adapter in pendingAdapters {
-                    initEvents.append(MetricsEvent(start: start,
-                                                   error: ChartboostMediationError(code: .initializationFailureTimeout),
-                                                   partnerIdentifier: adapter.partnerIdentifier,
-                                                   partnerSDKVersion: adapter.partnerSDKVersion,
-                                                   partnerAdapterVersion: adapter.adapterVersion))
+                    initEvents.append(
+                        MetricsEvent(
+                            start: start,
+                            error: ChartboostMediationError(code: .initializationFailureTimeout),
+                            partnerIdentifier: adapter.partnerIdentifier,
+                            partnerSDKVersion: adapter.partnerSDKVersion,
+                            partnerAdapterVersion: adapter.adapterVersion
+                        )
+                    )
                 }
                 // Log metrics
                 completion(initEvents)
             }
         }
     }
-    
+
     func routeFetchBidderInformation(request: PreBidRequest, completion: @escaping ([PartnerIdentifier: [String: String]]) -> Void) {
         taskDispatcher.async(on: .background) { [self] in
             logger.debug("Routing bidder info fetch to all adapters with placement \(request.chartboostPlacement) and load ID \(request.loadID)")
@@ -194,9 +211,15 @@ final class PartnerAdapterController: PartnerController {
             }
         }
     }
-    
-    func routeLoad(request: PartnerAdLoadRequest, viewController: UIViewController?, delegate: PartnerAdDelegate, completion: @escaping (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void) -> CancelAction {
-        taskDispatcher.sync(on: .background) { [self] in    // sync operation so we can return the cancel action with info about the created ad
+
+    func routeLoad(
+        request: PartnerAdLoadRequest,
+        viewController: UIViewController?,
+        delegate: PartnerAdDelegate,
+        completion: @escaping (Result<(PartnerAd, PartnerEventDetails), ChartboostMediationError>) -> Void
+    ) -> CancelAction {
+        // sync operation so we can return the cancel action with info about the created ad
+        taskDispatcher.sync(on: .background) { [self] in
             logger.debug("Routing load to \(request.partnerIdentifier) for \(request.format) ad with placement \(request.partnerPlacement)")
             // Fail early if adapter is not initialized
             guard let adapter = initializedAdapters[request.partnerIdentifier] else {
@@ -211,13 +234,14 @@ final class PartnerAdapterController: PartnerController {
                     ? try taskDispatcher.sync(on: .main, execute: makeAd)
                     : try makeAd()
                 addToStorage(ad)
-                
+
                 // Partner load. Banners are handled on the main thread since they generally make use of UIKit
-                taskDispatcher.async(on: request.format.isBanner ? .main : .background) {     // here we switch to async to make sure we are not clogging the UI thread with the previous sync
+                // here we switch to async to make sure we are not clogging the UI thread with the previous sync
+                taskDispatcher.async(on: request.format.isBanner ? .main : .background) {
                     ad.load(with: viewController) { [weak self, weak ad] result in
                         self?.taskDispatcher.async(on: .background) {
                             // If ad is nil or not in storage that means it was invalidated and the load result should be ignored
-                            guard let ad = ad, self?.isInStorage(ad) == true else {
+                            guard let ad, self?.isInStorage(ad) == true else {
                                 logger.warning("Discarding load result for invalidated \(request.partnerIdentifier) ad with placement \(request.partnerPlacement)")
                                 return
                             }
@@ -230,12 +254,14 @@ final class PartnerAdapterController: PartnerController {
                                 // On failure we dispose of the partner ad and report back with error
                                 logger.error("Received load failure from \(request.partnerIdentifier) for \(request.format) ad with placement \(request.partnerPlacement) and error: \(error)")
                                 self?.routeInvalidate(ad) { _ in }
-                                completion(.failure(error as? ChartboostMediationError ?? .init(code: adapter.mapLoadError(error) ?? .loadFailureUnknown, error: error)))
+                                let chartboostMediationError = error as? ChartboostMediationError
+                                    ?? .init(code: adapter.mapLoadError(error) ?? .loadFailureUnknown, error: error)
+                                completion(.failure(chartboostMediationError))
                             }
                         }
                     }
                 }
-                /// Return the cancel action that invalidates the created ad when executed
+                // Return the cancel action that invalidates the created ad when executed
                 return { [weak self] in
                     logger.debug("Load cancelled on \(request.partnerIdentifier) for \(request.format) ad with placement \(request.partnerPlacement)")
                     self?.routeInvalidate(ad, completion: { _ in })
@@ -243,18 +269,22 @@ final class PartnerAdapterController: PartnerController {
             } catch {
                 // Failed to create the partner ad
                 logger.error("Routing load failed with error: \(error)")
-                completion(.failure(error as? ChartboostMediationError ?? .init(code: adapter.mapLoadError(error) ?? .loadFailureUnknown, error: error)))
+                let chartboostMediationError = error as? ChartboostMediationError
+                    ?? .init(code: adapter.mapLoadError(error) ?? .loadFailureUnknown, error: error)
+                completion(.failure(chartboostMediationError))
                 return {}
             }
         }
     }
-    
+
     func routeShow(_ ad: PartnerAd, viewController: UIViewController, completion: @escaping (ChartboostMediationError?) -> Void) {
         taskDispatcher.async(on: .main) {
             logger.debug("Routing show to \(ad.request.partnerIdentifier) for \(ad.request.format) ad with placement \(ad.request.partnerPlacement)")
             // Partner show
             ad.show(with: viewController) { [weak ad] result in
-                let error = result.error.map { $0 as? ChartboostMediationError ?? .init(code: ad?.adapter.mapShowError($0) ?? .showFailureUnknown, error: $0) }
+                let error = result.error.map {
+                    $0 as? ChartboostMediationError ?? .init(code: ad?.adapter.mapShowError($0) ?? .showFailureUnknown, error: $0)
+                }
                 if let error {
                     logger.error("Received show failure from \(ad?.request.partnerIdentifier ?? "nil") for \(ad?.request.format.rawValue ?? "nil") ad with placement \(ad?.request.partnerPlacement ?? "nil") and error: \(error)")
                 } else {
@@ -269,22 +299,24 @@ final class PartnerAdapterController: PartnerController {
     func routeInvalidate(_ ad: PartnerAd, completion: @escaping (ChartboostMediationError?) -> Void) {
         taskDispatcher.async(on: .background) { [self] in
             logger.debug("Routing invalidate to \(ad.request.partnerIdentifier) for \(ad.request.format) ad with placement \(ad.request.partnerPlacement)")
-            
+
             // Remove the partner ad from storage
             removeFromStorage(ad)
-            
+
             // Partner invalidate
             do {
                 try ad.invalidate()
                 completion(nil)
             } catch {
-                completion(error as? ChartboostMediationError ?? .init(code: ad.adapter.mapInvalidateError(error) ?? .invalidateFailureUnknown, error: error))
+                let chartboostMediationError = error as? ChartboostMediationError
+                    ?? .init(code: ad.adapter.mapInvalidateError(error) ?? .invalidateFailureUnknown, error: error)
+                completion(chartboostMediationError)
             }
         }
     }
-    
+
     // MARK: - ConsentSettingsDelegate
-    
+
     func didChangeGDPR() {
         taskDispatcher.async(on: .background) { [self] in
             logger.debug("Routing GDPR consent change to all adapters")
@@ -293,7 +325,7 @@ final class PartnerAdapterController: PartnerController {
             }
         }
     }
-    
+
     func didChangeCCPA() {
         taskDispatcher.async(on: .background) { [self] in
             logger.debug("Routing CCPA consent change to all adapters")
@@ -302,7 +334,7 @@ final class PartnerAdapterController: PartnerController {
             }
         }
     }
-    
+
     func didChangeCOPPA() {
         taskDispatcher.async(on: .background) { [self] in
             logger.debug("Routing COPPA consent change to all adapters")
@@ -315,39 +347,57 @@ final class PartnerAdapterController: PartnerController {
 
 // MARK: - Helpers
 
-private extension PartnerAdapterController {
-    
-    func addToStorage(_ ad: PartnerAd) {
+extension PartnerAdapterController {
+    private func addToStorage(_ ad: PartnerAd) {
         adaptersStorage[ad.adapter.partnerIdentifier]?.ads.append(ad)
     }
-    
-    func removeFromStorage(_ ad: PartnerAd) {
+
+    private func removeFromStorage(_ ad: PartnerAd) {
         adaptersStorage[ad.adapter.partnerIdentifier]?.ads.removeAll(where: { $0 === ad })
     }
-    
-    func isInStorage(_ ad: PartnerAd) -> Bool {
+
+    private func isInStorage(_ ad: PartnerAd) -> Bool {
         adaptersStorage[ad.adapter.partnerIdentifier]?.ads.contains(where: { $0 === ad }) ?? false
     }
-    
-    func setAlreadySetConsents(on adapter: PartnerAdapter) {
+
+    private func setAlreadySetConsents(on adapter: PartnerAdapter) {
         setGDPRConsent(on: adapter)
         setCCPAConsent(on: adapter)
         setCOPPAConsent(on: adapter)
     }
-    
-    func setGDPRConsent(on adapter: PartnerAdapter) {
-        if consentSettings.isSubjectToGDPR != nil || consentSettings.gdprConsent != .unknown {
-            adapter.setGDPR(applies: consentSettings.isSubjectToGDPR, status: consentSettings.gdprConsent)
+
+    private func setGDPRConsent(on adapter: PartnerAdapter) {
+        if consentSettings.isSubjectToGDPR != nil
+            || consentSettings.gdprConsent != .unknown
+            || consentSettings.partnerConsents[adapter.partnerIdentifier] != nil {
+            // Partner-specific GDPR consent is used if available, otherwise we fall back to the general signal
+            let consentStatus: GDPRConsentStatus
+            if let partnerConsent = consentSettings.partnerConsents[adapter.partnerIdentifier] {
+                consentStatus = partnerConsent ? .granted : .denied
+            } else {
+                consentStatus = consentSettings.gdprConsent
+            }
+            adapter.setGDPR(applies: consentSettings.isSubjectToGDPR, status: consentStatus)
         }
     }
-    
-    func setCCPAConsent(on adapter: PartnerAdapter) {
-        if let ccpaConsent = consentSettings.ccpaConsent, let ccpaPrivacyString = consentSettings.ccpaPrivacyString {
+
+    private func setCCPAConsent(on adapter: PartnerAdapter) {
+        // Partner-specific CCPA consent is used if available, otherwise we fall back to the general signal
+        let ccpaConsent: Bool?
+        let ccpaPrivacyString: String?
+        if let partnerConsent = consentSettings.partnerConsents[adapter.partnerIdentifier] {
+            ccpaConsent = partnerConsent
+            ccpaPrivacyString = consentSettings.ccpaPrivacyString(forCCPAConsent: partnerConsent)
+        } else {
+            ccpaConsent = consentSettings.ccpaConsent
+            ccpaPrivacyString = consentSettings.ccpaPrivacyString
+        }
+        if let ccpaConsent, let ccpaPrivacyString {
             adapter.setCCPA(hasGivenConsent: ccpaConsent, privacyString: ccpaPrivacyString)
         }
     }
-    
-    func setCOPPAConsent(on adapter: PartnerAdapter) {
+
+    private func setCOPPAConsent(on adapter: PartnerAdapter) {
         if let coppaIsChildDirected = consentSettings.isSubjectToCOPPA {
             adapter.setCOPPA(isChildDirected: coppaIsChildDirected)
         }

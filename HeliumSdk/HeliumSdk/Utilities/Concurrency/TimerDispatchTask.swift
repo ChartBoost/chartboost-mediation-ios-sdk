@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -26,19 +26,19 @@ final class TimerDispatchTask: DispatchTask {
     }
     /// The backing timer that provides all the logic. This class is thread-safe because ResumableTimer is thread-safe.
     private let timer: ResumableTimer
-    
+
     init(timer: ResumableTimer) {
         self.timer = timer
     }
-    
+
     func cancel() {
         timer.invalidate()
     }
-    
+
     func pause() {
         timer.pause()
     }
-    
+
     func resume() {
         timer.scheduleNow()
     }

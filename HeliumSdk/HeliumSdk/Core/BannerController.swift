@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -71,8 +71,13 @@ protocol BannerControllerConfiguration {
     var bannerSizeEventDelay: TimeInterval { get }
 }
 
-final class BannerController: BannerControllerProtocol, AdControllerDelegate, ViewVisibilityObserver, ApplicationActivationObserver, ApplicationInactivationObserver, FullScreenAdShowObserver {
-
+final class BannerController: BannerControllerProtocol,
+                                AdControllerDelegate,
+                                ViewVisibilityObserver,
+                                ApplicationActivationObserver,
+                                ApplicationInactivationObserver,
+                                FullScreenAdShowObserver
+{
     weak var delegate: BannerControllerDelegate?
     let request: ChartboostMediationBannerLoadRequest
     private(set) var showingBannerLoadResult: AdLoadResult?
@@ -160,7 +165,7 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
     }
 
     // MARK: -
-    
+
     init(
         request: ChartboostMediationBannerLoadRequest,
         adController: AdController,
@@ -169,7 +174,7 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
         self.request = request
         self.adController = adController
         self.visibilityTracker = visibilityTracker
-        
+
         application.addObserver(self)   // to pause/resume autorefresh when app goes to background/foreground
         fullScreenAdShowCoordinator.addObserver(self)   // to pause/resume autorefresh when full-screen ad is shown/closed
         adController.addObserver(observer: self)    // to receive ad life-cycle events
@@ -177,28 +182,28 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
         // Calculate the initial composite paused states.
         updatePausedStates()
     }
-    
+
     deinit {
         // to make sure we don't keep partner banner views in memory when not needed
         adController.clearLoadedAd()
         adController.clearShowingAd { _ in }
     }
-    
+
     // MARK: - BannerControllerProtocol
-    
+
     var keywords: [String: String]?
 
-    var isPaused: Bool = false {
+    var isPaused = false {
         didSet {
             updatePausedStates()
         }
     }
-    
+
     func clearAd() {
         // We clear both the preloaded ad and the currently showing ad.
         adController.clearLoadedAd()
         adController.clearShowingAd { _ in }
-        
+
         taskDispatcher.async(on: .background) {
             self.needsToShowOnLoad = false
             self.needsToStopLoadRetryCycle = true
@@ -224,7 +229,7 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
         let serverRequest = makeLoadRequest()
 
         taskDispatcher.async(on: .background) { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             // Set the load completion first, it will be called in `callLoadCompletionIfNeeded`.
             self.loadCompletion = completion
             // finish early if ad is loaded and waiting to become visible
@@ -242,37 +247,41 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
     }
 
     // MARK: -
-    
-    private func loadAdAndShowIfNeeded(with request: HeliumAdLoadRequest) {
+
+    private func loadAdAndShowIfNeeded(with request: AdLoadRequest) {
         // Load through ad controller
         // Note that multiple calls will be ignored by the ad controller if a load is already ongoing
         adController.loadAd(request: request, viewController: viewController) { [weak self] result in
-            self?.taskDispatcher.async(on: .background) { [self] in
-                guard let self = self else { return }
+            self?.taskDispatcher.async(on: .background) {
+                guard let self else { return }
                 // Call completion with result
-                let isFirstLoad = self.loadCompletion != nil // indicates if it's the first load result from a publisher loadAd() call, as against a load triggered due to auto-refresh
+                // indicates if it's the first load result from a publisher loadAd() call, as against a load triggered due to auto-refresh
+                let isFirstLoad = self.loadCompletion != nil
                 self.callLoadCompletionIfNeeded(with: result, request: request)
                 // Load success: reset load retry count, show ad if needed
                 if case .success(let ad) = result.result, let view = ad.partnerAd.inlineView {
                     self.resetLoadRetryCount()
-                    // Show the ad if needed. Otherwise the loaded ad remains cached by ad controller and can be accessed later by another call to loadAd()
+                    // Show the ad if needed. Otherwise the loaded ad remains cached by ad controller and can be accessed later by another
+                    // call to loadAd()
                     if !self.needsToStopLoadRetryCycle && self.needsToShowOnLoad {
                         self.needsToShowOnLoad = false
                         self.showAd(ad, bannerView: view, result: result)
                     }
                 // Load failure: schedule a load retry if needed
                 } else if self.isAutoRefreshEnabled && !self.needsToStopLoadRetryCycle && (self.isBannerContainerVisible || !isFirstLoad) {
-                    // We do not schedule a load retry if: autorefresh is not enabled, or clearAd() was called, or the view is not visible on the first load.
-                    // Note that for auto-refresh (non-first) loads the retry task is scheduled but paused immediately if the banner is not visible (see scheduleLoadRetry()).
+                    // We do not schedule a load retry if: autorefresh is not enabled, or clearAd() was called, or the view is not visible
+                    // on the first load.
+                    // Note that for auto-refresh (non-first) loads the retry task is scheduled but paused immediately if the banner
+                    // is not visible (see scheduleLoadRetry()).
                     self.scheduleLoadRetry()
                 }
             }
         }
     }
-    
+
     private func callLoadCompletionIfNeeded(
         with adLoadResult: AdLoadResult?,
-        request: HeliumAdLoadRequest
+        request: AdLoadRequest
     ) {
         guard let completion = loadCompletion else { return }
 
@@ -291,6 +300,7 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
                 error: nil,
                 loadID: ad.request.loadID,
                 metrics: metrics,
+                size: ad.adSize,
                 winningBidInfo: ad.bidInfo
             )
         // nil means a load request happened when an ad was already loaded but waiting to get shown
@@ -299,6 +309,9 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
                 error: nil,
                 loadID: request.loadID,
                 metrics: metrics,
+                // In the case that the banner is loaded but not visible, the banner result is
+                // contained in `showingBannerLoadResult`.
+                size: try? showingBannerLoadResult?.result.get().adSize,
                 winningBidInfo: nil
             )
         // If failure notify didLoad with an error
@@ -307,6 +320,7 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
                 error: loadError,
                 loadID: request.loadID,
                 metrics: metrics,
+                size: nil,
                 winningBidInfo: nil
             )
         }
@@ -320,15 +334,16 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
         // it seems safer to set it immediately after the callback task has been dispatched.
         self.loadCompletion = nil
     }
-    
-    private func showAd(_ ad: HeliumAd, bannerView: UIView, result: AdLoadResult) {
+
+    private func showAd(_ ad: LoadedAd, bannerView: UIView, result: AdLoadResult) {
         taskDispatcher.async(on: .main) { [self] in
             // Clean up previously showing ad
             visibilityTracker.stopTracking()
             removeShowingBanner()
 
             adController.clearShowingAd { [weak self] _ in
-                // Show new ad, after the previous ad has been cleared so partners that have trouble displaying multiple ads for the same placement (Vungle) can do so sequentially.
+                // Show new ad, after the previous ad has been cleared so partners that have trouble displaying multiple ads for the same
+                // placement (Vungle) can do so sequentially.
                 self?.taskDispatcher.async(on: .main) {
                     self?.showingBannerLoadResult = result
                     self?.layOutBanner(bannerView)
@@ -338,8 +353,8 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
             logger.info("Waiting for banner ad with placement \(ad.request.heliumPlacement) to become visible")
             let start = Date()
             visibilityTracker.startTracking(bannerView) { [weak self] in
-                self?.taskDispatcher.async(on: .background) { [self] in
-                    guard let self = self else { return }
+                self?.taskDispatcher.async(on: .background) {
+                    guard let self else { return }
                     logger.debug("Banner ad with placement \(ad.request.heliumPlacement) became visible")
                     // Log metrics
                     _ = self.metrics.logShow(ad: ad, start: start, error: nil)
@@ -348,20 +363,22 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
                     // Schedule auto-refresh
                     if self.isAutoRefreshEnabled {
                         logger.debug("Preloading banner ad with placement \(ad.request.heliumPlacement)")
-                        self.loadAdAndShowIfNeeded(with: self.makeLoadRequest())   // we pre-load the next ad immediately so there's higher chances it is ready by the time we need to refresh the banner
+                        // we pre-load the next ad immediately so there's higher chances it is ready by the time we need to refresh
+                        // the banner
+                        self.loadAdAndShowIfNeeded(with: self.makeLoadRequest())
                         self.scheduleShowRefresh()
                     }
                 }
             }
         }
     }
-    
+
     private func layOutBanner(_ bannerView: UIView) {
         logger.debug("Adding ad with placement \(request.placement) to banner container")
 
         delegate?.bannerController(self, displayBannerView: bannerView)
     }
-    
+
     private func removeShowingBanner() {
         guard case .success(let ad) = showingBannerLoadResult?.result,
               let bannerView = ad.partnerAd.inlineView else {
@@ -372,15 +389,15 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
         delegate?.bannerController(self, clearBannerView: bannerView)
         self.showingBannerLoadResult = nil
     }
-    
+
     private func scheduleShowRefresh() {
         showRefreshTask?.cancel()
         let refreshRate = configuration.autoRefreshRate(forPlacement: request.placement)
         logger.info("Auto-refresh scheduled in \(refreshRate)s for banner ad with placement \(request.placement)")
         showRefreshTask = taskDispatcher.async(on: .background, delay: refreshRate) { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             logger.debug("Auto-refresh fired for banner ad with placement \(self.request.placement)")
-            
+
             self.loadRetryTask?.cancel()    // cancel scheduled load retry since we will trigger a new load right now
             // Set the flag so we show immediately on load
             self.needsToShowOnLoad = true
@@ -391,13 +408,13 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
             self.loadAdAndShowIfNeeded(with: self.makeLoadRequest())
         }
     }
-    
+
     private func scheduleLoadRetry() {
         loadRetryTask?.cancel()
         loadRetryCount += 1
         logger.debug("Load retry #\(loadRetryCount) scheduled in \(loadRetryDelay)s for banner ad with placement \(request.placement)")
         loadRetryTask = taskDispatcher.async(on: .background, delay: loadRetryDelay) { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             logger.debug("Load retry #\(self.loadRetryCount) fired for banner ad with placement \(self.request.placement)")
             self.loadAdAndShowIfNeeded(with: self.makeLoadRequest())
         }
@@ -409,24 +426,24 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
             loadRetryTask?.pause()
         }
     }
-    
+
     private func resetLoadRetryCount() {
         loadRetryCount = 0
     }
-    
+
     private var loadRetryDelay: TimeInterval {
         loadRetryCount < configuration.penaltyLoadRetryCount
             ? configuration.normalLoadRetryRate(forPlacement: request.placement)
             : configuration.penaltyLoadRetryRate
     }
-    
+
     private var isAutoRefreshEnabled: Bool {
         configuration.autoRefreshRate(forPlacement: request.placement) > 0
     }
-    
+
     /// Creates a new load request for the ad controller.
-    private func makeLoadRequest() -> HeliumAdLoadRequest {
-        HeliumAdLoadRequest(
+    private func makeLoadRequest() -> AdLoadRequest {
+        AdLoadRequest(
             adSize: request.size,
             adFormat: (request.size.type == .adaptive ? .adaptiveBanner : .banner),
             keywords: keywords,
@@ -444,60 +461,60 @@ final class BannerController: BannerControllerProtocol, AdControllerDelegate, Vi
             isFullscreenAdVisible
         )
     }
-    
+
     // MARK: - ViewVisibilityObserver
-    
-    func viewVisibilityDidChange(on view: UIView, to visible: Bool) {
+
+    func viewVisibilityDidChange(to visible: Bool) {
         // If view becomes hidden we stop the refresh and load retry processes, since we don't
         // want ad load requests to happen constantly for an unused banner.
         isBannerContainerVisible = visible
     }
-    
+
     // MARK: - ApplicationStateObserver
-    
+
     func applicationDidBecomeActive() {
         isApplicationActive = true
     }
-    
+
     func applicationWillBecomeInactive() {
         isApplicationActive = false
     }
-    
+
     // MARK: FullScreenAdShowObserver
-    
+
     func didShowFullScreenAd() {
         isFullscreenAdVisible = true
     }
-    
+
     func didCloseFullScreenAd() {
         isFullscreenAdVisible = false
     }
-    
+
     // MARK: - AdControllerDelegate
 
     // Events received from AdController which are forwarded to publishers through delegate method calls.
     // All delegate calls are made on the main thread to avoid issues with publishers integrations.
-    
+
     func didTrackImpression() {
         taskDispatcher.async(on: .main) { [self] in
             delegate?.bannerControllerDidRecordImpression(self)
         }
     }
-    
+
     func didClick() {
         taskDispatcher.async(on: .main) { [self] in
             delegate?.bannerControllerDidClick(self)
         }
     }
-    
+
     func didReward() {
         logger.trace("Reward ignored by banner ad")
     }
-    
+
     func didDismiss(error: ChartboostMediationError?) {
         logger.trace("Dismiss ignored by banner ad")
     }
-    
+
     func didExpire() {
         logger.trace("Expiration ignored by banner ad")
     }

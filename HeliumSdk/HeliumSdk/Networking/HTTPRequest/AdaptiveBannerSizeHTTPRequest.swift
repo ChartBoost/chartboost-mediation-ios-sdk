@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -15,7 +15,6 @@ struct AdaptiveBannerSizeData: Encodable {
 
 /// Error sent when `ChartboostMediationBannerView` is made smaller than the contained ad.
 struct AdaptiveBannerSizeHTTPRequest: HTTPRequestWithRawDataResponse, HTTPRequestWithEncodableBody {
-
     typealias Body = AdaptiveBannerSizeData
 
     let method = HTTP.Method.post

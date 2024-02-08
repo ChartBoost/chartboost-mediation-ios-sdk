@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -13,13 +13,12 @@ protocol ILRDEventPublisher {
 
 /// ILRDEventPublisher implementation that publishes ILRD events as Notification Center notifications.
 final class NotificationCenterILRDEventPublisher: ILRDEventPublisher {
-    
     @Injected(\.taskDispatcher) private var taskDispatcher
-    
+
     /// Fires the `heliumDidReceiveILRD` notification on the main thread.
     /// - parameter placement: Placement that the ILRD is associated with.
     /// - parameter ilrdJSON: ILRD JSON to send.
-    func postILRDEvent(forPlacement placement: String, ilrdJSON: [String : Any]) {
+    func postILRDEvent(forPlacement placement: String, ilrdJSON: [String: Any]) {
         // Create the ILRD object.
         let irld = HeliumImpressionData(placement: placement, jsonData: ilrdJSON)
         // Post the notification synchronously on the main thread so that the current

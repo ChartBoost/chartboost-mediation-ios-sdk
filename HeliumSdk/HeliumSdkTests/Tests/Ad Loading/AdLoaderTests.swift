@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-final class AdLoaderTests: HeliumTestCase {
+final class AdLoaderTests: ChartboostMediationTestCase {
 
     let adLoader = AdLoader()
     
@@ -19,7 +19,7 @@ final class AdLoaderTests: HeliumTestCase {
         let expectedAd = mocks.adFactory.returnValue(for: .makeFullscreenAd) as ChartboostMediationFullscreenAdMock
         let expectedLoadID = "some load ID"
         let bid = Bid.makeMock()
-        let loadedAd = HeliumAd(bid: bid, bidInfo: ["hello": 23], partnerAd: PartnerAdMock(), adSize: .init(size: .zero, type: .fixed), request: .test(loadID: expectedLoadID))
+        let loadedAd = LoadedAd(bid: bid, bidInfo: ["hello": 23], partnerAd: PartnerAdMock(), adSize: .init(size: .zero, type: .fixed), request: .test(loadID: expectedLoadID))
         mocks.adLoaderConfiguration.setReturnValue(format, for: .adFormatForPlacement)
         
         // Load the ad
@@ -43,8 +43,8 @@ final class AdLoaderTests: HeliumTestCase {
         let adController = mocks.adControllerFactory.returnValue(for: .makeAdController) as AdControllerMock
         var loadCompletion: (AdLoadResult) -> Void = { _ in }
         XCTAssertMethodCalls(adController, .loadAd, parameters: [
-            XCTMethodSomeParameter<HeliumAdLoadRequest> {
-                XCTAssertEqual($0.adSize, nil)
+            XCTMethodSomeParameter<AdLoadRequest> {
+                XCTAssertNil($0.adSize)
                 XCTAssertEqual($0.adFormat, format)
                 XCTAssertEqual($0.heliumPlacement, placement)
                 XCTAssertEqual($0.keywords, keywords)
@@ -96,8 +96,8 @@ final class AdLoaderTests: HeliumTestCase {
         let adController = mocks.adControllerFactory.returnValue(for: .makeAdController) as AdControllerMock
         var loadCompletion: (AdLoadResult) -> Void = { _ in }
         XCTAssertMethodCalls(adController, .loadAd, parameters: [
-            XCTMethodSomeParameter<HeliumAdLoadRequest> {
-                XCTAssertEqual($0.adSize, nil)
+            XCTMethodSomeParameter<AdLoadRequest> {
+                XCTAssertNil($0.adSize)
                 XCTAssertEqual($0.adFormat, format)
                 XCTAssertEqual($0.heliumPlacement, placement)
                 XCTAssertEqual($0.keywords, keywords)

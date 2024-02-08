@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -16,8 +16,10 @@ class DependenciesContainerMock: DependenciesContainer {
     var adLoaderConfiguration: FullscreenAdLoaderConfiguration { mocks.adLoaderConfiguration }
     var appConfigurationController: ApplicationConfigurationController { mocks.appConfigurationController }
     var appConfiguration: ApplicationConfiguration { mocks.appConfiguration }
-    var application: Application { mocks.application }
+    lazy var application: Application = mocks.application
     var adRepository: AdRepository { mocks.adRepository }
+    var auctionRequestFactory: AuctionsHTTPRequestFactory { mocks.auctionRequestFactory }
+    var backgroundTimeMonitor: BackgroundTimeMonitoring { mocks.backgroundTimeMonitor }
     var bannerControllerConfiguration: BannerControllerConfiguration { mocks.bannerControllerConfiguration }
     var bidFulfillOperationConfiguration: BidFulfillOperationConfiguration { mocks.bidFulfillOperationConfiguration }
     var bidFulfillOperationFactory: BidFulfillOperationFactory { mocks.bidFulfillOperationFactory }
@@ -31,7 +33,7 @@ class DependenciesContainerMock: DependenciesContainer {
     var partnerController: PartnerController { mocks.partnerController }
     var partnerControllerConfiguration: PartnerControllerConfiguration { mocks.partnerControllerConfiguration }
     var auctionService: AdAuctionService { mocks.auctionService }
-    var initializationStatusProvider: HeliumInitializationStatusProvider { mocks.initializationStatusProvider }
+    var initializationStatusProvider: MediationInitializationStatusProvider { mocks.initializationStatusProvider }
     var metrics: MetricsEventLogging { mocks.metrics }
     var metricsConfiguration: MetricsEventLoggerConfiguration { mocks.metricsConfiguration }
     var fileStorage: FileStorage { mocks.fileStorage }
@@ -42,6 +44,7 @@ class DependenciesContainerMock: DependenciesContainer {
     var initResultsEventPublisher: InitResultsEventPublisher { mocks.initResultsEventPublisher }
     var userDefaultsStorage: UserDefaultsStorage { mocks.userDefaultsStorage }
     var visibilityTrackerConfiguration: VisibilityTrackerConfiguration { mocks.visibilityTrackerConfiguration }
+    var sdkInitRequestFactory: SDKInitHTTPRequestFactory { mocks.sdkInitRequestFactory }
     var sdkInitializerConfiguration: SDKInitializerConfiguration { mocks.sdkInitializerConfiguration }
     var loadRateLimiter: LoadRateLimiting { mocks.loadRateLimiter }
     var instanceIdentifierProvider: InstanceIdentifierProviding { fatalError("Not implemented") }

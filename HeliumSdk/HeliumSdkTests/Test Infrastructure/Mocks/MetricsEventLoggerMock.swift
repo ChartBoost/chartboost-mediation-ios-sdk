@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -35,8 +35,8 @@ class MetricsEventLoggerMock: Mock<MetricsEventLoggerMock.Method>, MetricsEventL
         record(.logPrebid, parameters: [loadID, events])
     }
     
-    func logLoad(auctionID: ChartboostMediationSDK.AuctionID, loadID: ChartboostMediationSDK.LoadID, events: [ChartboostMediationSDK.MetricsEvent], error: ChartboostMediationSDK.ChartboostMediationError?, adFormat: ChartboostMediationSDK.AdFormat, size: CGSize?) -> ChartboostMediationSDK.RawMetrics? {
-        record(.logLoad, parameters: [auctionID, loadID, events, error, adFormat, size])
+    func logLoad(auctionID: ChartboostMediationSDK.AuctionID, loadID: ChartboostMediationSDK.LoadID, events: [ChartboostMediationSDK.MetricsEvent], error: ChartboostMediationSDK.ChartboostMediationError?, adFormat: ChartboostMediationSDK.AdFormat, size: CGSize?, backgroundDuration: TimeInterval) -> ChartboostMediationSDK.RawMetrics? {
+        record(.logLoad, parameters: [auctionID, loadID, events, error, adFormat, size, backgroundDuration])
     }
     
     func logShow(auctionID: AuctionID, loadID: LoadID, event: MetricsEvent) -> RawMetrics? {

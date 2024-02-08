@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,6 @@
 import Foundation
 
 enum SDKInitResult: String, CaseIterable {
-
     /// Invalid SDK init hash or app config.
     /// This usually means SDK init was never successful (SDK init hash are app config weren't cached).
     case failure
@@ -26,7 +25,6 @@ enum SDKInitResult: String, CaseIterable {
 
 /// Spec: go/cm-tracking-events
 struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataResponse {
-
     struct Body: Encodable {
         let auctionID: AuctionID?
         let metrics: [MetricsEvent]?
@@ -36,6 +34,8 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
         let placementType: AdFormat?
         // Only required if `adFormat` is `adaptiveBanner`.
         let size: BackendEncodableSize?
+        // The amount of time, in milliseconds, the app is backgrounded during an ad load.
+        let backgroundDuration: Int?
 
         init(
             auctionID: AuctionID? = nil,
@@ -43,7 +43,8 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
             result: String? = nil,
             error: Error? = nil,
             adFormat: AdFormat? = nil,
-            size: BackendEncodableSize? = nil
+            size: BackendEncodableSize? = nil,
+            backgroundDuration: TimeInterval? = nil
         ) {
             self.auctionID = auctionID
             self.metrics = metrics
@@ -59,6 +60,13 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
             } else {
                 self.size = nil
             }
+
+            // Background duration can be ommitted if the event type is != .load
+            if let backgroundDuration {
+                self.backgroundDuration = Int(backgroundDuration * 1000)
+            } else {
+                self.backgroundDuration = nil
+            }
         }
 
         struct Error: Encodable {
@@ -66,7 +74,7 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
             let details: Details
 
             init?(error: ChartboostMediationError?) {
-                guard let error = error else { return nil }
+                guard let error else { return nil }
                 cmCode = error.chartboostMediationCode.string
                 details = Details(error: error)
             }
@@ -113,7 +121,7 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
     }
 
     static func initialization(events: [MetricsEvent], result: SDKInitResult, error: ChartboostMediationError?) -> Self {
-        Self.init(
+        Self(
             eventType: .initialization,
             loadID: nil,
             body: .init(
@@ -125,18 +133,19 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
     }
 
     static func prebid(loadID: LoadID, events: [MetricsEvent]) -> Self {
-        Self.init(eventType: .prebid, loadID: loadID, body: .init(metrics: events))
+        Self(eventType: .prebid, loadID: loadID, body: .init(metrics: events))
     }
-    
+
     static func load(
         auctionID: String,
         loadID: LoadID,
         events: [MetricsEvent],
         error: ChartboostMediationError?,
         adFormat: AdFormat,
-        size: CGSize?
+        size: CGSize?,
+        backgroundDuration: TimeInterval?
     ) -> Self {
-        Self.init(
+        Self(
             eventType: .load,
             loadID: loadID,
             body: .init(
@@ -144,13 +153,14 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
                 metrics: events,
                 error: .init(error: error),
                 adFormat: adFormat,
-                size: size?.backendEncodableSize
+                size: size?.backendEncodableSize,
+                backgroundDuration: backgroundDuration
             )
         )
     }
 
     static func show(auctionID: String, loadID: LoadID, event: MetricsEvent) -> Self {
-        Self.init(
+        Self(
             eventType: .show,
             loadID: loadID,
             body: .init(
@@ -161,28 +171,28 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
     }
 
     static func click(auctionID: String, loadID: LoadID) -> Self {
-        Self.init(eventType: .click, loadID: loadID, body: .init(auctionID: auctionID))
+        Self(eventType: .click, loadID: loadID, body: .init(auctionID: auctionID))
     }
 
     static func expiration(auctionID: String, loadID: LoadID) -> Self {
-        Self.init(eventType: .expiration, loadID: loadID, body: .init(auctionID: auctionID))
+        Self(eventType: .expiration, loadID: loadID, body: .init(auctionID: auctionID))
     }
 
     static func heliumImpression(auctionID: String, loadID: LoadID) -> Self {
-        Self.init(eventType: .heliumImpression, loadID: loadID, body: .init(auctionID: auctionID))
+        Self(eventType: .heliumImpression, loadID: loadID, body: .init(auctionID: auctionID))
     }
 
     static func partnerImpression(auctionID: String, loadID: LoadID) -> Self {
-        Self.init(eventType: .partnerImpression, loadID: loadID, body: .init(auctionID: auctionID))
+        Self(eventType: .partnerImpression, loadID: loadID, body: .init(auctionID: auctionID))
     }
 
     static func reward(auctionID: String, loadID: LoadID) -> Self {
-        Self.init(eventType: .reward, loadID: loadID, body: .init(auctionID: auctionID))
+        Self(eventType: .reward, loadID: loadID, body: .init(auctionID: auctionID))
     }
 }
 
-private extension MetricsEvent.EventType {
-    var endpoint: BackendAPI.Endpoint {
+extension MetricsEvent.EventType {
+    fileprivate var endpoint: BackendAPI.Endpoint {
         switch self {
         case .bannerSize: return .bannerSize
         case .click: return .click

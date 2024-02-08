@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class UpdatableApplicationConfigurationTests: HeliumTestCase {
+class UpdatableApplicationConfigurationTests: ChartboostMediationTestCase {
 
     lazy var configuration = UpdatableApplicationConfiguration()
     
@@ -128,7 +128,7 @@ class UpdatableApplicationConfigurationTests: HeliumTestCase {
 		XCTAssertEqual(configuration.adFormat(forPlacement: "placement2"), .interstitial)
 		XCTAssertEqual(configuration.adFormat(forPlacement: "placement3"), .rewarded)
 		XCTAssertEqual(configuration.adFormat(forPlacement: "placement4"), .banner)
-		XCTAssertEqual(configuration.adFormat(forPlacement: "placement5"), nil)
+		XCTAssertNil(configuration.adFormat(forPlacement: "placement5"))
 	}
     
     /// Validates that banner autorefresh rate is properly retrieved when matched with a placement.
@@ -319,9 +319,6 @@ class UpdatableApplicationConfigurationTests: HeliumTestCase {
                 ],
                 "vungle": [
                     "vungle_app_id": "5dcde5072aa70a0017bcc85c"
-                ],
-                "yahoo": [
-                    "site_id": "8a809418014d4dba274de5017840037f"
                 ],
                 // TODO: Remove this reference adapter hack in HB-4504
                 "reference": [:]

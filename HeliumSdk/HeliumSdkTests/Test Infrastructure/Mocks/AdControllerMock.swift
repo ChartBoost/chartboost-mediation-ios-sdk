@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -28,7 +28,7 @@ class AdControllerMock: Mock<AdControllerMock.Method>, AdController {
     
     var isReadyToShowAd = false
     
-    func loadAd(request: HeliumAdLoadRequest, viewController: UIViewController?, completion: @escaping (AdLoadResult) -> Void) {
+    func loadAd(request: AdLoadRequest, viewController: UIViewController?, completion: @escaping (AdLoadResult) -> Void) {
         record(.loadAd, parameters: [request, viewController, completion])
     }
     

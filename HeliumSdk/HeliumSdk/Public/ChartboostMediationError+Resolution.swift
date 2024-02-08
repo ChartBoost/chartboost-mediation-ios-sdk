@@ -1,13 +1,12 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
 
 import Foundation
 
-// This list must reflect the documentation at https://chartboost.atlassian.net/wiki/spaces/HM/pages/2551513299
+// swiftlint:disable line_length
 extension ChartboostMediationError.Code {
-    
     /// A concise explanation of potential next step(s) that can be taken to address the issue.
     var resolution: String {
         switch self {
@@ -197,3 +196,4 @@ extension ChartboostMediationError.Code {
         }
     }
 }
+// swiftlint:enable line_length

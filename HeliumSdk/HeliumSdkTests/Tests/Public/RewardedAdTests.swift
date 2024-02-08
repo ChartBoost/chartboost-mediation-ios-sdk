@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class RewardedAdTests: HeliumTestCase {
+class RewardedAdTests: ChartboostMediationTestCase {
 
     lazy var rewarded = RewardedAd(
         heliumPlacement: placement,
@@ -52,7 +52,7 @@ class RewardedAdTests: HeliumTestCase {
         XCTAssertNoMethodCalls(delegate)
         
         // Finish the controller operation
-        let ad = HeliumAd.test()
+        let ad = LoadedAd.test()
         lastLoadAdCompletion?(AdLoadResult(result: .success(ad), metrics: nil))
         
         // Check delegate is called with the proper bid info
@@ -204,8 +204,8 @@ class RewardedAdTests: HeliumTestCase {
 private extension RewardedAdTests {
     typealias RequestID = String
 
-    func expectedLoadRequest(loadID: String = "", keywords: [String: String]?) -> HeliumAdLoadRequest {
-        HeliumAdLoadRequest(
+    func expectedLoadRequest(loadID: String = "", keywords: [String: String]?) -> AdLoadRequest {
+        AdLoadRequest(
             adSize: nil,
             adFormat: .rewarded,
             keywords: keywords,
@@ -217,7 +217,7 @@ private extension RewardedAdTests {
     func assertAdControllerLoad(keywords: [String: String]? = nil) {
         let expectedRequest = expectedLoadRequest(keywords: keywords)
         XCTAssertMethodCalls(mocks.adController, .loadAd, parameters: [
-            XCTMethodSomeParameter<HeliumAdLoadRequest> {
+            XCTMethodSomeParameter<AdLoadRequest> {
                 XCTAssertEqual($0.adSize, expectedRequest.adSize)
                 XCTAssertEqual($0.adFormat, expectedRequest.adFormat)
                 XCTAssertEqual($0.heliumPlacement, expectedRequest.heliumPlacement)
