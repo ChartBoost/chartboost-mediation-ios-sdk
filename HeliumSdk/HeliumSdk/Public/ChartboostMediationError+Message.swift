@@ -1,13 +1,11 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
 
 import Foundation
 
-// This list must reflect the documentation at https://chartboost.atlassian.net/wiki/spaces/HM/pages/2551513299
 extension ChartboostMediationError.Code {
-    
     /// A brief description of what triggered the error.
     public var message: String {
         switch group {

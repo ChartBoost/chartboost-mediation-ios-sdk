@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -55,19 +55,16 @@ final class ChartboostMediationErrorTests: XCTestCase {
         XCTAssertEqual(code, error.chartboostMediationCode)
     }
 
-    func testWithError() {
-        CustomError.allCases.forEach { customError in
+    func testWithError() throws {
+        try CustomError.allCases.forEach { customError in
             let code = Code.allCases.randomElement()!
             let error = ChartboostMediationError(code: code, error: customError)
             XCTAssertEqual("com.chartboost.mediation", error.domain)
             XCTAssertEqual(error.userInfo[NSLocalizedDescriptionKey] as? String, code.message)
-            let underlyingError = error.userInfo[NSUnderlyingErrorKey] as? NSError
-            if let underlyingError = underlyingError {
-                XCTAssertEqual(customError.errorDescription, underlyingError.localizedDescription)
-            }
-            else {
-                XCTFail()
-            }
+
+            let underlyingError = try XCTUnwrap(error.userInfo[NSUnderlyingErrorKey] as? NSError)
+            XCTAssertEqual(customError.errorDescription, underlyingError.localizedDescription)
+
             if #available(iOS 14.5, *) {
                 XCTAssertEqual(1, error.underlyingErrors.count)
             }
@@ -78,19 +75,16 @@ final class ChartboostMediationErrorTests: XCTestCase {
         }
     }
 
-    func testWithErrorAndDescription() {
-        CustomError.allCases.forEach { customError in
+    func testWithErrorAndDescription() throws {
+        try CustomError.allCases.forEach { customError in
             let code = Code.allCases.randomElement()!
             let error = ChartboostMediationError(code: code, description: "cannot compute!", error: customError)
             XCTAssertEqual("com.chartboost.mediation", error.domain)
             XCTAssertEqual(error.userInfo[NSLocalizedDescriptionKey] as? String, code.message)
-            let underlyingError = error.userInfo[NSUnderlyingErrorKey] as? NSError
-            if let underlyingError = underlyingError {
-                XCTAssertEqual(customError.errorDescription, underlyingError.localizedDescription)
-            }
-            else {
-                XCTFail()
-            }
+
+            let underlyingError = try XCTUnwrap(error.userInfo[NSUnderlyingErrorKey] as? NSError)
+            XCTAssertEqual(customError.errorDescription, underlyingError.localizedDescription)
+
             if #available(iOS 14.5, *) {
                 XCTAssertEqual(1, error.underlyingErrors.count)
             }

@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-final class AuctionsHTTPRequestTests: HeliumTestCase {
+final class AuctionsHTTPRequestTests: ChartboostMediationTestCase {
 
     /// Test URL prefix: "tracking" if ATT auth status is `.authorized` on iOS 17+, "non-tracking" for all other cases.
     func testTrackingVsNonTracking() throws {
@@ -17,15 +17,27 @@ final class AuctionsHTTPRequestTests: HeliumTestCase {
             dependencyMock.authStatusOverride = authStatus
             let request = AuctionsHTTPRequest(bidRequest: mockBidRequest, loadRateLimit: 0, loadID: "")
 
-            switch authStatus {
-            case .authorized:
-                if #available(iOS 17.0, *) { // unfortunately we cannot mock #available()
-                    XCTAssertEqual(try? request.url.absoluteString, "https://tracking.auction.mediation-sdk.chartboost.com/v3/auctions")
-                } else {
-                    XCTAssertEqual(try? request.url.absoluteString, "https://non-tracking.auction.mediation-sdk.chartboost.com/v3/auctions")
+            if #available(iOS 17.0, *) { // unfortunately we cannot mock #available()
+                switch authStatus {
+                case .authorized:
+                    XCTAssertEqual(
+                        try? request.url.absoluteString,
+                        "https://tracking.auction.mediation-sdk.chartboost.com/v3/auctions",
+                        "iOS 17+: use `tracking` API if authorized"
+                    )
+                default:
+                    XCTAssertEqual(
+                        try? request.url.absoluteString,
+                        "https://non-tracking.auction.mediation-sdk.chartboost.com/v3/auctions",
+                        "iOS 17+: use `non-tracking` API if authorized"
+                    )
                 }
-            default:
-                XCTAssertEqual(try? request.url.absoluteString, "https://non-tracking.auction.mediation-sdk.chartboost.com/v3/auctions")
+            } else {
+                XCTAssertEqual(
+                    try? request.url.absoluteString, 
+                    "https://tracking.auction.mediation-sdk.chartboost.com/v3/auctions",
+                    "Before iOS 17: use `tracking` API because iOS does not block it"
+                )
             }
         }
     }

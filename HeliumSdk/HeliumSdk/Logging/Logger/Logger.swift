@@ -1,21 +1,24 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
 
 import Foundation
 
-/// The unified logging subystem.  The console handler is attached by default.
+/// The unified logging subystem. The console handler is attached by default.
 final class Logger {
     /// The default logger.
     static let `default` = Logger()
 
     /// Initializer.
-    /// - Parameter subsystem: A subsystem for the log.  This value is used as the subsystem for `OSLog(subsystem:category:)` on iOS 12+.  The default is `com.chartboost.mediation.sdk`.
-    /// - Parameter category: The category for the log. This value is used as the category for `OSLog(subsystem:category:)` on iOS 12+. It is also included with the ouput within the brackets that prepend the message.  The default is "CM"; if one is provided it is appended to "CM-".
+    /// - Parameter subsystem: A subsystem for the log. This value is used as the subsystem for `OSLog(subsystem:category:)` on iOS 12+.
+    /// The default is `com.chartboost.mediation.sdk`.
+    /// - Parameter category: The category for the log. This value is used as the category for `OSLog(subsystem:category:)` on iOS 12+.
+    /// It is also included with the ouput within the brackets that prepend the message. The default is "CM"; if one is provided it is
+    /// appended to "CM-".
     init(subsystem: String? = nil, category: String? = nil) {
         self.subsystem = subsystem ?? defaultSubsystem
-        if let category = category {
+        if let category {
             self.category = "\(baseCategory) - \(category)"
         } else {
             self.category = baseCategory

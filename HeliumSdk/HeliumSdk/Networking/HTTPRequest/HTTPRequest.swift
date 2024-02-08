@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -18,7 +18,6 @@ enum HTTPRequestError: Error {
 
 /// A basic representation of a HTTP request.
 protocol HTTPRequest: CustomStringConvertible {
-
     /// The URL.
     var url: URL { get throws }
 
@@ -43,7 +42,6 @@ protocol HTTPRequest: CustomStringConvertible {
 }
 
 extension HTTPRequest {
-
     var description: String {
         "\(method): \((try? url)?.absoluteString ?? "bad URL")"
     }
@@ -84,16 +82,16 @@ extension HTTPRequest {
         var headers = [
             HTTP.HeaderKey.accept.rawValue: HTTP.HeaderValue.applicationJSON_chartsetUTF8,
             HTTP.HeaderKey.contentType.rawValue: HTTP.HeaderValue.applicationJSON_chartsetUTF8,
-        ].merging(customHeaders) { (_, new) in new } // `customHeaders` overrides the default headers
+        ].merging(customHeaders) { _, new in new } // `customHeaders` overrides the default headers
 
         @Injected(\.environment) var environment: EnvironmentProviding
 
         if shouldIncludeSessionID {
-            headers = headers.merging([HTTP.HeaderKey.sessionID.rawValue: environment.session.sessionID.uuidString]) { (_, new) in new }
+            headers = headers.merging([HTTP.HeaderKey.sessionID.rawValue: environment.session.sessionID.uuidString]) { _, new in new }
         }
 
         if shouldIncludeIDFV, let idfv = environment.appTracking.idfv {
-            headers = headers.merging([HTTP.HeaderKey.idfv.rawValue: idfv]) { (_, new) in new }
+            headers = headers.merging([HTTP.HeaderKey.idfv.rawValue: idfv]) { _, new in new }
         }
 
         var urlRequest = URLRequest(url: try url)

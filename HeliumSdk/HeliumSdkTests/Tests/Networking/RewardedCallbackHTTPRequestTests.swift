@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-final class RewardedCallbackHTTPRequestTests: HeliumTestCase {
+final class RewardedCallbackHTTPRequestTests: ChartboostMediationTestCase {
 
     enum URLPathParameter {
         static let revenue = "revenue=%25%25AD_REVENUE%25%25"
@@ -98,7 +98,7 @@ final class RewardedCallbackHTTPRequestTests: HeliumTestCase {
             ]
         )
         XCTAssertEqual(request.method, .get)
-        XCTAssert(request.url.absoluteString == Self.urlString)
+        XCTAssertEqual(request.url.absoluteString, Self.urlString)
         XCTAssertEqual(request.maxRetries, 5)
         XCTAssertEqual(request.retryDelay, 7)
         XCTAssertNil(request.bodyData)
@@ -118,7 +118,7 @@ final class RewardedCallbackHTTPRequestTests: HeliumTestCase {
         )
         let bodyString = try request.bodyString
         XCTAssertEqual(request.method, .post)
-        XCTAssert(request.url.absoluteString == Self.urlString)
+        XCTAssertEqual(request.url.absoluteString, Self.urlString)
         XCTAssertEqual(request.maxRetries, 5)
         XCTAssertEqual(request.retryDelay, 7)
         XCTAssert(bodyString.contains("\"hash\":\"999123424212324122324\""))
@@ -144,7 +144,7 @@ final class RewardedCallbackHTTPRequestTests: HeliumTestCase {
             ]
         )
         XCTAssertEqual(request.method, .get)
-        XCTAssert(request.url.absoluteString == Self.urlString)
+        XCTAssertEqual(request.url.absoluteString, Self.urlString)
         XCTAssert(request.customHeaders.isEmpty)
     }
 
@@ -162,7 +162,7 @@ final class RewardedCallbackHTTPRequestTests: HeliumTestCase {
             timestampMs: 123
         )
         XCTAssertEqual(request.method, .post)
-        XCTAssert(request.url.absoluteString == "https://myserver.com/some/path?revenue=&cpm=&network=some%20partnerIdentifier&data=&imp_ts=123")
+        XCTAssertEqual(request.url.absoluteString, "https://myserver.com/some/path?revenue=&cpm=&network=some%20partnerIdentifier&data=&imp_ts=123")
         XCTAssertFalse(try request.bodyString.contains("\"revenue\""))
         XCTAssertFalse(try request.bodyString.contains("\"cpm\""))
         XCTAssert(try request.bodyString.contains("\"data\":\"\""))
@@ -184,7 +184,7 @@ final class RewardedCallbackHTTPRequestTests: HeliumTestCase {
             timestampMs: 789
         )
         XCTAssertEqual(request.method, .post)
-        XCTAssert(request.url.absoluteString == "https://myserver.com/some/path?revenue=12.3&cpm=45.6&network=some%20network&data=some%20custome%20data&imp_ts=789")
+        XCTAssertEqual(request.url.absoluteString, "https://myserver.com/some/path?revenue=12.3&cpm=45.6&network=some%20network&data=some%20custome%20data&imp_ts=789")
         XCTAssert(try request.bodyString.contains("\"revenue\":12.3"))
         XCTAssert(try request.bodyString.contains("\"cpm\":45.6"))
         XCTAssert(try request.bodyString.contains("\"network\":\"some network\""))
@@ -204,7 +204,7 @@ final class RewardedCallbackHTTPRequestTests: HeliumTestCase {
             adRevenue: 10.99
         )
         XCTAssertEqual(request.method, .post)
-        XCTAssert(request.url.absoluteString == "https://myserver.com/some/path?revenue=10.99")
+        XCTAssertEqual(request.url.absoluteString, "https://myserver.com/some/path?revenue=10.99")
         XCTAssert(try request.bodyString.contains("\"revenue\":10.99"))
         XCTAssert(request.customHeadersHasPositiveContentLength)
     }
@@ -220,7 +220,7 @@ final class RewardedCallbackHTTPRequestTests: HeliumTestCase {
             adRevenue: nil
         )
         XCTAssertEqual(request.method, .post)
-        XCTAssert(request.url.absoluteString == "https://myserver.com/some/path?revenue=")
+        XCTAssertEqual(request.url.absoluteString, "https://myserver.com/some/path?revenue=")
         XCTAssertFalse(try request.bodyString.contains("\"revenue\""))
         XCTAssert(request.customHeadersHasPositiveContentLength)
     }
@@ -236,7 +236,7 @@ final class RewardedCallbackHTTPRequestTests: HeliumTestCase {
             cpmPrice: 999.99
         )
         XCTAssertEqual(request.method, .post)
-        XCTAssert(request.url.absoluteString == "https://myserver.com/some/path?cpm=999.99")
+        XCTAssertEqual(request.url.absoluteString, "https://myserver.com/some/path?cpm=999.99")
         XCTAssert(try request.bodyString.contains("\"cpm\":999.99"))
         XCTAssert(request.customHeadersHasPositiveContentLength)
     }
@@ -252,7 +252,7 @@ final class RewardedCallbackHTTPRequestTests: HeliumTestCase {
             cpmPrice: nil
         )
         XCTAssertEqual(request.method, .post)
-        XCTAssert(request.url.absoluteString == "https://myserver.com/some/path?cpm=")
+        XCTAssertEqual(request.url.absoluteString, "https://myserver.com/some/path?cpm=")
         XCTAssertFalse(try request.bodyString.contains("\"cpm\""))
         XCTAssert(request.customHeadersHasPositiveContentLength)
     }
@@ -268,7 +268,7 @@ final class RewardedCallbackHTTPRequestTests: HeliumTestCase {
             partnerIdentifier: "some network"
         )
         XCTAssertEqual(request.method, .post)
-        XCTAssert(request.url.absoluteString == "https://myserver.com/some/path?network=some%20network")
+        XCTAssertEqual(request.url.absoluteString, "https://myserver.com/some/path?network=some%20network")
         XCTAssert(try request.bodyString.contains("\"network\":\"some network\""))
         XCTAssert(request.customHeadersHasPositiveContentLength)
     }
@@ -284,7 +284,7 @@ final class RewardedCallbackHTTPRequestTests: HeliumTestCase {
             customData: "TEST URI ENCODING"
         )
         XCTAssertEqual(request.method, .post)
-        XCTAssert(request.url.absoluteString == "https://myserver.com/some/path?data=TEST%20URI%20ENCODING")
+        XCTAssertEqual(request.url.absoluteString, "https://myserver.com/some/path?data=TEST%20URI%20ENCODING")
         XCTAssert(try request.bodyString.contains("\"data\":\"TEST URI ENCODING\""))
         XCTAssert(request.customHeadersHasPositiveContentLength)
     }
@@ -300,7 +300,7 @@ final class RewardedCallbackHTTPRequestTests: HeliumTestCase {
             customData: nil
         )
         XCTAssertEqual(request.method, .post)
-        XCTAssert(request.url.absoluteString == "https://myserver.com/some/path?data=")
+        XCTAssertEqual(request.url.absoluteString, "https://myserver.com/some/path?data=")
         XCTAssert(try request.bodyString.contains("\"data\":\"\""))
         XCTAssert(request.customHeadersHasPositiveContentLength)
     }
@@ -317,7 +317,7 @@ final class RewardedCallbackHTTPRequestTests: HeliumTestCase {
             timestampMs: timestampMs
         )
         XCTAssertEqual(request.method, .post)
-        XCTAssert(request.url.absoluteString == "https://myserver.com/some/path?imp_ts=\(timestampMs)")
+        XCTAssertEqual(request.url.absoluteString, "https://myserver.com/some/path?imp_ts=\(timestampMs)")
         XCTAssert(try request.bodyString.contains("\"imp_ts\":\"\(timestampMs)\""))
         XCTAssert(request.customHeadersHasPositiveContentLength)
     }

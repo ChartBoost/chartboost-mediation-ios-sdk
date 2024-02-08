@@ -1,13 +1,12 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
 
 import Foundation
 
-// This list must reflect the documentation at https://chartboost.atlassian.net/wiki/spaces/HM/pages/2551513299
+// swiftlint:disable line_length
 extension ChartboostMediationError.Code {
-    
     /// A concise explanation of what caused the issue.
     public var cause: String {
         switch self {
@@ -44,7 +43,7 @@ extension ChartboostMediationError.Code {
             return "The initialization request failed due to a server error."
         case .initializationFailureInternalError:
             return "An error occurred within the Chartboost Mediation initialization sequence."
-        
+
         // 200
         case .prebidFailureUnknown:
             return "There was an error that was not accounted for."
@@ -64,7 +63,7 @@ extension ChartboostMediationError.Code {
             return "The partner does not support this OS version."
         case .prebidFailureNetworkingError:
             return "Prebid request failed due to a networking error."
-        
+
         // 300
         case .loadFailureUnknown:
             return "There was an error that was not accounted for."
@@ -190,7 +189,7 @@ extension ChartboostMediationError.Code {
             return "The ad size is not supported by the partner SDK."
         case .showFailureInvalidBannerSize:
             return "The supplied banner size is invalid."
-        
+
         // 500
         case .invalidateFailureUnknown:
             return "There was an error that was not accounted for."
@@ -217,3 +216,4 @@ extension ChartboostMediationError.Code {
         }
     }
 }
+// swiftlint:enable line_length

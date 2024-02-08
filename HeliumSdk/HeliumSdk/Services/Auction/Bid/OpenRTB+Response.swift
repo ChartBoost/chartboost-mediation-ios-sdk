@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -58,7 +58,8 @@ extension OpenRTB {
         let price: Decimal?
 
         /// Win notice URL called by the exchange if the bid wins (not necessarily indicative of a delivered, viewed, or billable ad);
-        /// optional means of serving ad markup. Substitution macros (Section 4.4) may be included in both the URL and optionally returned markup.
+        /// optional means of serving ad markup. Substitution macros (Section 4.4) may be included in both the URL and optionally returned
+        /// markup.
         let nurl: String?
 
         /// Loss notice URL called by the exchange when a bid is known to have been lost. Substitution macros (Section 4.4) may be

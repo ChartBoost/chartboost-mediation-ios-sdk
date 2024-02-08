@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -49,7 +49,6 @@ extension EnvironmentMock {
 extension EnvironmentMock {
     fileprivate final class AppInfoProviderMock: AppInfoProviding {
         var appID: String? = "some-app-identifier"
-        var appSignature: String?
         var appVersion: String?
         var bundleID: String?
         var gameEngineName: String?
@@ -57,7 +56,6 @@ extension EnvironmentMock {
 
         func randomizeAll() {
             appID = Bool.random() ? String.random() : nil
-            appSignature = Bool.random() ? String.random() : nil
             appVersion = Bool.random() ? String.random() : nil
             bundleID = Bool.random() ? String.random() : nil
             gameEngineName = Bool.random() ? String.random() : nil

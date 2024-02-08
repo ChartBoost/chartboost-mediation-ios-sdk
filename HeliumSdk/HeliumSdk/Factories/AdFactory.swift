@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -8,7 +8,11 @@ import Foundation
 /// Factory type to create ads.
 protocol AdFactory {
     /// Returns a new Chartboost Mediation fullscreen ad instance.
-    func makeFullscreenAd(request: ChartboostMediationAdLoadRequest, winningBidInfo: [String: Any], controller: AdController) -> ChartboostMediationFullscreenAd
+    func makeFullscreenAd(
+        request: ChartboostMediationAdLoadRequest,
+        winningBidInfo: [String: Any],
+        controller: AdController
+    ) -> ChartboostMediationFullscreenAd
     /// Returns a new Helium interstitial ad instance.
     func makeInterstitialAd(placement: String, delegate: CHBHeliumInterstitialAdDelegate?) -> HeliumInterstitialAd
     /// Returns a new Helium rewarded ad instance.
@@ -18,15 +22,18 @@ protocol AdFactory {
     /// Returns a new Helium banner swap controller.
     func makeBannerSwapController() -> BannerSwapControllerProtocol
     /// Returns a new Helium banner controller.
-    func makeBannerController(request: ChartboostMediationBannerLoadRequest, delegate: BannerControllerDelegate?, keywords: [String: String]?) -> BannerControllerProtocol
+    func makeBannerController(
+        request: ChartboostMediationBannerLoadRequest,
+        delegate: BannerControllerDelegate?,
+        keywords: [String: String]?
+    ) -> BannerControllerProtocol
 }
 
 final class ContainerAdFactory: AdFactory {
-    
     @Injected(\.adControllerRepository) private var adControllerRepository
     @Injected(\.adControllerFactory) private var adControllerFactory
     @Injected(\.visibilityTrackerConfiguration) private var visibilityTrackerConfiguration
-    
+
     func makeInterstitialAd(placement: String, delegate: CHBHeliumInterstitialAdDelegate?) -> HeliumInterstitialAd {
         InterstitialAd(
             heliumPlacement: placement,
@@ -34,7 +41,7 @@ final class ContainerAdFactory: AdFactory {
             controller: adControllerRepository.adController(forHeliumPlacement: placement)
         )
     }
-    
+
     func makeRewardedAd(placement: String, delegate: CHBHeliumRewardedAdDelegate?) -> HeliumRewardedAd {
         RewardedAd(
             heliumPlacement: placement,
@@ -42,7 +49,7 @@ final class ContainerAdFactory: AdFactory {
             controller: adControllerRepository.adController(forHeliumPlacement: placement)
         )
     }
-    
+
     func makeBannerAd(placement: String, size: CHBHBannerSize, delegate: HeliumBannerAdDelegate?) -> HeliumBannerView {
         let requestSize: ChartboostMediationBannerSize
 
@@ -65,7 +72,7 @@ final class ContainerAdFactory: AdFactory {
             delegate: delegate
         )
     }
-    
+
     func makeBannerController(
         request: ChartboostMediationBannerLoadRequest,
         delegate: BannerControllerDelegate?,
@@ -84,8 +91,12 @@ final class ContainerAdFactory: AdFactory {
     func makeBannerSwapController() -> BannerSwapControllerProtocol {
         BannerSwapController()
     }
-    
-    func makeFullscreenAd(request: ChartboostMediationAdLoadRequest, winningBidInfo: [String: Any], controller: AdController) -> ChartboostMediationFullscreenAd {
+
+    func makeFullscreenAd(
+        request: ChartboostMediationAdLoadRequest,
+        winningBidInfo: [String: Any],
+        controller: AdController
+    ) -> ChartboostMediationFullscreenAd {
         FullscreenAd(request: request, winningBidInfo: winningBidInfo, controller: controller)
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -29,13 +29,13 @@ final class MiddleManFullScreenAdShowCoordinator: FullScreenAdShowCoordinator, F
     /// lead to strong reference cycles unless they were properly removed, which is not obvious when to do in some cases.
     private var observers = WeakReferences<FullScreenAdShowObserver>()
     @Injected(\.taskDispatcher) private var taskDispatcher
-    
+
     func addObserver(_ observer: FullScreenAdShowObserver) {
         taskDispatcher.async(on: .background) { [weak self] in
             self?.observers.add(observer)
         }
     }
-    
+
     func didShowFullScreenAd() {
         taskDispatcher.async(on: .background) { [weak self] in
             self?.observers.forEach {
@@ -43,7 +43,7 @@ final class MiddleManFullScreenAdShowCoordinator: FullScreenAdShowCoordinator, F
             }
         }
     }
-    
+
     func didCloseFullScreenAd() {
         taskDispatcher.async(on: .background) { [weak self] in
             self?.observers.forEach {

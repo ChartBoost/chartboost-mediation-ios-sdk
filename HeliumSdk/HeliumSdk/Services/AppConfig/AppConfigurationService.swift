@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -25,61 +25,56 @@ protocol AppConfigurationServiceProtocol {
 }
 
 final class AppConfigurationService: AppConfigurationServiceProtocol {
-
     @Injected(\.networkManager) private var networkManager
-    @Injected(\.environment) private var environment
+    @Injected(\.sdkInitRequestFactory) private var sdkInitRequestFactory
 
     func fetchAppConfiguration(sdkInitHash: SDKInitHash?, completion: @escaping FetchAppConfigurationCompletion) {
         logger.debug("Sending SDK init request")
-        
-        guard let appID = environment.app.appID else {
-            let error = ChartboostMediationError(
-                code: .initializationFailureInvalidAppConfig,
-                description: "Cannot send /sdk_init request because app ID is nil."
-            )
-            logger.error("Failed to send SDK init request with error: \(error)")
-            completion(.failure(error))
-            return
-        }
 
-        let request = SDKInitHTTPRequest(
-            appID: appID,
-            deviceOSName: environment.device.osName,
-            deviceOSVersion: environment.device.osVersion,
-            sdkInitHash: sdkInitHash,
-            sdkVersion: environment.sdk.sdkVersion
-        )
-        
-        networkManager.send(request) { result in
+        // Generate HTTP request
+        sdkInitRequestFactory.makeRequest(sdkInitHash: sdkInitHash) { [weak self] result in
+            guard let self else { return }
+
             switch result {
-            case .success(let response):
-                guard response.httpURLResponse.statusCode != 204 else {
-                    logger.debug("SDK init request succeeded with no new data")
-                    completion(.success(nil))
-                    return
-                }
+            case .success(let request):
 
-                guard let data = response.rawData else {
-                    let error = ChartboostMediationError(
-                        code: .initializationFailureInvalidAppConfig,
-                        description: "Response data is nil."
-                    )
-                    logger.error("SDK init request failed with error: \(error)")
-                    completion(.failure(error))
-                    return
-                }
-                
-                logger.info("SDK init request succeeded")
-                completion(.success((response.httpURLResponse.sdkInitHash, data)))
+                // Send HTTP request
+                self.networkManager.send(request) { result in
+                    // Parse HTTP response
+                    switch result {
+                    case .success(let response):
+                        guard response.httpURLResponse.statusCode != 204 else {
+                            logger.debug("SDK init request succeeded with no new data")
+                            completion(.success(nil))
+                            return
+                        }
 
-            case .failure(let requestError):
-                let httpStatusCode = requestError.httpURLResponse.map { "\($0.statusCode)" } ?? "n/a"
-                let error = ChartboostMediationError(
-                    code: requestError.asCMErrorCode,
-                    description: "Failed to fetch app configuration. HTTP status code: \(httpStatusCode)",
-                    error: requestError
-                )
-                logger.error("SDK init request failed with error: \(error)")
+                        guard let data = response.rawData else {
+                            let error = ChartboostMediationError(
+                                code: .initializationFailureInvalidAppConfig,
+                                description: "Response data is nil."
+                            )
+                            logger.error("SDK init request failed with error: \(error)")
+                            completion(.failure(error))
+                            return
+                        }
+
+                        logger.info("SDK init request succeeded")
+                        completion(.success((response.httpURLResponse.sdkInitHash, data)))
+
+                    case .failure(let requestError):
+                        let httpStatusCode = requestError.httpURLResponse.map { "\($0.statusCode)" } ?? "n/a"
+                        let error = ChartboostMediationError(
+                            code: requestError.asCMErrorCode,
+                            description: "Failed to fetch app configuration. HTTP status code: \(httpStatusCode)",
+                            error: requestError
+                        )
+                        logger.error("SDK init request failed with error: \(error)")
+                        completion(.failure(error))
+                    }
+                }
+            case .failure(let error):
+                logger.error("Failed to send SDK init request with error: \(error)")
                 completion(.failure(error))
             }
         }

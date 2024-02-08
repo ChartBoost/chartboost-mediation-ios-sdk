@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -19,7 +19,7 @@ class Atomic<Value> {
         self.value = wrappedValue
     }
 
-    /// The value that is managed by the wrapper.  Access to it is gated by a serial queue.
+    /// The value that is managed by the wrapper. Access to it is gated by a serial queue.
     var wrappedValue: Value {
         get {
             queue.sync { value }

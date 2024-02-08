@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -8,6 +8,9 @@ import Foundation
 /// The result of a banner load operation.
 @objc
 public class ChartboostMediationBannerLoadResult: ChartboostMediationAdLoadResult {
+    /// The size of the loaded ad, or `nil` in the case of load error.
+    @objc public let size: ChartboostMediationBannerSize?
+
     // This is provided as a compatibility for HeliumBannerView.
     //
     // HeliumBannerView wraps ChartboostMediationBannerView, and passes through its legacy load call
@@ -25,9 +28,11 @@ public class ChartboostMediationBannerLoadResult: ChartboostMediationAdLoadResul
     init(
         error: ChartboostMediationError?,
         loadID: String,
-        metrics: [String : Any]?,
+        metrics: [String: Any]?,
+        size: ChartboostMediationBannerSize?,
         winningBidInfo: [String: Any]?
     ) {
+        self.size = size
         self.winningBidInfo = winningBidInfo
         super.init(error: error, loadID: loadID, metrics: metrics)
     }

@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -71,9 +71,9 @@ class BannerSwapController: BannerSwapControllerProtocol {
         case active(BannerControllerProtocol)
     }
 
-    var delegate: BannerSwapControllerDelegate?
+    weak var delegate: BannerSwapControllerDelegate?
 
-    var keywords: [String : String]? {
+    var keywords: [String: String]? {
         // Since the controller can change over time, this controller must be the source of truth
         // of the keywords. We will update them on the controller(s) when they change.
         didSet {
@@ -120,30 +120,20 @@ class BannerSwapController: BannerSwapControllerProtocol {
     }
 
     /// Save the view visibility in case it changes before `load` is called.
-    private var viewVisibility: (view: UIView, isVisible: Bool)? {
+    private var viewVisibility: Bool? {
         didSet {
-            guard let viewVisibility = viewVisibility else {
+            guard let viewVisibility else {
                 return
             }
 
             switch state {
             case .active(let activeController):
-                activeController.viewVisibilityDidChange(
-                    on: viewVisibility.view,
-                    to: viewVisibility.isVisible
-                )
+                activeController.viewVisibilityDidChange(to: viewVisibility)
             case .swapping(let pendingController, let activeController, _):
-                activeController?.viewVisibilityDidChange(
-                    on: viewVisibility.view,
-                    to: viewVisibility.isVisible
-                )
-                pendingController.viewVisibilityDidChange(
-                    on: viewVisibility.view,
-                    to: viewVisibility.isVisible
-                )
+                activeController?.viewVisibilityDidChange(to: viewVisibility)
+                pendingController.viewVisibilityDidChange(to: viewVisibility)
             case .cleared:
                 break
-                
             }
         }
     }
@@ -176,18 +166,15 @@ class BannerSwapController: BannerSwapControllerProtocol {
                 completion: newCompletion
             )
         default:
-            // In all other cases, we need to create a new controller.  We will not clear any
+            // In all other cases, we need to create a new controller. We will not clear any
             // currently loaded ad here until the new controller successfully loads an ad.
             let newController = adFactory.makeBannerController(
                 request: request,
                 delegate: self,
                 keywords: keywords
             )
-            if let viewVisibility = viewVisibility {
-                newController.viewVisibilityDidChange(
-                    on: viewVisibility.view,
-                    to: viewVisibility.isVisible
-                )
+            if let viewVisibility {
+                newController.viewVisibilityDidChange(to: viewVisibility)
             }
             self.state = .swapping(
                 pending: newController,
@@ -207,7 +194,7 @@ class BannerSwapController: BannerSwapControllerProtocol {
                     return
                 }
 
-                if result.error != nil, let active = active {
+                if result.error != nil, let active {
                     // If an error occured during the load, and there's a currently active
                     // controller, reset to that controller.
                     self.state = .active(active)
@@ -231,8 +218,8 @@ class BannerSwapController: BannerSwapControllerProtocol {
 
 // MARK: - ViewVisibilityObserver
 extension BannerSwapController: ViewVisibilityObserver {
-    func viewVisibilityDidChange(on view: UIView, to visible: Bool) {
-        viewVisibility = (view, visible)
+    func viewVisibilityDidChange(to visible: Bool) {
+        viewVisibility = visible
     }
 }
 

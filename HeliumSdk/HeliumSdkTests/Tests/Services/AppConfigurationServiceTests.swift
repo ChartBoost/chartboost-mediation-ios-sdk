@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,132 +6,113 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class AppConfigurationServiceTests: HeliumTestCase {
+class AppConfigurationServiceTests: ChartboostMediationTestCase {
 
     private lazy var appConfigService = AppConfigurationService()
-    private static let sdkInitHash = "some SDK init hash"
-    private static let testExpectationDescription = "test SDK init"
-    private static let fullSDKInitResponseData = JSONLoader.loadData(.full_sdk_init_response)
+    let networkManager = CompleteNetworkManagerMock()
+    private let sdkInitHash = "some SDK init hash"
+    private let fullSDKInitResponseData = JSONLoader.loadData(.full_sdk_init_response)
 
-    @Injected(\.environment) private var environment
-    private var sdkInitURLString: String { "https://config.mediation-sdk.chartboost.com/v1/sdk_init/\(environment.app.appID!)" }
-    private var sdkInitURL: URL { URL(unsafeString: sdkInitURLString)! }
+    override func setUp() {
+        super.setUp()
+        mocks.networkManager = networkManager
+    }
 
     /// Backend response 200 (Success) contains SDK init hash and the config data.
     func testFetchSuccessWithHTTPStatusCode200() {
-        let statusCode = 200
-        URLProtocolMock.registerRequestHandler(httpMethod: "GET", urlString: sdkInitURLString) { [unowned self] request in
-            XCTAssertEqual(request.httpMethod, "GET")
-            XCTAssertEqual(request.allHTTPHeaderFields, [
-                "Accept": "application/json; charset=utf-8",
-                "Content-Type": "application/json; charset=utf-8",
-                "X-Helium-SessionID": environment.session.sessionID.uuidString,
-                "X-Helium-Device-OS": environment.device.osName,
-                "X-Helium-Device-OS-Version": environment.device.osVersion,
-                "X-Helium-SDK-Version": environment.sdk.sdkVersion
-            ])
+        let sdkInitResponse = NetworkManager.RawDataResponse.test(
+            statusCode: 200,
+            sdkInitHash: sdkInitHash,
+            rawData: fullSDKInitResponseData
+        )
+        mocks.sdkInitRequestFactory.autoCompletionResult = .success(SDKInitHTTPRequest.test())
 
-            return (
-                response: HTTPURLResponse(
-                    url: self.sdkInitURL,
-                    statusCode: statusCode,
-                    httpVersion: nil,
-                    headerFields: ["x-helium-sdk-init-hash": Self.sdkInitHash]
-                ),
-                data: Self.fullSDKInitResponseData
-            )
-        }
-
-        let expectation = XCTestExpectation(description: Self.testExpectationDescription)
+        // Fetch app config
+        var completed = false
         appConfigService.fetchAppConfiguration(sdkInitHash: nil) { result in // expect non-nil success if 200
             guard case let .success(update) = result, let update else {
                 XCTFail("Unexpected result \(result)")
                 return
             }
 
-            XCTAssertEqual(update.sdkInitHash, Self.sdkInitHash)
-            XCTAssertFalse(update.data.isEmpty)
-            expectation.fulfill()
+            XCTAssertEqual(update.sdkInitHash, self.sdkInitHash)
+            XCTAssertEqual(update.data, self.fullSDKInitResponseData)
+            completed = true
         }
+        
+        // Check SDK init hash is used when creating the HTTP request
+        XCTAssertMethodCalls(mocks.sdkInitRequestFactory, .makeRequest, parameters: [
+            nil,    // sdkInitHash
+            XCTMethodIgnoredParameter()
+        ])
 
-        wait(for: [expectation], timeout: 1)
+        // Finish network manager operation
+        var sdkInitRequestCompletion: NetworkManager.RequestCompletionWithRawDataResponse = { _ in }
+        XCTAssertMethodCalls(networkManager, .send, parameters: [XCTMethodIgnoredParameter(), 0, 0.0, XCTMethodCaptureParameter { sdkInitRequestCompletion = $0 }])
+        sdkInitRequestCompletion(.success(sdkInitResponse))
+
+        XCTAssertTrue(completed)
     }
 
     /// Backend response 204 (No Content) does not contain the config data because it should have
     /// been stored locally after previous 200 (Success) response.
     func testFetchSuccessWithHTTPStatusCode204() {
-        let statusCode = 204
-        URLProtocolMock.registerRequestHandler(httpMethod: "GET", urlString: sdkInitURLString) { [unowned self] request in
-            XCTAssertEqual(request.httpMethod, "GET")
-            XCTAssertEqual(request.allHTTPHeaderFields, [
-                "Accept": "application/json; charset=utf-8",
-                "Content-Type": "application/json; charset=utf-8",
-                "X-Helium-SessionID": environment.session.sessionID.uuidString,
-                "X-Helium-Device-OS": environment.device.osName,
-                "X-Helium-Device-OS-Version": environment.device.osVersion,
-                "X-Helium-SDK-Version": environment.sdk.sdkVersion,
-                "x-helium-sdk-init-hash": Self.sdkInitHash
-            ])
+        let sdkInitResponse = NetworkManager.RawDataResponse.test(
+            statusCode: 204,
+            sdkInitHash: sdkInitHash,
+            rawData: fullSDKInitResponseData
+        )
+        mocks.sdkInitRequestFactory.autoCompletionResult = .success(SDKInitHTTPRequest.test())
 
-            return (
-                response: HTTPURLResponse(
-                    url: self.sdkInitURL,
-                    statusCode: statusCode,
-                    httpVersion: nil,
-                    headerFields: ["x-helium-sdk-init-hash": Self.sdkInitHash]
-                ),
-                data: Data()
-            )
-        }
-
-        let expectation = XCTestExpectation(description: Self.testExpectationDescription)
-        appConfigService.fetchAppConfiguration(sdkInitHash: Self.sdkInitHash) { result in
+        // Fetch app config
+        var completed = false
+        appConfigService.fetchAppConfiguration(sdkInitHash: sdkInitHash) { result in
             guard case let .success(update) = result, update == nil else {  // expect nil success if 204
                 XCTFail("Unexpected result \(result)")
                 return
             }
-            expectation.fulfill()
+            completed = true
         }
 
-        wait(for: [expectation], timeout: 1)
+        // Check SDK init hash is used when creating the HTTP request
+        XCTAssertMethodCalls(mocks.sdkInitRequestFactory, .makeRequest, parameters: [
+            sdkInitHash,
+            XCTMethodIgnoredParameter()
+        ])
+
+        // Finish network manager operation
+        var sdkInitRequestCompletion: NetworkManager.RequestCompletionWithRawDataResponse = { _ in }
+        XCTAssertMethodCalls(networkManager, .send, parameters: [XCTMethodIgnoredParameter(), 0, 0.0, XCTMethodCaptureParameter { sdkInitRequestCompletion = $0 }])
+        sdkInitRequestCompletion(.success(sdkInitResponse))
+
+        XCTAssertTrue(completed)
     }
 
     func testFetchFailureWithErrorStatusCode() {
-        let statusCode = 500
-        URLProtocolMock.registerRequestHandler(httpMethod: "GET", urlString: sdkInitURLString) { [unowned self] request in
-            XCTAssertEqual(request.httpMethod, "GET")
-            XCTAssertEqual(request.allHTTPHeaderFields, [
-                "Accept": "application/json; charset=utf-8",
-                "Content-Type": "application/json; charset=utf-8",
-                "X-Helium-SessionID": environment.session.sessionID.uuidString,
-                "X-Helium-Device-OS": environment.device.osName,
-                "X-Helium-Device-OS-Version": environment.device.osVersion,
-                "X-Helium-SDK-Version": environment.sdk.sdkVersion,
-                "x-helium-sdk-init-hash": Self.sdkInitHash
-            ])
+        let sdkInitError = NetworkManager.RequestError.responseStatusCodeOutOfRangeError(
+            httpRequest: SDKInitHTTPRequest.test(),
+            httpURLResponse: .init(),
+            maxRetries: 0
+        )
+        mocks.sdkInitRequestFactory.autoCompletionResult = .success(SDKInitHTTPRequest.test())
 
-            return (
-                response: HTTPURLResponse(
-                    url: self.sdkInitURL,
-                    statusCode: statusCode,
-                    httpVersion: nil,
-                    headerFields: nil
-                ),
-                data: Data()
-            )
-        }
-
-        let expectation = XCTestExpectation(description: Self.testExpectationDescription)
-        appConfigService.fetchAppConfiguration(sdkInitHash: Self.sdkInitHash) { result in
+        // Fetch app config
+        var completed = false
+        appConfigService.fetchAppConfiguration(sdkInitHash: sdkInitHash) { result in
             guard case let .failure(error) = result else {
                 XCTFail("Unexpected result \(result)")
                 return
             }
             XCTAssertEqual(error.domain, "com.chartboost.mediation")
             XCTAssertEqual(error.code, ChartboostMediationError.Code.initializationFailureServerError.rawValue)
-            expectation.fulfill()
+            completed = true
         }
 
-        wait(for: [expectation], timeout: 1)
+        // Finish network manager operation
+        var sdkInitRequestCompletion: NetworkManager.RequestCompletionWithRawDataResponse = { _ in }
+        XCTAssertMethodCalls(networkManager, .send, parameters: [XCTMethodIgnoredParameter(), 0, 0.0, XCTMethodCaptureParameter { sdkInitRequestCompletion = $0 }])
+        sdkInitRequestCompletion(.failure(sdkInitError))
+
+        XCTAssertTrue(completed)
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -21,13 +21,13 @@ struct Bid {
     let adm: String?
 
     /// Extra partner-specific information.
-    let partnerDetails: [String : Any]?
+    let partnerDetails: [String: Any]?
 
     /// Helium line item identifier.
     let lineItemIdentifier: String?
 
     /// Optional Impression level revenue data (ILRD) associated with the bid.
-    let ilrd: [String : Any]?
+    let ilrd: [String: Any]?
 
     /// The real or estimated bid price.
     let cpmPrice: Decimal?
@@ -60,7 +60,7 @@ struct Bid {
 extension Bid {
     @Injected(\.environment) private static var environment
 
-    static func makeBids(response: OpenRTB.BidResponse, request: HeliumAdLoadRequest) -> [Bid] {
+    static func makeBids(response: OpenRTB.BidResponse, request: AdLoadRequest) -> [Bid] {
         guard let seatbids = response.seatbid else {
             return []
         }
@@ -73,7 +73,7 @@ extension Bid {
             guard let seat = seatbid.seat else {
                 continue
             }
-            
+
             // TODO: Remove this reference adapter hack in HB-4504
             let partnerIdentifier = environment.testMode.isTestModeEnabled && request.heliumPlacement.hasPrefix("REF") ? "reference" : seat
 
@@ -83,7 +83,7 @@ extension Bid {
                 // is no ILRD information, a `nil` value is set.
                 let baseILRD = response.ext?.ilrd?.value ?? [:]
                 let bidderILRD = rtbBid.ext.ilrd?.value ?? [:]
-                let ilrd = bidderILRD.merging(zip(baseILRD.keys, baseILRD.values)) { (current, _) in current }
+                let ilrd = bidderILRD.merging(zip(baseILRD.keys, baseILRD.values)) { current, _ in current }
 
                 // Rewarded callback structure
                 var rewardedCallback: RewardedCallback?

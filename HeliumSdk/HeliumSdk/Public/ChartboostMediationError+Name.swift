@@ -1,18 +1,16 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
 
 import Foundation
 
-// This list must reflect the documentation at https://chartboost.atlassian.net/wiki/spaces/HM/pages/2551513299
 extension ChartboostMediationError.Code {
-    
     /// A prefixed string version of the error code.
     public var string: String {
         "CM_\(rawValue)"
     }
-    
+
     /// A human-friendly constant string that uniquely identifies the error. 
     public var name: String {
         let codeString: String
@@ -50,7 +48,7 @@ extension ChartboostMediationError.Code {
             codeString = "SERVER_ERROR"
         case .initializationFailureInternalError:
             codeString = "INTERNAL_ERROR"
-        
+
         // 200
         case .prebidFailureUnknown:
             codeString = "UNKNOWN"
@@ -70,7 +68,7 @@ extension ChartboostMediationError.Code {
             codeString = "OS_VERSION_NOT_SUPPORTED"
         case .prebidFailureNetworkingError:
             codeString = "NETWORKING_ERROR"
-        
+
         // 300
         case .loadFailureUnknown:
             codeString = "UNKNOWN"
@@ -196,7 +194,7 @@ extension ChartboostMediationError.Code {
             codeString = "UNSUPPORTED_AD_SIZE"
         case .showFailureInvalidBannerSize:
             codeString = "INVALID_BANNER_SIZE"
-        
+
         // 500
         case .invalidateFailureUnknown:
             codeString = "UNKNOWN"
@@ -232,7 +230,7 @@ extension ChartboostMediationError.Code {
 
         return "CM_\(groupMnemonic)_\(codeString)"
     }
-    
+
     private var groupMnemonic: String {
         switch group {
         case .initialization:

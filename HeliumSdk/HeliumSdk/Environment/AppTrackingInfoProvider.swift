@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -22,17 +22,16 @@ protocol AppTrackingInfoProviderDependency {
 
     var idfv: String? { get }
 
-    // Apple doc: @available(iOS, introduced: 6, deprecated: 14, message: "This has been replaced by functionality in AppTrackingTransparency's ATTrackingManager class.")
+    // Apple doc: @available(iOS, introduced: 6, deprecated: 14, message: "This has been replaced by functionality in
+    // AppTrackingTransparency's ATTrackingManager class.")
     var isAdvertisingTrackingEnabled: Bool { get }
 }
 
 struct AppTrackingInfoProvider: AppTrackingInfoProviding {
-
     typealias Dependency = AppTrackingInfoProviderDependency
 
     /// All iOS API calls should be made here, not other places in `AppTrackingInfoProvider`.
     struct SystemDependency: Dependency {
-
         @available(iOS 14.0, *)
         var appTransparencyAuthStatus: ATTrackingManager.AuthorizationStatus {
             ATTrackingManager.trackingAuthorizationStatus
@@ -75,10 +74,10 @@ struct AppTrackingInfoProvider: AppTrackingInfoProviding {
         // We translate '00000000-0000-0000-0000-000000000000' into `nil` so that it is
         // unambiguous that the IFA is unavailable for use.
         if ifa == Constant.zeroUUID {
-            return nil;
+            return nil
         }
 
-        return ifa;
+        return ifa
     }
 
     var idfv: String? {

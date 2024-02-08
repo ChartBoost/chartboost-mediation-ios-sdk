@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -7,7 +7,7 @@
 import Foundation
 import XCTest
 
-class ChartboostMediationBannerViewTests: HeliumTestCase {
+class ChartboostMediationBannerViewTests: ChartboostMediationTestCase {
     lazy var bannerView: ChartboostMediationBannerView = setUpView()
     var controller: BannerSwapControllerMock = BannerSwapControllerMock()
     var networkManager = CompleteNetworkManagerMock()
@@ -82,7 +82,7 @@ class ChartboostMediationBannerViewTests: HeliumTestCase {
         let controller = BannerSwapControllerMock()
         mocks.adFactory.setReturnValue(controller, for: .makeBannerSwapController)
         let bannerView = ChartboostMediationBannerView()
-        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [bannerView, false])
+        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [false])
     }
 
     func testSetsDelegateOnInit() {
@@ -581,15 +581,15 @@ class ChartboostMediationBannerViewTests: HeliumTestCase {
         // Banner needs to be inside a container, otherwise it will never become visible
         let container = UIView()
         container.addSubview(bannerView)
-        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [bannerView, true])
+        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [true])
 
         // if hidden controller should be notified
         bannerView.isHidden = true
-        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [bannerView, false])
+        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [false])
 
         // if unhidden controller should be notified
         bannerView.isHidden = false
-        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [bannerView, true])
+        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [true])
     }
 
     func testMoveAndRemoveFromSuperview() {
@@ -597,11 +597,11 @@ class ChartboostMediationBannerViewTests: HeliumTestCase {
 
         // when adding to superview controller should be notified
         container.addSubview(bannerView)
-        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [bannerView, true])
+        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [true])
 
         // when removing from superview controller should be notified
         bannerView.removeFromSuperview()
-        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [bannerView, false])
+        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [false])
     }
 
     func testMoveAndRemoveFromSuperviewWhenHidden() {
@@ -609,15 +609,15 @@ class ChartboostMediationBannerViewTests: HeliumTestCase {
 
         // if hidden controller should be notified
         bannerView.isHidden = true
-        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [bannerView, false])
+        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [false])
 
         // when adding to superview controller should be notified
         container.addSubview(bannerView)
-        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [bannerView, false])
+        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [false])
 
         // when removing from superview controller should be notified
         bannerView.removeFromSuperview()
-        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [bannerView, false])
+        XCTAssertMethodCalls(controller, .viewVisibilityDidChange, parameters: [false])
     }
 
     // MARK: - Delegate
@@ -893,8 +893,8 @@ class ChartboostMediationBannerViewTests: HeliumTestCase {
         adapter.partnerIdentifier = "test_partner_name"
         let partnerAdRequest = PartnerAdLoadRequest.test(partnerPlacement: "test_partner_placement")
         let partnerAd = PartnerAdMock(adapter: adapter, request: partnerAdRequest, inlineView: view)
-        let adRequest = HeliumAdLoadRequest.test(heliumPlacement: "test_placement_name", loadID: "test_load_id")
-        let ad = HeliumAd(bid: bid, bidInfo: [:], partnerAd: partnerAd, adSize: adSize, request: adRequest)
+        let adRequest = AdLoadRequest.test(heliumPlacement: "test_placement_name", loadID: "test_load_id")
+        let ad = LoadedAd(bid: bid, bidInfo: [:], partnerAd: partnerAd, adSize: adSize, request: adRequest)
         controller.request = .test(size: ChartboostMediationBannerSize(size: CGSize(width: 500.0, height: 100.0), type: .adaptive))
         controller.showingBannerLoadResult = AdLoadResult(result: .success(ad), metrics: nil)
         bannerView.bannerSwapController(controller, displayBannerView: view)
@@ -961,7 +961,7 @@ extension ChartboostMediationBannerViewTests {
 
     private func setUpControllerWithBanner(view: UIView, size: ChartboostMediationBannerSize) {
         let partnerAd = PartnerAdMock(inlineView: view)
-        let ad = HeliumAd.test(partnerAd: partnerAd, adSize: size)
+        let ad = LoadedAd.test(partnerAd: partnerAd, adSize: size)
         controller.showingBannerLoadResult = AdLoadResult(result: .success(ad), metrics: nil)
         bannerView.bannerSwapController(controller, displayBannerView: view)
         XCTAssertEqual(view.superview, bannerView)

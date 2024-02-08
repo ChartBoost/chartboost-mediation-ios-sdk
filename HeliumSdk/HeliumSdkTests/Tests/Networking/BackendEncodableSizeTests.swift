@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-final class BackendEncodableSizeTests: HeliumTestCase {
+final class BackendEncodableSizeTests: ChartboostMediationTestCase {
     func testInitFromCGSize() {
         let size = BackendEncodableSize(cgSize: CGSize(width: 100, height: 100))
         XCTAssertEqual(size.width, 100)

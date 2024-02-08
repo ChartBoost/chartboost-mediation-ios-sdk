@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-final class JSONTests: HeliumTestCase {
+final class JSONTests: ChartboostMediationTestCase {
 
     func testInteger() throws {
         let data = try encode("1")
@@ -15,12 +15,12 @@ final class JSONTests: HeliumTestCase {
         
         XCTAssertEqual(json.value, 1)
     }
-    
-    func testDouble() throws {
+
+    func testDecimal() throws {
         let data = try encode("1.2")
-        
-        let json = try decode(JSON<Double>.self, from: data)
-        
+
+        let json = try decode(JSON<Decimal>.self, from: data)
+
         XCTAssertEqual(json.value, 1.2)
     }
     
@@ -37,7 +37,7 @@ final class JSONTests: HeliumTestCase {
         
         let json = try decode(JSON<Bool>.self, from: data)
         
-        XCTAssertEqual(json.value, false)
+        XCTAssertFalse(json.value)
     }
     
     func testArrayOfStrings() throws {
@@ -49,13 +49,14 @@ final class JSONTests: HeliumTestCase {
     }
     
     func testArrayOfAny() throws {
-        let data = try encode(#"["a", 23, false, ["23"], {"hello": "a", "bye": "b"}]"#)
-        
+        let data = try encode(#"["a", 23, 2.3, false, ["23"], {"hello": "a", "bye": "b"}]"#)
+
         let json = try decode(JSON<[Any]>.self, from: data)
         
         XCTAssertJSONEqual(json.value, [
             "a",
             23,
+            2.3 as Decimal,
             false,
             ["23"],
             ["hello": "a", "bye": "b"]
@@ -71,15 +72,16 @@ final class JSONTests: HeliumTestCase {
     }
     
     func testObjectOfAny() throws {
-        let data = try encode(#"{"key1": 23, "key2": false, "key3": ["23"], "key4": {"hello": "a", "bye": "b", "23": [{"1": "2"}, {"1": "2"}]}}"#)
-        
+        let data = try encode(#"{"key1": 23, "key2": false, "key3": ["23"], "key4": {"hello": "a", "bye": "b", "23": [{"1": "2"}, {"1": "2"}]}, "key5": 1.3}"#)
+
         let json = try decode(JSON<[String: Any]>.self, from: data)
         
         XCTAssertJSONEqual(json.value, [
             "key1": 23,
             "key2": false,
             "key3": ["23"],
-            "key4": ["hello": "a", "bye": "b", "23": [["1": "2"], ["1": "2"]]] as [String : Any]
+            "key4": ["hello": "a", "bye": "b", "23": [["1": "2"], ["1": "2"]]] as [String : Any],
+            "key5": 1.3 as Decimal
         ] as [String: Any])
     }
 }

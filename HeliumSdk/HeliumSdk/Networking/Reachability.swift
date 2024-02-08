@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -23,7 +23,6 @@ protocol Reachability: NetworkStatusProviding {
 }
 
 final class ReachabilityMonitor: Reachability {
-
     // MARK: - Lifecycle
 
     class func make() -> Reachability {
@@ -46,7 +45,7 @@ final class ReachabilityMonitor: Reachability {
     // MARK: - Properties
 
     var status: NetworkStatus {
-       guard let flags = flags else {
+       guard let flags else {
            return .notReachable
        }
        var status: NetworkStatus = .unknown
@@ -72,7 +71,7 @@ final class ReachabilityMonitor: Reachability {
 
     @discardableResult
     func startNotifier() -> Bool {
-        guard !notifierIsRunning, let networkReachability = networkReachability else {
+        guard !notifierIsRunning, let networkReachability else {
             return false
         }
 
@@ -112,7 +111,7 @@ final class ReachabilityMonitor: Reachability {
 
     func stopNotifier() {
         defer { notifierIsRunning = false }
-        guard let networkReachability = networkReachability else {
+        guard let networkReachability else {
             return
         }
         SCNetworkReachabilitySetCallback(networkReachability, nil, nil)
@@ -122,11 +121,11 @@ final class ReachabilityMonitor: Reachability {
     // MARK: - Private
 
     private let networkReachability: SCNetworkReachability?
-    private let queue = DispatchQueue(label: "com.chartboost.helium.ReachabilityMonitor.queue")
+    private let queue = DispatchQueue(label: "com.chartboost.mediation.ReachabilityMonitor.queue")
     private var notifierIsRunning = false
 
     private let reachabilityCallback: SCNetworkReachabilityCallBack = { _, flags, info in
-        guard let info = info else { return }
+        guard let info else { return }
         let weakReachability = Unmanaged<WeakReachability>.fromOpaque(info).takeUnretainedValue()
         weakReachability.reachability?.flags = flags
     }
@@ -134,7 +133,7 @@ final class ReachabilityMonitor: Reachability {
     private var flags: SCNetworkReachabilityFlags?
 
     private func updateFlags() {
-        guard let networkReachability = networkReachability else {
+        guard let networkReachability else {
             return
         }
         queue.sync {

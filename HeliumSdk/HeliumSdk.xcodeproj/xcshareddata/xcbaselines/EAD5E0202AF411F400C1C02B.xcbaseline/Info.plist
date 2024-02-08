@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>runDestinationsByUUID</key>
+	<dict>
+		<key>6FAA9961-5DF1-4206-8C59-94063E5C52A4</key>
+		<dict>
+			<key>localComputer</key>
+			<dict>
+				<key>busSpeedInMHz</key>
+				<integer>0</integer>
+				<key>cpuCount</key>
+				<integer>1</integer>
+				<key>cpuKind</key>
+				<string>#CHIP#</string>
+				<key>cpuSpeedInMHz</key>
+				<integer>#CPU_SPEED#</integer>
+				<key>logicalCPUCoresPerPackage</key>
+				<integer>#NUMBER_OF_CORES#</integer>
+				<key>modelCode</key>
+				<string>#COMPUTER_CODE#</string>
+				<key>physicalCPUCoresPerPackage</key>
+				<integer>#NUMBER_OF_CORES#</integer>
+				<key>platformIdentifier</key>
+				<string>com.apple.platform.macosx</string>
+			</dict>
+			<key>targetArchitecture</key>
+			<string>#ARCHITECTURE#</string>
+			<key>targetDevice</key>
+			<dict>
+				<key>modelCode</key>
+				<string>#SIMULATOR_CODE#</string>
+				<key>platformIdentifier</key>
+				<string>com.apple.platform.iphonesimulator</string>
+			</dict>
+		</dict>
+	</dict>
+</dict>
+</plist>

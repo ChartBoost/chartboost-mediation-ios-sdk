@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -36,6 +36,9 @@
     Helium *helium = Helium.sharedHelium;
     id result; // for suppressing the "unused result" warning
 
+    [helium startWithAppId:@"" options:nil delegate:nil];
+    [helium startWithAppId:@"" options:[[HeliumInitializationOptions alloc] initWithSkippedPartnerIdentifiers:nil] delegate:self];
+
     [helium startWithAppId:@"" andAppSignature:@"" options:nil delegate:nil];
     [helium startWithAppId:@"" andAppSignature:@"" options:[[HeliumInitializationOptions alloc] initWithSkippedPartnerIdentifiers:nil] delegate:self];
 
@@ -64,6 +67,9 @@
     result = [Helium sdkVersion];
 
     result = [helium initializedAdapterInfo];
+
+    NSDictionary<NSString *, NSNumber *> *partnerConsents = helium.partnerConsents;
+    helium.partnerConsents = partnerConsents;
 }
 
 /// API stability test for notifications.

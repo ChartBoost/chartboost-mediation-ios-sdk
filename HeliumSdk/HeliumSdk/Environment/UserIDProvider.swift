@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,6 @@
 import Foundation
 
 protocol UserIDProviding: AnyObject {
-
     /// Optional user ID specified by the publisher.
     /// This generally represents the user in the publisher's ecosystem.
     var publisherUserID: String? { get set }
@@ -16,11 +15,10 @@ protocol UserIDProviding: AnyObject {
 }
 
 final class UserIDProvider: UserIDProviding {
-
     @Injected(\.appTrackingInfo) var appTrackingInfo
     @Injected(\.chartboostIDProvider) var chartboostIDProvider
 
-    var publisherUserID: String?
+    @Atomic var publisherUserID: String?
 
     var userID: String? {
         if !appTrackingInfo.isLimitAdTrackingEnabled,

@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -7,12 +7,11 @@ import Foundation
 
 /// This logger prints console logs.
 enum NetworkActivityConsoleLogger {
-    
     private enum Source {
         case request
         case response
     }
-    
+
     @Injected(\.jsonSerializer) private static var jsonSerializer
 
 #if PRINT_NETWORK_ACTIVITY
@@ -20,7 +19,7 @@ enum NetworkActivityConsoleLogger {
 #else
     private static let isLoggingEnabled = false
 #endif
-    
+
     /// A reusable instance for better performance.
     static var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -52,7 +51,7 @@ HTTP Request
                 log.appendLine("JSON error: \(error)")
             }
         }
-        log.appendLine(".....................................................................................\n");
+        log.appendLine(".....................................................................................\n")
         logger.trace(log)
     }
 
@@ -74,7 +73,7 @@ HTTP Response
             log.appendLine("Headers: \(httpURLResponse.allHeaderFields.description)")
         }
 
-        if let data = data {
+        if let data {
             do {
                 let prettyPrintedData = try jsonSerializer.reserialize(data, options: .prettyPrinted)
                 let prettyPrintedJSON = String(data: prettyPrintedData, encoding: .utf8)
@@ -84,7 +83,7 @@ HTTP Response
             }
         }
 
-        log.appendLine(".....................................................................................\n");
+        log.appendLine(".....................................................................................\n")
         logger.trace(log)
     }
 
@@ -101,8 +100,8 @@ HTTP Response
     }
 }
 
-private extension String {
-    mutating func appendLine(_ line: String = "") {
+extension String {
+    fileprivate mutating func appendLine(_ line: String = "") {
         append("\(line)\n")
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -7,9 +7,11 @@ import Foundation
 
 /// Loads full screen ads using a request and returning a load result.
 protocol FullscreenAdLoader {
-    
     /// Loads a Chartboost Mediation fullscreen ad using the information provided in the request.
-    func loadFullscreenAd(with request: ChartboostMediationAdLoadRequest, completion: @escaping (ChartboostMediationFullscreenAdLoadResult) -> Void)
+    func loadFullscreenAd(
+        with request: ChartboostMediationAdLoadRequest,
+        completion: @escaping (ChartboostMediationFullscreenAdLoadResult) -> Void
+    )
 }
 
 /// Configuration settings for FullscreenAdLoader.
@@ -19,35 +21,36 @@ protocol FullscreenAdLoaderConfiguration {
 }
 
 final class AdLoader: FullscreenAdLoader {
-    
     @Injected(\.adControllerFactory) private var adControllerFactory
     @Injected(\.adLoaderConfiguration) private var configuration
     @Injected(\.adFactory) private var adFactory
     @Injected(\.taskDispatcher) private var taskDispatcher
-    
-    func loadFullscreenAd(with request: ChartboostMediationAdLoadRequest, completion: @escaping (ChartboostMediationFullscreenAdLoadResult) -> Void) {
-        
+
+    func loadFullscreenAd(
+        with request: ChartboostMediationAdLoadRequest,
+        completion: @escaping (ChartboostMediationFullscreenAdLoadResult) -> Void
+    ) {
         func completionOnMain(_ result: ChartboostMediationFullscreenAdLoadResult) {
             taskDispatcher.async(on: .main) {   // all user callbacks on main
                 completion(result)
             }
         }
-        
+
         // Get the ad format that corresponds to the requested placement
         guard let adFormat = configuration.adFormat(forPlacement: request.placement) else {
             completionOnMain(self.makeLoadResult(error: ChartboostMediationError(code: .loadFailureInvalidChartboostMediationPlacement)))
             return
         }
-        
+
         // Fail if the ad format is banner, since we are supposedly loading a fullscreen ad
         guard isFullscreenFormat(adFormat) else {
             completionOnMain(self.makeLoadResult(error: ChartboostMediationError(code: .loadFailureMismatchedAdFormat)))
             return
         }
-        
+
         // Get a new ad controller with its own ad storage
         let adController = adControllerFactory.makeAdController()
-        
+
         // Load through ad controller
         // Note the ad controller instance is retained by the completion block until the load operation finishes,
         // after that it is the fullscreen ad instance that keeps a strong reference to it and it's the publisher's
@@ -56,14 +59,14 @@ final class AdLoader: FullscreenAdLoader {
         // of the loaded PartnerAd and its deallocation on the partner controller.
         let loadRequest = makeLoadRequest(request: request, adFormat: adFormat)
         adController.loadAd(request: loadRequest, viewController: nil) { [weak self, adController] result in
-            guard let self = self else { return }
-            
+            guard let self else { return }
+
             let loadResult: ChartboostMediationFullscreenAdLoadResult
             switch result.result {
             case .success(let ad):
                 // Create the ad instance shared with the user
                 let fullscreenAd = self.adFactory.makeFullscreenAd(request: request, winningBidInfo: ad.bidInfo, controller: adController)
-                
+
                 // When loadAd() exits early because another ad was already loaded, it returns the identifier for
                 // the already-completed request, not the one for the request that was passed at the same time as this callback.
                 // Thus if an ad is already loaded when the user tries to load an ad, we return the identifier for the
@@ -82,12 +85,12 @@ final class AdLoader: FullscreenAdLoader {
                     metrics: result.metrics
                 )
             }
-            
+
             // Report back result
             completionOnMain(loadResult)
         }
     }
-    
+
     /// Validates that the format is compatible with fullscreen ads.
     private func isFullscreenFormat(_ adFormat: AdFormat) -> Bool {
         // An exhaustive switch makes sure that we don't forget to handle new format cases
@@ -98,10 +101,10 @@ final class AdLoader: FullscreenAdLoader {
             return false
         }
     }
-    
+
     /// Creates a new load request for the ad controller.
-    private func makeLoadRequest(request: ChartboostMediationAdLoadRequest, adFormat: AdFormat) -> HeliumAdLoadRequest {
-        HeliumAdLoadRequest(
+    private func makeLoadRequest(request: ChartboostMediationAdLoadRequest, adFormat: AdFormat) -> AdLoadRequest {
+        AdLoadRequest(
             adSize: nil,    // nil means full-screen
             adFormat: adFormat,
             keywords: request.keywords,
@@ -109,8 +112,13 @@ final class AdLoader: FullscreenAdLoader {
             loadID: UUID().uuidString
         )
     }
-    
-    private func makeLoadResult(ad: ChartboostMediationFullscreenAd? = nil, error: ChartboostMediationError?, loadID: String = "", metrics: RawMetrics? = nil) -> ChartboostMediationFullscreenAdLoadResult {
+
+    private func makeLoadResult(
+        ad: ChartboostMediationFullscreenAd? = nil,
+        error: ChartboostMediationError?,
+        loadID: String = "",
+        metrics: RawMetrics? = nil
+    ) -> ChartboostMediationFullscreenAdLoadResult {
         ChartboostMediationFullscreenAdLoadResult(
             ad: ad,
             error: error,

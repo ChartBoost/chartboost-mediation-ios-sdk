@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,6 @@
 import Foundation
 
 extension URL {
-
     /// A failable init to avoid encoding invalid `unsafeString` characters in the `URL`.
     /// On iOS 17+, `URL(string:)` assumes `encodingInvalidCharacters` being `true`, which is
     /// inconsistent with older iOS versions and makes bad URL less obvious.

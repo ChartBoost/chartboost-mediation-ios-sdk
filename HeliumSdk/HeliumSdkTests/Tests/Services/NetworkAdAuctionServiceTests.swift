@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -7,10 +7,9 @@ import Foundation
 import XCTest
 @testable import ChartboostMediationSDK
 
-class NetworkAdAuctionServiceTests: HeliumTestCase {
+class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
 
     lazy var service = NetworkAdAuctionService()
-    private lazy var networkManager = mocks.networkManager
 
     private static let nonTracking_auctionsURLString = "https://non-tracking.auction.mediation-sdk.chartboost.com/v3/auctions"
     private static let nonTracking_auctionsURL = URL(unsafeString: nonTracking_auctionsURLString)!
@@ -19,7 +18,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     static let loadID = "some load ID"
     static let auctionID = "some auction ID"
     static let rateLimitReset = "5"
-    static let interstitialRequest = HeliumAdLoadRequest.test(adFormat: .interstitial, keywords: nil, loadID: loadID)
+    static let interstitialRequest = AdLoadRequest.test(adFormat: .interstitial, keywords: nil, loadID: loadID)
     let bidderInfo = ["partner1": ["1": "2"], "partner2": ["1": "2", "a": "b"], "partner3": ["1234": "2423", "asdf ": "fsdfsdf", "asdf-o-": "sdfj"]]
 
     override func setUp() {
@@ -37,6 +36,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testSingleProgrammatic() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.Test_BidResp_OnlyProg)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -81,6 +81,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testSingleNonProgramatic() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.Test_BidResp_Only1NonProg)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -124,6 +125,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testOrderOfMultipleBids() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.Test_BidResp_Order)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -168,6 +170,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testPartnerExt() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.Test_BidResp_OnlyTJProg)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -218,6 +221,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testILRDBidderAndBase() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseILRD)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         let expectedBidILRD0: [String: Any] = [
             "impression_id": "ab82501b580000bb8ace119907f7a4d6665212c3",
@@ -294,6 +298,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testILRDBidderAndNoBase() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseNoBaseILRD)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         let expectedBidILRDFirst: [String: Any] = [
             "network_name": "fyber",
@@ -362,6 +367,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testILRDNoBidder() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseNoBidderILRD)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         let expectedBidILRD: [String: Any] = [
             "impression_id": "ab82501b580000bb8ace119907f7a4d6665212c3",
@@ -413,6 +419,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testILRDNoInformation() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseNoILRD)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -452,6 +459,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testILRDNullInformation() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseILRDNullValues)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -495,6 +503,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testRewardedCallbackNotPresent() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseNoILRD)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -535,6 +544,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testRewardedCallbackSparse() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseRewardedCallbackSparse)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -603,6 +613,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testRewardedCallback() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseRewardedCallbackPOST)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -683,6 +694,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testRewardedCallbackNullCPMPriceNullAdRevenueGET() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseRewardedCallbackNullGET)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -764,6 +776,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testRewardedCallbackNullCPMPriceNullAdRevenuePOST() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseRewardedCallbackNullPOST)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -856,6 +869,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testRewardedCallbackMalformed() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseRewardedCallbackMalformed)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -897,6 +911,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testRealInterstitialResponse() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.bid_response_interstitial_real)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -941,8 +956,9 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
 
     // Test the parsing of a completely backend realistically generated response for rewarded.
     func testRealRewardedResponse() throws {
-        let request = HeliumAdLoadRequest.test(adFormat: .rewarded, keywords: nil, loadID: Self.loadID)
+        let request = AdLoadRequest.test(adFormat: .rewarded, keywords: nil, loadID: Self.loadID)
         Self.registerResponseJSON(.bid_response_rewarded_real)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -987,8 +1003,9 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
 
     // Test the parsing of a completely backend realistically generated response for banners.
     func testRealBannerResponse() throws {
-        let request = HeliumAdLoadRequest.test(adFormat: .banner, keywords: nil, loadID: Self.loadID)
+        let request = AdLoadRequest.test(adFormat: .banner, keywords: nil, loadID: Self.loadID)
         Self.registerResponseJSON(.bid_response_banner_real)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -1036,13 +1053,14 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testEmptyDataWithDifferentHTTPStatusCodes() {
         [200, 204, 404, 500].forEach { httpResponseStatusCode in
             Self.registerResponseJSON(nil, statusCode: httpResponseStatusCode)
-            let request = HeliumAdLoadRequest.test(adFormat: .interstitial, keywords: nil)
+            mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
+            let request = AdLoadRequest.test(adFormat: .interstitial, keywords: nil)
             let expectation = XCTestExpectation(description: "auction")
             service.startAuction(request: request) { response in
                 if httpResponseStatusCode == 204 {
-                    XCTAssert(response.result.error?.code == ChartboostMediationError.Code.loadFailureAuctionNoBid.rawValue)
+                    XCTAssertEqual(response.result.error?.code, ChartboostMediationError.Code.loadFailureAuctionNoBid.rawValue)
                 } else { // 200, 404, 500
-                    XCTAssert(response.result.error?.code == ChartboostMediationError.Code.loadFailureException.rawValue)
+                    XCTAssertEqual(response.result.error?.code, ChartboostMediationError.Code.loadFailureException.rawValue)
                 }
                 expectation.fulfill()
             }
@@ -1059,15 +1077,16 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testValidDataWithDifferentHTTPStatusCodes() {
         [200, 204, 404, 500].forEach { httpResponseStatusCode in
             Self.registerResponseJSON(.Test_BidResp_OnlyProg, statusCode: httpResponseStatusCode)
-            let request = HeliumAdLoadRequest.test(adFormat: .interstitial, keywords: nil)
+            mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
+            let request = AdLoadRequest.test(adFormat: .interstitial, keywords: nil)
             let expectation = XCTestExpectation(description: "auction")
             service.startAuction(request: request) { response in
                 if httpResponseStatusCode == 200 {
                     XCTAssertNil(response.result.error)
                 } else if httpResponseStatusCode == 204 {
-                    XCTAssert(response.result.error?.code == ChartboostMediationError.Code.loadFailureAuctionNoBid.rawValue)
+                    XCTAssertEqual(response.result.error?.code, ChartboostMediationError.Code.loadFailureAuctionNoBid.rawValue)
                 } else { // 404, 500
-                    XCTAssert(response.result.error?.code == ChartboostMediationError.Code.loadFailureException.rawValue)
+                    XCTAssertEqual(response.result.error?.code, ChartboostMediationError.Code.loadFailureException.rawValue)
                 }
                 expectation.fulfill()
             }
@@ -1086,7 +1105,8 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
         // Mock network manager
         let networkManager = CompleteNetworkManagerMock()
         mocks.networkManager = networkManager
-        
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
+
         let responseData = "some data".data(using: .utf8)!
         let decodingError = NSError.test(domain: "decoding", code: 5)
         let networkManagerError = NetworkManager.RequestError.jsonDecodeError(
@@ -1136,7 +1156,8 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     func testAuctionIDIsNotIncludedIfAuctionFailsEarly() {
         // Setup: load rate limiter rejects the load
         mocks.loadRateLimiter.setReturnValue(9.0, for: .timeUntilNextLoadIsAllowed)
-        let request = HeliumAdLoadRequest.test(adFormat: .interstitial, keywords: nil)
+        let request = AdLoadRequest.test(adFormat: .interstitial, keywords: nil)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         var completed = false
@@ -1157,9 +1178,10 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     /// Validates that the auction ID in the response header is returned even in a failure path.
     func testAuctionIDIsIncludedIfNetworkFails() {
         // Setup: network manager fails with a response that includes auction ID
-        let request = HeliumAdLoadRequest.test(adFormat: .interstitial, keywords: nil)
+        let request = AdLoadRequest.test(adFormat: .interstitial, keywords: nil)
         Self.registerResponseJSON(nil, statusCode: 500)
-        
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
+
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
         service.startAuction(request: request) { response in
@@ -1183,9 +1205,10 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     /// Validates that the auction ID in the response header is returned in a success path.
     func testAuctionIDIsIncludedIfNetworkSucceeds() {
         // Setup: network manager succeeds with a response that includes auction ID
-        let request = HeliumAdLoadRequest.test(adFormat: .interstitial, keywords: nil)
+        let request = AdLoadRequest.test(adFormat: .interstitial, keywords: nil)
         Self.registerResponseJSON(.Test_BidResp_OnlyProg)
-        
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
+
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
         service.startAuction(request: request) { response in
@@ -1211,6 +1234,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     /// Validates that the load rate limit is not updated by X-Helium-RateLimit-Reset in the response header.
     func testRateLimitResetIfNetworkFails() {
         Self.registerResponseJSON(.Test_BidResp_OnlyProg, statusCode: 500)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
         let request = Self.interstitialRequest
         let expectation = XCTestExpectation(description: "auction")
         service.startAuction(request: request) { response in
@@ -1237,6 +1261,7 @@ class NetworkAdAuctionServiceTests: HeliumTestCase {
     /// Validates that the load rate limit is updated by X-Helium-RateLimit-Reset in the response header.
     func testRateLimitResetIfNetworkSucceeds() {
         Self.registerResponseJSON(.Test_BidResp_OnlyProg)
+        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
         let request = Self.interstitialRequest
         let expectation = XCTestExpectation(description: "auction")
         service.startAuction(request: request) { response in

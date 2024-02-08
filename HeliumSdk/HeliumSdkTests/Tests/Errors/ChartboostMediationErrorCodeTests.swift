@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,8 +6,6 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-// TDD: https://docs.google.com/document/d/1nbCVEqzAVxeXuuu780NWU7Ctp8ohpo5cicBpmPs5Ixg/edit#heading=h.5ny1kfakcz1
-// Exhaustive code list: https://chartboost.atlassian.net/wiki/spaces/HM/pages/2551513299/Helium+Error+Codes+Helium+4.0.0
 
 final class ChartboostMediationErrorCodeTests: XCTestCase {
 
@@ -66,18 +64,18 @@ final class ChartboostMediationErrorCodeTests: XCTestCase {
             // TDD test callout: All Chartboost Mediation error codes must have non-empty codes, messages, causes, and resolutions
             XCTAssertFalse(error.chartboostMediationCode.message.isEmpty)
             XCTAssertEqual(expected.message, error.chartboostMediationCode.message)
-            XCTAssertTrue(expected.message.suffix(1) == ".") // ends with period
+            XCTAssertEqual(expected.message.suffix(1), ".") // ends with period
 
             // TDD test callout: All Chartboost Mediation error codes must have non-empty codes, messages, causes, and resolutions
             XCTAssertFalse(error.chartboostMediationCode.cause.isEmpty)
             XCTAssertEqual(expected.cause, error.chartboostMediationCode.cause)
-            XCTAssertTrue(expected.cause.suffix(1) == ".") // ends with period
+            XCTAssertEqual(expected.cause.suffix(1), ".") // ends with period
 
             // TDD test callout: All Chartboost Mediation error codes must have non-empty codes, messages, causes, and resolutions
             XCTAssertFalse(error.chartboostMediationCode.resolution.isEmpty)
             XCTAssertEqual(expected.resolution, error.chartboostMediationCode.resolution)
             if expected.resolution != "N/A." {
-                XCTAssertTrue(expected.resolution.suffix(1) == ".") // ends with period
+                XCTAssertEqual(expected.resolution.suffix(1), ".") // ends with period
             }
         }
     }
@@ -113,58 +111,58 @@ final class ChartboostMediationErrorCodeTests: XCTestCase {
     // Note: "generic" is presumed to be the code that is X00 and the specific ones are XYY where YY is not 00
     func testMinimumErrorCodesPerGroup() {
         let initialization = Code.allInitializationCases.map(\.rawValue)
-        XCTAssertTrue(initialization.count >= 2)
-        XCTAssertTrue(initialization.filter({$0 == 100}).count == 1)
-        XCTAssertTrue(initialization.filter({$0 == 200}).count == 0)
-        XCTAssertTrue(initialization.filter({$0 == 300}).count == 0)
-        XCTAssertTrue(initialization.filter({$0 == 400}).count == 0)
-        XCTAssertTrue(initialization.filter({$0 == 500}).count == 0)
-        XCTAssertTrue(initialization.filter({$0 == 600}).count == 0)
+        XCTAssertGreaterThanOrEqual(initialization.count, 2)
+        XCTAssertEqual(initialization.filter({$0 == 100}).count, 1)
+        XCTAssertEqual(initialization.filter({$0 == 200}).count, 0)
+        XCTAssertEqual(initialization.filter({$0 == 300}).count, 0)
+        XCTAssertEqual(initialization.filter({$0 == 400}).count, 0)
+        XCTAssertEqual(initialization.filter({$0 == 500}).count, 0)
+        XCTAssertEqual(initialization.filter({$0 == 600}).count, 0)
 
         let prebid = Code.allPrebidCases.map(\.rawValue)
-        XCTAssertTrue(prebid.count >= 2)
-        XCTAssertTrue(prebid.filter({$0 == 200}).count == 1)
-        XCTAssertTrue(prebid.filter({$0 == 100}).count == 0)
-        XCTAssertTrue(prebid.filter({$0 == 300}).count == 0)
-        XCTAssertTrue(prebid.filter({$0 == 400}).count == 0)
-        XCTAssertTrue(prebid.filter({$0 == 500}).count == 0)
-        XCTAssertTrue(prebid.filter({$0 == 600}).count == 0)
+        XCTAssertGreaterThanOrEqual(prebid.count, 2)
+        XCTAssertEqual(prebid.filter({$0 == 200}).count, 1)
+        XCTAssertEqual(prebid.filter({$0 == 100}).count, 0)
+        XCTAssertEqual(prebid.filter({$0 == 300}).count, 0)
+        XCTAssertEqual(prebid.filter({$0 == 400}).count, 0)
+        XCTAssertEqual(prebid.filter({$0 == 500}).count, 0)
+        XCTAssertEqual(prebid.filter({$0 == 600}).count, 0)
 
         let load = Code.allLoadCases.map(\.rawValue)
-        XCTAssertTrue(load.count >= 2)
-        XCTAssertTrue(load.filter({$0 == 300}).count == 1)
-        XCTAssertTrue(load.filter({$0 == 100}).count == 0)
-        XCTAssertTrue(load.filter({$0 == 200}).count == 0)
-        XCTAssertTrue(load.filter({$0 == 400}).count == 0)
-        XCTAssertTrue(load.filter({$0 == 500}).count == 0)
-        XCTAssertTrue(load.filter({$0 == 600}).count == 0)
+        XCTAssertGreaterThanOrEqual(load.count, 2)
+        XCTAssertEqual(load.filter({$0 == 300}).count, 1)
+        XCTAssertEqual(load.filter({$0 == 100}).count, 0)
+        XCTAssertEqual(load.filter({$0 == 200}).count, 0)
+        XCTAssertEqual(load.filter({$0 == 400}).count, 0)
+        XCTAssertEqual(load.filter({$0 == 500}).count, 0)
+        XCTAssertEqual(load.filter({$0 == 600}).count, 0)
 
         let show = Code.allShowCases.map(\.rawValue)
-        XCTAssertTrue(show.count >= 2)
-        XCTAssertTrue(show.filter({$0 == 400}).count == 1)
-        XCTAssertTrue(show.filter({$0 == 100}).count == 0)
-        XCTAssertTrue(show.filter({$0 == 200}).count == 0)
-        XCTAssertTrue(show.filter({$0 == 300}).count == 0)
-        XCTAssertTrue(show.filter({$0 == 500}).count == 0)
-        XCTAssertTrue(show.filter({$0 == 600}).count == 0)
+        XCTAssertGreaterThanOrEqual(show.count, 2)
+        XCTAssertEqual(show.filter({$0 == 400}).count, 1)
+        XCTAssertEqual(show.filter({$0 == 100}).count, 0)
+        XCTAssertEqual(show.filter({$0 == 200}).count, 0)
+        XCTAssertEqual(show.filter({$0 == 300}).count, 0)
+        XCTAssertEqual(show.filter({$0 == 500}).count, 0)
+        XCTAssertEqual(show.filter({$0 == 600}).count, 0)
 
         let invalidate = Code.allInvalidateCases.map(\.rawValue)
-        XCTAssertTrue(invalidate.count >= 2)
-        XCTAssertTrue(invalidate.filter({$0 == 500}).count == 1)
-        XCTAssertTrue(invalidate.filter({$0 == 100}).count == 0)
-        XCTAssertTrue(invalidate.filter({$0 == 200}).count == 0)
-        XCTAssertTrue(invalidate.filter({$0 == 300}).count == 0)
-        XCTAssertTrue(invalidate.filter({$0 == 400}).count == 0)
-        XCTAssertTrue(invalidate.filter({$0 == 600}).count == 0)
+        XCTAssertGreaterThanOrEqual(invalidate.count, 2)
+        XCTAssertEqual(invalidate.filter({$0 == 500}).count, 1)
+        XCTAssertEqual(invalidate.filter({$0 == 100}).count, 0)
+        XCTAssertEqual(invalidate.filter({$0 == 200}).count, 0)
+        XCTAssertEqual(invalidate.filter({$0 == 300}).count, 0)
+        XCTAssertEqual(invalidate.filter({$0 == 400}).count, 0)
+        XCTAssertEqual(invalidate.filter({$0 == 600}).count, 0)
 
         let other = Code.allOtherCases.map(\.rawValue)
-        XCTAssertTrue(other.count >= 2)
-        XCTAssertTrue(other.filter({$0 == 600}).count == 1)
-        XCTAssertTrue(other.filter({$0 == 100}).count == 0)
-        XCTAssertTrue(other.filter({$0 == 200}).count == 0)
-        XCTAssertTrue(other.filter({$0 == 300}).count == 0)
-        XCTAssertTrue(other.filter({$0 == 400}).count == 0)
-        XCTAssertTrue(other.filter({$0 == 500}).count == 0)
+        XCTAssertGreaterThanOrEqual(other.count, 2)
+        XCTAssertEqual(other.filter({$0 == 600}).count, 1)
+        XCTAssertEqual(other.filter({$0 == 100}).count, 0)
+        XCTAssertEqual(other.filter({$0 == 200}).count, 0)
+        XCTAssertEqual(other.filter({$0 == 300}).count, 0)
+        XCTAssertEqual(other.filter({$0 == 400}).count, 0)
+        XCTAssertEqual(other.filter({$0 == 500}).count, 0)
     }
 }
 
@@ -199,7 +197,6 @@ extension ChartboostMediationError.Code {
     static let defaultInvalidateMessage = "Partner ad invalidation has failed."
     static let defaultUnknownMessage = "An unknown error has occurred. It is unclear if it originates from Chartboost Mediation or mediation partner(s)."
 
-    // https://chartboost.atlassian.net/wiki/spaces/HM/pages/2551513299/Helium+Error+Codes+Helium+4.0.0
     static let rawExpectedData: [Self: ExpectedData] = [
         // 100
         .initializationFailureUnknown: ExpectedData(["CM_100", "CM_INITIALIZATION_FAILURE_UNKNOWN", "Chartboost Mediation initialization has failed.", "There was an error that was not accounted for.", "Try again. If the problem persists, contact Chartboost Mediation Support and provide your console logs."]),

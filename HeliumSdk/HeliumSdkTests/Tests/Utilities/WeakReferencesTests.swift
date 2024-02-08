@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -7,7 +7,7 @@ import XCTest
 import UIKit
 @testable import ChartboostMediationSDK
 
-class WeakReferencesTests: HeliumTestCase {
+class WeakReferencesTests: ChartboostMediationTestCase {
     
     /// Validates WeakReferences functionality when empty.
     func testEmpty() {

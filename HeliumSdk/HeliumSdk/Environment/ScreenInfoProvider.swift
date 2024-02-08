@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -14,7 +14,6 @@ protocol ScreenInfoProviding {
 }
 
 struct ScreenInfoProvider: ScreenInfoProviding {
-
     var isDarkModeEnabled: Bool {
         if #available(iOS 12.0, *) {
             return mainScreen.traitCollection.userInterfaceStyle == .dark
@@ -59,7 +58,6 @@ struct ScreenInfoProvider: ScreenInfoProviding {
 }
 
 extension UIApplication {
-
     /// This is a best-effort approach for obtaining the main screen of an app.
     /// Modern iOS supports multi-window scenarios on iPad, as well as newer technologies such as
     /// CarPlay which uses `CPTemplateApplicationScene` + `CPWindow` instead of `UIWindowScene` +
@@ -74,7 +72,7 @@ extension UIApplication {
             .foregroundActive, // one and only one `foregroundActive` scene is expected
             .foregroundInactive,
             .background,
-            .unattached
+            .unattached,
         ] as [UIScene.ActivationState] {
             if let screen = windowScenes.first(where: { $0.activationState == activationState })?.screen {
                 return screen

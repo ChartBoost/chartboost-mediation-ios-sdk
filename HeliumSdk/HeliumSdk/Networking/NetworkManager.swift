@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -63,7 +63,6 @@ final class NetworkManager: NSObject {
         let responseData: ResponseData? // some API might return empty data as success, such as /sdk_init
     }
 
-    @Injected(\.environment) private var environment
     @Injected(\.initializationStatusProvider) private var initializationStatusProvider
     @OptionalInjected(\.customTaskDispatcher, default: .serialBackgroundQueue(name: "network-manager")) private var taskDispatcher
 
@@ -140,7 +139,6 @@ extension NetworkManager {
 // MARK: - NetworkManager: NetworkManagerProtocol
 
 extension NetworkManager: NetworkManagerProtocol {
-
     func send(
         _ httpRequest: HTTPRequestWithRawDataResponse,
         maxRetries: Int,
@@ -249,7 +247,7 @@ extension NetworkManager.RequestError {
         case .dataTaskError(_, let httpURLResponse, _): // this `httpURLResponse` is Optional
             return httpURLResponse
         case .responseStatusCodeOutOfRangeError(_, let httpURLResponse, _),
-             .responseWithEmptyDataError(_ , let httpURLResponse),
+             .responseWithEmptyDataError(_, let httpURLResponse),
              .jsonDecodeError(_, let httpURLResponse, _, _),
              .nilNetworkManagerBeforeRetryError(_, let httpURLResponse, _):
             return httpURLResponse
@@ -259,8 +257,8 @@ extension NetworkManager.RequestError {
 
 // MARK: - Private NetworkManager
 
-private extension NetworkManager {
-    func commonSend(
+extension NetworkManager {
+    private func commonSend(
         _ httpRequest: HTTPRequest,
         maxRetries: Int,
         retryDelay: TimeInterval,
@@ -381,7 +379,7 @@ private extension NetworkManager {
         }
     }
 
-    static func isConnectivityError(_ error: Error?) -> Bool {
+    private static func isConnectivityError(_ error: Error?) -> Bool {
         guard
             let error = error as? NSError,
             error.domain == NSURLErrorDomain
@@ -402,12 +400,12 @@ private extension NetworkManager {
     }
 }
 
-private extension HTTP.StatusCode {
-    var isSuccess: Bool {
+extension HTTP.StatusCode {
+    fileprivate var isSuccess: Bool {
         200 <= self && self < 400
     }
 
-    var isRetryable: Bool {
+    fileprivate var isRetryable: Bool {
         400 <= self && self < 600
     }
 }

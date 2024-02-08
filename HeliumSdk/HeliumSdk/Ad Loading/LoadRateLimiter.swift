@@ -1,10 +1,9 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
 
 final class LoadRateLimiter: LoadRateLimiting {
-
     // MARK: - LoadRateLimiting
 
     /// Specifies how much time from now that the next load is allowed for a specified placement.
@@ -34,7 +33,7 @@ final class LoadRateLimiter: LoadRateLimiting {
     }
 
     /// Define the rate limit for a specified placement.
-    /// - Parameter value: The rate limit.  0 to indicate no limit.
+    /// - Parameter value: The rate limit. 0 to indicate no limit.
     /// - Parameter placement: The placement in question.
     func setLoadRateLimit(_ value: TimeInterval, placement: String) {
         queue.sync {
@@ -49,9 +48,9 @@ final class LoadRateLimiter: LoadRateLimiting {
         /// The rate limit for the placement.
         let rateLimit: TimeInterval
         /// When the placement was last loaded.
-        let lastLoadedDate: Date = Date()
+        let lastLoadedDate = Date()
     }
 
     private var configurations: [String: Configuration] = .init()
-    private let queue = DispatchQueue(label: "com.chartboost.Helium.LoadRateLimiter")
+    private let queue = DispatchQueue(label: "com.chartboost.mediation.LoadRateLimiter")
 }

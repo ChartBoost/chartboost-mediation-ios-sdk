@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class HeliumKeywordsTests: HeliumTestCase {
+class HeliumKeywordsTests: ChartboostMediationTestCase {
     // MARK: - Properties
     
     let keywords = HeliumKeywords()
@@ -15,14 +15,14 @@ class HeliumKeywordsTests: HeliumTestCase {
     
     func testEmptyByDefault() throws {
         XCTAssertNotNil(keywords.dictionary)
-        XCTAssertTrue(keywords.dictionary.count == 0)
+        XCTAssertEqual(keywords.dictionary.count, 0)
     }
 
     func testSetAllOK() throws {
         XCTAssertTrue(keywords.set(keyword: "foo", value: "bar"))
         XCTAssertTrue(keywords.set(keyword: "abc", value: "123"))
         XCTAssertTrue(keywords.set(keyword: "123", value: "null"))
-        XCTAssertTrue(keywords.dictionary.count == 3)
+        XCTAssertEqual(keywords.dictionary.count, 3)
         
         // key length = 64
         XCTAssertTrue(keywords.set(keyword: "abcdefghijklmnopqrstuvwxyzabcdefabcdefghijklmnopqrstuvwxyzabcdef", value: "123"))
@@ -35,7 +35,7 @@ class HeliumKeywordsTests: HeliumTestCase {
         
         let dictionary = keywords.dictionary
         XCTAssertNotNil(dictionary)
-        XCTAssertTrue(dictionary.count == 6)
+        XCTAssertEqual(dictionary.count, 6)
 
         XCTAssertEqual("bar", dictionary["foo"])
         XCTAssertEqual("123", dictionary["abc"])
@@ -52,7 +52,7 @@ class HeliumKeywordsTests: HeliumTestCase {
         // value length > 256
         XCTAssertFalse(keywords.set(keyword: "xyz", value: "abcdefghijklmnopqrstuvwxyzabcdefabcdefghijklmnopqrstuvwxyzabcdefabcdefghijklmnopqrstuvwxyzabcdefabcdefghijklmnopqrstuvwxyzabcdefabcdefghijklmnopqrstuvwxyzabcdefabcdefghijklmnopqrstuvwxyzabcdefabcdefghijklmnopqrstuvwxyzabcdefabcdefghijklmnopqrstuvwxyzabcdefg"))
 
-        XCTAssertTrue(keywords.dictionary.count == 0)
+        XCTAssertEqual(keywords.dictionary.count, 0)
     }
 
     func testReplace() throws {
@@ -66,7 +66,7 @@ class HeliumKeywordsTests: HeliumTestCase {
 
         let dictionary = keywords.dictionary
         XCTAssertNotNil(dictionary)
-        XCTAssertTrue(dictionary.count == 3)
+        XCTAssertEqual(dictionary.count, 3)
 
         XCTAssertEqual("rab", dictionary["foo"])
         XCTAssertEqual("321", dictionary["abc"])
@@ -77,32 +77,32 @@ class HeliumKeywordsTests: HeliumTestCase {
         XCTAssertTrue(keywords.set(keyword: "foo", value: "bar"))
         XCTAssertTrue(keywords.set(keyword: "abc", value: "123"))
         XCTAssertTrue(keywords.set(keyword: "123", value: "null"))
-        XCTAssertTrue(keywords.dictionary.count == 3)
+        XCTAssertEqual(keywords.dictionary.count, 3)
 
         XCTAssertEqual("123", keywords.remove(keyword: "abc"))
         XCTAssertNotNil(keywords.dictionary)
         XCTAssertNil(keywords.dictionary["abc"])
-        XCTAssertTrue(keywords.dictionary.count == 2)
+        XCTAssertEqual(keywords.dictionary.count, 2)
         
         XCTAssertEqual("bar", keywords.remove(keyword: "foo"))
         XCTAssertNotNil(keywords.dictionary)
         XCTAssertNil(keywords.dictionary["foo"])
-        XCTAssertTrue(keywords.dictionary.count == 1)
+        XCTAssertEqual(keywords.dictionary.count, 1)
 
         XCTAssertEqual("null", keywords.remove(keyword: "123"))
         XCTAssertNotNil(keywords.dictionary)
         XCTAssertNil(keywords.dictionary["123"])
-        XCTAssertTrue(keywords.dictionary.count == 0)
+        XCTAssertEqual(keywords.dictionary.count, 0)
 
         // try to remove one of the already removed
         XCTAssertNil(keywords.remove(keyword: "foo"))
         XCTAssertNotNil(keywords.dictionary)
-        XCTAssertTrue(keywords.dictionary.count == 0)
+        XCTAssertEqual(keywords.dictionary.count, 0)
     }
     
     func testImmutableDictionary() throws {
         var dictionary = keywords.dictionary
         dictionary["abc"] = "123"
-        XCTAssertTrue(keywords.dictionary.count == 0)
+        XCTAssertEqual(keywords.dictionary.count, 0)
     }
 }

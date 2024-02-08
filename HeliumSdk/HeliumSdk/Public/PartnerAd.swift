@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -10,10 +10,9 @@ import Foundation
 /// events corresponding to that ad to the Chartboost Mediation SDK.
 /// They also keep track of information related to a single load request.
 public protocol PartnerAd: AnyObject {
-    
     /// The partner adapter that created this ad.
     var adapter: PartnerAdapter { get }
-    
+
     /// The ad load request associated to the ad.
     /// It should be the one provided on ``PartnerAdapter/makeAd(request:delegate:)``.
     var request: PartnerAdLoadRequest { get }
@@ -21,11 +20,11 @@ public protocol PartnerAd: AnyObject {
     /// The partner ad delegate to send ad life-cycle events to.
     /// It should be the one provided on ``PartnerAdapter/makeAd(request:delegate:)``.
     var delegate: PartnerAdDelegate? { get }
-    
+
     /// The partner ad view to display inline. E.g. a banner view.
     /// Should be `nil` for full-screen ads.
     var inlineView: UIView? { get }
-    
+
     /// Loads an ad.
     /// Chartboost Mediation SDK will always call this method from the main thread for banner ads.
     /// - parameter viewController: The view controller on which the ad will be presented on. Needed on load for some banners.
@@ -34,7 +33,7 @@ public protocol PartnerAd: AnyObject {
         with viewController: UIViewController?,
         completion: @escaping (Result<PartnerEventDetails, Error>) -> Void
     )
-    
+
     /// Shows a loaded ad.
     /// Chartboost Mediation SDK will always call this method from the main thread.
     /// It will never get called for banner ads. You may leave the implementation blank for that ad format.
@@ -44,7 +43,7 @@ public protocol PartnerAd: AnyObject {
         with viewController: UIViewController,
         completion: @escaping (Result<PartnerEventDetails, Error>) -> Void
     )
-    
+
     /// Invalidates a loaded ad.
     /// Chartboost Mediation SDK calls this method right before disposing of an ad.
     ///
@@ -67,10 +66,9 @@ public protocol PartnerAdDelegate: AnyObject {
     func didExpire(_ ad: PartnerAd, details: PartnerEventDetails)
 }
 
-/// `PartnerAd` extension that provides a default implementation of `invalidate()` that does nothing.
-public extension PartnerAd {
-    
-    func invalidate() throws {
+extension PartnerAd {
+    /// Default implementation of `invalidate()` that does nothing.
+    public func invalidate() throws {
         // Do nothing
         log(.invalidateSucceeded)
     }

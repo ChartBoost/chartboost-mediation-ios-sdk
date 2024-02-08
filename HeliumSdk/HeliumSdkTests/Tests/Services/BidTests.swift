@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-final class BidTests: HeliumTestCase {
+final class BidTests: ChartboostMediationTestCase {
 
     /// Validate that no rewarded callback object is created when there is no data specified.
     func testNoData() throws {

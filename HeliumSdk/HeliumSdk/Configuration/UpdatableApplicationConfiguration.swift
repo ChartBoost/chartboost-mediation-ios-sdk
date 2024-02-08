@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -9,15 +9,13 @@ import Foundation
 /// Since this is a reference type, one instance of this class can be shared with other components and they will always
 /// get the most up-to-date configuration whenever it is updated without having to update their reference to it.
 final class UpdatableApplicationConfiguration: ApplicationConfiguration {
-    
     /// Raw configuration values as obtained from the backend.
-    /// Matches the schema defined here https://chartboost.atlassian.net/wiki/spaces/SG/pages/2479423630/
     /// Note that property names must match the schema keys, except that we use camel case names instead of snake case.
     struct RawValues: Decodable {
-        
         struct Placement: Codable {
             let chartboostPlacement: String
-            let format: String  // a String instead of a Codable enum so we can recover from parsing errors without discarding the whole response
+            // a String instead of a Codable enum so we can recover from parsing errors without discarding the whole response
+            let format: String
             let autoRefreshRate: TimeInterval?
         }
 
@@ -39,9 +37,11 @@ final class UpdatableApplicationConfiguration: ApplicationConfiguration {
         let initMetricsPostTimeout: UInt?
         let placements: [Placement]
         let logLevel: LogLevel?
-        let privacyBanList: [String]? // use `String` instead of `PrivacyBanListCandidate` to avoid discarding the whole response when Codable parsing errors happen (unrecognized / misspelled value)
+        // use `String` instead of `PrivacyBanListCandidate` to avoid discarding the whole response when Codable parsing errors happen
+        // (unrecognized / misspelled value)
+        let privacyBanList: [String]?
     }
-    
+
     /// Default configuration values to use when a backend value is not available.
     private enum DefaultValues {
         static let fullscreenLoadTimeout: TimeInterval = 30
@@ -61,11 +61,11 @@ final class UpdatableApplicationConfiguration: ApplicationConfiguration {
     }
 
     static let keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy = .convertFromSnakeCase
-        
+
     /// The current configuration values, obtained either from the backend or from persisted data.
     /// If `nil` the configuration will use default values only.
     private var values: RawValues?
-    
+
     /// Updates the configuration with a JSON-encoded `RawValues` data.
     func update(with data: Data) throws {
         // Decode the values JSON expecting snake-cased keys to match our camel-cased property names.
@@ -81,37 +81,34 @@ final class UpdatableApplicationConfiguration: ApplicationConfiguration {
 // we want, and use them to fulfill component-specific configuration requirements.
 
 extension UpdatableApplicationConfiguration: PartnerControllerConfiguration {
-    
     var prebidFetchTimeout: TimeInterval {
         TimeInterval(values?.prebidFetchTimeout ?? DefaultValues.prebidFetchTimeout)
     }
-    
+
     var initMetricsPostTimeout: TimeInterval {
         TimeInterval(values?.initMetricsPostTimeout ?? DefaultValues.initMetricsPostTimeout)
     }
 }
 
 extension UpdatableApplicationConfiguration: BidFulfillOperationConfiguration {
-    
     var fullscreenLoadTimeout: TimeInterval {
         values?.fullscreenLoadTimeout ?? DefaultValues.fullscreenLoadTimeout
     }
-    
+
     var bannerLoadTimeout: TimeInterval {
         TimeInterval(values?.bannerLoadTimeout ?? DefaultValues.bannerLoadTimeout)
     }
 }
 
 extension UpdatableApplicationConfiguration: SDKInitializerConfiguration {
-
     var initTimeout: TimeInterval {
         TimeInterval(values?.initTimeout ?? DefaultValues.initTimeout)
     }
-    
+
     var partnerAdapterClassNames: Set<String> {
         Set(values?.adapterClasses ?? [])
     }
-    
+
     var partnerCredentials: [PartnerIdentifier: [String: Any]] {
         (values?.credentials.value ?? [:])
         // TODO: Remove this reference adapter hack in HB-4504
@@ -120,48 +117,44 @@ extension UpdatableApplicationConfiguration: SDKInitializerConfiguration {
 }
 
 extension UpdatableApplicationConfiguration: VisibilityTrackerConfiguration {
-    
     var minimumVisiblePoints: CGFloat {
         CGFloat(values?.bannerImpressionMinVisibleDips ?? DefaultValues.bannerImpressionMinVisibleDips)
     }
-    
+
     var pollInterval: TimeInterval {
         TimeInterval(values?.visibilityTrackerPollIntervalMs ?? DefaultValues.visibilityTrackerPollIntervalMs) / 1000
     }
-    
+
     var minimumVisibleSeconds: TimeInterval {
         TimeInterval(values?.bannerImpressionMinVisibleDurationMs ?? DefaultValues.bannerImpressionMinVisibleDurationMs) / 1000
     }
-    
+
     var traversalLimit: UInt {
         values?.visibilityTrackerTraversalLimit ?? DefaultValues.visibilityTrackerTraversalLimit
     }
 }
 
 extension UpdatableApplicationConfiguration: AdControllerConfiguration {
-    
     var showTimeout: TimeInterval {
         TimeInterval(values?.showTimeout ?? DefaultValues.showTimeout)
     }
 }
 
 extension UpdatableApplicationConfiguration: MetricsEventLoggerConfiguration {
-    
     var filter: [MetricsEvent.EventType] {
         values?.metricsEvents?.compactMap { MetricsEvent.EventType(rawValue: $0) } ?? MetricsEvent.EventType.allCases
     }
-    
+
     var country: String? {
         values?.country
     }
-    
+
     var testIdentifier: String? {
         values?.internalTestId
     }
 }
 
 extension UpdatableApplicationConfiguration: FullscreenAdLoaderConfiguration {
-    
     func adFormat(forPlacement placement: String) -> AdFormat? {
         // Fail early if there is no placement info in the configuration
         guard let placement = values?.placements.first(where: { $0.chartboostPlacement == placement }) else {
@@ -180,7 +173,6 @@ extension UpdatableApplicationConfiguration: FullscreenAdLoaderConfiguration {
 }
 
 extension UpdatableApplicationConfiguration: BannerControllerConfiguration {
-    
     func autoRefreshRate(forPlacement placement: String) -> TimeInterval {
         // Fail early if there is no placement info in the configuration
         guard let placement = values?.placements.first(where: { $0.chartboostPlacement == placement }) else {
@@ -199,18 +191,18 @@ extension UpdatableApplicationConfiguration: BannerControllerConfiguration {
             return autoRefreshRate  // Use the value as it is
         }
     }
-    
+
     func normalLoadRetryRate(forPlacement placement: String) -> TimeInterval {
         let rate = autoRefreshRate(forPlacement: placement)
         // In practice we never use the default value, because we don't retry banner loads if autorefresh is disabled.
         // This is just a safeguard.
         return rate < 10 ? DefaultValues.bannerAutoRefreshRate : rate
     }
-    
+
     var penaltyLoadRetryRate: TimeInterval {
         DefaultValues.bannerPenaltyLoadRetryRate
     }
-    
+
     var penaltyLoadRetryCount: UInt {
         DefaultValues.bannerPenaltyLoadRetryCount
     }
@@ -221,11 +213,9 @@ extension UpdatableApplicationConfiguration: BannerControllerConfiguration {
 }
 
 extension UpdatableApplicationConfiguration: ConsoleLoggerConfiguration {
-
     var logLevel: LogLevel? {
         values?.logLevel
     }
-    
 }
 
 extension UpdatableApplicationConfiguration: PrivacyConfiguration {

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -103,7 +103,7 @@
 		B96568072A0081A200BC61D1 /* AppTrackingInfoProviderDependencyMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = B96568062A0081A200BC61D1 /* AppTrackingInfoProviderDependencyMock.swift */; };
 		B96568092A0082D800BC61D1 /* AppTrackingInfoProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B96568082A0082D800BC61D1 /* AppTrackingInfoProviderTests.swift */; };
 		B97534CB29E4FC5D00450EBD /* AuctionsHTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97534CA29E4FC5D00450EBD /* AuctionsHTTPRequest.swift */; };
-		B97534CD29E6242E00450EBD /* HeliumAdLoadRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97534CC29E6242E00450EBD /* HeliumAdLoadRequestTests.swift */; };
+		B97534CD29E6242E00450EBD /* AdLoadRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97534CC29E6242E00450EBD /* AdLoadRequestTests.swift */; };
 		B977AF0729DB7EE6005F3984 /* WinnerEventHTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B977AF0629DB7EE6005F3984 /* WinnerEventHTTPRequest.swift */; };
 		B977AF0929DB87C4005F3984 /* WinnerEventHTTPRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B977AF0829DB87C4005F3984 /* WinnerEventHTTPRequestTests.swift */; };
 		B97DD25829A96FF700A42AF5 /* HTTPRequestWithEncodableBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97DD25729A96FF700A42AF5 /* HTTPRequestWithEncodableBody.swift */; };
@@ -131,6 +131,7 @@
 		B9D4A6A729C0483A00876C2B /* JSONSerialization+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9D4A6A529C0479300876C2B /* JSONSerialization+Test.swift */; };
 		B9D4A6A929C0FD5B00876C2B /* BackendAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9D4A6A829C0FD5B00876C2B /* BackendAPITests.swift */; };
 		B9FFE3CB2AB3A084007BBA37 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B9FFE3CA2AB3A084007BBA37 /* PrivacyInfo.xcprivacy */; };
+		DA8B2E61E128403268CD9ABC /* Pods_MemoryLeakTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B6E2BA9EAAEF30239595A2D /* Pods_MemoryLeakTests.framework */; };
 		E60289A828BD2A93003AC43E /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60289A728BD2A93003AC43E /* Reachability.swift */; };
 		E60BB45029CA07330005762E /* bid_response_interstitial_real.json in Resources */ = {isa = PBXBuildFile; fileRef = E60BB44D29CA07320005762E /* bid_response_interstitial_real.json */; };
 		E60BB45129CA07330005762E /* bid_response_rewarded_real.json in Resources */ = {isa = PBXBuildFile; fileRef = E60BB44E29CA07330005762E /* bid_response_rewarded_real.json */; };
@@ -149,6 +150,9 @@
 		E650651228A4203700C2FBEA /* LoadRateLimiting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E650651128A4203700C2FBEA /* LoadRateLimiting.swift */; };
 		E650651428A4343D00C2FBEA /* LoadRateLimiterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E650651328A4343D00C2FBEA /* LoadRateLimiterTests.swift */; };
 		E650651628A44DA300C2FBEA /* XCTestCase+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = E650651528A44DA300C2FBEA /* XCTestCase+Extras.swift */; };
+		E68106D22B4B23FD000C70E5 /* BackgroundTimeMonitorOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68106D12B4B23FD000C70E5 /* BackgroundTimeMonitorOperation.swift */; };
+		E68106D72B4B2CEF000C70E5 /* BackgroundTimeMonitorOperatorMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68106D52B4B2C83000C70E5 /* BackgroundTimeMonitorOperatorMock.swift */; };
+		E68106DA2B4B3F9B000C70E5 /* BackgroundTimeMonitorOperationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68106D82B4B3F7B000C70E5 /* BackgroundTimeMonitorOperationTests.swift */; };
 		E682465828F0A5ED0073B5AB /* MetricsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E682465728F0A5ED0073B5AB /* MetricsEvent.swift */; };
 		E699044C2A41F742003BC6D5 /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E699044B2A41F742003BC6D5 /* LogLevel.swift */; };
 		E699044E2A41F78E003BC6D5 /* LogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = E699044D2A41F78E003BC6D5 /* LogEntry.swift */; };
@@ -157,8 +161,10 @@
 		E69904542A41FE7F003BC6D5 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69904532A41FE7F003BC6D5 /* Logger.swift */; };
 		E6AAC932290730A600A1E66C /* MetricsEventLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AAC931290730A600A1E66C /* MetricsEventLogger.swift */; };
 		E6B9A2E129C2641400AEC225 /* ConsentSettingsMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B9A2E029C2641400AEC225 /* ConsentSettingsMock.swift */; };
-		E6B9A2E529C380F400AEC225 /* OpenRTB+Request+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B9A2E429C380F400AEC225 /* OpenRTB+Request+Extras.swift */; };
+		E6B9A2E529C380F400AEC225 /* AuctionsHTTPRequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B9A2E429C380F400AEC225 /* AuctionsHTTPRequestFactory.swift */; };
 		E6B9A2E729C3A90000AEC225 /* Bid.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B9A2E629C3A90000AEC225 /* Bid.swift */; };
+		E6C4107A2B4E013F0023ED4B /* BackgroundTimeMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C410792B4E013F0023ED4B /* BackgroundTimeMonitor.swift */; };
+		E6C4107F2B4E05BF0023ED4B /* BackgroundTimeMonitorMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C4107D2B4E05760023ED4B /* BackgroundTimeMonitorMock.swift */; };
 		E6C4DD592A449F56006F6249 /* ConsoleLoggerConfigurationDependencyMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C4DD582A449F56006F6249 /* ConsoleLoggerConfigurationDependencyMock.swift */; };
 		E6CA5B9C28AEAE2000CB80FD /* InstanceIdentifierProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6CA5B9B28AEAE2000CB80FD /* InstanceIdentifierProvider.swift */; };
 		E6CA5B9F28AED05000CB80FD /* InstanceIdentifierProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6CA5B9E28AED05000CB80FD /* InstanceIdentifierProviderTests.swift */; };
@@ -166,7 +172,7 @@
 		E6DD93B329BF7786000B962E /* OpenRTB+Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DD93B229BF7786000B962E /* OpenRTB+Request.swift */; };
 		E6DD93B529BF7790000B962E /* OpenRTB+Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DD93B429BF7790000B962E /* OpenRTB+Response.swift */; };
 		E6E2E86D29C8C0D500A64350 /* LoadRateLimiterMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E2E86C29C8C0D500A64350 /* LoadRateLimiterMock.swift */; };
-		E6E2E87029C8C46200A64350 /* OpenRTBRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E2E86F29C8C46200A64350 /* OpenRTBRequestTests.swift */; };
+		E6E2E87029C8C46200A64350 /* AuctionsHTTPRequestFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E2E86F29C8C46200A64350 /* AuctionsHTTPRequestFactoryTests.swift */; };
 		E6E2E87129C9057800A64350 /* NetworkAdAuctionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E2E86A29C8C04E00A64350 /* NetworkAdAuctionServiceTests.swift */; };
 		E6E7A535295B8AE80077792C /* PartnerAd+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA145AEB28F85BE500137C76 /* PartnerAd+Error.swift */; };
 		E6ED4E4D28BEAB4800C70AFE /* ReachabilityMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6ED4E4C28BEAB4800C70AFE /* ReachabilityMock.swift */; };
@@ -177,11 +183,11 @@
 		EA13BBBC2902ECA400AF0864 /* full_sdk_init_response.json in Resources */ = {isa = PBXBuildFile; fileRef = EA13BBBB2902ECA400AF0864 /* full_sdk_init_response.json */; };
 		EA13BBBE2902EF1200AF0864 /* partial_sdk_init_response.json in Resources */ = {isa = PBXBuildFile; fileRef = EA13BBBD2902EF1200AF0864 /* partial_sdk_init_response.json */; };
 		EA13BBC12902F2C900AF0864 /* JSONTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA13BBC02902F2C900AF0864 /* JSONTests.swift */; };
-		EA13BBC42902F64500AF0864 /* HeliumUserDefaultsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA13BBC32902F64500AF0864 /* HeliumUserDefaultsStorageTests.swift */; };
+		EA13BBC42902F64500AF0864 /* MediationUserDefaultsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA13BBC32902F64500AF0864 /* MediationUserDefaultsStorageTests.swift */; };
 		EA13F80228C0FBA7000E2B21 /* SDKInitializerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA13F80128C0FBA7000E2B21 /* SDKInitializerMock.swift */; };
 		EA13F80428C0FBD7000E2B21 /* ApplicationConfigurationControllerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA13F80328C0FBD7000E2B21 /* ApplicationConfigurationControllerMock.swift */; };
 		EA13F80828C0FE1A000E2B21 /* LengthSDKCredentialsValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA13F80728C0FE1A000E2B21 /* LengthSDKCredentialsValidatorTests.swift */; };
-		EA13F80A28C0FFD8000E2B21 /* HeliumSDKInitializerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA13F80928C0FFD8000E2B21 /* HeliumSDKInitializerTests.swift */; };
+		EA13F80A28C0FFD8000E2B21 /* MediationSDKInitializerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA13F80928C0FFD8000E2B21 /* MediationSDKInitializerTests.swift */; };
 		EA13F80C28C1004E000E2B21 /* SDKCredentialsValidatorMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA13F80B28C1004E000E2B21 /* SDKCredentialsValidatorMock.swift */; };
 		EA13F80E28C262E1000E2B21 /* JSONStringSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA13F80D28C262E1000E2B21 /* JSONStringSerializer.swift */; };
 		EA145AE428F835AA00137C76 /* MutablePartnerAdapterStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA145AE328F835AA00137C76 /* MutablePartnerAdapterStorage.swift */; };
@@ -191,6 +197,13 @@
 		EA145AF028F8684900137C76 /* PartnerAdMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA145AEF28F8684900137C76 /* PartnerAdMock.swift */; };
 		EA145AF228F869FF00137C76 /* PartnerAdTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA145AF128F869FF00137C76 /* PartnerAdTests.swift */; };
 		EA145AF428F8737E00137C76 /* XCTAssert+AnyEquatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA145AF328F8737E00137C76 /* XCTAssert+AnyEquatable.swift */; };
+		EA27D91B2B4F358900A7E1D7 /* SDKInitHTTPRequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA27D91A2B4F358900A7E1D7 /* SDKInitHTTPRequestFactory.swift */; };
+		EA27D91E2B4F3BFD00A7E1D7 /* SDKInitHTTPRequestFactoryMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA27D91D2B4F3BFD00A7E1D7 /* SDKInitHTTPRequestFactoryMock.swift */; };
+		EA27D9202B4F3C3800A7E1D7 /* AuctionsHTTPRequestFactoryMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA27D91F2B4F3C3800A7E1D7 /* AuctionsHTTPRequestFactoryMock.swift */; };
+		EA27D9222B4F43F400A7E1D7 /* SDKInitHTTPRequestFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA27D9212B4F43F400A7E1D7 /* SDKInitHTTPRequestFactoryTests.swift */; };
+		EA27D9242B4F480A00A7E1D7 /* SDKInitHTTPRequest+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA27D9232B4F480A00A7E1D7 /* SDKInitHTTPRequest+Test.swift */; };
+		EA27D9262B4F4DD000A7E1D7 /* NetworkManager.RawDataResponse+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA27D9252B4F4DD000A7E1D7 /* NetworkManager.RawDataResponse+Test.swift */; };
+		EA27D9282B4F52C700A7E1D7 /* AuctionsHTTPRequest+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA27D9272B4F52C700A7E1D7 /* AuctionsHTTPRequest+Test.swift */; };
 		EA398B69296C405100FE052A /* ChartboostMediationError+Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA398B68296C405100FE052A /* ChartboostMediationError+Message.swift */; };
 		EA398B6B296C405800FE052A /* ChartboostMediationError+Cause.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA398B6A296C405800FE052A /* ChartboostMediationError+Cause.swift */; };
 		EA398B6D296C406100FE052A /* ChartboostMediationError+Resolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA398B6C296C406100FE052A /* ChartboostMediationError+Resolution.swift */; };
@@ -210,6 +223,7 @@
 		EA3D7E162886E3A700B4F667 /* PartnerControllerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA3D7E152886E3A700B4F667 /* PartnerControllerMock.swift */; };
 		EA3D7E1A2886F9BE00B4F667 /* ApplicationConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA3D7E192886F9BE00B4F667 /* ApplicationConfiguration.swift */; };
 		EA3D7E1C2886FB9000B4F667 /* ApplicationConfigurationMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA3D7E1B2886FB9000B4F667 /* ApplicationConfigurationMock.swift */; };
+		EA3F5E022AF418B4006D618F /* ChartboostMediationSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1147EAD1214B06550007EDF4 /* ChartboostMediationSDK.framework */; };
 		EA40EED829B74BC1002E5342 /* ChartboostMediationAdLoadRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA40EED729B74BC1002E5342 /* ChartboostMediationAdLoadRequest.swift */; };
 		EA40EEDA29B74EFE002E5342 /* ChartboostMediationAdLoadResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA40EED929B74EFE002E5342 /* ChartboostMediationAdLoadResult.swift */; };
 		EA40EEDC29B7506E002E5342 /* ChartboostMediationFullscreenAdLoadResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA40EEDB29B7506E002E5342 /* ChartboostMediationFullscreenAdLoadResult.swift */; };
@@ -239,7 +253,7 @@
 		EA4DDDEA28A549EA00C5C7B7 /* PartnerControllerConfigurationMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4DDDE928A549EA00C5C7B7 /* PartnerControllerConfigurationMock.swift */; };
 		EA4DDDF528ABA7A100C5C7B7 /* NSError+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4DDDF428ABA7A100C5C7B7 /* NSError+Test.swift */; };
 		EA4DDDF728AE76ED00C5C7B7 /* BidFulfillOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4DDDF628AE76ED00C5C7B7 /* BidFulfillOperation.swift */; };
-		EA4DDDFB28AE781600C5C7B7 /* HeliumAdLoadRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4DDDFA28AE781600C5C7B7 /* HeliumAdLoadRequest.swift */; };
+		EA4DDDFB28AE781600C5C7B7 /* AdLoadRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4DDDFA28AE781600C5C7B7 /* AdLoadRequest.swift */; };
 		EA54D9AF2A15809C00C9CBBE /* ChartboostMediationError+Code.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA54D9AE2A15809C00C9CBBE /* ChartboostMediationError+Code.swift */; };
 		EA5B133029474BA80022D6BD /* ImpressionTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5B132F29474BA80022D6BD /* ImpressionTracker.swift */; };
 		EA5B13322947521A0022D6BD /* ImpressionTrackerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5B13312947521A0022D6BD /* ImpressionTrackerMock.swift */; };
@@ -292,7 +306,7 @@
 		EA99B66628992413002736E0 /* HeliumRewardedAdDelegateMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA99B66528992413002736E0 /* HeliumRewardedAdDelegateMock.swift */; };
 		EA9A869928B62E450065918F /* PartnerAdLoadRequest+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA9A869828B62E450065918F /* PartnerAdLoadRequest+Test.swift */; };
 		EA9A869B28B641070065918F /* AdController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA9A869A28B641070065918F /* AdController.swift */; };
-		EA9A869D28B647BD0065918F /* HeliumAd.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA9A869C28B647BD0065918F /* HeliumAd.swift */; };
+		EA9A869D28B647BD0065918F /* LoadedAd.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA9A869C28B647BD0065918F /* LoadedAd.swift */; };
 		EA9A869F28B648DB0065918F /* RewardedCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA9A869E28B648DB0065918F /* RewardedCallback.swift */; };
 		EA9A86A128B65B5D0065918F /* AdRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA9A86A028B65B5D0065918F /* AdRepository.swift */; };
 		EA9A86A728B789920065918F /* AdAuctionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA9A86A628B789920065918F /* AdAuctionService.swift */; };
@@ -310,7 +324,7 @@
 		EAC53CDE28C0B294001A6DAF /* ApplicationConfigurationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC53CDD28C0B294001A6DAF /* ApplicationConfigurationController.swift */; };
 		EAC53CE028C0B77E001A6DAF /* SDKCredentialsValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC53CDF28C0B77E001A6DAF /* SDKCredentialsValidator.swift */; };
 		EACF401B28BF5FC30035D8C0 /* ConsentSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = EACF401A28BF5FC30035D8C0 /* ConsentSettings.swift */; };
-		EACF401F28BF69AA0035D8C0 /* HeliumInitializationStatusProviderMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EACF401E28BF69AA0035D8C0 /* HeliumInitializationStatusProviderMock.swift */; };
+		EACF401F28BF69AA0035D8C0 /* MediationInitializationStatusProviderMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EACF401E28BF69AA0035D8C0 /* MediationInitializationStatusProviderMock.swift */; };
 		EACF402128BF6C450035D8C0 /* AdControllerRepositoryMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EACF402028BF6C450035D8C0 /* AdControllerRepositoryMock.swift */; };
 		EACF402328BF6C910035D8C0 /* AdControllerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EACF402228BF6C910035D8C0 /* AdControllerMock.swift */; };
 		EACF402728BF6D360035D8C0 /* AdFactoryMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EACF402628BF6D360035D8C0 /* AdFactoryMock.swift */; };
@@ -324,6 +338,9 @@
 		EAD3278C28CA0AC700CE7514 /* UpdatableApplicationConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAD3278B28CA0AC700CE7514 /* UpdatableApplicationConfiguration.swift */; };
 		EAD3278E28CA0D6500CE7514 /* FileStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAD3278D28CA0D6500CE7514 /* FileStorage.swift */; };
 		EAD3279028CA0D9400CE7514 /* FileSystemStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAD3278F28CA0D9400CE7514 /* FileSystemStorageTests.swift */; };
+		EAD5E0122AF4119100C1C02B /* TestsHostAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAD5E0112AF4119100C1C02B /* TestsHostAppApp.swift */; };
+		EAD5E0162AF4119200C1C02B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EAD5E0152AF4119200C1C02B /* Assets.xcassets */; };
+		EAD5E0242AF411F400C1C02B /* MemoryLeakTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAD5E0232AF411F400C1C02B /* MemoryLeakTests.swift */; };
 		EADF00C229F6F4BC0025AA63 /* ConsentSettingsDelegateMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EADF00C129F6F4BC0025AA63 /* ConsentSettingsDelegateMock.swift */; };
 		EAEC309C286C61D100B6C120 /* JSONObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAEC309B286C61D100B6C120 /* JSONObject.swift */; };
 		EAEE1F352954A28F00DECC5E /* Injected.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAEE1F342954A28F00DECC5E /* Injected.swift */; };
@@ -340,7 +357,7 @@
 		EAF5F30E29D1CE2E00C82F3C /* BidFulfillOperationFactoryMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF5F30D29D1CE2E00C82F3C /* BidFulfillOperationFactoryMock.swift */; };
 		EAF9612E28BCC3850023E32E /* WeakReferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF9612D28BCC3850023E32E /* WeakReferences.swift */; };
 		EAF9613028BCC6480023E32E /* WeakReferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF9612F28BCC6480023E32E /* WeakReferencesTests.swift */; };
-		EAF9613228BCCEE90023E32E /* HeliumAdLoadRequest+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF9613128BCCEE90023E32E /* HeliumAdLoadRequest+Test.swift */; };
+		EAF9613228BCCEE90023E32E /* AdLoadRequest+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF9613128BCCEE90023E32E /* AdLoadRequest+Test.swift */; };
 		EAF9613428BCCEF30023E32E /* HeliumAd+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF9613328BCCEF30023E32E /* HeliumAd+Test.swift */; };
 		EAF9613628BCCEFE0023E32E /* RewardedCallback+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF9613528BCCEFE0023E32E /* RewardedCallback+Test.swift */; };
 		EAF9615A28BCEC460023E32E /* HeliumInterstitialAd.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF9615928BCEC460023E32E /* HeliumInterstitialAd.swift */; };
@@ -410,6 +427,20 @@
 			remoteGlobalIDString = 1147EAD0214B06550007EDF4;
 			remoteInfo = HeliumSdk;
 		};
+		EA3F5E042AF418B4006D618F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1147EAC8214B06550007EDF4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1147EAD0214B06550007EDF4;
+			remoteInfo = ChartboostMediationSDK;
+		};
+		EAD5E0252AF411F400C1C02B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1147EAC8214B06550007EDF4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EAD5E00E2AF4119100C1C02B;
+			remoteInfo = TestsHostApp;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -472,6 +503,9 @@
 		1147EADA214B06550007EDF4 /* ChartboostMediationSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChartboostMediationSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1147EAE1214B06550007EDF4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		11FBBDDC21ACD71700F9650C /* HeliumDelegates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeliumDelegates.h; sourceTree = "<group>"; };
+		4D24B3F03EB713D3C6D0581C /* Pods-MemoryLeakTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemoryLeakTests.debug.xcconfig"; path = "../HeliumSdk/MemoryLeakTests/Pods/Target Support Files/Pods-MemoryLeakTests/Pods-MemoryLeakTests.debug.xcconfig"; sourceTree = "<group>"; };
+		5949916C711C91A3B058B7B8 /* Pods-MemoryLeakTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemoryLeakTests.release.xcconfig"; path = "../HeliumSdk/MemoryLeakTests/Pods/Target Support Files/Pods-MemoryLeakTests/Pods-MemoryLeakTests.release.xcconfig"; sourceTree = "<group>"; };
+		9B6E2BA9EAAEF30239595A2D /* Pods_MemoryLeakTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MemoryLeakTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B90398CE29F73E99009A4261 /* ChartboostIDProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartboostIDProvider.swift; sourceTree = "<group>"; };
 		B90398D429F75158009A4261 /* Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		B90398D829F7536A009A4261 /* DeviceInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoTests.swift; sourceTree = "<group>"; };
@@ -516,7 +550,7 @@
 		B96568062A0081A200BC61D1 /* AppTrackingInfoProviderDependencyMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTrackingInfoProviderDependencyMock.swift; sourceTree = "<group>"; };
 		B96568082A0082D800BC61D1 /* AppTrackingInfoProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTrackingInfoProviderTests.swift; sourceTree = "<group>"; };
 		B97534CA29E4FC5D00450EBD /* AuctionsHTTPRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuctionsHTTPRequest.swift; sourceTree = "<group>"; };
-		B97534CC29E6242E00450EBD /* HeliumAdLoadRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeliumAdLoadRequestTests.swift; sourceTree = "<group>"; };
+		B97534CC29E6242E00450EBD /* AdLoadRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdLoadRequestTests.swift; sourceTree = "<group>"; };
 		B977AF0629DB7EE6005F3984 /* WinnerEventHTTPRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinnerEventHTTPRequest.swift; sourceTree = "<group>"; };
 		B977AF0829DB87C4005F3984 /* WinnerEventHTTPRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinnerEventHTTPRequestTests.swift; sourceTree = "<group>"; };
 		B97DD25729A96FF700A42AF5 /* HTTPRequestWithEncodableBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPRequestWithEncodableBody.swift; sourceTree = "<group>"; };
@@ -562,6 +596,9 @@
 		E650651128A4203700C2FBEA /* LoadRateLimiting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadRateLimiting.swift; sourceTree = "<group>"; };
 		E650651328A4343D00C2FBEA /* LoadRateLimiterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadRateLimiterTests.swift; sourceTree = "<group>"; };
 		E650651528A44DA300C2FBEA /* XCTestCase+Extras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Extras.swift"; sourceTree = "<group>"; };
+		E68106D12B4B23FD000C70E5 /* BackgroundTimeMonitorOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundTimeMonitorOperation.swift; sourceTree = "<group>"; };
+		E68106D52B4B2C83000C70E5 /* BackgroundTimeMonitorOperatorMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundTimeMonitorOperatorMock.swift; sourceTree = "<group>"; };
+		E68106D82B4B3F7B000C70E5 /* BackgroundTimeMonitorOperationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundTimeMonitorOperationTests.swift; sourceTree = "<group>"; };
 		E682465728F0A5ED0073B5AB /* MetricsEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsEvent.swift; sourceTree = "<group>"; };
 		E699044B2A41F742003BC6D5 /* LogLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogLevel.swift; sourceTree = "<group>"; };
 		E699044D2A41F78E003BC6D5 /* LogEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEntry.swift; sourceTree = "<group>"; };
@@ -570,8 +607,10 @@
 		E69904532A41FE7F003BC6D5 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		E6AAC931290730A600A1E66C /* MetricsEventLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsEventLogger.swift; sourceTree = "<group>"; };
 		E6B9A2E029C2641400AEC225 /* ConsentSettingsMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentSettingsMock.swift; sourceTree = "<group>"; };
-		E6B9A2E429C380F400AEC225 /* OpenRTB+Request+Extras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OpenRTB+Request+Extras.swift"; sourceTree = "<group>"; };
+		E6B9A2E429C380F400AEC225 /* AuctionsHTTPRequestFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuctionsHTTPRequestFactory.swift; sourceTree = "<group>"; };
 		E6B9A2E629C3A90000AEC225 /* Bid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bid.swift; sourceTree = "<group>"; };
+		E6C410792B4E013F0023ED4B /* BackgroundTimeMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundTimeMonitor.swift; sourceTree = "<group>"; };
+		E6C4107D2B4E05760023ED4B /* BackgroundTimeMonitorMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundTimeMonitorMock.swift; sourceTree = "<group>"; };
 		E6C4DD582A449F56006F6249 /* ConsoleLoggerConfigurationDependencyMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLoggerConfigurationDependencyMock.swift; sourceTree = "<group>"; };
 		E6CA5B9B28AEAE2000CB80FD /* InstanceIdentifierProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceIdentifierProvider.swift; sourceTree = "<group>"; };
 		E6CA5B9E28AED05000CB80FD /* InstanceIdentifierProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceIdentifierProviderTests.swift; sourceTree = "<group>"; };
@@ -580,7 +619,7 @@
 		E6DD93B429BF7790000B962E /* OpenRTB+Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OpenRTB+Response.swift"; sourceTree = "<group>"; };
 		E6E2E86A29C8C04E00A64350 /* NetworkAdAuctionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkAdAuctionServiceTests.swift; sourceTree = "<group>"; };
 		E6E2E86C29C8C0D500A64350 /* LoadRateLimiterMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadRateLimiterMock.swift; sourceTree = "<group>"; };
-		E6E2E86F29C8C46200A64350 /* OpenRTBRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenRTBRequestTests.swift; sourceTree = "<group>"; };
+		E6E2E86F29C8C46200A64350 /* AuctionsHTTPRequestFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuctionsHTTPRequestFactoryTests.swift; sourceTree = "<group>"; };
 		E6ED4E4C28BEAB4800C70AFE /* ReachabilityMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReachabilityMock.swift; sourceTree = "<group>"; };
 		E6F057C22A4B2AF600D899F2 /* LogCaptureHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogCaptureHandler.swift; sourceTree = "<group>"; };
 		EA13BBB42902923F00AF0864 /* UserDefaultsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsStorage.swift; sourceTree = "<group>"; };
@@ -589,11 +628,11 @@
 		EA13BBBB2902ECA400AF0864 /* full_sdk_init_response.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = full_sdk_init_response.json; sourceTree = "<group>"; };
 		EA13BBBD2902EF1200AF0864 /* partial_sdk_init_response.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = partial_sdk_init_response.json; sourceTree = "<group>"; };
 		EA13BBC02902F2C900AF0864 /* JSONTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONTests.swift; sourceTree = "<group>"; };
-		EA13BBC32902F64500AF0864 /* HeliumUserDefaultsStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeliumUserDefaultsStorageTests.swift; sourceTree = "<group>"; };
+		EA13BBC32902F64500AF0864 /* MediationUserDefaultsStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediationUserDefaultsStorageTests.swift; sourceTree = "<group>"; };
 		EA13F80128C0FBA7000E2B21 /* SDKInitializerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKInitializerMock.swift; sourceTree = "<group>"; };
 		EA13F80328C0FBD7000E2B21 /* ApplicationConfigurationControllerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationConfigurationControllerMock.swift; sourceTree = "<group>"; };
 		EA13F80728C0FE1A000E2B21 /* LengthSDKCredentialsValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LengthSDKCredentialsValidatorTests.swift; sourceTree = "<group>"; };
-		EA13F80928C0FFD8000E2B21 /* HeliumSDKInitializerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeliumSDKInitializerTests.swift; sourceTree = "<group>"; };
+		EA13F80928C0FFD8000E2B21 /* MediationSDKInitializerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediationSDKInitializerTests.swift; sourceTree = "<group>"; };
 		EA13F80B28C1004E000E2B21 /* SDKCredentialsValidatorMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKCredentialsValidatorMock.swift; sourceTree = "<group>"; };
 		EA13F80D28C262E1000E2B21 /* JSONStringSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONStringSerializer.swift; sourceTree = "<group>"; };
 		EA145AE328F835AA00137C76 /* MutablePartnerAdapterStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutablePartnerAdapterStorage.swift; sourceTree = "<group>"; };
@@ -604,6 +643,14 @@
 		EA145AEF28F8684900137C76 /* PartnerAdMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerAdMock.swift; sourceTree = "<group>"; };
 		EA145AF128F869FF00137C76 /* PartnerAdTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerAdTests.swift; sourceTree = "<group>"; };
 		EA145AF328F8737E00137C76 /* XCTAssert+AnyEquatable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTAssert+AnyEquatable.swift"; sourceTree = "<group>"; };
+		EA23E8292AF4320200F16CB7 /* MemoryLeakTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = MemoryLeakTests.xctestplan; sourceTree = "<group>"; };
+		EA27D91A2B4F358900A7E1D7 /* SDKInitHTTPRequestFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKInitHTTPRequestFactory.swift; sourceTree = "<group>"; };
+		EA27D91D2B4F3BFD00A7E1D7 /* SDKInitHTTPRequestFactoryMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKInitHTTPRequestFactoryMock.swift; sourceTree = "<group>"; };
+		EA27D91F2B4F3C3800A7E1D7 /* AuctionsHTTPRequestFactoryMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuctionsHTTPRequestFactoryMock.swift; sourceTree = "<group>"; };
+		EA27D9212B4F43F400A7E1D7 /* SDKInitHTTPRequestFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKInitHTTPRequestFactoryTests.swift; sourceTree = "<group>"; };
+		EA27D9232B4F480A00A7E1D7 /* SDKInitHTTPRequest+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SDKInitHTTPRequest+Test.swift"; sourceTree = "<group>"; };
+		EA27D9252B4F4DD000A7E1D7 /* NetworkManager.RawDataResponse+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NetworkManager.RawDataResponse+Test.swift"; sourceTree = "<group>"; };
+		EA27D9272B4F52C700A7E1D7 /* AuctionsHTTPRequest+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuctionsHTTPRequest+Test.swift"; sourceTree = "<group>"; };
 		EA398B68296C405100FE052A /* ChartboostMediationError+Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChartboostMediationError+Message.swift"; sourceTree = "<group>"; };
 		EA398B6A296C405800FE052A /* ChartboostMediationError+Cause.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChartboostMediationError+Cause.swift"; sourceTree = "<group>"; };
 		EA398B6C296C406100FE052A /* ChartboostMediationError+Resolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChartboostMediationError+Resolution.swift"; sourceTree = "<group>"; };
@@ -652,7 +699,7 @@
 		EA4DDDE928A549EA00C5C7B7 /* PartnerControllerConfigurationMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerControllerConfigurationMock.swift; sourceTree = "<group>"; };
 		EA4DDDF428ABA7A100C5C7B7 /* NSError+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSError+Test.swift"; sourceTree = "<group>"; };
 		EA4DDDF628AE76ED00C5C7B7 /* BidFulfillOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidFulfillOperation.swift; sourceTree = "<group>"; };
-		EA4DDDFA28AE781600C5C7B7 /* HeliumAdLoadRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeliumAdLoadRequest.swift; sourceTree = "<group>"; };
+		EA4DDDFA28AE781600C5C7B7 /* AdLoadRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdLoadRequest.swift; sourceTree = "<group>"; };
 		EA54D9AE2A15809C00C9CBBE /* ChartboostMediationError+Code.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChartboostMediationError+Code.swift"; sourceTree = "<group>"; };
 		EA5B132F29474BA80022D6BD /* ImpressionTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionTracker.swift; sourceTree = "<group>"; };
 		EA5B13312947521A0022D6BD /* ImpressionTrackerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionTrackerMock.swift; sourceTree = "<group>"; };
@@ -700,7 +747,7 @@
 		EA99B66528992413002736E0 /* HeliumRewardedAdDelegateMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeliumRewardedAdDelegateMock.swift; sourceTree = "<group>"; };
 		EA9A869828B62E450065918F /* PartnerAdLoadRequest+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PartnerAdLoadRequest+Test.swift"; sourceTree = "<group>"; };
 		EA9A869A28B641070065918F /* AdController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdController.swift; sourceTree = "<group>"; };
-		EA9A869C28B647BD0065918F /* HeliumAd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeliumAd.swift; sourceTree = "<group>"; };
+		EA9A869C28B647BD0065918F /* LoadedAd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadedAd.swift; sourceTree = "<group>"; };
 		EA9A869E28B648DB0065918F /* RewardedCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardedCallback.swift; sourceTree = "<group>"; };
 		EA9A86A028B65B5D0065918F /* AdRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdRepository.swift; sourceTree = "<group>"; };
 		EA9A86A628B789920065918F /* AdAuctionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdAuctionService.swift; sourceTree = "<group>"; };
@@ -719,7 +766,7 @@
 		EAC53CDD28C0B294001A6DAF /* ApplicationConfigurationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationConfigurationController.swift; sourceTree = "<group>"; };
 		EAC53CDF28C0B77E001A6DAF /* SDKCredentialsValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKCredentialsValidator.swift; sourceTree = "<group>"; };
 		EACF401A28BF5FC30035D8C0 /* ConsentSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentSettings.swift; sourceTree = "<group>"; };
-		EACF401E28BF69AA0035D8C0 /* HeliumInitializationStatusProviderMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeliumInitializationStatusProviderMock.swift; sourceTree = "<group>"; };
+		EACF401E28BF69AA0035D8C0 /* MediationInitializationStatusProviderMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediationInitializationStatusProviderMock.swift; sourceTree = "<group>"; };
 		EACF402028BF6C450035D8C0 /* AdControllerRepositoryMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdControllerRepositoryMock.swift; sourceTree = "<group>"; };
 		EACF402228BF6C910035D8C0 /* AdControllerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdControllerMock.swift; sourceTree = "<group>"; };
 		EACF402628BF6D360035D8C0 /* AdFactoryMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdFactoryMock.swift; sourceTree = "<group>"; };
@@ -733,6 +780,11 @@
 		EAD3278B28CA0AC700CE7514 /* UpdatableApplicationConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatableApplicationConfiguration.swift; sourceTree = "<group>"; };
 		EAD3278D28CA0D6500CE7514 /* FileStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileStorage.swift; sourceTree = "<group>"; };
 		EAD3278F28CA0D9400CE7514 /* FileSystemStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSystemStorageTests.swift; sourceTree = "<group>"; };
+		EAD5E00F2AF4119100C1C02B /* TestsHostApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestsHostApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EAD5E0112AF4119100C1C02B /* TestsHostAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestsHostAppApp.swift; sourceTree = "<group>"; };
+		EAD5E0152AF4119200C1C02B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		EAD5E0212AF411F400C1C02B /* MemoryLeakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MemoryLeakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EAD5E0232AF411F400C1C02B /* MemoryLeakTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryLeakTests.swift; sourceTree = "<group>"; };
 		EAD7AF1A28F031E700F5EF6F /* All Tests.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "All Tests.xctestplan"; sourceTree = "<group>"; };
 		EAD7AF1D28F039F800F5EF6F /* Fast Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Fast Tests.xctestplan"; sourceTree = "<group>"; };
 		EAD7AF1E28F03A4C00F5EF6F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -753,7 +805,7 @@
 		EAF5F30D29D1CE2E00C82F3C /* BidFulfillOperationFactoryMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidFulfillOperationFactoryMock.swift; sourceTree = "<group>"; };
 		EAF9612D28BCC3850023E32E /* WeakReferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeakReferences.swift; sourceTree = "<group>"; };
 		EAF9612F28BCC6480023E32E /* WeakReferencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeakReferencesTests.swift; sourceTree = "<group>"; };
-		EAF9613128BCCEE90023E32E /* HeliumAdLoadRequest+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HeliumAdLoadRequest+Test.swift"; sourceTree = "<group>"; };
+		EAF9613128BCCEE90023E32E /* AdLoadRequest+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AdLoadRequest+Test.swift"; sourceTree = "<group>"; };
 		EAF9613328BCCEF30023E32E /* HeliumAd+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HeliumAd+Test.swift"; sourceTree = "<group>"; };
 		EAF9613528BCCEFE0023E32E /* RewardedCallback+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RewardedCallback+Test.swift"; sourceTree = "<group>"; };
 		EAF9615928BCEC460023E32E /* HeliumInterstitialAd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeliumInterstitialAd.swift; sourceTree = "<group>"; };
@@ -849,6 +901,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EAD5E00C2AF4119100C1C02B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EAD5E01E2AF411F400C1C02B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EA3F5E022AF418B4006D618F /* ChartboostMediationSDK.framework in Frameworks */,
+				DA8B2E61E128403268CD9ABC /* Pods_MemoryLeakTests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -936,6 +1004,9 @@
 				EA3D7E0B2881909F00B4F667 /* ApplicationStateObserverMock.swift */,
 				B96568062A0081A200BC61D1 /* AppTrackingInfoProviderDependencyMock.swift */,
 				B9540C662A043375004A5D97 /* AppTrackingInfoProviderMock.swift */,
+				EA27D91F2B4F3C3800A7E1D7 /* AuctionsHTTPRequestFactoryMock.swift */,
+				E6C4107D2B4E05760023ED4B /* BackgroundTimeMonitorMock.swift */,
+				E68106D52B4B2C83000C70E5 /* BackgroundTimeMonitorOperatorMock.swift */,
 				EAF5F2F729BB4A2E00C82F3C /* BannerControllerConfigurationMock.swift */,
 				EC1A26F02A5F23A300472E3C /* BannerControllerDelegateMock.swift */,
 				EA3D7DF52880445700B4F667 /* BannerControllerMock.swift */,
@@ -963,7 +1034,6 @@
 				EA909F4B2899493A003E5F6C /* FullScreenAdShowCoordinatorMock.swift */,
 				EA909F4D289949BA003E5F6C /* FullScreenAdShowObserverMock.swift */,
 				EA3D7DF12880426C00B4F667 /* HeliumBannerAdDelegateMock.swift */,
-				EACF401E28BF69AA0035D8C0 /* HeliumInitializationStatusProviderMock.swift */,
 				EA99B66328992392002736E0 /* HeliumInterstitialAdDelegateMock.swift */,
 				EA99B66528992413002736E0 /* HeliumRewardedAdDelegateMock.swift */,
 				B96339792A12B39D00B8E995 /* HeliumSdkDelegateMock.swift */,
@@ -974,6 +1044,7 @@
 				B9540C6C2A047FDC004A5D97 /* InfoPlistMock.swift */,
 				E61A77712911771F0009F589 /* InitResultsEventPublisherMock.swift */,
 				E6E2E86C29C8C0D500A64350 /* LoadRateLimiterMock.swift */,
+				EACF401E28BF69AA0035D8C0 /* MediationInitializationStatusProviderMock.swift */,
 				EA6976E228D0E24C00306C8E /* MetricsEventLoggerConfigurationMock.swift */,
 				E63D48F12908444500E12298 /* MetricsEventLoggerMock.swift */,
 				EAEE1F3C2954B13E00DECC5E /* MocksContainer.swift */,
@@ -990,6 +1061,7 @@
 				E6ED4E4C28BEAB4800C70AFE /* ReachabilityMock.swift */,
 				EA13F80B28C1004E000E2B21 /* SDKCredentialsValidatorMock.swift */,
 				EA6976DE28D0E04E00306C8E /* SDKInitializerConfigurationMock.swift */,
+				EA27D91D2B4F3BFD00A7E1D7 /* SDKInitHTTPRequestFactoryMock.swift */,
 				EA13F80128C0FBA7000E2B21 /* SDKInitializerMock.swift */,
 				EA65991D286F4D2A00182CD7 /* TaskDispatcherMock.swift */,
 				B940157429AFF28C004682F4 /* URLProtocolMock.swift */,
@@ -1008,8 +1080,11 @@
 				EC21007F2A1D794900706AE8 /* Documentation.docc */,
 				11FBBD8521ACD71700F9650C /* HeliumSdk */,
 				1147EADE214B06550007EDF4 /* HeliumSdkTests */,
+				EAD5E0102AF4119100C1C02B /* TestsHostApp */,
+				EAD5E0222AF411F400C1C02B /* MemoryLeakTests */,
 				116562FF2155E36B00658359 /* Frameworks */,
 				1147EAD2214B06550007EDF4 /* Products */,
+				6A50C3CBBD7FA65CC31CBCBB /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1018,6 +1093,8 @@
 			children = (
 				1147EAD1214B06550007EDF4 /* ChartboostMediationSDK.framework */,
 				1147EADA214B06550007EDF4 /* ChartboostMediationSDKTests.xctest */,
+				EAD5E00F2AF4119100C1C02B /* TestsHostApp.app */,
+				EAD5E0212AF411F400C1C02B /* MemoryLeakTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1055,6 +1132,7 @@
 				03EED61C21CC5F5200077FF2 /* CoreTelephony.framework */,
 				03EED61A21CC5F4800077FF2 /* SystemConfiguration.framework */,
 				03EED61821CC5F3900077FF2 /* StoreKit.framework */,
+				9B6E2BA9EAAEF30239595A2D /* Pods_MemoryLeakTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1090,10 +1168,19 @@
 				E6B9A2E629C3A90000AEC225 /* Bid.swift */,
 				E6DD93AE29BF6101000B962E /* OpenRTB.swift */,
 				E6DD93B229BF7786000B962E /* OpenRTB+Request.swift */,
-				E6B9A2E429C380F400AEC225 /* OpenRTB+Request+Extras.swift */,
 				E6DD93B429BF7790000B962E /* OpenRTB+Response.swift */,
 			);
 			path = Bid;
+			sourceTree = "<group>";
+		};
+		6A50C3CBBD7FA65CC31CBCBB /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4D24B3F03EB713D3C6D0581C /* Pods-MemoryLeakTests.debug.xcconfig */,
+				5949916C711C91A3B058B7B8 /* Pods-MemoryLeakTests.release.xcconfig */,
+			);
+			name = Pods;
+			path = ../Pods;
 			sourceTree = "<group>";
 		};
 		B9CE784B298C4BB9003D457F /* HTTPRequest */ = {
@@ -1141,14 +1228,6 @@
 			path = Logger;
 			sourceTree = "<group>";
 		};
-		E6E2E86E29C8C45500A64350 /* OpenRTB */ = {
-			isa = PBXGroup;
-			children = (
-				E6E2E86F29C8C46200A64350 /* OpenRTBRequestTests.swift */,
-			);
-			path = OpenRTB;
-			sourceTree = "<group>";
-		};
 		EA13BBBA2902EC6800AF0864 /* SDK Init Responses */ = {
 			isa = PBXGroup;
 			children = (
@@ -1171,10 +1250,19 @@
 			isa = PBXGroup;
 			children = (
 				EAD3278F28CA0D9400CE7514 /* FileSystemStorageTests.swift */,
-				EA13BBC32902F64500AF0864 /* HeliumUserDefaultsStorageTests.swift */,
 				B90398DD29F789BD009A4261 /* InfoPlistTests.swift */,
+				EA13BBC32902F64500AF0864 /* MediationUserDefaultsStorageTests.swift */,
 			);
 			path = Persistence;
+			sourceTree = "<group>";
+		};
+		EA27D91C2B4F390700A7E1D7 /* Factories */ = {
+			isa = PBXGroup;
+			children = (
+				E6E2E86F29C8C46200A64350 /* AuctionsHTTPRequestFactoryTests.swift */,
+				EA27D9212B4F43F400A7E1D7 /* SDKInitHTTPRequestFactoryTests.swift */,
+			);
+			path = Factories;
 			sourceTree = "<group>";
 		};
 		EA523B6F28EDC28D008DEA4B /* Public */ = {
@@ -1248,6 +1336,8 @@
 			isa = PBXGroup;
 			children = (
 				F19DDACB286CC7D200A84203 /* Application.swift */,
+				E6C410792B4E013F0023ED4B /* BackgroundTimeMonitor.swift */,
+				E68106D12B4B23FD000C70E5 /* BackgroundTimeMonitorOperation.swift */,
 				EA940E27294B2F360072C4A2 /* Result+Error.swift */,
 				B99B0CA32992D83F00A5FC3A /* SecTrust+Chartboost.swift */,
 				B930DC8529B7A13A005B5540 /* String+Chartboost.swift */,
@@ -1265,14 +1355,14 @@
 			children = (
 				EA9A869A28B641070065918F /* AdController.swift */,
 				EA7B92DF28BE502300D783A6 /* AdControllerRepository.swift */,
+				EA4DDDFA28AE781600C5C7B7 /* AdLoadRequest.swift */,
 				EAF5F2FB29BF234500C82F3C /* AdLoadResult.swift */,
 				EAF5F2FD29BF239700C82F3C /* AdShowResult.swift */,
 				EA6CDE6B287C52B300F13FCF /* BannerController.swift */,
 				EC3B694B2A67342D00C2A32C /* BannerSwapController.swift */,
 				EA40EEE329B75FB1002E5342 /* FullscreenAd.swift */,
-				EA9A869C28B647BD0065918F /* HeliumAd.swift */,
-				EA4DDDFA28AE781600C5C7B7 /* HeliumAdLoadRequest.swift */,
 				EAF9615F28BCF0360023E32E /* InterstitialAd.swift */,
+				EA9A869C28B647BD0065918F /* LoadedAd.swift */,
 				EAF9616128BCFB090023E32E /* RewardedAd.swift */,
 				EA9A869E28B648DB0065918F /* RewardedCallback.swift */,
 			);
@@ -1423,7 +1513,6 @@
 		EA523B8728EDD116008DEA4B /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				E6E2E86E29C8C45500A64350 /* OpenRTB */,
 				EA5B1333294754E00022D6BD /* Ad Showing */,
 				EA523B8828EDD11B008DEA4B /* Ad Loading */,
 				EA523B8928EDD121008DEA4B /* Configuration */,
@@ -1431,6 +1520,7 @@
 				EA523B8C28EDD12E008DEA4B /* Dependency Injection */,
 				EA523B8B28EDD12A008DEA4B /* Environment */,
 				E62D592D2964D38B009A121C /* Errors */,
+				EA27D91C2B4F390700A7E1D7 /* Factories */,
 				EA523B8D28EDD135008DEA4B /* Initialization */,
 				EA523B8F28EDD143008DEA4B /* Logging */,
 				EA523B9028EDD146008DEA4B /* Networking */,
@@ -1466,10 +1556,10 @@
 		EA523B8A28EDD126008DEA4B /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				B97534CC29E6242E00450EBD /* AdLoadRequestTests.swift */,
 				EACF403828BF9B3B0035D8C0 /* BannerControllerTests.swift */,
 				EC344C6D2A7430730068388C /* BannerSwapControllerTests.swift */,
 				EA40EEF029B7815D002E5342 /* FullscreenAdTests.swift */,
-				B97534CC29E6242E00450EBD /* HeliumAdLoadRequestTests.swift */,
 				EAB5079728B8E1E2001427A0 /* SingleAdStorageAdControllerTests.swift */,
 			);
 			path = Core;
@@ -1501,8 +1591,8 @@
 		EA523B8D28EDD135008DEA4B /* Initialization */ = {
 			isa = PBXGroup;
 			children = (
-				EA13F80928C0FFD8000E2B21 /* HeliumSDKInitializerTests.swift */,
 				EA13F80728C0FE1A000E2B21 /* LengthSDKCredentialsValidatorTests.swift */,
+				EA13F80928C0FFD8000E2B21 /* MediationSDKInitializerTests.swift */,
 			);
 			path = Initialization;
 			sourceTree = "<group>";
@@ -1586,10 +1676,11 @@
 			isa = PBXGroup;
 			children = (
 				EA3D7E092881904600B4F667 /* ApplicationTests.swift */,
-				EAF9612F28BCC6480023E32E /* WeakReferencesTests.swift */,
-				EA13BBC22902F62C00AF0864 /* Persistence */,
-				EA13BBBF2902F2C000AF0864 /* JSON */,
+				E68106D82B4B3F7B000C70E5 /* BackgroundTimeMonitorOperationTests.swift */,
 				EA5EBEE32876C7A2007381EF /* Concurrency */,
+				EA13BBBF2902F2C000AF0864 /* JSON */,
+				EA13BBC22902F62C00AF0864 /* Persistence */,
+				EAF9612F28BCC6480023E32E /* WeakReferencesTests.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1673,18 +1764,39 @@
 		EA9A869528B62E100065918F /* SDK Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				EAF9613128BCCEE90023E32E /* AdLoadRequest+Test.swift */,
 				EC1A26EE2A5F208200472E3C /* ChartboostMediationBannerLoadRequest+Test.swift */,
 				EC3242E32A743A3A00C4B8D2 /* ChartboostMediationBannerLoadResult+Test.swift */,
 				EAF9613328BCCEF30023E32E /* HeliumAd+Test.swift */,
-				EAF9613128BCCEE90023E32E /* HeliumAdLoadRequest+Test.swift */,
 				B9D4A6A529C0479300876C2B /* JSONSerialization+Test.swift */,
 				EAF5F2F229B9F97300C82F3C /* MetricsEvent+Test.swift */,
 				EA4DDDF428ABA7A100C5C7B7 /* NSError+Test.swift */,
+				EA27D9232B4F480A00A7E1D7 /* SDKInitHTTPRequest+Test.swift */,
 				EA9A869828B62E450065918F /* PartnerAdLoadRequest+Test.swift */,
+				EA27D9252B4F4DD000A7E1D7 /* NetworkManager.RawDataResponse+Test.swift */,
 				F19DDAD3286CDC0B00A84203 /* ResumableTimer+Testing.swift */,
 				EAF9613528BCCEFE0023E32E /* RewardedCallback+Test.swift */,
+				EA27D9272B4F52C700A7E1D7 /* AuctionsHTTPRequest+Test.swift */,
 			);
 			path = "SDK Extensions";
+			sourceTree = "<group>";
+		};
+		EAD5E0102AF4119100C1C02B /* TestsHostApp */ = {
+			isa = PBXGroup;
+			children = (
+				EAD5E0112AF4119100C1C02B /* TestsHostAppApp.swift */,
+				EAD5E0152AF4119200C1C02B /* Assets.xcassets */,
+			);
+			path = TestsHostApp;
+			sourceTree = "<group>";
+		};
+		EAD5E0222AF411F400C1C02B /* MemoryLeakTests */ = {
+			isa = PBXGroup;
+			children = (
+				EAD5E0232AF411F400C1C02B /* MemoryLeakTests.swift */,
+				EA23E8292AF4320200F16CB7 /* MemoryLeakTests.xctestplan */,
+			);
+			path = MemoryLeakTests;
 			sourceTree = "<group>";
 		};
 		EAD7AF1828F031D400F5EF6F /* TestPlans */ = {
@@ -1704,6 +1816,8 @@
 				EA7B92DD28BE4ED900D783A6 /* AdFactory.swift */,
 				EAF5F30B29D1B28300C82F3C /* BidFulfillOperationFactory.swift */,
 				EA5EBED6287458A1007381EF /* PartnerAdapterFactory.swift */,
+				E6B9A2E429C380F400AEC225 /* AuctionsHTTPRequestFactory.swift */,
+				EA27D91A2B4F358900A7E1D7 /* SDKInitHTTPRequestFactory.swift */,
 			);
 			path = Factories;
 			sourceTree = "<group>";
@@ -1798,6 +1912,44 @@
 			productReference = 1147EADA214B06550007EDF4 /* ChartboostMediationSDKTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		EAD5E00E2AF4119100C1C02B /* TestsHostApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EAD5E01C2AF4119200C1C02B /* Build configuration list for PBXNativeTarget "TestsHostApp" */;
+			buildPhases = (
+				EAD5E00B2AF4119100C1C02B /* Sources */,
+				EAD5E00C2AF4119100C1C02B /* Frameworks */,
+				EAD5E00D2AF4119100C1C02B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TestsHostApp;
+			productName = TestsHostApp;
+			productReference = EAD5E00F2AF4119100C1C02B /* TestsHostApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		EAD5E0202AF411F400C1C02B /* MemoryLeakTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EAD5E0272AF411F400C1C02B /* Build configuration list for PBXNativeTarget "MemoryLeakTests" */;
+			buildPhases = (
+				D3055C4D19BD86F0E77A8725 /* [CP] Check Pods Manifest.lock */,
+				EAD5E01D2AF411F400C1C02B /* Sources */,
+				EAD5E01E2AF411F400C1C02B /* Frameworks */,
+				EAD5E01F2AF411F400C1C02B /* Resources */,
+				DBBA9CF2B8DAD0704F9236DD /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EAD5E0262AF411F400C1C02B /* PBXTargetDependency */,
+				EA3F5E052AF418B4006D618F /* PBXTargetDependency */,
+			);
+			name = MemoryLeakTests;
+			productName = MemoryLeakTests;
+			productReference = EAD5E0212AF411F400C1C02B /* MemoryLeakTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1805,7 +1957,7 @@
 			isa = PBXProject;
 			attributes = {
 				DefaultBuildSystemTypeForWorkspace = Latest;
-				LastSwiftUpdateCheck = 1340;
+				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1340;
 				TargetAttributes = {
 					1147EAD0214B06550007EDF4 = {
@@ -1815,6 +1967,13 @@
 					1147EAD9214B06550007EDF4 = {
 						CreatedOnToolsVersion = 9.4.1;
 						LastSwiftMigration = 1340;
+					};
+					EAD5E00E2AF4119100C1C02B = {
+						CreatedOnToolsVersion = 15.0.1;
+					};
+					EAD5E0202AF411F400C1C02B = {
+						CreatedOnToolsVersion = 15.0.1;
+						TestTargetID = EAD5E00E2AF4119100C1C02B;
 					};
 				};
 			};
@@ -1833,6 +1992,8 @@
 			targets = (
 				1147EAD0214B06550007EDF4 /* ChartboostMediationSDK */,
 				1147EAD9214B06550007EDF4 /* ChartboostMediationSDKTests */,
+				EAD5E00E2AF4119100C1C02B /* TestsHostApp */,
+				EAD5E0202AF411F400C1C02B /* MemoryLeakTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1909,7 +2070,64 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EAD5E00D2AF4119100C1C02B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EAD5E0162AF4119200C1C02B /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EAD5E01F2AF411F400C1C02B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D3055C4D19BD86F0E77A8725 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-MemoryLeakTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DBBA9CF2B8DAD0704F9236DD /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MemoryLeakTests/Pods-MemoryLeakTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MemoryLeakTests/Pods-MemoryLeakTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MemoryLeakTests/Pods-MemoryLeakTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1147EACC214B06550007EDF4 /* Sources */ = {
@@ -1921,6 +2139,7 @@
 				F1409CA828930864009731E1 /* HeliumKeywords.swift in Sources */,
 				EAC53CDE28C0B294001A6DAF /* ApplicationConfigurationController.swift in Sources */,
 				EAF5F2FC29BF234500C82F3C /* AdLoadResult.swift in Sources */,
+				E6C4107A2B4E013F0023ED4B /* BackgroundTimeMonitor.swift in Sources */,
 				E64580332A4A29A00050B2BF /* Atomic.swift in Sources */,
 				B97DD25C29A9758D00A42AF5 /* NetworkActivityConsoleLogger.swift in Sources */,
 				E6AAC932290730A600A1E66C /* MetricsEventLogger.swift in Sources */,
@@ -1936,9 +2155,10 @@
 				EA4DDDC828A2B07600C5C7B7 /* GCDTaskGroup.swift in Sources */,
 				EAF9615E28BCEECA0023E32E /* HeliumBannerAd.swift in Sources */,
 				EA7B92DE28BE4ED900D783A6 /* AdFactory.swift in Sources */,
-				EA9A869D28B647BD0065918F /* HeliumAd.swift in Sources */,
+				EA9A869D28B647BD0065918F /* LoadedAd.swift in Sources */,
 				B90398CF29F73E99009A4261 /* ChartboostIDProvider.swift in Sources */,
 				EAEE1F352954A28F00DECC5E /* Injected.swift in Sources */,
+				EA27D91B2B4F358900A7E1D7 /* SDKInitHTTPRequestFactory.swift in Sources */,
 				EC2F952F2A5600E9002839BE /* ChartboostMediationBannerType.swift in Sources */,
 				EA145AE428F835AA00137C76 /* MutablePartnerAdapterStorage.swift in Sources */,
 				B940156F29AE86C2004682F4 /* HTTPRequestWithDecodableResponse.swift in Sources */,
@@ -1973,6 +2193,7 @@
 				EA13BBB52902923F00AF0864 /* UserDefaultsStorage.swift in Sources */,
 				B90398E229F9AD72009A4261 /* TelephonyNetworkInfoProvider.swift in Sources */,
 				EA3D7DDE2880216100B4F667 /* DependenciesContainer.swift in Sources */,
+				E68106D22B4B23FD000C70E5 /* BackgroundTimeMonitorOperation.swift in Sources */,
 				F103493828FA1289005473FF /* PartnerIdentifier.swift in Sources */,
 				B981525029CB87E6009ED0E7 /* MetricsHTTPRequest.swift in Sources */,
 				EA9A869B28B641070065918F /* AdController.swift in Sources */,
@@ -2036,9 +2257,9 @@
 				E699044C2A41F742003BC6D5 /* LogLevel.swift in Sources */,
 				B9533CF529EE0BDF0097C3F7 /* AppConfigurationService.swift in Sources */,
 				EA398B6B296C405800FE052A /* ChartboostMediationError+Cause.swift in Sources */,
-				EA4DDDFB28AE781600C5C7B7 /* HeliumAdLoadRequest.swift in Sources */,
+				EA4DDDFB28AE781600C5C7B7 /* AdLoadRequest.swift in Sources */,
 				EA40EEE029B75138002E5342 /* ChartboostMediationFullscreenAd.swift in Sources */,
-				E6B9A2E529C380F400AEC225 /* OpenRTB+Request+Extras.swift in Sources */,
+				E6B9A2E529C380F400AEC225 /* AuctionsHTTPRequestFactory.swift in Sources */,
 				EC2F95392A5604DF002839BE /* ChartboostMediationBannerLoadResult.swift in Sources */,
 				ECD705142A7C6FA2000E22CA /* AdaptiveBannerSizeHTTPRequest.swift in Sources */,
 				EA7B92E028BE502300D783A6 /* AdControllerRepository.swift in Sources */,
@@ -2089,9 +2310,10 @@
 				EA6976E928D1DC1000306C8E /* UpdatableApplicationConfigurationTests.swift in Sources */,
 				E61A77722911771F0009F589 /* InitResultsEventPublisherMock.swift in Sources */,
 				EAB5079A28B8E246001427A0 /* AdRepositoryMock.swift in Sources */,
+				EA27D9202B4F3C3800A7E1D7 /* AuctionsHTTPRequestFactoryMock.swift in Sources */,
 				B9540C672A043375004A5D97 /* AppTrackingInfoProviderMock.swift in Sources */,
 				E62D59312964D439009A121C /* ChartboostMediationErrorCodeTests.swift in Sources */,
-				B97534CD29E6242E00450EBD /* HeliumAdLoadRequestTests.swift in Sources */,
+				B97534CD29E6242E00450EBD /* AdLoadRequestTests.swift in Sources */,
 				EAB5079828B8E1E2001427A0 /* SingleAdStorageAdControllerTests.swift in Sources */,
 				B98635D429E0C56D0061205B /* RewardedCallbackHTTPRequestTests.swift in Sources */,
 				EACF402328BF6C910035D8C0 /* AdControllerMock.swift in Sources */,
@@ -2100,6 +2322,7 @@
 				EA65991E286F4D2A00182CD7 /* TaskDispatcherMock.swift in Sources */,
 				E63D48F729084FC900E12298 /* NetworkStatusProviderMock.swift in Sources */,
 				B9A2DCCD2ABB901300B76C76 /* PrivacyConfigurationDependencyMock.swift in Sources */,
+				EA27D9242B4F480A00A7E1D7 /* SDKInitHTTPRequest+Test.swift in Sources */,
 				B93443FC29E8A0B0006E4546 /* NetworkManagerMock.swift in Sources */,
 				EA3D7E1C2886FB9000B4F667 /* ApplicationConfigurationMock.swift in Sources */,
 				B940157329AFF258004682F4 /* NetworkManagerTests.swift in Sources */,
@@ -2122,11 +2345,12 @@
 				B98635D029E0B5C00061205B /* BidTests.swift in Sources */,
 				EA145AF228F869FF00137C76 /* PartnerAdTests.swift in Sources */,
 				B9B678672AB4CBB10000F9E7 /* AuctionsHTTPRequestTests.swift in Sources */,
+				E68106D72B4B2CEF000C70E5 /* BackgroundTimeMonitorOperatorMock.swift in Sources */,
 				E6ED4E4D28BEAB4800C70AFE /* ReachabilityMock.swift in Sources */,
 				EA40EEF929B787C6002E5342 /* ChartboostMediationAdShowResultTests.swift in Sources */,
 				EA13F80C28C1004E000E2B21 /* SDKCredentialsValidatorMock.swift in Sources */,
 				EA13F80228C0FBA7000E2B21 /* SDKInitializerMock.swift in Sources */,
-				EA13BBC42902F64500AF0864 /* HeliumUserDefaultsStorageTests.swift in Sources */,
+				EA13BBC42902F64500AF0864 /* MediationUserDefaultsStorageTests.swift in Sources */,
 				EC344C6C2A7326740068388C /* ChartboostMediationBannerViewDelegateMock.swift in Sources */,
 				B934039729C41AB200319E1B /* HTTPRequestTests.swift in Sources */,
 				EA659916286F2B1700182CD7 /* ResumableTimerTests.swift in Sources */,
@@ -2140,8 +2364,10 @@
 				EA4DDDE628A547F300C5C7B7 /* PartnerAdapterFactoryMock.swift in Sources */,
 				EA40EEFB29B78805002E5342 /* ChartboostMediationFullscreenAdLoadResultTests.swift in Sources */,
 				EAB507A428B90E2A001427A0 /* AdAuctionServiceMock.swift in Sources */,
+				E68106DA2B4B3F9B000C70E5 /* BackgroundTimeMonitorOperationTests.swift in Sources */,
 				E6B9A2E129C2641400AEC225 /* ConsentSettingsMock.swift in Sources */,
 				B96568092A0082D800BC61D1 /* AppTrackingInfoProviderTests.swift in Sources */,
+				EA27D91E2B4F3BFD00A7E1D7 /* SDKInitHTTPRequestFactoryMock.swift in Sources */,
 				EA13BBB92902EB2600AF0864 /* UserDefaultsStorageMock.swift in Sources */,
 				EAF5F30529CDFC5A00C82F3C /* PartnerAdDelegateMock.swift in Sources */,
 				E650651428A4343D00C2FBEA /* LoadRateLimiterTests.swift in Sources */,
@@ -2160,7 +2386,7 @@
 				EACF403728BF9A410035D8C0 /* ConsentSettingsManagerTests.swift in Sources */,
 				EA40EEF329B784B4002E5342 /* ChartboostMediationFullscreenAdDelegateMock.swift in Sources */,
 				EAF5F2F429B9F97600C82F3C /* MetricsEvent+Test.swift in Sources */,
-				EACF401F28BF69AA0035D8C0 /* HeliumInitializationStatusProviderMock.swift in Sources */,
+				EACF401F28BF69AA0035D8C0 /* MediationInitializationStatusProviderMock.swift in Sources */,
 				EA6599242873074800182CD7 /* GCDTaskDispatcherTests.swift in Sources */,
 				EA40EEFF29B8B211002E5342 /* FullscreenAdLoaderConfigurationMock.swift in Sources */,
 				B9540C652A04333E004A5D97 /* UserIDProviderTests.swift in Sources */,
@@ -2178,15 +2404,17 @@
 				EACF403528BF99480035D8C0 /* RewardedAdTests.swift in Sources */,
 				EA40EEF129B7815D002E5342 /* FullscreenAdTests.swift in Sources */,
 				EACF402F28BF76220035D8C0 /* AdControllerFactoryMock.swift in Sources */,
-				EA13F80A28C0FFD8000E2B21 /* HeliumSDKInitializerTests.swift in Sources */,
+				EA13F80A28C0FFD8000E2B21 /* MediationSDKInitializerTests.swift in Sources */,
 				EA13F80428C0FBD7000E2B21 /* ApplicationConfigurationControllerMock.swift in Sources */,
 				EAB7F3C3288AC81E007DB64F /* Mock.swift in Sources */,
 				EACF402728BF6D360035D8C0 /* AdFactoryMock.swift in Sources */,
 				B93F663B2A01D1F200162D3C /* UserSettingsProviderTests.swift in Sources */,
 				EA909F4C2899493A003E5F6C /* FullScreenAdShowCoordinatorMock.swift in Sources */,
 				EC3B28232A96BC0B007821CF /* OpenRTBMocks.swift in Sources */,
+				EA27D9262B4F4DD000A7E1D7 /* NetworkManager.RawDataResponse+Test.swift in Sources */,
 				EAF5F2F829BB4A2E00C82F3C /* BannerControllerConfigurationMock.swift in Sources */,
 				EA99B66428992392002736E0 /* HeliumInterstitialAdDelegateMock.swift in Sources */,
+				E6C4107F2B4E05BF0023ED4B /* BackgroundTimeMonitorMock.swift in Sources */,
 				B963397A2A12B39D00B8E995 /* HeliumSdkDelegateMock.swift in Sources */,
 				EA659919286F2B2D00182CD7 /* ApplicationMock.swift in Sources */,
 				B90398DC29F753FF009A4261 /* ChartboostIDProviderTests.swift in Sources */,
@@ -2204,7 +2432,7 @@
 				EA648EAE289A69480006FBD4 /* ILRDEventPublisherMock.swift in Sources */,
 				B977AF0929DB87C4005F3984 /* WinnerEventHTTPRequestTests.swift in Sources */,
 				EA659917286F2B2300182CD7 /* UIView+ViewVisibilityTests.swift in Sources */,
-				EAF9613228BCCEE90023E32E /* HeliumAdLoadRequest+Test.swift in Sources */,
+				EAF9613228BCCEE90023E32E /* AdLoadRequest+Test.swift in Sources */,
 				E6CA5B9F28AED05000CB80FD /* InstanceIdentifierProviderTests.swift in Sources */,
 				EA4DDDCC28A2CCF600C5C7B7 /* DispatchTaskGroupMock.swift in Sources */,
 				EAB5079E28B90537001427A0 /* AdControllerDelegateMock.swift in Sources */,
@@ -2219,7 +2447,7 @@
 				EA61A6DE28AFAB3200BE051C /* BidFulfillOperationTests.swift in Sources */,
 				B9CB6CFE29D382DC006F3354 /* Dictionary+Test.swift in Sources */,
 				EA3D7E0C2881909F00B4F667 /* ApplicationStateObserverMock.swift in Sources */,
-				E6E2E87029C8C46200A64350 /* OpenRTBRequestTests.swift in Sources */,
+				E6E2E87029C8C46200A64350 /* AuctionsHTTPRequestFactoryTests.swift in Sources */,
 				EA5EBEDF2876C2D9007381EF /* DispatchTaskMock.swift in Sources */,
 				E64580312A4A10D10050B2BF /* LoggerTests.swift in Sources */,
 				EAF9613428BCCEF30023E32E /* HeliumAd+Test.swift in Sources */,
@@ -2229,6 +2457,7 @@
 				E6F057C32A4B2AF600D899F2 /* LogCaptureHandler.swift in Sources */,
 				B9540C5F2A032AE4004A5D97 /* BundleInfoProviderMock.swift in Sources */,
 				EACF402D28BF75F90035D8C0 /* SingleControllerPerPlacementAdControllerRepositoryTests.swift in Sources */,
+				EA27D9282B4F52C700A7E1D7 /* AuctionsHTTPRequest+Test.swift in Sources */,
 				EA40EEEB29B77C21002E5342 /* FullscreenAdLoaderMock.swift in Sources */,
 				EA6976D928D0DD9300306C8E /* BidFulfillOperationConfigurationMock.swift in Sources */,
 				B90398DE29F789BD009A4261 /* InfoPlistTests.swift in Sources */,
@@ -2239,8 +2468,25 @@
 				EA13F80828C0FE1A000E2B21 /* LengthSDKCredentialsValidatorTests.swift in Sources */,
 				EA9A869928B62E450065918F /* PartnerAdLoadRequest+Test.swift in Sources */,
 				EA909F4E289949BA003E5F6C /* FullScreenAdShowObserverMock.swift in Sources */,
+				EA27D9222B4F43F400A7E1D7 /* SDKInitHTTPRequestFactoryTests.swift in Sources */,
 				EA5B13322947521A0022D6BD /* ImpressionTrackerMock.swift in Sources */,
 				EA4DDDF528ABA7A100C5C7B7 /* NSError+Test.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EAD5E00B2AF4119100C1C02B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EAD5E0122AF4119100C1C02B /* TestsHostAppApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EAD5E01D2AF411F400C1C02B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EAD5E0242AF411F400C1C02B /* MemoryLeakTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2251,6 +2497,16 @@
 			isa = PBXTargetDependency;
 			target = 1147EAD0214B06550007EDF4 /* ChartboostMediationSDK */;
 			targetProxy = 1147EADC214B06550007EDF4 /* PBXContainerItemProxy */;
+		};
+		EA3F5E052AF418B4006D618F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1147EAD0214B06550007EDF4 /* ChartboostMediationSDK */;
+			targetProxy = EA3F5E042AF418B4006D618F /* PBXContainerItemProxy */;
+		};
+		EAD5E0262AF411F400C1C02B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EAD5E00E2AF4119100C1C02B /* TestsHostApp */;
+			targetProxy = EAD5E0252AF411F400C1C02B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2513,6 +2769,148 @@
 			};
 			name = Release;
 		};
+		EAD5E01A2AF4119200C1C02B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = F38H382JLK;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chartboost.TestsHostApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EAD5E01B2AF4119200C1C02B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = F38H382JLK;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chartboost.TestsHostApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		EAD5E0282AF411F400C1C02B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4D24B3F03EB713D3C6D0581C /* Pods-MemoryLeakTests.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = F38H382JLK;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chartboost.MemoryLeakTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestsHostApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TestsHostApp";
+				TREAT_MISSING_BASELINES_AS_TEST_FAILURES = YES;
+			};
+			name = Debug;
+		};
+		EAD5E0292AF411F400C1C02B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5949916C711C91A3B058B7B8 /* Pods-MemoryLeakTests.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = F38H382JLK;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chartboost.MemoryLeakTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestsHostApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TestsHostApp";
+				TREAT_MISSING_BASELINES_AS_TEST_FAILURES = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2539,6 +2937,24 @@
 			buildConfigurations = (
 				1147EAE9214B06550007EDF4 /* Debug */,
 				1147EAEA214B06550007EDF4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EAD5E01C2AF4119200C1C02B /* Build configuration list for PBXNativeTarget "TestsHostApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EAD5E01A2AF4119200C1C02B /* Debug */,
+				EAD5E01B2AF4119200C1C02B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EAD5E0272AF411F400C1C02B /* Build configuration list for PBXNativeTarget "MemoryLeakTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EAD5E0282AF411F400C1C02B /* Debug */,
+				EAD5E0292AF411F400C1C02B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

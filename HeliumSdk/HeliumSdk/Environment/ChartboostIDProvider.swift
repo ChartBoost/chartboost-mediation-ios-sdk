@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -13,7 +13,6 @@ protocol ChartboostIDProviding {
 }
 
 final class ChartboostIDProvider: ChartboostIDProviding {
-
     @Injected(\.fileStorage) private var fileStorage
 
     var chartboostID: ChartboostID? {

@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -10,7 +10,7 @@ import Foundation
 /// For every log message emitted by the SDK, ``LogHandler/handle(_:)`` will be called on all handlers that have been
 /// registered with ``Helium/attachLogHandler(_:)``.
 @objc(ChartboostMediationLogEntry)
-final public class LogEntry: NSObject {
+public final class LogEntry: NSObject {
     /// The message content of the log.
     @objc public let message: String
     /// A subsystem for the log.

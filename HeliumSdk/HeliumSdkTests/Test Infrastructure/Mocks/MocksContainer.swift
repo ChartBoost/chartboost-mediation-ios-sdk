@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -7,7 +7,7 @@ import Foundation
 @testable import ChartboostMediationSDK
 
 /// A wrapper over all the possible mocks.
-/// Any new mock used by a test should be added here and accessed through the `HeliumTestCase.mocks` property.
+/// Any new mock used by a test should be added here and accessed through the `ChartboostMediationTestCase.mocks` property.
 /// This will ensure that the mock value is used for dependency injection on Helium SDK classes.
 class MocksContainer {
     var bidFulfillOperationConfiguration = BidFulfillOperationConfigurationMock()
@@ -18,6 +18,8 @@ class MocksContainer {
     var appConfigurationController = ApplicationConfigurationControllerMock()
     var appConfiguration = ApplicationConfigurationMock()
     var application = ApplicationMock()
+    var auctionRequestFactory = AuctionsHTTPRequestFactoryMock()
+    var backgroundTimeMonitor = BackgroundTimeMonitorMock()
     var bannerControllerConfiguration = BannerControllerConfigurationMock()
     var credentialsValidator = SDKCredentialsValidatorMock()
     var taskDispatcher = TaskDispatcherMock()
@@ -25,7 +27,7 @@ class MocksContainer {
     var partnerController = PartnerControllerMock()
     var partnerControllerConfiguration = PartnerControllerConfigurationMock()
     var auctionService = AdAuctionServiceMock()
-    var initializationStatusProvider = HeliumInitializationStatusProviderMock()
+    var initializationStatusProvider = MediationInitializationStatusProviderMock()
     var metrics = MetricsEventLoggerMock()
     var metricsConfiguration = MetricsEventLoggerConfigurationMock()
     var fileStorage = FileStorageMock()
@@ -36,6 +38,7 @@ class MocksContainer {
     var initResultsEventPublisher = InitResultsEventPublisherMock()
     var userDefaultsStorage = UserDefaultsStorageMock()
     var visibilityTrackerConfiguration = VisibilityTrackerConfigurationMock()
+    var sdkInitRequestFactory = SDKInitHTTPRequestFactoryMock()
     var sdkInitializerConfiguration = SDKInitializerConfigurationMock()
     var adFactory = AdFactoryMock()
     var sdkInitializer = SDKInitializerMock()

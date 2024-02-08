@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,14 +6,24 @@
 import Foundation
 @testable import ChartboostMediationSDK
 
-class ApplicationStateObserverMock: Mock<ApplicationStateObserverMock.Method>, ApplicationActivationObserver, ApplicationInactivationObserver, ApplicationTerminationObserver {
+class ApplicationStateObserverMock: Mock<ApplicationStateObserverMock.Method>, ApplicationActivationObserver, ApplicationInactivationObserver, ApplicationTerminationObserver, ApplicationForegroundObserver, ApplicationBackgroundObserver {
     
     enum Method {
+        case applicationWillEnterForeground
+        case applicationDidEnterBackground
         case applicationDidBecomeActive
         case applicationWillBecomeInactive
         case applicationWillTerminate
     }
         
+    func applicationWillEnterForeground() {
+        record(.applicationWillEnterForeground)
+    }
+
+    func applicationDidEnterBackground() {
+        record(.applicationDidEnterBackground)
+    }
+
     func applicationDidBecomeActive() {
         record(.applicationDidBecomeActive)
     }

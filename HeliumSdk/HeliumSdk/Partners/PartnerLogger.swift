@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -7,25 +7,23 @@ import Foundation
 
 /// Logs partner events in the console.
 struct PartnerLogger {
-    
     /// Logs a console message for a partner adapter event.
     func log(_ event: PartnerLogEvent, from adapter: PartnerAdapter, functionName: StaticString) {
         logger(for: adapter).log(message(for: event), level: event.logLevel)
     }
-    
+
     /// Logs a console message for a partner ad event.
     func log(_ event: PartnerAdLogEvent, from ad: PartnerAd, functionName: StaticString) {
         logger(for: ad.adapter).log(message(for: event, from: ad, functionName: functionName), level: event.logLevel)
     }
 }
 
-private extension PartnerLogger {
-    
-    func logger(for adapter: PartnerAdapter) -> Logger {
+extension PartnerLogger {
+    private func logger(for adapter: PartnerAdapter) -> Logger {
         Logger(subsystem: "com.chartboost.mediation.adapter", category: "\(adapter.partnerDisplayName) Adapter")
     }
-    
-    func message(for event: PartnerLogEvent) -> String {
+
+    private func message(for event: PartnerLogEvent) -> String {
         switch event {
         case .setUpStarted:
             return "Setup started"
@@ -45,8 +43,8 @@ private extension PartnerLogger {
             return string
         }
     }
-    
-    func message(for event: PartnerAdLogEvent, from ad: PartnerAd, functionName: StaticString) -> String {
+
+    private func message(for event: PartnerAdLogEvent, from ad: PartnerAd, functionName: StaticString) -> String {
         switch event {
         case .loadStarted:
             return "Load started for \(ad.request.format) ad with placement \(ad.request.partnerPlacement)"
@@ -88,9 +86,9 @@ private extension PartnerLogger {
             return string
         }
     }
-    
+
     /// Returns a proper message for Helium errors created by the `PartnerAdapter.error()` method, or a default error description.
-    func message(for error: Error) -> String {
+    private func message(for error: Error) -> String {
         guard let error = error as? ChartboostMediationError else {
             return "'\((error as NSError).description)'"
         }

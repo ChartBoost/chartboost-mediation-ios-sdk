@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -27,22 +27,21 @@ protocol ApplicationConfigurationController {
 
 /// A configuration controller that updates the configuration using data fetched from backend and persists it across app sessions.
 final class PersistingApplicationConfigurationController: ApplicationConfigurationController {
-    
     @Injected(\.appConfiguration) private var configuration
     @Injected(\.fileStorage) private var fileStorage
     @Injected(\.userDefaultsStorage) private var defaultsStorage
     @Injected(\.appConfigurationService) private var service
-    
+
     private var initHash: String? {
         get { defaultsStorage["init-hash"] }
         set { defaultsStorage["init-hash"] = newValue }
     }
-    
+
     init() {
         // Tries to restore a persisted configuration from a previous session
         restorePersistedConfiguration()
     }
-    
+
     private var appConfigSource: ApplicationConfigurationSource = .hardcodedDefault
 
     /// The file system url where the configuration data is stored.
@@ -51,12 +50,12 @@ final class PersistingApplicationConfigurationController: ApplicationConfigurati
             try fileStorage.urlForHeliumConfigurationDirectory.appendingPathComponent("HeConfig.json")
         }
     }
-    
+
     /// Obtains new configuration data from backend and updates the `configuration` property with it.
     /// It also persists new configuration in disk to reuse in the next session.
     func updateConfiguration(completion: @escaping UpdateAppConfigCompletion) {
         logger.debug("App config update started")
-        
+
         // Fetch new data from backend
         service.fetchAppConfiguration(sdkInitHash: initHash) { [weak self] result in
             guard let self else { return }
@@ -77,10 +76,9 @@ final class PersistingApplicationConfigurationController: ApplicationConfigurati
                     completion(self.appConfigSource, nil)
                 } catch {
                     logger.error("Failed to parse app config with error \(error)")
-                    completion(
-                        self.appConfigSource,
-                        error as? ChartboostMediationError ?? .init(code: .initializationFailureInternalError, error: error, data: update.data)
-                    )
+                    let chartboostMediationError = error as? ChartboostMediationError
+                        ?? .init(code: .initializationFailureInternalError, error: error, data: update.data)
+                    completion(self.appConfigSource, chartboostMediationError)
                 }
 
             case .failure(let error):
@@ -89,14 +87,13 @@ final class PersistingApplicationConfigurationController: ApplicationConfigurati
             }
         }
     }
-    
+
     /// Updates the configuration using the persisted data from a previous session, if available.
     private func restorePersistedConfiguration() {
         let url: URL
         do {
             url = try heliumConfigURL
-        }
-        catch {
+        } catch {
             logger.error("Failed to compute app config URL with error \(error)")
             return
         }

@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -12,12 +12,11 @@ protocol InitResultsEventPublisher {
 
 /// An event with information about the initialization status of all partner adapters.
 struct InitResultsEvent: Encodable {
-    
     struct InProgress: Encodable {
         let partner: String
         let start: Date
     }
-    
+
     let sessionId: String
     let skipped: [String]
     let success: [MetricsEvent]
@@ -27,10 +26,9 @@ struct InitResultsEvent: Encodable {
 
 /// InitEventPublisher implementation that publishes initialization events as Notification Center notifications.
 final class NotificationCenterInitResultsEventPublisher: InitResultsEventPublisher {
-    
     @Injected(\.taskDispatcher) private var taskDispatcher
     @Injected(\.jsonSerializer) private var jsonSerializer
-    
+
     /// Fires the `heliumDidReceiveInit` notification on the main thread.
     func postInitResultsEvent(_ event: InitResultsEvent) {
         do {
@@ -45,8 +43,7 @@ final class NotificationCenterInitResultsEventPublisher: InitResultsEventPublish
             taskDispatcher.async(on: .main) {
                 NotificationCenter.default.post(name: .heliumDidReceiveInitResults, object: json)
             }
-        }
-        catch {
+        } catch {
             logger.error("Failed to post init results with error: \(error)")
         }
     }

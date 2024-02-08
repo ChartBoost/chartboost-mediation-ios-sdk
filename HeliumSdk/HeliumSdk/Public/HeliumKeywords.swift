@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -13,36 +13,36 @@ import Foundation
 @objc(HeliumKeywords)
 public class HeliumKeywords: NSObject {
     // MARK: - Constants
-    
+
     /// Maximum length for a keyword.
     private static let maxKeywordLength: Int = 64
-    
+
     /// Maximum length for a keyword's value.
     private static let maxValueLength: Int = 256
-    
+
     // MARK: - Properties
-    
+
     /// The backing property to store the `keyword`:`value` pairs.
     @objc public private(set) var dictionary: [String: String] = [:]
-    
+
     // MARK: - Initialization
-    
+
     /// Initializes an empty `HeliumKeywords` instance.
-    @objc public override init() {
+    @objc override public init() {
         super.init()
     }
-    
+
     /// Initializes `HeliumKeywords` with a dictionary of `keyword`:`value` pairs.
     /// - Parameter dictionary: Optional dictionary to use as the seed for the keywords.
     init?(_ dictionary: [String: String]? = nil) {
         super.init()
-        
-        guard let dictionary = dictionary else { return nil }
+
+        guard let dictionary else { return nil }
         self.dictionary = dictionary
     }
-    
+
     // MARK: - Keyword Manipulation
-    
+
     /// Sets the specified value for the keyword.
     ///
     /// In the event that the keyword already exists, it will overwrite the value if valid.
@@ -52,11 +52,11 @@ public class HeliumKeywords: NSObject {
     /// `value` exceed the maximum allowable characters.
     @objc(setKeyword:value:)
     @discardableResult public func set(keyword: String, value: String) -> Bool {
-        guard keyword.count > 0 && keyword.count <= Self.maxKeywordLength else { return false }
+        guard !keyword.isEmpty && keyword.count <= Self.maxKeywordLength else { return false }
         guard value.count <= Self.maxValueLength else { return false }
-        
+
         self.dictionary[keyword] = value
-        
+
         return true
     }
 
@@ -67,9 +67,9 @@ public class HeliumKeywords: NSObject {
     @discardableResult public func remove(keyword: String) -> String? {
         return dictionary.removeValue(forKey: keyword)
     }
-    
+
     // MARK: - Equatable Override
-    
+
     override public func isEqual(_ object: Any?) -> Bool {
         guard let object = object as? Self else { return false }
         return object.dictionary == dictionary

@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class LoggerTests: HeliumTestCase {
+class LoggerTests: ChartboostMediationTestCase {
 
     let capture = LogCaptureHandler()
 
@@ -33,7 +33,7 @@ class LoggerTests: HeliumTestCase {
                 expectation.fulfill()
 
                 guard let entry = lastEntry else {
-                    return XCTFail()
+                    return XCTFail("lastEntry was unexpectedly nil")
                 }
 
                 XCTAssertEqual("com.chartboost.mediation.sdk", entry.subsystem)
@@ -57,7 +57,7 @@ class LoggerTests: HeliumTestCase {
             expectation.fulfill()
 
             guard let entry = lastEntry else {
-                return XCTFail()
+                return XCTFail("lastEntry was unexpectedly nil")
             }
 
             XCTAssertEqual("com.chartboost.mediation.sdk", entry.subsystem)
@@ -80,7 +80,7 @@ class LoggerTests: HeliumTestCase {
             expectation.fulfill()
 
             guard let entry = lastEntry else {
-                return XCTFail()
+                return XCTFail("lastEntry was unexpectedly nil")
             }
 
             XCTAssertEqual("com.chartboost.mediation.sdk", entry.subsystem)
@@ -101,9 +101,9 @@ class LoggerTests: HeliumTestCase {
         let expectation = expectation(description: message)
         capture.didReceiveEntry = { lastEntry in
             expectation.fulfill()
-
+            
             guard let entry = lastEntry else {
-                return XCTFail()
+                return XCTFail("lastEntry was unexpectedly nil")
             }
 
             XCTAssertEqual("com.chartboost.mediation.sdk", entry.subsystem)
@@ -126,7 +126,7 @@ class LoggerTests: HeliumTestCase {
             expectation.fulfill()
 
             guard let entry = lastEntry else {
-                return XCTFail()
+                return XCTFail("lastEntry was unexpectedly nil")
             }
 
             XCTAssertEqual("com.chartboost.mediation.sdk", entry.subsystem)
@@ -149,7 +149,7 @@ class LoggerTests: HeliumTestCase {
             expectation.fulfill()
 
             guard let entry = lastEntry else {
-                return XCTFail()
+                return XCTFail("lastEntry was unexpectedly nil")
             }
 
             XCTAssertEqual("com.chartboost.mediation.sdk", entry.subsystem)
@@ -177,7 +177,7 @@ class LoggerTests: HeliumTestCase {
             expectation.fulfill()
 
             guard let entry = lastEntry else {
-                return XCTFail()
+                return XCTFail("lastEntry was unexpectedly nil")
             }
 
             XCTAssertEqual("com.chartboost.mediation.sdk", entry.subsystem)
@@ -201,7 +201,7 @@ class LoggerTests: HeliumTestCase {
                 expectation.fulfill()
 
                 guard let entry = lastEntry else {
-                    return XCTFail()
+                    return XCTFail("lastEntry was unexpectedly nil")
                 }
 
                 XCTAssertEqual("com.chartboost.mediation.sdk.tests", entry.subsystem)
@@ -226,7 +226,7 @@ class LoggerTests: HeliumTestCase {
         }
 
         let logger = Logger.default
-        LogLevel.all.forEach { level in
+        try LogLevel.all.forEach { level in
             let message = "testMultipleHandlers-\(level.asString)"
 
             let expectation1 = expectation(description: "Primary: \(message)")
@@ -238,7 +238,7 @@ class LoggerTests: HeliumTestCase {
                 expectation1.fulfill()
 
                 guard let entry = lastEntry else {
-                    return XCTFail()
+                    return XCTFail("lastEntry was unexpectedly nil")
                 }
 
                 XCTAssertEqual("com.chartboost.mediation.sdk", entry.subsystem)
@@ -251,7 +251,7 @@ class LoggerTests: HeliumTestCase {
                 expectation2.fulfill()
 
                 guard let entry = lastEntry else {
-                    return XCTFail()
+                    return XCTFail("lastEntry was unexpectedly nil")
                 }
 
                 XCTAssertEqual("com.chartboost.mediation.sdk", entry.subsystem)
@@ -265,9 +265,8 @@ class LoggerTests: HeliumTestCase {
             wait(for: [expectation1, expectation2], timeout: 1)
 
             // The dates of the two log capture handlers must be identical
-            guard let date1 = date1, let date2 = date2 else {
-                return XCTFail()
-            }
+            date1 = try XCTUnwrap(date1)
+            date2 = try XCTUnwrap(date2)
             XCTAssertEqual(date1, date2)
         }
     }

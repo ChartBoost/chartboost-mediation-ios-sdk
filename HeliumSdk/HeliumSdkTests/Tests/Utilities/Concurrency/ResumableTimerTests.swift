@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,7 @@
 import XCTest
 @testable import ChartboostMediationSDK
 
-class ResumableTimerTests: HeliumTestCase {
+class ResumableTimerTests: ChartboostMediationTestCase {
     // MARK: - Test Setup
     
     override func setUpWithError() throws {
@@ -444,7 +444,7 @@ class ResumableTimerTests: HeliumTestCase {
             // There should be about half of the interval remaining.
             let roundedRemainingTime = Int(round(remainingTime))
             let expectedRemainingTime = Int(halfInterval)
-            XCTAssertTrue(roundedRemainingTime == expectedRemainingTime)
+            XCTAssertEqual(roundedRemainingTime, expectedRemainingTime)
             
             pauseExpectation.fulfill()
         }

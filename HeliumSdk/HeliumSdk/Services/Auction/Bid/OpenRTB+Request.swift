@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -8,7 +8,6 @@
 import Foundation
 
 extension OpenRTB {
-
     // An OpenRTB bid request is supposed to include an `id` but the ChartboostMedicationSDK does not.
     struct BidRequest: Encodable {
         /// Array of `Impression` objects representing the impressions offered. At least 1 `Impression` object is required.
@@ -77,8 +76,8 @@ extension OpenRTB {
             let pos: OpenRTB.AdPosition?
 
             /// Supported VAST companion ad types. Refer to List 5.14. Recommended if companion `Banner` objects are included via
-            /// the `companionad` array. If one of these banners will be rendered as an end-card, this can be specified using the `vcm` attribute
-            /// with the particular banner.
+            /// the `companionad` array. If one of these banners will be rendered as an end-card, this can be specified using the
+            /// `vcm` attribute with the particular banner.
             let companiontype: [CompanionType]?
 
             /// Extension (implementation-specific) data
@@ -203,10 +202,12 @@ extension OpenRTB.Impression.Video {
     /// The following enumeration lists the various types of video placements derived largely from the IAB Digital Video Guidelines.
     /// - Note: Conforms to OpenRTB 2.5 specification 5.9
     enum VideoPlacementType: Int, Codable {
-        /// Played before, during or after the streaming video content that the consumer has requested (e.g., Pre-roll, Mid-roll, Post-roll).
+        /// Played before, during or after the streaming video content that the consumer has requested
+        /// (e.g., Pre-roll, Mid-roll, Post-roll).
         case inStream = 1
 
-        /// Exists within a web banner that leverages the banner space to deliver a video experience as opposed to another static or rich media format.
+        /// Exists within a web banner that leverages the banner space to deliver a video experience as opposed to another static or rich
+        /// media format.
         /// The format relies on the existence of display ad inventory on the page for its delivery.
         case inBanner = 2
 
@@ -217,12 +218,14 @@ extension OpenRTB.Impression.Video {
         case inFeed = 4
 
         /// Covers the entire or a portion of screen area, but is always on screen while displayed (i.e. cannot be scrolled out of view).
-        /// Note that a full-screen interstitial (e.g., in mobile) can be distinguished from a floating/slider unit by the `imp.instl` field.
+        /// Note that a full-screen interstitial (e.g., in mobile) can be distinguished from a floating/slider unit by the
+        /// `imp.instl` field.
         case interstitialSliderOrFloating = 5
     }
 
     /// The following enumeration lists the options to indicate markup types allowed for companion ads that apply to video and audio ads.
-    /// This table is derived from VAST 2.0+ and DAAST 1.0 specifications. Refer to www.iab.com/guidelines/digital-video-suite for more information.
+    /// This table is derived from VAST 2.0+ and DAAST 1.0 specifications. Refer to www.iab.com/guidelines/digital-video-suite for
+    /// more information.
     /// - Note: Conforms to OpenRTB 2.5 specification 5.14
     enum CompanionType: Int, Codable {
         /// Static Resource
@@ -240,7 +243,8 @@ extension OpenRTB.Device {
     /// The following table lists the type of device from which the impression originated.
     /// OpenRTB version 2.2 of the specification added distinct values for Mobile and Tablet.
     /// It is recommended that any bidder adding support for 2.2 treat a value of 1 as an acceptable alias of 4 & 5.
-    /// This OpenRTB enumeration has values derived from the Inventory Quality Guidelines (IQG). Practitioners should keep in sync with updates to the IQG values.
+    /// This OpenRTB enumeration has values derived from the Inventory Quality Guidelines (IQG). Practitioners should keep in sync with
+    /// updates to the IQG values.
     /// - Note: Conforms to OpenRTB 2.5 specification 5.21
     enum DeviceType: Int, Codable {
         case mobileOrTablet = 1

@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -7,12 +7,9 @@ import Foundation
 
 extension ChartboostMediationError {
 
-    // This list must reflect the documentation at https://chartboost.atlassian.net/wiki/spaces/HM/pages/2551513299
-
     /// Chartboost Mediation SDK error codes.
     @objc(ChartboostMediationErrorCode)
     public enum Code: Int, CaseIterable {
-
         /// Categories of errors.
         public enum Group: Int {
             /// Errors that occur during SDK initialization.

@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Chartboost, Inc.
+// Copyright 2018-2024 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -39,11 +39,11 @@ struct DeviceInfoProvider: DeviceInfoProviding {
         }
 
         // Use `sysctlbyname` to obtain the most specific device modle if possible.
-        var size : Int = 0
+        var size: Int = 0
         sysctlbyname("hw.machine", nil, &size, nil, 0)
         var deviceModel = [CChar](repeating: 0, count: size)
         sysctlbyname("hw.machine", &deviceModel, &size, nil, 0)
-        return deviceModel.count > 0 ? String(cString: deviceModel) : UIDevice.current.model
+        return !deviceModel.isEmpty ? String(cString: deviceModel) : UIDevice.current.model
     }
 
     var deviceType: DeviceType {
@@ -57,7 +57,7 @@ struct DeviceInfoProvider: DeviceInfoProviding {
             return 0
         } else {
             guard
-                let values = try? URL(fileURLWithPath:"/").resourceValues(forKeys: [.volumeAvailableCapacityKey]),
+                let values = try? URL(fileURLWithPath: "/").resourceValues(forKeys: [.volumeAvailableCapacityKey]),
                 let capacity = values.volumeAvailableCapacity
             else {
                 return 0
@@ -97,7 +97,7 @@ struct DeviceInfoProvider: DeviceInfoProviding {
             return 0
         } else {
             guard
-                let values = try? URL(fileURLWithPath:"/").resourceValues(forKeys: [.volumeTotalCapacityKey]),
+                let values = try? URL(fileURLWithPath: "/").resourceValues(forKeys: [.volumeTotalCapacityKey]),
                 let capacity = values.volumeTotalCapacity
             else {
                 return 0
