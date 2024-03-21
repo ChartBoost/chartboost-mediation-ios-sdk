@@ -18,13 +18,8 @@ class DeviceInfoTests: ChartboostMediationTestCase {
         XCTAssertEqual(info.deviceType, UIDevice.current.userInterfaceIdiom == .pad ? .iPad : .iPhone)
         XCTAssertEqual(info.osName, "iOS")
         XCTAssertFalse(info.osVersion.isEmpty)
-        if #available(iOS 17.0, *) {
-            XCTAssertEqual(info.freeDiskSpace, 0)
-            XCTAssertEqual(info.totalDiskSpace, 0)
-        } else {
-            XCTAssertGreaterThan(info.freeDiskSpace, 0)
-            XCTAssertGreaterThan(info.totalDiskSpace, 0)
-        }
+        XCTAssertEqual(info.freeDiskSpace, 0)
+        XCTAssertEqual(info.totalDiskSpace, 0)
     }
 
     func testPrivacyBanList() {

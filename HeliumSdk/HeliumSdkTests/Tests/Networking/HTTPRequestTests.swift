@@ -81,4 +81,39 @@ final class HTTPRequestTests: ChartboostMediationTestCase {
             XCTFail("Unexpected failure: obtain `URLRequest` from [\(httpRequest)]")
         }
     }
+
+    func testXHeliumDebugHeader() throws {
+        let debugHeaderKey = "X-Helium-Debug"
+        let appID = "some-app-identifier"
+        let httpRequest = try XCTUnwrap(HTTPRequestMock(
+            urlString: "http://some.endpoint",
+            method: .get,
+            customHeaders: ["some key": "some value"],
+            bodyData: "some string".data(using: .utf8)
+        ))
+
+        // Part 1: nil app ID
+        mocks.environment.app.appID = nil
+
+        try [false, true, false].forEach { isTestModeEnabled in
+            mocks.environment.testMode.isTestModeEnabled = isTestModeEnabled
+            let urlRequest = try httpRequest.makeURLRequest()
+            XCTAssertFalse(try XCTUnwrap(urlRequest.allHTTPHeaderFields).keys.contains(debugHeaderKey))
+        }
+
+        // Part 2: non-nil app ID
+        mocks.environment.app.appID = appID
+
+        mocks.environment.testMode.isTestModeEnabled = false
+        var urlRequest = try httpRequest.makeURLRequest()
+        XCTAssertFalse(try XCTUnwrap(urlRequest.allHTTPHeaderFields).keys.contains(debugHeaderKey))
+
+        mocks.environment.testMode.isTestModeEnabled = true
+        urlRequest = try httpRequest.makeURLRequest()
+        XCTAssertEqual(try XCTUnwrap(urlRequest.allHTTPHeaderFields)[debugHeaderKey], appID)
+
+        mocks.environment.testMode.isTestModeEnabled = false // repeat to test reset
+        urlRequest = try httpRequest.makeURLRequest()
+        XCTAssertFalse(try XCTUnwrap(urlRequest.allHTTPHeaderFields).keys.contains(debugHeaderKey))
+    }
 }

@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name              = 'ChartboostMediationSDK'
-  spec.version           = '4.8.0'
+  spec.version           = '4.9.0'
   spec.license           = { :type => 'Commercial', :text => 'LICENSE © 2011-2024 Chartboost. All rights reserved. LICENSE' }
   spec.homepage          = 'https://www.chartboost.com/'
   spec.authors           = { 'Chartboost' => 'https://www.chartboost.com/' }
@@ -10,7 +10,7 @@ Pod::Spec.new do |spec|
 
   # Source
   spec.module_name  = 'ChartboostMediationSDK'
-  spec.source       = { :http => 'https://chartboost.s3.amazonaws.com/helium/sdk/ios/4.8.0/ChartboostMediationSDK-iOS-4.8.0.zip' }
+  spec.source       = { :http => 'https://chartboost.s3.amazonaws.com/helium/sdk/ios/4.9.0/ChartboostMediationSDK-iOS-4.9.0.zip' }
 
   # Minimum supported versions
   spec.swift_version         = '5.0'

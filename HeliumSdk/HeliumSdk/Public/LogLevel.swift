@@ -9,18 +9,28 @@ import os.log
 /// Log severity levels for the unified logging subsystem.
 @objc(ChartboostMediationLogLevel)
 public enum LogLevel: Int, Codable {
-    /// Log very low level and/or noisy information that may be useful during development or troubleshooting.
-    case trace
-    /// Log information that may be useful during development or troubleshooting.
-    case debug
-    /// Log helpful, non-essential information.
-    case info
-    /// Log information that may result in a failure.
-    case warning
-    /// Log information that communicates an error.
-    case error
     /// No logging is expected to be performed.
     case none
+
+    /// Log information that communicates an error.
+    case error
+
+    /// Log information that may result in a failure.
+    case warning
+
+    /// Log helpful, non-essential information.
+    case info
+
+    /// Log information that may be useful during development or troubleshooting.
+    case debug
+
+    /// Deprecated. 
+    /// Log very low level and/or noisy information that may be useful during development or troubleshooting.
+    @available(*, deprecated, message: "Use `.verbose` instead")
+    case trace
+
+    /// Log very low level and/or noisy information that may be useful during development or troubleshooting.
+    case verbose
 }
 
 extension LogLevel: Comparable {

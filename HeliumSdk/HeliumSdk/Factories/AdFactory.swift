@@ -11,17 +11,18 @@ protocol AdFactory {
     func makeFullscreenAd(
         request: ChartboostMediationAdLoadRequest,
         winningBidInfo: [String: Any],
-        controller: AdController
+        controller: AdController,
+        loadID: String
     ) -> ChartboostMediationFullscreenAd
-    /// Returns a new Helium interstitial ad instance.
+    /// Returns a new Chartboost Mediation interstitial ad instance.
     func makeInterstitialAd(placement: String, delegate: CHBHeliumInterstitialAdDelegate?) -> HeliumInterstitialAd
-    /// Returns a new Helium rewarded ad instance.
+    /// Returns a new Chartboost Mediation rewarded ad instance.
     func makeRewardedAd(placement: String, delegate: CHBHeliumRewardedAdDelegate?) -> HeliumRewardedAd
-    /// Returns a new Helium banner ad instance.
+    /// Returns a new Chartboost Mediation banner ad instance.
     func makeBannerAd(placement: String, size: CHBHBannerSize, delegate: HeliumBannerAdDelegate?) -> HeliumBannerView
-    /// Returns a new Helium banner swap controller.
+    /// Returns a new Chartboost Mediation banner swap controller.
     func makeBannerSwapController() -> BannerSwapControllerProtocol
-    /// Returns a new Helium banner controller.
+    /// Returns a new Chartboost Mediation banner controller.
     func makeBannerController(
         request: ChartboostMediationBannerLoadRequest,
         delegate: BannerControllerDelegate?,
@@ -36,17 +37,17 @@ final class ContainerAdFactory: AdFactory {
 
     func makeInterstitialAd(placement: String, delegate: CHBHeliumInterstitialAdDelegate?) -> HeliumInterstitialAd {
         InterstitialAd(
-            heliumPlacement: placement,
+            mediationPlacement: placement,
             delegate: delegate,
-            controller: adControllerRepository.adController(forHeliumPlacement: placement)
+            controller: adControllerRepository.adController(for: placement)
         )
     }
 
     func makeRewardedAd(placement: String, delegate: CHBHeliumRewardedAdDelegate?) -> HeliumRewardedAd {
         RewardedAd(
-            heliumPlacement: placement,
+            mediationPlacement: placement,
             delegate: delegate,
-            controller: adControllerRepository.adController(forHeliumPlacement: placement)
+            controller: adControllerRepository.adController(for: placement)
         )
     }
 
@@ -95,8 +96,14 @@ final class ContainerAdFactory: AdFactory {
     func makeFullscreenAd(
         request: ChartboostMediationAdLoadRequest,
         winningBidInfo: [String: Any],
-        controller: AdController
+        controller: AdController,
+        loadID: String
     ) -> ChartboostMediationFullscreenAd {
-        FullscreenAd(request: request, winningBidInfo: winningBidInfo, controller: controller)
+        FullscreenAd(
+            request: request,
+            winningBidInfo: winningBidInfo,
+            controller: controller,
+            loadID: loadID
+        )
     }
 }

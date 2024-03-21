@@ -25,7 +25,10 @@ protocol MetricsEventLogging {
         error: ChartboostMediationError?,
         adFormat: AdFormat,
         size: CGSize?,
-        backgroundDuration: TimeInterval
+        start: Date,
+        end: Date,
+        backgroundDuration: TimeInterval,
+        queueID: String?
     ) -> RawMetrics?
 
     /// Logs a show event.
@@ -37,11 +40,11 @@ protocol MetricsEventLogging {
     /// Logs an expiration event.
     func logExpiration(auctionID: AuctionID, loadID: LoadID)
 
-    /// Logs a Helium ad impression.
+    /// Logs a Chartboost Mediation ad impression.
     /// This is when we consider that the ad is visible, which may not be the same as when the partner that shows the ad considers the
     /// ad is visible.
     /// - parameter ad: The partner ad affected.
-    func logHeliumImpression(for ad: PartnerAd)
+    func logMediationImpression(for ad: PartnerAd)
 
     /// Logs a partner ad impression.
     /// This is when the partner that shows the ad considers that the ad is visible, which may not be the same as when we consider the
@@ -69,6 +72,42 @@ protocol MetricsEventLogging {
     /// - parameter rewardedCallback: The rewarded callback model containing all the info needed to make the HTTP request.
     /// - parameter customData: Extra info passed programmatically by the publisher to be sent in the rewarded callback request.
     func logRewardedCallback(_ rewardedCallback: RewardedCallback, customData: String?)
+
+    /// Logs that a queue has been given a new unique ID and will run until .stop() is called on the queue.
+    func logStartQueue(_ queue: FullscreenAdQueue)
+
+    /// Logs that .stop() has been called on a running queue. The queue will discard the current queueID and will not request any
+    /// more ads unless restarted.
+    func logEndQueue(_ queue: FullscreenAdQueue)
+}
+
+extension MetricsEventLogging {
+    /// Logs a load event. The `end` date is set to now.
+    /// - returns: Raw metrics dictionary sent to our backend.
+    func logLoad(
+        auctionID: AuctionID,
+        loadID: LoadID,
+        events: [MetricsEvent],
+        error: ChartboostMediationError?,
+        adFormat: AdFormat,
+        size: CGSize?,
+        start: Date,
+        backgroundDuration: TimeInterval,
+        queueID: String? = nil
+    ) -> RawMetrics? {
+        self.logLoad(
+            auctionID: auctionID,
+            loadID: loadID,
+            events: events,
+            error: error,
+            adFormat: adFormat,
+            size: size,
+            start: start,
+            end: Date(),
+            backgroundDuration: backgroundDuration,
+            queueID: queueID
+        )
+    }
 }
 
 protocol MetricsEventLoggerConfiguration {
@@ -83,6 +122,7 @@ protocol MetricsEventLoggerConfiguration {
 /// A `MetricsEventLogging` implementation for logging to the backend to the appropriate endpoint as dicated by the
 /// event type.
 final class MetricsEventLogger: MetricsEventLogging {
+    @Injected(\.environment) private var environment
     @Injected(\.metricsConfiguration) private var configuration
     /// Indicates Mediation SDK initialization status.
     @Injected(\.initializationStatusProvider) private var initializationStatusProvider
@@ -110,7 +150,10 @@ final class MetricsEventLogger: MetricsEventLogging {
         error: ChartboostMediationError?,
         adFormat: AdFormat,
         size: CGSize?,
-        backgroundDuration: TimeInterval
+        start: Date,
+        end: Date,
+        backgroundDuration: TimeInterval,
+        queueID: String? = nil
     ) -> RawMetrics? {
         guard configuration.filter.contains(.load) else { return nil }
 
@@ -121,7 +164,10 @@ final class MetricsEventLogger: MetricsEventLogging {
             error: error,
             adFormat: adFormat,
             size: size,
-            backgroundDuration: backgroundDuration
+            start: start,
+            end: end,
+            backgroundDuration: backgroundDuration,
+            queueID: queueID
         )
         var metrics = send(request)
         logToConsole(.load, auctionID: auctionID, loadID: loadID, events: events)
@@ -154,12 +200,12 @@ final class MetricsEventLogger: MetricsEventLogging {
         logToConsole(.expiration, auctionID: auctionID, loadID: loadID)
     }
 
-    func logHeliumImpression(for ad: PartnerAd) {
-        send(MetricsHTTPRequest.heliumImpression(
+    func logMediationImpression(for ad: PartnerAd) {
+        send(MetricsHTTPRequest.mediationImpression(
             auctionID: ad.request.auctionIdentifier,
             loadID: ad.request.loadID
         ))
-        logToConsole(.heliumImpression, auctionID: ad.request.auctionIdentifier, loadID: ad.request.loadID)
+        logToConsole(.mediationImpression, auctionID: ad.request.auctionIdentifier, loadID: ad.request.loadID)
     }
 
     func logPartnerImpression(for ad: PartnerAd) {
@@ -202,6 +248,31 @@ final class MetricsEventLogger: MetricsEventLogging {
         networkManager.send(request) { _ in }
     }
 
+    func logStartQueue(_ queue: FullscreenAdQueue) {
+        let event = StartQueueEventHTTPRequest(
+            actualMaxQueueSize: queue.maxQueueSize,
+            appID: environment.app.appID ?? "",
+            currentQueueDepth: queue.numberOfAdsReady,
+            placementName: queue.placement,
+            queueCapacity: queue.queueCapacity,
+            queueID: queue.queueID
+        )
+        networkManager.send(event) { _ in }
+        logger.log("Starting queue for placement \(queue.placement)", level: .info)
+    }
+
+    func logEndQueue(_ queue: FullscreenAdQueue) {
+        let event = EndQueueEventHTTPRequest(
+            appID: environment.app.appID ?? "",
+            currentQueueDepth: queue.numberOfAdsReady,
+            placementName: queue.placement,
+            queueCapacity: queue.queueCapacity,
+            queueID: queue.queueID
+        )
+        networkManager.send(event) { _ in }
+        logger.log("Stopping queue for placement \(queue.placement)", level: .info)
+    }
+
     private func logToConsole(
         _ eventType: MetricsEvent.EventType,
         auctionID: AuctionID? = nil,
@@ -214,10 +285,10 @@ final class MetricsEventLogger: MetricsEventLogging {
         let errorInfo = error.map { "error = \($0)" } ?? ""
         if let events {
             events.forEach {
-                logger.trace("Metrics data for \(eventType): [\(auctionIDInfo)][\(loadIDInfo)] \($0.logString), \(errorInfo)")
+                logger.verbose("Metrics data for \(eventType): [\(auctionIDInfo)][\(loadIDInfo)] \($0.logString), \(errorInfo)")
             }
         } else {
-            logger.trace("Metrics data for \(eventType): [\(auctionIDInfo)][\(loadIDInfo)] \(errorInfo)")
+            logger.verbose("Metrics data for \(eventType): [\(auctionIDInfo)][\(loadIDInfo)] \(errorInfo)")
         }
     }
 }

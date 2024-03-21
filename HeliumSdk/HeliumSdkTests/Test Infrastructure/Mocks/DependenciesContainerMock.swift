@@ -7,7 +7,6 @@ import Foundation
 @testable import ChartboostMediationSDK
 
 class DependenciesContainerMock: DependenciesContainer {
-    
     let mocks = MocksContainer()
     
     var adControllerFactory: AdControllerFactory { mocks.adControllerFactory }
@@ -62,6 +61,7 @@ class DependenciesContainerMock: DependenciesContainer {
     var infoPlist: InfoPlistProviding { mocks.infoPlist }
     var appTrackingInfo: AppTrackingInfoProviding { mocks.appTrackingInfo }
     var appTrackingInfoDependency: AppTrackingInfoProviderDependency { mocks.appTrackingInfoProviderDependency }
-    var consoleLoggerConfiguration: ConsoleLoggerConfiguration { mocks.consoleLoggerConfigurationDependency }
+    var consoleLoggerConfigurationOverride: ConsoleLoggerConfigurationOverride { mocks.consoleLoggerConfigurationDependency }
     var privacyConfiguration: PrivacyConfiguration { mocks.privacyConfigurationDependency }
+    var fullscreenAdQueueConfiguration: FullscreenAdQueueConfiguration { mocks.fullscreenAdQueueConfiguration }
 }

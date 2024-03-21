@@ -350,19 +350,19 @@ final class BannerController: BannerControllerProtocol,
                 }
             }
             // Wait until it is visible
-            logger.info("Waiting for banner ad with placement \(ad.request.heliumPlacement) to become visible")
+            logger.info("Waiting for banner ad with placement \(ad.request.mediationPlacement) to become visible")
             let start = Date()
             visibilityTracker.startTracking(bannerView) { [weak self] in
                 self?.taskDispatcher.async(on: .background) {
                     guard let self else { return }
-                    logger.debug("Banner ad with placement \(ad.request.heliumPlacement) became visible")
+                    logger.debug("Banner ad with placement \(ad.request.mediationPlacement) became visible")
                     // Log metrics
                     _ = self.metrics.logShow(ad: ad, start: start, error: nil)
                     // Mark it as shown so ad controller records impression and allows to load a new ad
                     self.adController.markLoadedAdAsShown()
                     // Schedule auto-refresh
                     if self.isAutoRefreshEnabled {
-                        logger.debug("Preloading banner ad with placement \(ad.request.heliumPlacement)")
+                        logger.debug("Preloading banner ad with placement \(ad.request.mediationPlacement)")
                         // we pre-load the next ad immediately so there's higher chances it is ready by the time we need to refresh
                         // the banner
                         self.loadAdAndShowIfNeeded(with: self.makeLoadRequest())
@@ -447,7 +447,7 @@ final class BannerController: BannerControllerProtocol,
             adSize: request.size,
             adFormat: (request.size.type == .adaptive ? .adaptiveBanner : .banner),
             keywords: keywords,
-            heliumPlacement: request.placement,
+            mediationPlacement: request.placement,
             loadID: UUID().uuidString
         )
     }
@@ -508,14 +508,14 @@ final class BannerController: BannerControllerProtocol,
     }
 
     func didReward() {
-        logger.trace("Reward ignored by banner ad")
+        logger.verbose("Reward ignored by banner ad")
     }
 
     func didDismiss(error: ChartboostMediationError?) {
-        logger.trace("Dismiss ignored by banner ad")
+        logger.verbose("Dismiss ignored by banner ad")
     }
 
     func didExpire() {
-        logger.trace("Expiration ignored by banner ad")
+        logger.verbose("Expiration ignored by banner ad")
     }
 }

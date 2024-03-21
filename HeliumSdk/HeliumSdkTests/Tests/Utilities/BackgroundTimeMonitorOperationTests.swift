@@ -10,10 +10,8 @@ class BackgroundTimeMonitorOperationTests: ChartboostMediationTestCase {
 
     let monitor = BackgroundTimeMonitor()
 
-    override func setUp() {
-        super.setUp()
-        dependenciesContainer.application = UIApplication.shared
-    }
+    /// Error margin used for any time interval comparisons for reliability.
+    let errorMargin: TimeInterval = 0.1
 
     func testUneventfulMonitoringMonitoring() {
         let operation = monitor.startMonitoringOperation()
@@ -23,37 +21,40 @@ class BackgroundTimeMonitorOperationTests: ChartboostMediationTestCase {
         XCTAssertEqual(0, operation.backgroundTimeUntilNow())
     }
 
-    func testEventfulMonitoring() {
-        let operation = monitor.startMonitoringOperation()
+    func testEventfulMonitoring() throws {
+        let operation = try XCTUnwrap(monitor.startMonitoringOperation() as? BackgroundTimeMonitorOperation)
         wait(duration: TimeInterval.random(in: 0.1...1.0))
-
         XCTAssertEqual(0, operation.backgroundTimeUntilNow())
 
-        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
+        operation.applicationDidEnterBackground()
+        let date1 = Date()
         wait(duration: TimeInterval.random(in: 0.1...1.0))
         let backgroundTime1 = operation.backgroundTimeUntilNow()
-        XCTAssertTrue(backgroundTime1 >= 0.1)
-        XCTAssertTrue(backgroundTime1 <= 1.0)
+        XCTAssertGreaterThanOrEqual(backgroundTime1, abs(date1.timeIntervalSinceNow) - errorMargin)
+        XCTAssertLessThanOrEqual(backgroundTime1, abs(date1.timeIntervalSinceNow) + errorMargin)
 
-        NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
+        operation.applicationWillEnterForeground()
         wait(duration: TimeInterval.random(in: 0.1...1.0))
         let backgroundTime2 = operation.backgroundTimeUntilNow()
-        XCTAssertTrue(backgroundTime2 >= 0.1)
-        XCTAssertTrue(backgroundTime2 <= 1.0)
+        XCTAssertGreaterThanOrEqual(backgroundTime1, backgroundTime2 - errorMargin)
+        XCTAssertLessThanOrEqual(backgroundTime1, backgroundTime2 + errorMargin)
 
-        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
+        operation.applicationDidEnterBackground()
+        let date3 = Date()
         wait(duration: TimeInterval.random(in: 0.1...1.0))
-        NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
+        operation.applicationWillEnterForeground()
         let backgroundTime3 = operation.backgroundTimeUntilNow()
-        XCTAssertTrue(backgroundTime3 >= 0.2)
-        XCTAssertTrue(backgroundTime3 <= 2.0)
+        XCTAssertGreaterThanOrEqual(backgroundTime3, backgroundTime2 + abs(date3.timeIntervalSinceNow) - errorMargin)
+        XCTAssertLessThanOrEqual(backgroundTime3, backgroundTime2 + abs(date3.timeIntervalSinceNow) + errorMargin)
 
-        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
+        operation.applicationDidEnterBackground()
+        let date4 = Date()
         wait(duration: TimeInterval.random(in: 0.1...1.0))
-        NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
+        let date5 = Date()
+        operation.applicationWillEnterForeground()
         wait(duration: TimeInterval.random(in: 0.1...1.0))
         let backgroundTime4 = operation.backgroundTimeUntilNow()
-        XCTAssertTrue(backgroundTime4 >= 0.3)
-        XCTAssertTrue(backgroundTime4 <= 3.0)
+        XCTAssertGreaterThanOrEqual(backgroundTime4, backgroundTime3 + date5.timeIntervalSince(date4) - errorMargin)
+        XCTAssertLessThanOrEqual(backgroundTime4, backgroundTime3 + date5.timeIntervalSince(date4) + errorMargin)
     }
 }

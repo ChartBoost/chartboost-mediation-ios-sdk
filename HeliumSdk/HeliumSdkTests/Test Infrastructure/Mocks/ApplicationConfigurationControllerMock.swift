@@ -9,7 +9,12 @@ import Foundation
 class ApplicationConfigurationControllerMock: Mock<ApplicationConfigurationControllerMock.Method>, ApplicationConfigurationController {
     
     enum Method {
+        case restorePersistedConfiguration
         case updateConfiguration
+    }
+
+    func restorePersistedConfiguration() {
+        record(.restorePersistedConfiguration)
     }
 
     func updateConfiguration(completion: @escaping UpdateAppConfigCompletion) {

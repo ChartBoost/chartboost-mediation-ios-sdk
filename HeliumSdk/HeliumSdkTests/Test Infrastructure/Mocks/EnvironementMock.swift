@@ -180,6 +180,9 @@ extension EnvironmentMock {
     }
 
     final class TestModeInfoProviderMock: TestModeInfoProviding {
+        var fullscreenAdQueueTTL: TimeInterval? = nil
+        var fullscreenAdQueueMaxSize: Int? = nil
+        var fullscreenAdQueueRequestedSize: Int? = nil
         var isTestModeEnabled = false
         var isRateLimitingEnabled = true
         var sdkAPIHostOverride: String? = nil

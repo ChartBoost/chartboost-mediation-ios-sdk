@@ -30,7 +30,7 @@ final class AdLoadRequestTests: ChartboostMediationTestCase {
                 key_2_too_long: value_2, // the key is too long
                 key_3_too_long: value_3_too_long, // both key and value are too long
             ],
-            heliumPlacement: "",
+            mediationPlacement: "",
             loadID: ""
         )
         XCTAssertAnyEqual(request.keywords, [

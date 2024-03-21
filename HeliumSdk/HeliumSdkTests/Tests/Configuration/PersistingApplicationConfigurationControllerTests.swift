@@ -16,7 +16,7 @@ class PersistingApplicationConfigurationControllerTests: ChartboostMediationTest
     private static let updatedInitHash = "some updated init hash"
     
     var expectedConfigFileURL: URL {
-        try! mocks.fileStorage.urlForHeliumConfigurationDirectory.appendingPathComponent("HeConfig.json")
+        try! mocks.fileStorage.urlForSDKConfigurationDirectory.appendingPathComponent("HeConfig.json")
     }
     
     override func setUp() {
@@ -24,7 +24,7 @@ class PersistingApplicationConfigurationControllerTests: ChartboostMediationTest
         
         // Clean up records from restore action that happens on the controller's init.
         // We do this here to avoid having to worry about it on every test we write.
-        _ = controller  // access to force instantiation of lazy var
+        controller.restorePersistedConfiguration() // access to force instantiation of lazy var and restore the config
         mocks.fileStorage.removeAllRecords()
         mocks.appConfiguration.removeAllRecords()
         
@@ -33,13 +33,14 @@ class PersistingApplicationConfigurationControllerTests: ChartboostMediationTest
     }
     
     /// Validates that the controller restores a persisted configuration on init.
-    func testInitRestoresPersistedConfiguration() {
+    func testRestoresPersistedConfiguration() {
         // Setup: persisted data file exists
         mocks.fileStorage.setReturnValue(true, for: .fileExists)
         
-        // Init a controller
-        _ = PersistingApplicationConfigurationController()
-        
+        // Init the controller and restore config
+        let controller = PersistingApplicationConfigurationController()
+        controller.restorePersistedConfiguration()
+
         // Check that config is updated with the persisted data
         XCTAssertMethodCallsContains(mocks.fileStorage, .readData, parameters: [expectedConfigFileURL])
         XCTAssertMethodCalls(mocks.appConfiguration, .update, parameters: [mocks.fileStorage.returnValue(for: .readData)])
@@ -50,9 +51,10 @@ class PersistingApplicationConfigurationControllerTests: ChartboostMediationTest
         // Setup: persisted data does not exist
         mocks.fileStorage.setReturnValue(false, for: .fileExists)
         
-        // Init a controller
-        _ = PersistingApplicationConfigurationController()
-        
+        // Init the controller and restore config
+        let controller = PersistingApplicationConfigurationController()
+        controller.restorePersistedConfiguration()
+
         // Check that config is not updated and data not read
         XCTAssertNoMethodCall(mocks.fileStorage, to: .readData)
         XCTAssertNoMethodCalls(mocks.appConfiguration)
@@ -64,9 +66,10 @@ class PersistingApplicationConfigurationControllerTests: ChartboostMediationTest
         mocks.fileStorage.setReturnValue(true, for: .fileExists)
         mocks.appConfiguration.setReturnValue(NSError.test(), for: .update)
         
-        // Init a controller
-        _ = PersistingApplicationConfigurationController()
-        
+        // Init a controller and restore config
+        let controller = PersistingApplicationConfigurationController()
+        controller.restorePersistedConfiguration()
+
         // Check that config is tried to be updated with the persisted data
         XCTAssertMethodCallsContains(mocks.fileStorage, .readData, parameters: [expectedConfigFileURL])
         XCTAssertMethodCalls(mocks.appConfiguration, .update, parameters: [mocks.fileStorage.returnValue(for: .readData)])

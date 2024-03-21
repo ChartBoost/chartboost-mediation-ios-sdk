@@ -60,7 +60,7 @@ protocol AdControllerConfiguration {
 /// AdController implementation that can hold at most one loaded ad.
 /// Trying to load again when an ad is already loaded will return immediately with success.
 /// It is possible to load another ad when the previous one is already shown.
-/// - note: With the current architecture there is one AdController instance per Helium placement.
+/// - note: With the current architecture there is one AdController instance per Chartboost Mediation placement.
 /// Currently multiple ads for the same placement can be created and used, but this is discouraged as they will share the same state.
 /// This is the reason AdController needs to know about multiple observers and not just a single delegate.
 final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
@@ -124,9 +124,9 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
 
     func loadAd(request: AdLoadRequest, viewController: UIViewController?, completion: @escaping (AdLoadResult) -> Void) {
         taskDispatcher.async(on: .background) { [self] in
-            logger.debug("Load started for \(request.adFormat) ad with placement \(request.heliumPlacement) and load ID \(request.loadID)")
+            logger.debug("Load started for \(request.adFormat) ad with placement \(request.mediationPlacement) and load ID \(request.loadID)")
 
-            // If Helium not started fail early
+            // If Chartboost Mediation not started fail early
             guard initializationStatusProvider.isInitialized else {
                 logger.error("Load failed due to SDK not being initialized")
                 completion(
@@ -146,7 +146,7 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
             }
             // If already loaded finish successfully
             if let (ad, metrics) = loadedAd {
-                logger.info("Ad already loaded with placement \(request.heliumPlacement)")
+                logger.info("Ad already loaded with placement \(request.mediationPlacement)")
                 completion(AdLoadResult(result: .success(ad), metrics: metrics))
                 return
             }
@@ -172,10 +172,10 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
                     self.isLoading = false
                     switch result.result {
                     case .success(let ad):
-                        logger.info("Load succeeded for \(request.adFormat) ad with placement \(request.heliumPlacement) and load ID \(request.loadID)")
+                        logger.info("Load succeeded for \(request.adFormat) ad with placement \(request.mediationPlacement) and load ID \(request.loadID)")
                         self.loadedAd = (ad, result.metrics)
                     case .failure(let error):
-                        logger.error("Load failed for \(request.adFormat) ad with placement \(request.heliumPlacement) and load ID \(request.loadID) and error: \(error)")
+                        logger.error("Load failed for \(request.adFormat) ad with placement \(request.mediationPlacement) and load ID \(request.loadID) and error: \(error)")
                     }
                     completion(result)
                 }
@@ -189,7 +189,7 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
             guard let (ad, _) = loadedAd else {
                 return
             }
-            logger.debug("Invalidating \(ad.request.adFormat) ad with placement \(ad.request.heliumPlacement)")
+            logger.debug("Invalidating \(ad.request.adFormat) ad with placement \(ad.request.mediationPlacement)")
             // Remove loaded ad
             loadedAd = nil
             // Tell partner to remove the ad on their side
@@ -205,7 +205,7 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
                 completion(nil)
                 return
             }
-            logger.debug("Invalidating showing \(ad.request.adFormat) ad with placement \(ad.request.heliumPlacement)")
+            logger.debug("Invalidating showing \(ad.request.adFormat) ad with placement \(ad.request.mediationPlacement)")
             // Remove showing ad
             showingAd = nil
             // Tell partner to remove the ad on their side
@@ -227,7 +227,7 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
             }
             assert(!ad.request.adFormat.isBanner, "Calling this for banner ads is a programmer error")
 
-            logger.debug("Show started for \(ad.request.adFormat) ad with placement \(ad.request.heliumPlacement) and load ID \(ad.request.loadID)")
+            logger.debug("Show started for \(ad.request.adFormat) ad with placement \(ad.request.mediationPlacement) and load ID \(ad.request.loadID)")
 
             // Remove loadedAd since it's now used. This prevents multiple user calls to show() to trigger multiple requests to the
             // partnerController for the same ad.
@@ -246,7 +246,7 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
                 // Stop retaining the delegate
                 self.retainedDelegate = nil
                 // Finish
-                logger.error("Show failed for \(ad.request.adFormat) ad with placement \(ad.request.heliumPlacement) and load ID \(ad.request.loadID) and error: \(error)")
+                logger.error("Show failed for \(ad.request.adFormat) ad with placement \(ad.request.mediationPlacement) and load ID \(ad.request.loadID) and error: \(error)")
                 completion(AdShowResult(error: error, metrics: rawMetrics))
             }
 
@@ -275,14 +275,14 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
                         // Stop retaining the delegate
                         self.retainedDelegate = nil
                         // Finish
-                        logger.error("Show failed for \(ad.request.adFormat) ad with placement \(ad.request.heliumPlacement) and load ID \(ad.request.loadID) and error: \(error)")
+                        logger.error("Show failed for \(ad.request.adFormat) ad with placement \(ad.request.mediationPlacement) and load ID \(ad.request.loadID) and error: \(error)")
                         completion(AdShowResult(error: error, metrics: rawMetrics))
                     } else {
-                        // Record a Helium impression
+                        // Record a Chartboost Mediation impression
                         self.recordAdImpression(for: ad)
                         // Notify full-screen ad show observer and finish
                         self.fullScreenAdShowObserver.didShowFullScreenAd()
-                        logger.info("Show succeeded for \(ad.request.adFormat) ad with placement \(ad.request.heliumPlacement) and load ID \(ad.request.loadID)")
+                        logger.info("Show succeeded for \(ad.request.adFormat) ad with placement \(ad.request.mediationPlacement) and load ID \(ad.request.loadID)")
                         completion(AdShowResult(error: nil, metrics: rawMetrics))
                     }
                 }
@@ -314,12 +314,12 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
         // Increase the impression count for this format
         impressionTracker.trackImpression(for: ad.request.adFormat)
 
-        // Log a helium impression
-        metrics.logHeliumImpression(for: ad.partnerAd)
+        // Log a Chartboost Mediation impression
+        metrics.logMediationImpression(for: ad.partnerAd)
 
         // Fire ILRD notification for the winning bid, if available.
         if let ilrd = ad.ilrd {
-            ilrdEventPublisher.postILRDEvent(forPlacement: ad.request.heliumPlacement, ilrdJSON: ilrd)
+            ilrdEventPublisher.postILRDEvent(forPlacement: ad.request.mediationPlacement, ilrdJSON: ilrd)
         }
 
         // Call impression delegate method

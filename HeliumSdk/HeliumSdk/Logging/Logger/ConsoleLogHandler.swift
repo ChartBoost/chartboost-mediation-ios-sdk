@@ -6,14 +6,13 @@
 import Foundation
 import os.log
 
-/// Configuration settings for console logger.
-protocol ConsoleLoggerConfiguration {
-    /// The logging level.
+/// Override value of console logger configuration.
+protocol ConsoleLoggerConfigurationOverride {
     var logLevel: LogLevel? { get }
 }
 
 /// A `LogHandler` that logs to the console. On iOS 12 and later, logging is performed using `os_log`, otherwise it uses `print`.
-final class ConsoleLoggerHandler: LogHandler {
+final class ConsoleLogHandler: LogHandler {
     /// The desired log level.
     @Atomic static var logLevel: LogLevel = .info
 
@@ -23,7 +22,7 @@ final class ConsoleLoggerHandler: LogHandler {
         guard #available(iOS 12, *) else {
             return
         }
-        guard actualLogLevel <= entry.logLevel else {
+        guard actualLogLevel >= entry.logLevel else {
             return
         }
         guard let type = entry.logLevel.asOSLogType else {
@@ -35,15 +34,15 @@ final class ConsoleLoggerHandler: LogHandler {
 
     // MARK: - Private
 
-    @Injected(\.consoleLoggerConfiguration) private var configuration
+    @Injected(\.consoleLoggerConfigurationOverride) private var configurationOverride
 
     private var actualLogLevel: LogLevel {
-        if let logLevelOverride = configuration.logLevel {
+        if let logLevelOverride = configurationOverride.logLevel {
             // The app configuration can provide a log level in order to override the value for
             // production apps using network re-writing for field debugging purposes.
             return logLevelOverride
         } else {
-           return Self.logLevel
+            return Self.logLevel
         }
     }
 }
@@ -54,7 +53,7 @@ extension LogLevel {
         switch self {
         case .none:
             return nil
-        case .trace, .debug:
+        case .verbose, .trace, .debug:
             // Use this level to capture information that may be useful during development or while
             // troubleshooting a specific problem.
             return .debug

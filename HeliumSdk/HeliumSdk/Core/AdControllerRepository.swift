@@ -8,25 +8,25 @@ import Foundation
 /// A repository that produces AdController instances on demand.
 protocol AdControllerRepository {
     /// Returns an AdController instance suitable for the specified placement.
-    func adController(forHeliumPlacement heliumPlacement: String) -> AdController
+    func adController(for mediationPlacement: String) -> AdController
 }
 
-/// An AdControllerRepository that shares the same ad controller per Helium placement.
+/// An AdControllerRepository that shares the same ad controller per Chartboost Mediation placement.
 /// Note that there will never be ads of different format but with same placement.
 final class SingleControllerPerPlacementAdControllerRepository: AdControllerRepository {
-    /// Already created controllers keyed by Helium placement.
+    /// Already created controllers keyed by Chartboost Mediation placement.
     private var controllers: [String: AdController] = [:]
     /// A factory that knows how to create new ad controllers
     @Injected(\.adControllerFactory) private var factory
 
-    func adController(forHeliumPlacement heliumPlacement: String) -> AdController {
+    func adController(for mediationPlacement: String) -> AdController {
         // If controller already created for this placement return it
-        if let controller = controllers[heliumPlacement] {
+        if let controller = controllers[mediationPlacement] {
             return controller
         }
         // Otherwise create a new controller, save it, and return it
         let controller = factory.makeAdController()
-        controllers[heliumPlacement] = controller
+        controllers[mediationPlacement] = controller
         return controller
     }
 }

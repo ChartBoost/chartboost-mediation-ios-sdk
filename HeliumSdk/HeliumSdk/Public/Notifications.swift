@@ -38,6 +38,20 @@ extension Notification.Name {
     /// }
     /// ```
     public static let heliumDidReceiveInitResults = Notification.Name(rawValue: "com.chartboost.helium.notification.init")
+
+    /// `Notification.Name` for receiving notification of initialization completion.
+    /// To listen for initialization completion events, register a notification handler using this constant as the
+    /// notification name.
+    ///
+    /// ```
+    /// NotificationCenter.default.addObserver(
+    ///     forName: .heliumDidFinishInitializing,
+    ///     object: nil,
+    ///     queue: nil
+    /// ) { _ in
+    /// }
+    /// ```
+    public static let heliumDidFinishInitializing = Notification.Name(rawValue: "com.chartboost.helium.notification.init-completed")
 }
 
 // swiftlint:disable legacy_objc_type
@@ -73,5 +87,18 @@ extension NSNotification {
     /// }];
     /// ```
     public static let heliumDidReceiveInitResults = Notification.Name.heliumDidReceiveInitResults
+
+    /// `Notification.Name` for receiving notification of initialization completion.
+    /// To listen for initialization completion events, register a notification handler using this constant as the
+    /// notification name.
+    ///
+    /// ```
+    /// [NSNotificationCenter.defaultCenter addObserverForName:NSNotification.heliumDidFinishInitializing
+    ///                                                 object:nil
+    ///                                                  queue:nil
+    ///                                             usingBlock:^(NSNotification * _Nonnull notification) {
+    /// }];
+    /// ```
+    public static let heliumDidFinishInitializing = Notification.Name.heliumDidFinishInitializing
 }
 // swiftlint:enable legacy_objc_type

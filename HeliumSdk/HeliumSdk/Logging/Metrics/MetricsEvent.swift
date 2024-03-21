@@ -21,11 +21,13 @@ struct MetricsEvent: Encodable {
         case show
         case click
         case expiration
-        case heliumImpression = "helium_impression"
+        case mediationImpression = "helium_impression"
         case partnerImpression = "partner_impression"
         case reward
         case winner
         case bannerSize = "banner_size"
+        case startQueue
+        case endQueue
     }
 
     /// Start time the event started.

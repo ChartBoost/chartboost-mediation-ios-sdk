@@ -17,6 +17,9 @@ public protocol ChartboostMediationFullscreenAd: AnyObject {
     /// Limited to 1000 characters. It will be ignored if the limit is exceeded.
     @objc var customData: String? { get set }
 
+    /// A unique identifier for the load request.
+    @objc var loadID: String { get }
+
     /// The request that resulted in this ad getting loaded.
     @objc var request: ChartboostMediationAdLoadRequest { get }
 

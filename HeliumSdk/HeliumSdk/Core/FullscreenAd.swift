@@ -19,6 +19,9 @@ final class FullscreenAd: ChartboostMediationFullscreenAd, AdControllerDelegate 
         set { controller.customData = newValue }
     }
 
+    /// A unique identifier for the load request.
+    var loadID: String
+
     /// The request that resulted in this ad getting loaded.
     let request: ChartboostMediationAdLoadRequest
 
@@ -32,10 +35,16 @@ final class FullscreenAd: ChartboostMediationFullscreenAd, AdControllerDelegate 
 
     @Injected(\.taskDispatcher) private var taskDispatcher
 
-    init(request: ChartboostMediationAdLoadRequest, winningBidInfo: [String: Any], controller: AdController) {
+    init(
+        request: ChartboostMediationAdLoadRequest,
+        winningBidInfo: [String: Any],
+        controller: AdController,
+        loadID: String
+    ) {
         self.request = request
         self.winningBidInfo = winningBidInfo
         self.controller = controller
+        self.loadID = loadID
 
         controller.delegate = self
     }

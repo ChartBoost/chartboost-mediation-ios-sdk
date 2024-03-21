@@ -87,7 +87,8 @@ extension PartnerLogger {
         }
     }
 
-    /// Returns a proper message for Helium errors created by the `PartnerAdapter.error()` method, or a default error description.
+    /// Returns a proper message for Chartboost Mediation errors created by the `PartnerAdapter.error()` method, 
+    /// or a default error description.
     private func message(for error: Error) -> String {
         guard let error = error as? ChartboostMediationError else {
             return "'\((error as NSError).description)'"

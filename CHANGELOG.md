@@ -2,6 +2,14 @@ iOS Change Log
 ==================
 Check for the latest Chartboost Mediation SDK at the Chartboost website.
 
+### Version 4.9.0 *(2024-03-21)*
+----------------------------
+Improvements:
+- Added support for ad queueing, a new feature that builds upon the existing fullscreen ad experience that allows publishers to queue up multiple fullscreen ads and show them in succession.
+- Added a test mode toggle.
+- Renamed `LogLevel.trace` to `LogLevel.verbose`.
+- Added `loadID` to `ChartboostMediatonFullscreenAd`.
+
 ### Version 4.8.0 *(2024-02-08)*
 ----------------------------
 Improvements:

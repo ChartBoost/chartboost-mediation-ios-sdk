@@ -5,7 +5,7 @@
 
 import Foundation
 
-/// A model that represents an ad load request on the Helium SDK.
+/// A model that represents an ad load request on the Chartboost Mediation SDK.
 struct AdLoadRequest: Equatable {
     private enum Constant {
         static let maxKeywordKeyLength = 64
@@ -18,24 +18,28 @@ struct AdLoadRequest: Equatable {
     let adFormat: AdFormat
     /// Keywords to be sent in API load requests.
     let keywords: [String: String]?
-    /// Helium's placement identifier.
-    let heliumPlacement: String
+    /// Chartboost Mediation's placement identifier.
+    let mediationPlacement: String
     /// A unique identifier for the load request.
     let loadID: String
+    /// The unique identifier for the FullscreenAdQueue that initiated this load. Nil for requests not originating from a queue.
+    let queueID: String?
 
     init(
         adSize: ChartboostMediationBannerSize?,
         adFormat: AdFormat,
         keywords: [String: String]?,
-        heliumPlacement: String,
-        loadID: String
+        mediationPlacement: String,
+        loadID: String,
+        queueID: String? = nil
     ) {
         self.adSize = adSize
         self.adFormat = adFormat
         self.keywords = keywords?.filter { pair in
             pair.key.count <= Constant.maxKeywordKeyLength && pair.value.count <= Constant.maxKeywordValueLength
         }
-        self.heliumPlacement = heliumPlacement
+        self.mediationPlacement = mediationPlacement
         self.loadID = loadID
+        self.queueID = queueID
     }
 }

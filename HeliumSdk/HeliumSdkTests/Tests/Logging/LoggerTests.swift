@@ -47,6 +47,29 @@ class LoggerTests: ChartboostMediationTestCase {
         }
     }
 
+    // Tests that the trace log level is properly exercised through the `Logger.verbose()` method.
+    func testDefaultLoggerVerbose() throws {
+        let logger = Logger.default
+        let message = "testDefaultLogger-verbose"
+
+        let expectation = expectation(description: message)
+        capture.didReceiveEntry = { lastEntry in
+            expectation.fulfill()
+
+            guard let entry = lastEntry else {
+                return XCTFail("lastEntry was unexpectedly nil")
+            }
+
+            XCTAssertEqual("com.chartboost.mediation.sdk", entry.subsystem)
+            XCTAssertEqual("Chartboost Mediation", entry.category)
+            XCTAssertEqual(message, entry.message)
+            XCTAssertEqual(.verbose, entry.logLevel)
+        }
+
+        logger.verbose(message)
+        wait(for: [expectation], timeout: 1)
+    }
+
     // Tests that the trace log level is properly exercised through the `Logger.trace()` method.
     func testDefaultLoggerTrace() throws {
         let logger = Logger.default
@@ -63,10 +86,10 @@ class LoggerTests: ChartboostMediationTestCase {
             XCTAssertEqual("com.chartboost.mediation.sdk", entry.subsystem)
             XCTAssertEqual("Chartboost Mediation", entry.category)
             XCTAssertEqual(message, entry.message)
-            XCTAssertEqual(.trace, entry.logLevel)
+            XCTAssertEqual(.verbose, entry.logLevel)
         }
 
-        logger.trace(message)
+        logger.verbose(message)
         wait(for: [expectation], timeout: 1)
     }
 
@@ -274,23 +297,25 @@ class LoggerTests: ChartboostMediationTestCase {
 
 extension LogLevel {
     static let all: [LogLevel] = [
-        .trace, .debug, .info, .warning, .error, .none
+        .none, .error, .warning, .info, .debug, .trace, .verbose
     ]
 
     var asString: String {
         switch self {
-        case .trace:
-            return "trace"
-        case .debug:
-            return "debug"
-        case .info:
-            return "info"
-        case .warning:
-            return "warning"
-        case .error:
-            return "error"
         case .none:
             return "none"
+        case .error:
+            return "error"
+        case .warning:
+            return "warning"
+        case .info:
+            return "info"
+        case .debug:
+            return "debug"
+        case .trace:
+            return "trace"
+        case .verbose:
+            return "verbose"
         }
     }
 }

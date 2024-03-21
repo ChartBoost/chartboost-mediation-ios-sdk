@@ -20,7 +20,7 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
         adSize: .init(size: CGSize(width: 23, height: 45), type: .fixed),
         adFormat: .interstitial,
         keywords: ["asd": "fgh"],
-        heliumPlacement: "some helium placement",
+        mediationPlacement: "some helium placement",
         loadID: "some load ID"
     )
     let viewController = UIViewController()
@@ -1098,7 +1098,7 @@ private extension BidFulfillOperationTests {
     func partnerLoadRequest(for bid: Bid) -> PartnerAdLoadRequest {
         PartnerAdLoadRequest(
             partnerIdentifier: bid.partnerIdentifier,
-            chartboostPlacement: request.heliumPlacement,
+            chartboostPlacement: request.mediationPlacement,
             partnerPlacement: bid.partnerPlacement,
             format: request.adFormat,
             size: bid.size ?? request.adSize?.size,

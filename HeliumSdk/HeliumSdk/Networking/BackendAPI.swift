@@ -25,6 +25,8 @@ enum BackendAPI {
         case reward
         case show
         case winner
+        case startQueue
+        case endQueue
 
         var scheme: String {
             "https"
@@ -61,6 +63,10 @@ enum BackendAPI {
                     return "show"
                 case .winner:
                     return "winner"
+                case .startQueue:
+                    return "start-queue"
+                case .endQueue:
+                    return "end-queue"
                 }
             }
 
@@ -104,6 +110,10 @@ enum BackendAPI {
                 return "/v1/event/show"
             case .winner:
                 return "/v3/event/winner"
+            case .startQueue:
+                return "/v1/event/start_queue"
+            case .endQueue:
+                return "/v1/event/end_queue"
             }
         }
     }

@@ -14,29 +14,17 @@ class UserSettingsProviderTests: ChartboostMediationTestCase {
 
         DispatchQueue.main.async {
             let inputLanguages = userSettingsProvider.inputLanguages
-            if #available(iOS 17.0, *) {
-                XCTAssert(inputLanguages.isEmpty)
-            } else {
-                XCTAssertFalse(inputLanguages.isEmpty)
-            }
+            XCTAssert(inputLanguages.isEmpty)
             expectation.fulfill()
         }
         DispatchQueue.global(qos: .default).async {
             let inputLanguages = userSettingsProvider.inputLanguages
-            if #available(iOS 17.0, *) {
-                XCTAssert(inputLanguages.isEmpty)
-            } else {
-                XCTAssertFalse(inputLanguages.isEmpty)
-            }
+            XCTAssert(inputLanguages.isEmpty)
             expectation.fulfill()
         }
         DispatchQueue.global(qos: .userInitiated).async {
             let inputLanguages = userSettingsProvider.inputLanguages
-            if #available(iOS 17.0, *) {
-                XCTAssert(inputLanguages.isEmpty)
-            } else {
-                XCTAssertFalse(inputLanguages.isEmpty)
-            }
+            XCTAssert(inputLanguages.isEmpty)
             expectation.fulfill()
         }
         waitForExpectations(timeout: 10)

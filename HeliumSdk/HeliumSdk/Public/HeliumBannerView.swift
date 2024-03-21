@@ -6,14 +6,14 @@
 import Foundation
 
 // Concrete class that implements the public HeliumBannerAd protocol.
-// These are the ad instances that publishers use to ask Helium to load and show ads.
+// These are the ad instances that publishers use to ask Chartboost Mediation to load and show ads.
 // Publishers are responsible for keeping them alive.
 // - note: Unlike InterstitialAd and RewardedAd, BannerAd does not make delegate calls itself.
 // This is because of the BannerController that lies between the BannerAd and the AdController, and manages
 // the banner auto-refresh logic. BannerController is in charge of making these delegate calls.
 
-/// Helium banner ad view.
-/// 
+/// Chartboost Mediation banner ad view.
+///
 /// Add this view to the view hierarchy before showing the banner ad.
 @objc
 public class HeliumBannerView: UIView, HeliumBannerAd {

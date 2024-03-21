@@ -24,12 +24,12 @@ class AdFactoryMock: Mock<AdFactoryMock.Method>, AdFactory {
     override var defaultReturnValues: [Method : Any?] {
         [
             .makeInterstitialAd: InterstitialAd(
-                heliumPlacement: "",
+                mediationPlacement: "",
                 delegate: HeliumInterstitialAdDelegateMock(),
                 controller: AdControllerMock()
             ),
             .makeRewardedAd: InterstitialAd(
-                heliumPlacement: "",
+                mediationPlacement: "",
                 delegate: HeliumInterstitialAdDelegateMock(),
                 controller: AdControllerMock()
             ),
@@ -71,7 +71,7 @@ class AdFactoryMock: Mock<AdFactoryMock.Method>, AdFactory {
         record(.makeBannerAd, parameters: [placement, size, delegate])
     }
     
-    func makeFullscreenAd(request: ChartboostMediationAdLoadRequest, winningBidInfo: [String : Any], controller: AdController) -> ChartboostMediationFullscreenAd {
+    func makeFullscreenAd(request: ChartboostMediationAdLoadRequest, winningBidInfo: [String : Any], controller: AdController, loadID: String) -> ChartboostMediationFullscreenAd {
         record(.makeFullscreenAd, parameters: [request, winningBidInfo, controller])
     }
 

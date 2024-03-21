@@ -45,6 +45,9 @@ class BackendAPITests: ChartboostMediationTestCase {
             case .config:
                 XCTAssertEqual(endpoint.host, "config.mediation-sdk.chartboost.com")
                 XCTAssertEqual(endpoint.basePath, "/v1/sdk_init")
+            case .endQueue:
+                XCTAssertEqual(endpoint.host, "end-queue.mediation-sdk.chartboost.com")
+                XCTAssertEqual(endpoint.basePath, "/v1/event/end_queue")
             case .expiration:
                 XCTAssertEqual(endpoint.host, "expiration.mediation-sdk.chartboost.com")
                 XCTAssertEqual(endpoint.basePath, "/v1/event/expiration")
@@ -69,6 +72,9 @@ class BackendAPITests: ChartboostMediationTestCase {
             case .show:
                 XCTAssertEqual(endpoint.host, "show.mediation-sdk.chartboost.com")
                 XCTAssertEqual(endpoint.basePath, "/v1/event/show")
+            case .startQueue:
+                XCTAssertEqual(endpoint.host, "start-queue.mediation-sdk.chartboost.com")
+                XCTAssertEqual(endpoint.basePath, "/v1/event/start_queue")
             case .winner:
                 XCTAssertEqual(endpoint.host, "winner.mediation-sdk.chartboost.com")
                 XCTAssertEqual(endpoint.basePath, "/v3/event/winner")

@@ -7,8 +7,9 @@ import Foundation
 
 /// Keywords are essentially key-value pairs used to enable real-time targeting on line items (and/or adgroups, placements, apps).
 ///
-/// Helium SDK requests keywords from the Publisher App and sends them as part of the ad request to the Helium Auction server.
-/// The Auction server uses the targeting rules defined by the publisher via Helium Dashboard to decide which line items
+/// Chartboost Mediation SDK requests keywords from the Publisher App and sends them as part of the ad request to the Chartboost
+/// Mediation Auction server.
+/// The Auction server uses the targeting rules defined by the publisher via Chartboost Mediation Dashboard to decide which line items
 /// will participate in the auction.
 @objc(HeliumKeywords)
 public class HeliumKeywords: NSObject {

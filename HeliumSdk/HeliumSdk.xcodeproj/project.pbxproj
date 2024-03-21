@@ -59,6 +59,12 @@
 		03EED63621CC609700077FF2 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03EED62E21CC609700077FF2 /* ImageIO.framework */; };
 		1147EADB214B06550007EDF4 /* ChartboostMediationSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1147EAD1214B06550007EDF4 /* ChartboostMediationSDK.framework */; };
 		11FBBE9D21ACD71700F9650C /* HeliumDelegates.h in Headers */ = {isa = PBXBuildFile; fileRef = 11FBBDDC21ACD71700F9650C /* HeliumDelegates.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9A4F288B2B60A03B000F04CB /* FullscreenAdQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4F288A2B60A03B000F04CB /* FullscreenAdQueue.swift */; };
+		9A4F288D2B60A06C000F04CB /* FullscreenAdQueueDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4F288C2B60A06C000F04CB /* FullscreenAdQueueDelegate.swift */; };
+		9A6796742B71D836005026BA /* FullscreenAdQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6796732B71D836005026BA /* FullscreenAdQueueTests.swift */; };
+		9A99E7EF2B917604005BA569 /* FullscreenAdQueueConfigurationMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A99E7EE2B917604005BA569 /* FullscreenAdQueueConfigurationMock.swift */; };
+		9AF6BEE82B8D35AD00517126 /* StartQueueEventHTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF6BEE72B8D35AD00517126 /* StartQueueEventHTTPRequest.swift */; };
+		9AF6BEEA2B8D35BF00517126 /* EndQueueEventHTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF6BEE92B8D35BF00517126 /* EndQueueEventHTTPRequest.swift */; };
 		B90398CF29F73E99009A4261 /* ChartboostIDProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90398CE29F73E99009A4261 /* ChartboostIDProvider.swift */; };
 		B90398D529F75158009A4261 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90398D429F75158009A4261 /* Environment.swift */; };
 		B90398DA29F753AA009A4261 /* DeviceInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90398D829F7536A009A4261 /* DeviceInfoTests.swift */; };
@@ -69,7 +75,6 @@
 		B934039729C41AB200319E1B /* HTTPRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B934039629C41AB200319E1B /* HTTPRequestTests.swift */; };
 		B93443FC29E8A0B0006E4546 /* NetworkManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93443FB29E8A0B0006E4546 /* NetworkManagerMock.swift */; };
 		B93956AB29F7280D009729D5 /* InfoPlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93956AA29F7280D009729D5 /* InfoPlist.swift */; };
-		B939D0612A09661800AF8682 /* TestModeInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B939D0602A09661800AF8682 /* TestModeInfoTests.swift */; };
 		B93F66362A01746B00162D3C /* SessionInfoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93F66352A01746B00162D3C /* SessionInfoProvider.swift */; };
 		B93F66382A0197B600162D3C /* UserSettingsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93F66372A0197B600162D3C /* UserSettingsProvider.swift */; };
 		B93F663B2A01D1F200162D3C /* UserSettingsProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93F66392A01D1D800162D3C /* UserSettingsProviderTests.swift */; };
@@ -88,6 +93,7 @@
 		B9540C6B2A045E15004A5D97 /* EnvironementMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9540C6A2A045E15004A5D97 /* EnvironementMock.swift */; };
 		B9540C6D2A047FDC004A5D97 /* InfoPlistMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9540C6C2A047FDC004A5D97 /* InfoPlistMock.swift */; };
 		B9540C6F2A049ABD004A5D97 /* ImpressionCounterMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9540C6E2A049ABD004A5D97 /* ImpressionCounterMock.swift */; };
+		B95771F92B58B19C000D2C65 /* TestModeInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B95771F82B58B19C000D2C65 /* TestModeInfoTests.swift */; };
 		B95CC82429B002B400F0A179 /* HTTPRequestMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = B95CC82329B002B400F0A179 /* HTTPRequestMock.swift */; };
 		B96339702A11F31B00B8E995 /* Helium.swift in Sources */ = {isa = PBXBuildFile; fileRef = B963396F2A11F31B00B8E995 /* Helium.swift */; };
 		B96339722A120E6F00B8E995 /* HeliumDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B96339712A120E6F00B8E995 /* HeliumDelegate.swift */; };
@@ -157,7 +163,7 @@
 		E699044C2A41F742003BC6D5 /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E699044B2A41F742003BC6D5 /* LogLevel.swift */; };
 		E699044E2A41F78E003BC6D5 /* LogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = E699044D2A41F78E003BC6D5 /* LogEntry.swift */; };
 		E69904502A41F7D1003BC6D5 /* LogHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E699044F2A41F7D1003BC6D5 /* LogHandler.swift */; };
-		E69904522A41F7F6003BC6D5 /* ConsoleLoggerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69904512A41F7F6003BC6D5 /* ConsoleLoggerHandler.swift */; };
+		E69904522A41F7F6003BC6D5 /* ConsoleLogHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69904512A41F7F6003BC6D5 /* ConsoleLogHandler.swift */; };
 		E69904542A41FE7F003BC6D5 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69904532A41FE7F003BC6D5 /* Logger.swift */; };
 		E6AAC932290730A600A1E66C /* MetricsEventLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AAC931290730A600A1E66C /* MetricsEventLogger.swift */; };
 		E6B9A2E129C2641400AEC225 /* ConsentSettingsMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B9A2E029C2641400AEC225 /* ConsentSettingsMock.swift */; };
@@ -505,6 +511,12 @@
 		11FBBDDC21ACD71700F9650C /* HeliumDelegates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeliumDelegates.h; sourceTree = "<group>"; };
 		4D24B3F03EB713D3C6D0581C /* Pods-MemoryLeakTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemoryLeakTests.debug.xcconfig"; path = "../HeliumSdk/MemoryLeakTests/Pods/Target Support Files/Pods-MemoryLeakTests/Pods-MemoryLeakTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5949916C711C91A3B058B7B8 /* Pods-MemoryLeakTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemoryLeakTests.release.xcconfig"; path = "../HeliumSdk/MemoryLeakTests/Pods/Target Support Files/Pods-MemoryLeakTests/Pods-MemoryLeakTests.release.xcconfig"; sourceTree = "<group>"; };
+		9A4F288A2B60A03B000F04CB /* FullscreenAdQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullscreenAdQueue.swift; sourceTree = "<group>"; };
+		9A4F288C2B60A06C000F04CB /* FullscreenAdQueueDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullscreenAdQueueDelegate.swift; sourceTree = "<group>"; };
+		9A6796732B71D836005026BA /* FullscreenAdQueueTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FullscreenAdQueueTests.swift; sourceTree = "<group>"; };
+		9A99E7EE2B917604005BA569 /* FullscreenAdQueueConfigurationMock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FullscreenAdQueueConfigurationMock.swift; sourceTree = "<group>"; };
+		9AF6BEE72B8D35AD00517126 /* StartQueueEventHTTPRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartQueueEventHTTPRequest.swift; sourceTree = "<group>"; };
+		9AF6BEE92B8D35BF00517126 /* EndQueueEventHTTPRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndQueueEventHTTPRequest.swift; sourceTree = "<group>"; };
 		9B6E2BA9EAAEF30239595A2D /* Pods_MemoryLeakTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MemoryLeakTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B90398CE29F73E99009A4261 /* ChartboostIDProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartboostIDProvider.swift; sourceTree = "<group>"; };
 		B90398D429F75158009A4261 /* Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
@@ -516,7 +528,6 @@
 		B934039629C41AB200319E1B /* HTTPRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPRequestTests.swift; sourceTree = "<group>"; };
 		B93443FB29E8A0B0006E4546 /* NetworkManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManagerMock.swift; sourceTree = "<group>"; };
 		B93956AA29F7280D009729D5 /* InfoPlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoPlist.swift; sourceTree = "<group>"; };
-		B939D0602A09661800AF8682 /* TestModeInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestModeInfoTests.swift; sourceTree = "<group>"; };
 		B93F66352A01746B00162D3C /* SessionInfoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionInfoProvider.swift; sourceTree = "<group>"; };
 		B93F66372A0197B600162D3C /* UserSettingsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettingsProvider.swift; sourceTree = "<group>"; };
 		B93F66392A01D1D800162D3C /* UserSettingsProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettingsProviderTests.swift; sourceTree = "<group>"; };
@@ -535,6 +546,7 @@
 		B9540C6A2A045E15004A5D97 /* EnvironementMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironementMock.swift; sourceTree = "<group>"; };
 		B9540C6C2A047FDC004A5D97 /* InfoPlistMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoPlistMock.swift; sourceTree = "<group>"; };
 		B9540C6E2A049ABD004A5D97 /* ImpressionCounterMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionCounterMock.swift; sourceTree = "<group>"; };
+		B95771F82B58B19C000D2C65 /* TestModeInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestModeInfoTests.swift; sourceTree = "<group>"; };
 		B95CC82329B002B400F0A179 /* HTTPRequestMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPRequestMock.swift; sourceTree = "<group>"; };
 		B963396F2A11F31B00B8E995 /* Helium.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helium.swift; sourceTree = "<group>"; };
 		B96339712A120E6F00B8E995 /* HeliumDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeliumDelegate.swift; sourceTree = "<group>"; };
@@ -603,7 +615,7 @@
 		E699044B2A41F742003BC6D5 /* LogLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogLevel.swift; sourceTree = "<group>"; };
 		E699044D2A41F78E003BC6D5 /* LogEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEntry.swift; sourceTree = "<group>"; };
 		E699044F2A41F7D1003BC6D5 /* LogHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogHandler.swift; sourceTree = "<group>"; };
-		E69904512A41F7F6003BC6D5 /* ConsoleLoggerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLoggerHandler.swift; sourceTree = "<group>"; };
+		E69904512A41F7F6003BC6D5 /* ConsoleLogHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLogHandler.swift; sourceTree = "<group>"; };
 		E69904532A41FE7F003BC6D5 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		E6AAC931290730A600A1E66C /* MetricsEventLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsEventLogger.swift; sourceTree = "<group>"; };
 		E6B9A2E029C2641400AEC225 /* ConsentSettingsMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentSettingsMock.swift; sourceTree = "<group>"; };
@@ -989,6 +1001,7 @@
 		039E51A823F5F78600CB7096 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
+				9A99E7EE2B917604005BA569 /* FullscreenAdQueueConfigurationMock.swift */,
 				EAB507A328B90E2A001427A0 /* AdAuctionServiceMock.swift */,
 				EA6976EA28D1F67C00306C8E /* AdControllerConfigurationMock.swift */,
 				EAB5079D28B90537001427A0 /* AdControllerDelegateMock.swift */,
@@ -1183,6 +1196,14 @@
 			path = ../Pods;
 			sourceTree = "<group>";
 		};
+		9A6796722B71D836005026BA /* Ad Queueing */ = {
+			isa = PBXGroup;
+			children = (
+				9A6796732B71D836005026BA /* FullscreenAdQueueTests.swift */,
+			);
+			path = "Ad Queueing";
+			sourceTree = "<group>";
+		};
 		B9CE784B298C4BB9003D457F /* HTTPRequest */ = {
 			isa = PBXGroup;
 			children = (
@@ -1197,6 +1218,8 @@
 				B98635D729E0C5960061205B /* RewardedCallbackHTTPRequest.swift */,
 				B9533CF629EE14A00097C3F7 /* SDKInitHTTPRequest.swift */,
 				B977AF0629DB7EE6005F3984 /* WinnerEventHTTPRequest.swift */,
+				9AF6BEE72B8D35AD00517126 /* StartQueueEventHTTPRequest.swift */,
+				9AF6BEE92B8D35BF00517126 /* EndQueueEventHTTPRequest.swift */,
 			);
 			path = HTTPRequest;
 			sourceTree = "<group>";
@@ -1222,7 +1245,7 @@
 		E699044A2A41F71B003BC6D5 /* Logger */ = {
 			isa = PBXGroup;
 			children = (
-				E69904512A41F7F6003BC6D5 /* ConsoleLoggerHandler.swift */,
+				E69904512A41F7F6003BC6D5 /* ConsoleLogHandler.swift */,
 				E69904532A41FE7F003BC6D5 /* Logger.swift */,
 			);
 			path = Logger;
@@ -1316,6 +1339,8 @@
 				EA978D0728B3CC0B00E3371B /* PartnerAdapter+Log.swift */,
 				EAD3278528C79FE700CE7514 /* PartnerAdapter+Models.swift */,
 				F103493728FA1289005473FF /* PartnerIdentifier.swift */,
+				9A4F288A2B60A03B000F04CB /* FullscreenAdQueue.swift */,
+				9A4F288C2B60A06C000F04CB /* FullscreenAdQueueDelegate.swift */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -1513,6 +1538,7 @@
 		EA523B8728EDD116008DEA4B /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				9A6796722B71D836005026BA /* Ad Queueing */,
 				EA5B1333294754E00022D6BD /* Ad Showing */,
 				EA523B8828EDD11B008DEA4B /* Ad Loading */,
 				EA523B8928EDD121008DEA4B /* Configuration */,
@@ -1572,9 +1598,9 @@
 				B90398DB29F753FF009A4261 /* ChartboostIDProviderTests.swift */,
 				B90398D829F7536A009A4261 /* DeviceInfoTests.swift */,
 				E6CA5B9E28AED05000CB80FD /* InstanceIdentifierProviderTests.swift */,
-				B939D0602A09661800AF8682 /* TestModeInfoTests.swift */,
 				B9540C642A04333E004A5D97 /* UserIDProviderTests.swift */,
 				B93F66392A01D1D800162D3C /* UserSettingsProviderTests.swift */,
+				B95771F82B58B19C000D2C65 /* TestModeInfoTests.swift */,
 			);
 			path = Environment;
 			sourceTree = "<group>";
@@ -1646,18 +1672,18 @@
 			children = (
 				B96339752A12A5E900B8E995 /* APIStabilityTests_ObjectiveC.m */,
 				B96339772A12A5F300B8E995 /* APIStabilityTests_Swift.swift */,
-				F1608F792893145300463F60 /* HeliumKeywordsTests.swift */,
-				EACF403228BF7A830035D8C0 /* InterstitialAdTests.swift */,
-				EACF403428BF99480035D8C0 /* RewardedAdTests.swift */,
-				EA3D7DF3288043B900B4F667 /* HeliumBannerViewTests.swift */,
-				EA648EAF289A6A8A0006FBD4 /* HeliumImpressionDataTests.swift */,
 				EA40EEF429B7869F002E5342 /* ChartboostMediationAdLoadRequestTests.swift */,
 				EA40EEF629B786FB002E5342 /* ChartboostMediationAdLoadResultTests.swift */,
 				EA40EEF829B787C6002E5342 /* ChartboostMediationAdShowResultTests.swift */,
 				EC344C672A7316260068388C /* ChartboostMediationBannerLoadRequestTests.swift */,
 				EC344C652A73103C0068388C /* ChartboostMediationBannerSizeTests.swift */,
-				EA40EEFA29B78804002E5342 /* ChartboostMediationFullscreenAdLoadResultTests.swift */,
 				EC344C692A7317B30068388C /* ChartboostMediationBannerViewTests.swift */,
+				EA40EEFA29B78804002E5342 /* ChartboostMediationFullscreenAdLoadResultTests.swift */,
+				EA3D7DF3288043B900B4F667 /* HeliumBannerViewTests.swift */,
+				EA648EAF289A6A8A0006FBD4 /* HeliumImpressionDataTests.swift */,
+				F1608F792893145300463F60 /* HeliumKeywordsTests.swift */,
+				EACF403228BF7A830035D8C0 /* InterstitialAdTests.swift */,
+				EACF403428BF99480035D8C0 /* RewardedAdTests.swift */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -2136,6 +2162,7 @@
 			files = (
 				EA40EEDC29B7506E002E5342 /* ChartboostMediationFullscreenAdLoadResult.swift in Sources */,
 				EC3B694C2A67342D00C2A32C /* BannerSwapController.swift in Sources */,
+				9AF6BEEA2B8D35BF00517126 /* EndQueueEventHTTPRequest.swift in Sources */,
 				F1409CA828930864009731E1 /* HeliumKeywords.swift in Sources */,
 				EAC53CDE28C0B294001A6DAF /* ApplicationConfigurationController.swift in Sources */,
 				EAF5F2FC29BF234500C82F3C /* AdLoadResult.swift in Sources */,
@@ -2151,8 +2178,9 @@
 				B96567F229FCD45E00BC61D1 /* BundleInfoProvider.swift in Sources */,
 				B93F663D2A01E62800162D3C /* UserIDProvider.swift in Sources */,
 				B9533CF729EE14A00097C3F7 /* SDKInitHTTPRequest.swift in Sources */,
-				E69904522A41F7F6003BC6D5 /* ConsoleLoggerHandler.swift in Sources */,
+				E69904522A41F7F6003BC6D5 /* ConsoleLogHandler.swift in Sources */,
 				EA4DDDC828A2B07600C5C7B7 /* GCDTaskGroup.swift in Sources */,
+				9A4F288B2B60A03B000F04CB /* FullscreenAdQueue.swift in Sources */,
 				EAF9615E28BCEECA0023E32E /* HeliumBannerAd.swift in Sources */,
 				EA7B92DE28BE4ED900D783A6 /* AdFactory.swift in Sources */,
 				EA9A869D28B647BD0065918F /* LoadedAd.swift in Sources */,
@@ -2272,11 +2300,13 @@
 				F19DDABF286B65FC00A84203 /* VisibilityTracker.swift in Sources */,
 				EC2F95312A56027A002839BE /* ChartboostMediationBannerHorizontalAlignment.swift in Sources */,
 				EAF5F30C29D1B28300C82F3C /* BidFulfillOperationFactory.swift in Sources */,
+				9A4F288D2B60A06C000F04CB /* FullscreenAdQueueDelegate.swift in Sources */,
 				EA13F80E28C262E1000E2B21 /* JSONStringSerializer.swift in Sources */,
 				EAD3278E28CA0D6500CE7514 /* FileStorage.swift in Sources */,
 				B9D326F7299CB8F100AA94BD /* TestModeInfo.swift in Sources */,
 				EA909F5028998EC0003E5F6C /* ILRDEventPublisher.swift in Sources */,
 				E61A777629118C230009F589 /* HeliumInitResultsEvent.m in Sources */,
+				9AF6BEE82B8D35AD00517126 /* StartQueueEventHTTPRequest.swift in Sources */,
 				B93F66382A0197B600162D3C /* UserSettingsProvider.swift in Sources */,
 				E69904542A41FE7F003BC6D5 /* Logger.swift in Sources */,
 				E60289A828BD2A93003AC43E /* Reachability.swift in Sources */,
@@ -2358,9 +2388,9 @@
 				EA99B66628992413002736E0 /* HeliumRewardedAdDelegateMock.swift in Sources */,
 				EA40EEF729B786FB002E5342 /* ChartboostMediationAdLoadResultTests.swift in Sources */,
 				EA145AF028F8684900137C76 /* PartnerAdMock.swift in Sources */,
+				9A6796742B71D836005026BA /* FullscreenAdQueueTests.swift in Sources */,
 				EA978D0628B3C29B00E3371B /* PartnerAdapterTests.swift in Sources */,
 				E6E2E87129C9057800A64350 /* NetworkAdAuctionServiceTests.swift in Sources */,
-				B939D0612A09661800AF8682 /* TestModeInfoTests.swift in Sources */,
 				EA4DDDE628A547F300C5C7B7 /* PartnerAdapterFactoryMock.swift in Sources */,
 				EA40EEFB29B78805002E5342 /* ChartboostMediationFullscreenAdLoadResultTests.swift in Sources */,
 				EAB507A428B90E2A001427A0 /* AdAuctionServiceMock.swift in Sources */,
@@ -2424,6 +2454,7 @@
 				EC1A26EF2A5F208200472E3C /* ChartboostMediationBannerLoadRequest+Test.swift in Sources */,
 				EAEC309C286C61D100B6C120 /* JSONObject.swift in Sources */,
 				E6E2E86D29C8C0D500A64350 /* LoadRateLimiterMock.swift in Sources */,
+				B95771F92B58B19C000D2C65 /* TestModeInfoTests.swift in Sources */,
 				EA3D7E0E2881932600B4F667 /* VisibilityTrackerMock.swift in Sources */,
 				B9540C6D2A047FDC004A5D97 /* InfoPlistMock.swift in Sources */,
 				EA6976E328D0E24C00306C8E /* MetricsEventLoggerConfigurationMock.swift in Sources */,
@@ -2433,6 +2464,7 @@
 				B977AF0929DB87C4005F3984 /* WinnerEventHTTPRequestTests.swift in Sources */,
 				EA659917286F2B2300182CD7 /* UIView+ViewVisibilityTests.swift in Sources */,
 				EAF9613228BCCEE90023E32E /* AdLoadRequest+Test.swift in Sources */,
+				9A99E7EF2B917604005BA569 /* FullscreenAdQueueConfigurationMock.swift in Sources */,
 				E6CA5B9F28AED05000CB80FD /* InstanceIdentifierProviderTests.swift in Sources */,
 				EA4DDDCC28A2CCF600C5C7B7 /* DispatchTaskGroupMock.swift in Sources */,
 				EAB5079E28B90537001427A0 /* AdControllerDelegateMock.swift in Sources */,

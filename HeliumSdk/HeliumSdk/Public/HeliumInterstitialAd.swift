@@ -6,7 +6,7 @@
 import Foundation
 import UIKit
 
-/// Helium interstitial ad.
+/// Chartboost Mediation interstitial ad.
 @objc
 public protocol HeliumInterstitialAd {
     /// Optional keywords that can be associated with the advertisement placement.
@@ -65,7 +65,7 @@ public protocol CHBHeliumInterstitialAdDelegate: NSObjectProtocol {
     /// - parameter error: Optional error associated with the click event.
     @objc optional func heliumInterstitialAd(withPlacementName placementName: String, didClickWithError error: ChartboostMediationError?)
 
-    /// Ad impression recorded by Helium as result of an ad being shown.
+    /// Ad impression recorded by Chartboost Mediation as result of an ad being shown.
     /// - parameter placementName: Placement associated with the impression event.
     @objc optional func heliumInterstitialAdDidRecordImpression(withPlacementName placementName: String)
 }

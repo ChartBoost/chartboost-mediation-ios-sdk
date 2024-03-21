@@ -8,48 +8,59 @@ import XCTest
 
 final class TestModeInfoTests: XCTestCase {
 
-    func testIsTestModeEnabled_notForcedOn() throws {
-        Self.set_isTestModeEnabled_isForcedOn(false)
+    /// Copied from `TestModeInfo`.
+    enum EnvKey {
+        static let rateLimitingOverride = "CB_MEDIATION_RATE_LIMITING_OVERRIDE"
+        static let sdkAPIHostOverride = "CB_MEDIATION_SDK_API_HOST_OVERRIDE"
 
-        [false, true].forEach { envValue in
-            Self.setEnvironmentValue_isTestModeEnabled(envValue)
-            XCTAssertEqual(TestModeInfo().isTestModeEnabled, envValue) // matches the env value
+        static var allKeys: [String] {
+            [rateLimitingOverride, sdkAPIHostOverride]
         }
     }
 
-    func testIsTestModeEnabled_isForcedOn() throws {
-        Self.set_isTestModeEnabled_isForcedOn(true)
-
-        [false, true].forEach { envValue in
-            Self.setEnvironmentValue_isTestModeEnabled(envValue)
-            XCTAssert(TestModeInfo().isTestModeEnabled) // forced on
+    override func tearDown() {
+        EnvKey.allKeys.forEach {
+            unsetenv($0.cString(using: .utf8))
         }
     }
 
-    /// Set the value of `CHBHTestModeHelper.isTestModeEnabled_isForcedOn` via reflection.
-    private static func set_isTestModeEnabled_isForcedOn(_ value: Bool) {
-        guard let testModeHelperClass: AnyClass = NSClassFromString("CHBHTestModeHelper") else {
-            fatalError("cannot resolve class named CHBHTestModeHelper")
-        }
+    func testRateLimitingOverride() throws {
+        let testModeInfo = TestModeInfo()
 
-        typealias Signature = @convention(c) (AnyObject, Selector, Bool) -> Void
-        let selectorName = "setIsTestModeEnabled_isForcedOn:"
-        let selector = Selector((selectorName))
-        guard let method = class_getClassMethod(testModeHelperClass, selector) else {
-            fatalError("Cannot resolve method CHBHTestModeHelper.\(selectorName)")
-        }
-        let implementation = method_getImplementation(method)
-        let curriedImplementation: Signature = unsafeBitCast(implementation, to: Signature.self)
-        curriedImplementation(testModeHelperClass, selector, value)
+        // Part 1: Env flag is unset
+        unsetenv(EnvKey.rateLimitingOverride)
+        XCTAssert(testModeInfo.isRateLimitingEnabled)
+
+        // Part 2: Env flag is set with expected value "OFF"
+        setenv(EnvKey.rateLimitingOverride, "OFF", 1)
+        XCTAssertFalse(testModeInfo.isRateLimitingEnabled)
+
+        // Part 3: Env flag is set with unexpected value "ON"
+        setenv(EnvKey.rateLimitingOverride, "ON", 1)
+        XCTAssert(testModeInfo.isRateLimitingEnabled)
+
+        // Part 4: Env flag is unset again
+        unsetenv(EnvKey.rateLimitingOverride)
+        XCTAssert(testModeInfo.isRateLimitingEnabled)
     }
 
-    private static func setEnvironmentValue_isTestModeEnabled(_ enabled: Bool) {
-        if enabled {
-            // set environment variable
-            setenv("HELIUM_TEST_MODE", "ON", 1);
-        } else {
-            // unset environment variable
-            unsetenv("HELIUM_TEST_MODE");
-        }
+    func testSDKAPIHostOverride() throws {
+        let testModeInfo = TestModeInfo()
+
+        // Part 1: Env flag is unset
+        unsetenv(EnvKey.sdkAPIHostOverride)
+        XCTAssertNil(testModeInfo.sdkAPIHostOverride)
+
+        // Part 2: Env flag is set with valid URL string
+        setenv(EnvKey.sdkAPIHostOverride, "www.test.com", 1)
+        XCTAssertEqual(testModeInfo.sdkAPIHostOverride, "www.test.com")
+
+        // Part 3: Env flag is set with invalid URL string
+        setenv(EnvKey.sdkAPIHostOverride, "invalid_url", 1)
+        XCTAssertEqual(testModeInfo.sdkAPIHostOverride, "invalid_url")
+
+        // Part 4: Env flag is unset again
+        unsetenv(EnvKey.sdkAPIHostOverride)
+        XCTAssertNil(testModeInfo.sdkAPIHostOverride)
     }
 }

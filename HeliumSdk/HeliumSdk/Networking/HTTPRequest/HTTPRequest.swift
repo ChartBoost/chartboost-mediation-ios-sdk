@@ -94,6 +94,10 @@ extension HTTPRequest {
             headers = headers.merging([HTTP.HeaderKey.idfv.rawValue: idfv]) { _, new in new }
         }
 
+        if environment.testMode.isTestModeEnabled, let appID = environment.app.appID {
+            headers = headers.merging([HTTP.HeaderKey.debug.rawValue: appID]) { _, new in new }
+        }
+
         var urlRequest = URLRequest(url: try url)
         urlRequest.allHTTPHeaderFields = headers
         urlRequest.httpMethod = method.rawValue

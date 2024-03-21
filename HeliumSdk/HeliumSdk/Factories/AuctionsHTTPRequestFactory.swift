@@ -39,7 +39,8 @@ struct MediationAuctionsHTTPRequestFactory: AuctionsHTTPRequestFactory {
                 AuctionsHTTPRequest(
                    bidRequest: makeBidRequest(request: request, bidderInformation: bidderInformation),
                    loadRateLimit: Int(loadRateLimit),
-                   loadID: request.loadID
+                   loadID: request.loadID,
+                   queueID: request.queueID
                )
             )
         }
@@ -162,7 +163,7 @@ struct MediationAuctionsHTTPRequestFactory: AuctionsHTTPRequestFactory {
             displaymanager: environment.sdk.sdkName,
             displaymanagerver: environment.sdk.sdkVersion,
             instl: (!request.adFormat.isBanner).intValue,
-            tagid: request.heliumPlacement,
+            tagid: request.mediationPlacement,
             secure: true.intValue,
             video: video,
             banner: banner

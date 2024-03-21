@@ -8,7 +8,7 @@ import Foundation
 /// Delegate for receiving ``Helium`` SDK initialization callbacks.
 @objc
 public protocol HeliumSdkDelegate: NSObjectProtocol {
-    /// Helium SDK has finished initializing.
-    /// - Parameter error: Optional error if the Helium SDK did not initialize properly.
+    /// Chartboost Mediation SDK has finished initializing.
+    /// - Parameter error: Optional error if the Chartboost Mediation SDK did not initialize properly.
     func heliumDidStartWithError(_ error: ChartboostMediationError?)
 }

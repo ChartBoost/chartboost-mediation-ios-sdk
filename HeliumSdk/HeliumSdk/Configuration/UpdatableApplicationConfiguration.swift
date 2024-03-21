@@ -17,6 +17,7 @@ final class UpdatableApplicationConfiguration: ApplicationConfiguration {
             // a String instead of a Codable enum so we can recover from parsing errors without discarding the whole response
             let format: String
             let autoRefreshRate: TimeInterval?
+            var queueSize: Int?
         }
 
         let fullscreenLoadTimeout: TimeInterval?
@@ -36,10 +37,15 @@ final class UpdatableApplicationConfiguration: ApplicationConfiguration {
         let initTimeout: UInt?
         let initMetricsPostTimeout: UInt?
         let placements: [Placement]
-        let logLevel: LogLevel?
+        /// The expected value is `nil` or one of [ "none",  "error",  "warning", "info", "debug", "verbose" ].
+        let logLevel: String?
         // use `String` instead of `PrivacyBanListCandidate` to avoid discarding the whole response when Codable parsing errors happen
         // (unrecognized / misspelled value)
         let privacyBanList: [String]?
+        let maxQueueSize: UInt?
+        let defaultQueueSize: UInt?
+        // Normally, 'TTL' would be all caps but this needs to match the way 'queued_ad_ttl' was camel-cased
+        let queuedAdTtl: TimeInterval?
     }
 
     /// Default configuration values to use when a backend value is not available.
@@ -58,6 +64,9 @@ final class UpdatableApplicationConfiguration: ApplicationConfiguration {
         static let bannerAutoRefreshRate: TimeInterval = 30
         static let bannerPenaltyLoadRetryRate: TimeInterval = 240
         static let bannerPenaltyLoadRetryCount: UInt = 4
+        static let maxQueueSize: UInt = 5
+        static let defaultQueueSize: UInt = 1
+        static let queuedAdTtl: TimeInterval = 3600
     }
 
     static let keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy = .convertFromSnakeCase
@@ -212,14 +221,75 @@ extension UpdatableApplicationConfiguration: BannerControllerConfiguration {
     }
 }
 
-extension UpdatableApplicationConfiguration: ConsoleLoggerConfiguration {
+extension UpdatableApplicationConfiguration: ConsoleLoggerConfigurationOverride {
     var logLevel: LogLevel? {
-        values?.logLevel
+        switch values?.logLevel {
+        case "none":
+            return LogLevel.none // differentiate from `Optional.none`
+        case "error":
+            return .error
+        case "warning":
+            return .warning
+        case "info":
+            return .info
+        case "debug":
+            return .debug
+        case "verbose":
+            return .verbose
+        default:
+            return nil
+        }
     }
 }
 
 extension UpdatableApplicationConfiguration: PrivacyConfiguration {
     var privacyBanList: [PrivacyBanListCandidate] {
         (values?.privacyBanList ?? []).compactMap { .init(rawValue: $0) }
+    }
+}
+
+extension UpdatableApplicationConfiguration: FullscreenAdQueueConfiguration {
+    /// Time to delay after a failed load attempt
+    var queueLoadTimeout: TimeInterval {
+        // Borrowing a value from bidFulfillOperationConfiguration until we have a
+        // queue-specific timeout plan.
+        values?.fullscreenLoadTimeout ?? DefaultValues.fullscreenLoadTimeout
+    }
+
+    /// Under no circumstances should any queue be larger than this limit received from the backend.
+    var maxQueueSize: Int {
+        let configuredMax = Int(values?.maxQueueSize ?? DefaultValues.maxQueueSize)
+        // Defend against invalid input from backend such as zero or negative numbers.
+        return max(configuredMax, 1)
+    }
+
+    /// Returns the app-wide default queue size as configured on the dashboard, or a failsafe default if none was set.
+    var defaultQueueSize: Int {
+        let configuredDefault = Int(values?.defaultQueueSize ?? DefaultValues.defaultQueueSize)
+        // Defend against invalid input from backend such as zero or negative numbers.
+        return max(configuredDefault, 1)
+    }
+
+    /// Time, in seconds, that loaded ads are allowd to wait in the queue before getting discarded.
+    var queuedAdTtl: TimeInterval {
+        let configuredTTL = TimeInterval(values?.queuedAdTtl ?? DefaultValues.queuedAdTtl)
+        // Defend against invalid input from backend such as zero or negative numbers.
+        // "1 second" would still be pretty bad, but at least we wouldn't be trying to pass
+        // negative durations to timers.
+        return max(configuredTTL, 1)
+    }
+
+    /// Returns the queue size for this specific placement. If that's not set on the dashboard then the app's default is returned instead.
+    func queueSize(for placement: String) -> Int {
+        // Fail early if there is no placement info in the configuration
+        guard let placement = values?.placements.first(
+            where: { $0.chartboostPlacement == placement }
+        ) else {
+            return defaultQueueSize
+        }
+        // Use default value if none is provided
+        let configuredQueueSize = placement.queueSize ?? defaultQueueSize
+        // Defend against invalid input from backend such as zero or negative numbers.
+        return max(configuredQueueSize, 1)
     }
 }

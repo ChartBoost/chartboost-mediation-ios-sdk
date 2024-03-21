@@ -13,8 +13,8 @@ class SingleControllerPerPlacementAdControllerRepositoryTests: ChartboostMediati
     /// Validates that when asked to provide a controller for a new placement the repository creates one through the factory.
     func testAdControllerForNewPlacement() {
         // Ask for an ad controller
-        let controller = repository.adController(forHeliumPlacement: "hello")
-        
+        let controller = repository.adController(for: "hello")
+
         // Check that it's the one the factory returned
         XCTAssertMethodCalls(mocks.adControllerFactory, .makeAdController)
         XCTAssertIdentical(controller, mocks.adControllerFactory.returnValue(for: .makeAdController))
@@ -29,8 +29,8 @@ class SingleControllerPerPlacementAdControllerRepositoryTests: ChartboostMediati
         // Change the factory return value so we can validate that it's not used
         mocks.adControllerFactory.setReturnValue(AdControllerMock(), for: .makeAdController)
         // Ask for the same controller
-        let controller = repository.adController(forHeliumPlacement: "hello")
-        
+        let controller = repository.adController(for: "hello")
+
         // Check that it's the previous one and the factory is not used
         XCTAssertNoMethodCalls(mocks.adControllerFactory)
         XCTAssertNotIdentical(controller, mocks.adControllerFactory.returnValue(for: .makeAdController))
@@ -46,7 +46,7 @@ class SingleControllerPerPlacementAdControllerRepositoryTests: ChartboostMediati
         // Change the factory return value so we can validate that it's not used
         mocks.adControllerFactory.setReturnValue(AdControllerMock(), for: .makeAdController)
         // Ask for an ad controller
-        let controller = repository.adController(forHeliumPlacement: "hello 2")
+        let controller = repository.adController(for: "hello 2")
         
         // Check that it's the one the factory returned
         XCTAssertMethodCalls(mocks.adControllerFactory, .makeAdController)

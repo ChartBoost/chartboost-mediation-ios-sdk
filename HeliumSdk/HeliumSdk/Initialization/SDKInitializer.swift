@@ -14,7 +14,7 @@ protocol MediationInitializationStatusProvider {
 /// Initializes the SDK by fetching the proper configuration, applying it, and initializing partner SDKs.
 protocol SDKInitializer {
     /// Starts the initialization process.
-    /// - parameter appIdentifier: User-provided Helium app identifier.
+    /// - parameter appIdentifier: User-provided Chartboost Mediation app identifier.
     /// - parameter partnerIdentifiersToSkipInitialization: Set of partner adapter identifiers to skip during partner adapter
     /// initialization.
     /// - parameter completion: Closure executed by the initializer when the initialization process finishes either successfully or with
@@ -57,7 +57,7 @@ final class MediationSDKInitializer: SDKInitializer, MediationInitializationStat
     /// Indicates the current initialization status.
     private var initializationStatus: InitializationStatus = .uninitialized
 
-    /// `true` if the Helium SDK is initialized, `false` otherwise.
+    /// `true` if the Chartboost Mediation SDK is initialized, `false` otherwise.
     var isInitialized: Bool {
         taskDispatcher.sync(on: .background) {
             self.initializationStatus == .initialized
@@ -73,6 +73,11 @@ final class MediationSDKInitializer: SDKInitializer, MediationInitializationStat
         completion: @escaping (ChartboostMediationError?) -> Void
     ) {
         taskDispatcher.async(on: .background) { [self] in
+            if initializationStatus == .uninitialized {
+                // restore the app config first so that the restored log level is effective after this point
+                appConfigurationController.restorePersistedConfiguration()
+            }
+
             logger.debug("Initialization started")
 
             // Finish early if already initialized or initializing
@@ -136,6 +141,11 @@ final class MediationSDKInitializer: SDKInitializer, MediationInitializationStat
                     self.taskDispatcher.async(on: .background, after: self.configuration.initTimeout) {
                         self.initializationStatus = .initialized
                         logger.info("Initialization succeeded")
+                        // Post the notification synchronously on the main thread in case a listener
+                        // does UI manipulation
+                        self.taskDispatcher.async(on: .main) {
+                            NotificationCenter.default.post(name: .heliumDidFinishInitializing, object: nil)
+                        }
                         completion(nil)
                     }
                 }

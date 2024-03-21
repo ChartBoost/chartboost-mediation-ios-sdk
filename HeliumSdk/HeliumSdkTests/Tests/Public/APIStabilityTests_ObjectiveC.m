@@ -31,45 +31,48 @@
 
 @implementation APIStabilityTests_ObjectiveC
 
-/// API stability test for `Helium`.
-- (void)stability_Helium {
-    Helium *helium = Helium.sharedHelium;
+/// API stability test for the Chartboost Mediation SDK.
+- (void)stability_Mediation {
+    Helium *mediation = Helium.sharedHelium;
     id result; // for suppressing the "unused result" warning
 
-    [helium startWithAppId:@"" options:nil delegate:nil];
-    [helium startWithAppId:@"" options:[[HeliumInitializationOptions alloc] initWithSkippedPartnerIdentifiers:nil] delegate:self];
+    [mediation startWithAppId:@"" options:nil delegate:nil];
+    [mediation startWithAppId:@"" options:[[HeliumInitializationOptions alloc] initWithSkippedPartnerIdentifiers:nil] delegate:self];
 
-    [helium startWithAppId:@"" andAppSignature:@"" options:nil delegate:nil];
-    [helium startWithAppId:@"" andAppSignature:@"" options:[[HeliumInitializationOptions alloc] initWithSkippedPartnerIdentifiers:nil] delegate:self];
+    [mediation startWithAppId:@"" andAppSignature:@"" options:nil delegate:nil];
+    [mediation startWithAppId:@"" andAppSignature:@"" options:[[HeliumInitializationOptions alloc] initWithSkippedPartnerIdentifiers:nil] delegate:self];
 
-    result = [helium interstitialAdProviderWithDelegate:nil andPlacementName:@""];
-    result = [helium interstitialAdProviderWithDelegate:self andPlacementName:@""];
+    result = [mediation interstitialAdProviderWithDelegate:nil andPlacementName:@""];
+    result = [mediation interstitialAdProviderWithDelegate:self andPlacementName:@""];
 
-    result = [helium rewardedAdProviderWithDelegate:nil andPlacementName:@""];
-    result = [helium rewardedAdProviderWithDelegate:self andPlacementName:@""];
+    result = [mediation rewardedAdProviderWithDelegate:nil andPlacementName:@""];
+    result = [mediation rewardedAdProviderWithDelegate:self andPlacementName:@""];
 
-    result = [helium bannerProviderWithDelegate:nil andPlacementName:@"" andSize:CHBHBannerSize_Standard];
-    result = [helium bannerProviderWithDelegate:self andPlacementName:@"" andSize:CHBHBannerSize_Standard];
+    result = [mediation bannerProviderWithDelegate:nil andPlacementName:@"" andSize:CHBHBannerSize_Standard];
+    result = [mediation bannerProviderWithDelegate:self andPlacementName:@"" andSize:CHBHBannerSize_Standard];
 
     ChartboostMediationAdLoadRequest *request = [[ChartboostMediationAdLoadRequest alloc] initWithPlacement:@"" keywords:@{}];
-    [helium loadFullscreenAdWithRequest:request completion:^(ChartboostMediationFullscreenAdLoadResult * _Nonnull result) { }];
+    [mediation loadFullscreenAdWithRequest:request completion:^(ChartboostMediationFullscreenAdLoadResult * _Nonnull result) { }];
 
-    [helium setSubjectToGDPR:NO];
-    [helium setSubjectToCoppa:NO];
-    [helium setUserHasGivenConsent:NO];
-    [helium setCCPAConsent:NO];
+    [mediation setSubjectToGDPR:NO];
+    [mediation setSubjectToCoppa:NO];
+    [mediation setUserHasGivenConsent:NO];
+    [mediation setCCPAConsent:NO];
 
-    result = helium.userIdentifier;
-    helium.userIdentifier = nil;
+    result = mediation.userIdentifier;
+    mediation.userIdentifier = nil;
 
-    [helium setGameEngineName:nil version:nil];
+    [mediation setGameEngineName:nil version:nil];
 
     result = [Helium sdkVersion];
 
-    result = [helium initializedAdapterInfo];
+    result = [mediation initializedAdapterInfo];
 
-    NSDictionary<NSString *, NSNumber *> *partnerConsents = helium.partnerConsents;
-    helium.partnerConsents = partnerConsents;
+    NSDictionary<NSString *, NSNumber *> *partnerConsents = mediation.partnerConsents;
+    mediation.partnerConsents = partnerConsents;
+
+    BOOL boolResult = Helium.isTestModeEnabled; // Implicit conversion of 'BOOL' (aka '_Bool') to 'id' is disallowed with ARC
+    Helium.isTestModeEnabled = false;
 }
 
 /// API stability test for notifications.

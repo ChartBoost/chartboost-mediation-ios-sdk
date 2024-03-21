@@ -8,7 +8,7 @@ import XCTest
 
 final class FullscreenAdTests: ChartboostMediationTestCase {
 
-    lazy var ad = FullscreenAd(request: request, winningBidInfo: winningBidInfo, controller: mocks.adController)
+    lazy var ad = FullscreenAd(request: request, winningBidInfo: winningBidInfo, controller: mocks.adController, loadID: "hello")
     let request = ChartboostMediationAdLoadRequest(placement: "some placement", keywords: ["some": "keywords"])
     let winningBidInfo: [String: Any] = ["hello": 1, "abc": ["1", "2"]]
     
@@ -50,8 +50,7 @@ final class FullscreenAdTests: ChartboostMediationTestCase {
     
     /// Validates that the ad sets itself as the AdController delegate on init.
     func testInitSetsSelfAsControllerDelegate() {
-        let ad = FullscreenAd(request: request, winningBidInfo: winningBidInfo, controller: mocks.adController)
-        
+        let ad = FullscreenAd(request: request, winningBidInfo: winningBidInfo, controller: mocks.adController, loadID: "hello")
         XCTAssertIdentical(ad, mocks.adController.delegate)
     }
     

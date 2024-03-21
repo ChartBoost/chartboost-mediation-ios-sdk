@@ -6,7 +6,7 @@
 import Foundation
 import UIKit
 
-/// Helium rewarded ad.
+/// Chartboost Mediation rewarded ad.
 @objc
 public protocol HeliumRewardedAd {
     /// Optional keywords that can be associated with the advertisement placement.
@@ -75,7 +75,7 @@ public protocol CHBHeliumRewardedAdDelegate: NSObjectProtocol {
     /// - parameter error: Optional error associated with the click event.
     @objc optional func heliumRewardedAd(withPlacementName placementName: String, didClickWithError error: ChartboostMediationError?)
 
-    /// Ad impression recorded by Helium as result of an ad being shown.
+    /// Ad impression recorded by Chartboost Mediation as result of an ad being shown.
     /// - parameter placementName: Placement associated with the impression event.
     @objc optional func heliumRewardedAdDidRecordImpression(withPlacementName placementName: String)
 }

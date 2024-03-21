@@ -1858,14 +1858,14 @@ extension BannerControllerTests {
             adSize: adSize,
             adFormat: format,
             keywords: keywords,
-            heliumPlacement: placement,
+            mediationPlacement: placement,
             loadID: loadID
         )
         XCTAssertMethodCalls(mocks.adController, .loadAd, parameters: [
             XCTMethodSomeParameter<AdLoadRequest> {
                 XCTAssertEqual($0.adSize, expectedRequest.adSize)
                 XCTAssertEqual($0.adFormat, expectedRequest.adFormat)
-                XCTAssertEqual($0.heliumPlacement, expectedRequest.heliumPlacement)
+                XCTAssertEqual($0.mediationPlacement, expectedRequest.mediationPlacement)
                 XCTAssertEqual($0.keywords, expectedRequest.keywords)
                 XCTAssertFalse($0.loadID.isEmpty)
             },

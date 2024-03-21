@@ -1,5 +1,8 @@
 {
 	"app_id": "59c04299d989d60fc5d2c782",
+    "max_queue_size": 5,
+    "default_queue_size": 3,
+    "queued_ad_ttl": 3600,
 	"credentials": {
 		"adcolony": {
 			"adc_app_id": "app4a5d0480628d4fe0b2"

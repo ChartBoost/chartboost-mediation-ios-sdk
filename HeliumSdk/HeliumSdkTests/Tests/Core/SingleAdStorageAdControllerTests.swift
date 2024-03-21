@@ -456,7 +456,7 @@ class SingleAdStorageAdControllerTests: ChartboostMediationTestCase {
         showCompletion(nil)
         
         // Check ILRD event is posted
-        XCTAssertMethodCalls(mocks.ilrdEventPublisher, .postILRDEvent, parameters: [ad.request.heliumPlacement, ilrd])
+        XCTAssertMethodCalls(mocks.ilrdEventPublisher, .postILRDEvent, parameters: [ad.request.mediationPlacement, ilrd])
     }
     
     /// Validates the AdController fails on showAd() if the PartnerController does not finish showing the ad on a timely manner.

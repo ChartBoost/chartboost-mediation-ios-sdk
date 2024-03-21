@@ -6,16 +6,16 @@
 import Foundation
 
 /// Concrete class that implements the public HeliumRewardedAd protocol.
-/// These are the ad instances that publishers use to ask Helium to load and show ads.
+/// These are the ad instances that publishers use to ask Chartboost Mediation to load and show ads.
 /// Publishers are responsible for keeping them alive.
 final class RewardedAd: HeliumRewardedAd, AdControllerDelegate {
     private let controller: AdController
     private weak var delegate: CHBHeliumRewardedAdDelegate?
-    private let heliumPlacement: String
+    private let mediationPlacement: String
     @Injected(\.taskDispatcher) private var taskDispatcher
 
-    init(heliumPlacement: String, delegate: CHBHeliumRewardedAdDelegate?, controller: AdController) {
-        self.heliumPlacement = heliumPlacement
+    init(mediationPlacement: String, delegate: CHBHeliumRewardedAdDelegate?, controller: AdController) {
+        self.mediationPlacement = mediationPlacement
         self.delegate = delegate
         self.controller = controller
 
@@ -48,7 +48,7 @@ final class RewardedAd: HeliumRewardedAd, AdControllerDelegate {
                     // Thus if an ad is already loaded when the user tries to load an ad, we return the identifier for the
                     // request that completed the load, since that is the one we share with backend and partner adapters.
                     self.delegate?.heliumRewardedAd(
-                        withPlacementName: self.heliumPlacement,
+                        withPlacementName: self.mediationPlacement,
                         requestIdentifier: ad.request.loadID,
                         winningBidInfo: ad.bidInfo,
                         didLoadWithError: nil
@@ -56,7 +56,7 @@ final class RewardedAd: HeliumRewardedAd, AdControllerDelegate {
                 // If failure notify didLoad with an error
                 case .failure(let error):
                     self.delegate?.heliumRewardedAd(
-                        withPlacementName: self.heliumPlacement,
+                        withPlacementName: self.mediationPlacement,
                         requestIdentifier: request.loadID,
                         winningBidInfo: nil,
                         didLoadWithError: error
@@ -78,7 +78,7 @@ final class RewardedAd: HeliumRewardedAd, AdControllerDelegate {
             self.taskDispatcher.async(on: .main) {  // all delegate calls on main thread
                 // Notify didShow with an error in case of failure or nil in case of success
                 self.delegate?.heliumRewardedAd(
-                    withPlacementName: self.heliumPlacement,
+                    withPlacementName: self.mediationPlacement,
                     didShowWithError: result.error
                 )
             }
@@ -100,7 +100,7 @@ extension RewardedAd {
             adSize: nil,    // nil means full-screen
             adFormat: .rewarded,
             keywords: keywords?.dictionary,
-            heliumPlacement: heliumPlacement,
+            mediationPlacement: mediationPlacement,
             loadID: UUID().uuidString
         )
     }
@@ -114,7 +114,7 @@ extension RewardedAd {
     func didTrackImpression() {
         taskDispatcher.async(on: .main) { [self] in
             delegate?.heliumRewardedAdDidRecordImpression?(
-                withPlacementName: heliumPlacement
+                withPlacementName: mediationPlacement
             )
         }
     }
@@ -122,7 +122,7 @@ extension RewardedAd {
     func didClick() {
         taskDispatcher.async(on: .main) { [self] in
             delegate?.heliumRewardedAd?(
-                withPlacementName: heliumPlacement,
+                withPlacementName: mediationPlacement,
                 didClickWithError: nil
             )
         }
@@ -131,7 +131,7 @@ extension RewardedAd {
     func didReward() {
         taskDispatcher.async(on: .main) { [self] in
             delegate?.heliumRewardedAdDidGetReward(
-                withPlacementName: heliumPlacement
+                withPlacementName: mediationPlacement
             )
         }
     }
@@ -139,13 +139,13 @@ extension RewardedAd {
     func didDismiss(error: ChartboostMediationError?) {
         taskDispatcher.async(on: .main) { [self] in
             delegate?.heliumRewardedAd(
-                withPlacementName: heliumPlacement,
+                withPlacementName: mediationPlacement,
                 didCloseWithError: error
             )
         }
     }
 
     func didExpire() {
-        logger.trace("Expiration ignored by rewarded ad")
+        logger.verbose("Expiration ignored by rewarded ad")
     }
 }

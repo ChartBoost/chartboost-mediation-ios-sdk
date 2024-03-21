@@ -16,6 +16,9 @@ public class ChartboostMediationAdLoadRequest: NSObject {
     /// Keys are limited to 64 characters and values are limited to 256 characters.
     @objc public let keywords: [String: String]
 
+    /// UUID Identifying the queue (if any) that initiated this load request.
+    internal let queueID: String?
+
     /// Initializes the request with the desired parameters.
     /// - parameter placement: Placement from the Chartboost Mediation dashboard.
     /// - parameter keywords: Key-value pairs to be associated with the placement.
@@ -23,5 +26,16 @@ public class ChartboostMediationAdLoadRequest: NSObject {
     @objc public init(placement: String, keywords: [String: String] = [:]) {
         self.placement = placement
         self.keywords = keywords
+        self.queueID = nil
+    }
+
+    /// Private initializer for requests originiating from FullscreenAdQueues
+    /// - parameter placement: Placement from the Chartboost Mediation dashboard.
+    /// - parameter keywords: Key-value pairs to be associated with the placement.
+    /// - parameter queueID: ID of the queue that initiated this load request,
+    internal init(placement: String, keywords: [String: String] = [:], queueID: String) {
+        self.placement = placement
+        self.keywords = keywords
+        self.queueID = queueID
     }
 }

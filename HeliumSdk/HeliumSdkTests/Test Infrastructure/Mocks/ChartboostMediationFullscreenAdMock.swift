@@ -16,7 +16,9 @@ class ChartboostMediationFullscreenAdMock: Mock<ChartboostMediationFullscreenAdM
     var delegate: ChartboostMediationFullscreenAdDelegate?
     
     var customData: String?
-    
+
+    var loadID: String = "hello"
+
     var request: ChartboostMediationAdLoadRequest = .init(placement: "some placement")
     
     var winningBidInfo: [String: Any] = [:]

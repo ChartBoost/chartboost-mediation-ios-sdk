@@ -46,7 +46,7 @@ final class AdLoaderTests: ChartboostMediationTestCase {
             XCTMethodSomeParameter<AdLoadRequest> {
                 XCTAssertNil($0.adSize)
                 XCTAssertEqual($0.adFormat, format)
-                XCTAssertEqual($0.heliumPlacement, placement)
+                XCTAssertEqual($0.mediationPlacement, placement)
                 XCTAssertEqual($0.keywords, keywords)
                 XCTAssertFalse($0.loadID.isEmpty)
             },
@@ -99,7 +99,7 @@ final class AdLoaderTests: ChartboostMediationTestCase {
             XCTMethodSomeParameter<AdLoadRequest> {
                 XCTAssertNil($0.adSize)
                 XCTAssertEqual($0.adFormat, format)
-                XCTAssertEqual($0.heliumPlacement, placement)
+                XCTAssertEqual($0.mediationPlacement, placement)
                 XCTAssertEqual($0.keywords, keywords)
                 XCTAssertFalse($0.loadID.isEmpty)
                 expectedLoadID = $0.loadID  // save the request loadID to compare later with the one in the result

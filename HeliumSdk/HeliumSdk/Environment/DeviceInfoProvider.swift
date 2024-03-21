@@ -51,19 +51,9 @@ struct DeviceInfoProvider: DeviceInfoProviding {
     }
 
     var freeDiskSpace: UInt {
-        if #available(iOS 17.0, *) {
-            // Stop using `volumeAvailableCapacity(Key)` on iOS 17+ because it's a Required Reason API
-            // and we don't have an approved reason to use it.
-            return 0
-        } else {
-            guard
-                let values = try? URL(fileURLWithPath: "/").resourceValues(forKeys: [.volumeAvailableCapacityKey]),
-                let capacity = values.volumeAvailableCapacity
-            else {
-                return 0
-            }
-            return UInt(capacity)
-        }
+        // Stop using `volumeAvailableCapacity(Key)` on iOS 17+ because it's a Required Reason API
+        // and we don't have an approved reason to use it.
+        return 0
     }
 
     var isBatteryCharging: Bool {
@@ -91,18 +81,8 @@ struct DeviceInfoProvider: DeviceInfoProviding {
     }
 
     var totalDiskSpace: UInt {
-        if #available(iOS 17.0, *) {
-            // Stop using `volumeTotalCapacity(Key)` on iOS 17+ because it's a Required Reason API
-            // and we don't have an approved reason to use it.
-            return 0
-        } else {
-            guard
-                let values = try? URL(fileURLWithPath: "/").resourceValues(forKeys: [.volumeTotalCapacityKey]),
-                let capacity = values.volumeTotalCapacity
-            else {
-                return 0
-            }
-            return UInt(capacity)
-        }
+        // Stop using `volumeTotalCapacity(Key)` on iOS 17+ because it's a Required Reason API
+        // and we don't have an approved reason to use it.
+        return 0
     }
 }

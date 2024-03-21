@@ -10,47 +10,49 @@ import XCTest
 /// The tests pass as long as everything compiles without errors.
 class APIStabilityTests_Swift: ChartboostMediationTestCase {
 
-    /// API stability test for `Helium`.
-    func stability_Helium() -> Any? {
-        let helium = Helium.shared()
+    /// API stability test for the Chartboost Mediation SDK.
+    func stability_Mediation() -> Any? {
+        let mediation = Helium.shared()
         var result: Any?
 
-        helium.start(withAppId: "", options: nil, delegate: nil)
-        helium.start(withAppId: "", options: HeliumInitializationOptions(skippedPartnerIdentifiers: nil), delegate: HeliumSdkDelegateMock())
+        mediation.start(withAppId: "", options: nil, delegate: nil)
+        mediation.start(withAppId: "", options: HeliumInitializationOptions(skippedPartnerIdentifiers: nil), delegate: HeliumSdkDelegateMock())
 
-        helium.start(withAppId: "", andAppSignature: "", options: nil, delegate: nil)
-        helium.start(withAppId: "", andAppSignature: "", options: HeliumInitializationOptions(skippedPartnerIdentifiers: nil), delegate: HeliumSdkDelegateMock())
+        mediation.start(withAppId: "", andAppSignature: "", options: nil, delegate: nil)
+        mediation.start(withAppId: "", andAppSignature: "", options: HeliumInitializationOptions(skippedPartnerIdentifiers: nil), delegate: HeliumSdkDelegateMock())
 
-        result = helium.interstitialAdProvider(with: nil, andPlacementName: "")
-        result = helium.interstitialAdProvider(with: HeliumInterstitialAdDelegateMock(), andPlacementName: "")
+        result = mediation.interstitialAdProvider(with: nil, andPlacementName: "")
+        result = mediation.interstitialAdProvider(with: HeliumInterstitialAdDelegateMock(), andPlacementName: "")
 
-        result = helium.rewardedAdProvider(with: nil, andPlacementName: "")
-        result = helium.rewardedAdProvider(with: HeliumRewardedAdDelegateMock(), andPlacementName: "")
+        result = mediation.rewardedAdProvider(with: nil, andPlacementName: "")
+        result = mediation.rewardedAdProvider(with: HeliumRewardedAdDelegateMock(), andPlacementName: "")
 
-        result = helium.bannerProvider(with: nil, andPlacementName: "", andSize: .standard)
-        result = helium.bannerProvider(with: HeliumBannerAdDelegateMock(), andPlacementName: "", andSize: .standard)
+        result = mediation.bannerProvider(with: nil, andPlacementName: "", andSize: .standard)
+        result = mediation.bannerProvider(with: HeliumBannerAdDelegateMock(), andPlacementName: "", andSize: .standard)
 
-        helium.loadFullscreenAd(with: ChartboostMediationAdLoadRequest(placement: "")) { _ in }
+        mediation.loadFullscreenAd(with: ChartboostMediationAdLoadRequest(placement: "")) { _ in }
 
-        helium.setSubjectToCoppa(false)
-        helium.setSubjectToGDPR(false)
-        helium.setUserHasGivenConsent(false)
-        helium.setCCPAConsent(false)
+        mediation.setSubjectToCoppa(false)
+        mediation.setSubjectToGDPR(false)
+        mediation.setUserHasGivenConsent(false)
+        mediation.setCCPAConsent(false)
 
-        result = helium.userIdentifier
-        helium.userIdentifier = nil
+        result = mediation.userIdentifier
+        mediation.userIdentifier = nil
 
-        helium.setGameEngineName(nil, version: nil)
-        helium.setGameEngineName("", version: "")
+        mediation.setGameEngineName(nil, version: nil)
+        mediation.setGameEngineName("", version: "")
 
         result = Helium.sdkVersion
+        result = Helium.isTestModeEnabled
+        Helium.isTestModeEnabled = false
 
-        result = helium.initializedAdapterInfo
+        result = mediation.initializedAdapterInfo
 
-        let _: [PartnerIdentifier: Bool] = helium.partnerConsents
-        helium.partnerConsents["some id"] = true
-        helium.partnerConsents["some id"] = nil
-        helium.partnerConsents = ["some id 1": false, "some id 2": true]
+        let _: [PartnerIdentifier: Bool] = mediation.partnerConsents
+        mediation.partnerConsents["some id"] = true
+        mediation.partnerConsents["some id"] = nil
+        mediation.partnerConsents = ["some id 1": false, "some id 2": true]
 
         return result // for suppressing the "variable was written to, but never read" warning
     }

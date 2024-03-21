@@ -8,7 +8,6 @@ import Foundation
 /// This `WinnerEventHTTPRequest` is only for `/event/winner` but not other `/event` because the
 /// POST payload of `/event/winner` is very different from the other `/event` tracking events,
 /// with only `"auction_id"` in common.
-/// Spec: go/cm-tracking-events
 struct WinnerEventHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataResponse {
     struct Body: Encodable {
         let auctionID: String

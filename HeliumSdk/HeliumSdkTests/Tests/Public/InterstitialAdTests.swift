@@ -9,7 +9,7 @@ import XCTest
 class InterstitialAdTests: ChartboostMediationTestCase {
 
     lazy var interstitial = InterstitialAd(
-        heliumPlacement: placement,
+        mediationPlacement: placement,
         delegate: mocks.interstitialDelegate,
         controller: mocks.adController
     )
@@ -29,7 +29,7 @@ class InterstitialAdTests: ChartboostMediationTestCase {
     /// Validates that the ad adds itself as an observer for AdController events on init.
     func testInitAddsSelfAsControllerObserver() {
         let interstitial = InterstitialAd(
-            heliumPlacement: placement,
+            mediationPlacement: placement,
             delegate: mocks.interstitialDelegate,
             controller: mocks.adController
         )
@@ -194,7 +194,7 @@ private extension InterstitialAdTests {
             adSize: nil,
             adFormat: .interstitial,
             keywords: keywords,
-            heliumPlacement: placement,
+            mediationPlacement: placement,
             loadID: loadID
         )
     }
@@ -205,7 +205,7 @@ private extension InterstitialAdTests {
             XCTMethodSomeParameter<AdLoadRequest> {
                 XCTAssertEqual($0.adSize, expectedRequest.adSize)
                 XCTAssertEqual($0.adFormat, expectedRequest.adFormat)
-                XCTAssertEqual($0.heliumPlacement, expectedRequest.heliumPlacement)
+                XCTAssertEqual($0.mediationPlacement, expectedRequest.mediationPlacement)
                 XCTAssertEqual($0.keywords, expectedRequest.keywords)
                 XCTAssertFalse($0.loadID.isEmpty)
             },

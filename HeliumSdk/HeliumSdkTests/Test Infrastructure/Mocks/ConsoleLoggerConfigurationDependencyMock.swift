@@ -6,6 +6,6 @@
 @testable import ChartboostMediationSDK
 
 /// This is just a simple data mock, thus no need to inherit `Mock`.
-final class ConsoleLoggerConfigurationDependencyMock: ConsoleLoggerConfiguration {
+final class ConsoleLoggerConfigurationDependencyMock: ConsoleLoggerConfigurationOverride {
     var logLevel: LogLevel?
 }

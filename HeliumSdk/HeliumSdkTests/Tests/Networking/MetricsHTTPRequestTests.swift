@@ -194,7 +194,10 @@ final class MetricsHTTPRequestTests: ChartboostMediationTestCase {
     }
 
     func testLoadWithOnlyAuctionID() throws {
-        let request = MetricsHTTPRequest.load(auctionID: Self.auctionID, loadID: Self.loadID, events: [], error: nil, adFormat: .banner, size: nil, backgroundDuration: 0)
+        let start = Date()
+        let end = start.addingTimeInterval(TimeInterval.random(in: 1...5))
+        let duration = durationMs(start: start, end: end)
+        let request = MetricsHTTPRequest.load(auctionID: Self.auctionID, loadID: Self.loadID, events: [], error: nil, adFormat: .banner, size: nil, start: start, end: end, backgroundDuration: 0)
         let json = try JSONSerialization.jsonDictionary(with: request.bodyData)
         XCTAssertEqual(request.eventType, .load)
         XCTAssertEqual(try request.url, TestURL.load)
@@ -202,15 +205,18 @@ final class MetricsHTTPRequestTests: ChartboostMediationTestCase {
         XCTAssert(request.isSDKInitializationRequired)
         XCTAssertAnyEqual(request.customHeaders, Self.loadIDJSON)
         var expectedJSON = Dictionary.merge(Self.auctionIDJSON, Self.emptyMetricsEventsJSON)
-        expectedJSON = Dictionary.merge(expectedJSON, ["placement_type": "banner", "background_duration": 0])
+        expectedJSON = Dictionary.merge(expectedJSON, ["placement_type": "banner", "start": start.unixTimestamp, "end": end.unixTimestamp, "duration": duration, "background_duration": 0])
         XCTAssertAnyEqual(json, expectedJSON)
     }
 
     func testLoad() throws {
-        let request = MetricsHTTPRequest.load(auctionID: Self.auctionID, loadID: Self.loadID, events: Self.metricsEvents, error: nil, adFormat: .banner, size: nil, backgroundDuration: nil)
+        let start = Date()
+        let end = start.addingTimeInterval(TimeInterval.random(in: 1...5))
+        let duration = durationMs(start: start, end: end)
+        let request = MetricsHTTPRequest.load(auctionID: Self.auctionID, loadID: Self.loadID, events: Self.metricsEvents, error: nil, adFormat: .banner, size: nil, start: start, end: end, backgroundDuration: nil)
         let json = try JSONSerialization.jsonDictionary(with: request.bodyData)
         var expectedJSON = Dictionary.merge(Self.auctionIDJSON, Self.metricsEventsJSON)
-        expectedJSON = Dictionary.merge(expectedJSON, ["placement_type": "banner"])
+        expectedJSON = Dictionary.merge(expectedJSON, ["placement_type": "banner", "start": start.unixTimestamp, "end": end.unixTimestamp, "duration": duration])
         XCTAssertEqual(request.eventType, .load)
         XCTAssertEqual(try request.url, TestURL.load)
         XCTAssertEqual(request.method, .post)
@@ -220,11 +226,14 @@ final class MetricsHTTPRequestTests: ChartboostMediationTestCase {
     }
 
     func testLoadWithBackgroundDuration() throws {
+        let start = Date()
+        let end = start.addingTimeInterval(TimeInterval.random(in: 1...5))
+        let duration = durationMs(start: start, end: end)
         let backgroundDuration = TimeInterval.random(in: 0.1...10.0)
-        let request = MetricsHTTPRequest.load(auctionID: Self.auctionID, loadID: Self.loadID, events: Self.metricsEvents, error: nil, adFormat: .banner, size: nil, backgroundDuration: backgroundDuration)
+        let request = MetricsHTTPRequest.load(auctionID: Self.auctionID, loadID: Self.loadID, events: Self.metricsEvents, error: nil, adFormat: .banner, size: nil, start: start, end: end, backgroundDuration: backgroundDuration)
         let json = try JSONSerialization.jsonDictionary(with: request.bodyData)
         var expectedJSON = Dictionary.merge(Self.auctionIDJSON, Self.metricsEventsJSON)
-        expectedJSON = Dictionary.merge(expectedJSON, ["placement_type": "banner", "background_duration": Int(backgroundDuration * 1000)])
+        expectedJSON = Dictionary.merge(expectedJSON, ["placement_type": "banner", "start": start.unixTimestamp, "end": end.unixTimestamp, "duration": duration, "background_duration": Int(backgroundDuration * 1000)])
         XCTAssertEqual(request.eventType, .load)
         XCTAssertEqual(try request.url, TestURL.load)
         XCTAssertEqual(request.method, .post)
@@ -234,10 +243,13 @@ final class MetricsHTTPRequestTests: ChartboostMediationTestCase {
     }
 
     func testLoadWithError() throws {
-        let request = MetricsHTTPRequest.load(auctionID: Self.auctionID, loadID: Self.loadID, events: Self.metricsEvents, error: Self.nestedCMError, adFormat: .banner, size: nil, backgroundDuration: 0)
+        let start = Date()
+        let end = start.addingTimeInterval(TimeInterval.random(in: 1...5))
+        let duration = durationMs(start: start, end: end)
+        let request = MetricsHTTPRequest.load(auctionID: Self.auctionID, loadID: Self.loadID, events: Self.metricsEvents, error: Self.nestedCMError, adFormat: .banner, size: nil, start: start, end: end, backgroundDuration: 0)
         let json = try JSONSerialization.jsonDictionary(with: request.bodyData)
         var expectedJSON = Dictionary.merge(Self.auctionIDJSON, Self.metricsEventsJSON, Self.nestedCMErrorJSON)
-        expectedJSON = Dictionary.merge(expectedJSON, ["placement_type": "banner", "background_duration": 0])
+        expectedJSON = Dictionary.merge(expectedJSON, ["placement_type": "banner", "start": start.unixTimestamp, "end": end.unixTimestamp, "duration": duration, "background_duration": 0])
         XCTAssertEqual(request.eventType, .load)
         XCTAssertEqual(try request.url, TestURL.load)
         XCTAssertEqual(request.method, .post)
@@ -247,11 +259,14 @@ final class MetricsHTTPRequestTests: ChartboostMediationTestCase {
     }
 
     func testLoadWithErrorAndBackgroundDuration() throws {
+        let start = Date()
+        let end = start.addingTimeInterval(TimeInterval.random(in: 1...5))
+        let duration = durationMs(start: start, end: end)
         let backgroundDuration = TimeInterval.random(in: 0.1...10.0)
-        let request = MetricsHTTPRequest.load(auctionID: Self.auctionID, loadID: Self.loadID, events: Self.metricsEvents, error: Self.nestedCMError, adFormat: .banner, size: nil, backgroundDuration: backgroundDuration)
+        let request = MetricsHTTPRequest.load(auctionID: Self.auctionID, loadID: Self.loadID, events: Self.metricsEvents, error: Self.nestedCMError, adFormat: .banner, size: nil, start: start, end: end, backgroundDuration: backgroundDuration)
         let json = try JSONSerialization.jsonDictionary(with: request.bodyData)
         var expectedJSON = Dictionary.merge(Self.auctionIDJSON, Self.metricsEventsJSON, Self.nestedCMErrorJSON)
-        expectedJSON = Dictionary.merge(expectedJSON, ["placement_type": "banner", "background_duration": Int(backgroundDuration * 1000)])
+        expectedJSON = Dictionary.merge(expectedJSON, ["placement_type": "banner", "start": start.unixTimestamp, "end": end.unixTimestamp, "duration": duration, "background_duration": Int(backgroundDuration * 1000)])
         XCTAssertEqual(request.eventType, .load)
         XCTAssertEqual(try request.url, TestURL.load)
         XCTAssertEqual(request.method, .post)
@@ -267,7 +282,9 @@ final class MetricsHTTPRequestTests: ChartboostMediationTestCase {
             events: Self.metricsEvents,
             error: Self.nestedCMError,
             adFormat: .adaptiveBanner,
-            size: CGSize(width: 400.0, height: 100.0), 
+            size: CGSize(width: 400.0, height: 100.0),
+            start: Date(),
+            end: Date().addingTimeInterval(TimeInterval.random(in: 0.1...5)),
             backgroundDuration: 0
         )
         let jsonDict = try XCTUnwrap(request.bodyJSON)
@@ -286,7 +303,9 @@ final class MetricsHTTPRequestTests: ChartboostMediationTestCase {
             events: Self.metricsEvents,
             error: Self.nestedCMError,
             adFormat: .adaptiveBanner,
-            size: nil, 
+            size: nil,
+            start: Date(),
+            end: Date().addingTimeInterval(TimeInterval.random(in: 0.1...5)),
             backgroundDuration: 0
         )
         let jsonDict = try XCTUnwrap(request.bodyJSON)
@@ -307,6 +326,8 @@ final class MetricsHTTPRequestTests: ChartboostMediationTestCase {
             error: Self.nestedCMError,
             adFormat: .banner,
             size: nil,
+            start: Date(),
+            end: Date().addingTimeInterval(TimeInterval.random(in: 0.1...5)),
             backgroundDuration: 0
         )
         let jsonDict = try XCTUnwrap(request.bodyJSON)
@@ -349,9 +370,9 @@ final class MetricsHTTPRequestTests: ChartboostMediationTestCase {
     }
 
     func testHeliumImpressionEvent() throws {
-        let request = MetricsHTTPRequest.heliumImpression(auctionID: Self.auctionID, loadID: Self.loadID)
+        let request = MetricsHTTPRequest.mediationImpression(auctionID: Self.auctionID, loadID: Self.loadID)
         let json = try JSONSerialization.jsonDictionary(with: request.bodyData)
-        XCTAssertEqual(request.eventType, .heliumImpression)
+        XCTAssertEqual(request.eventType, .mediationImpression)
         XCTAssertEqual(try request.url, TestURL.heliumImpression)
         XCTAssertEqual(request.method, .post)
         XCTAssert(request.isSDKInitializationRequired)
@@ -379,5 +400,9 @@ final class MetricsHTTPRequestTests: ChartboostMediationTestCase {
         XCTAssert(request.isSDKInitializationRequired)
         XCTAssertAnyEqual(request.customHeaders, Self.loadIDJSON)
         XCTAssertAnyEqual(json, Self.auctionIDJSON)
+    }
+
+    func durationMs(start: Date, end: Date) -> Int {
+        end.unixTimestamp - start.unixTimestamp
     }
 }

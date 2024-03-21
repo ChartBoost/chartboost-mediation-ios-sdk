@@ -9,7 +9,7 @@ import Foundation
 class FileStorageMock: Mock<FileStorageMock.Method>, FileStorage {
     
     enum Method {
-        case urlForHeliumConfigurationDirectory
+        case urlForSDKConfigurationDirectory
         case urlForChartboostIDFile
         case fileExists
         case removeFile
@@ -21,16 +21,16 @@ class FileStorageMock: Mock<FileStorageMock.Method>, FileStorage {
     }
     
     override var defaultReturnValues: [Method: Any?] {
-        [.urlForHeliumConfigurationDirectory: try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false),
+        [.urlForSDKConfigurationDirectory: try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false),
          .urlForChartboostIDFile: try? FileManager.default.url(for: .libraryDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("Chartboost/chartboost_identifier"),
          .fileExists: true,
          .readData: "some content".data(using: .utf8)!,
          .directoryExists: true]
     }
     
-    var urlForHeliumConfigurationDirectory: URL {
+    var urlForSDKConfigurationDirectory: URL {
         get throws {
-            try throwingRecord(.urlForHeliumConfigurationDirectory)
+            try throwingRecord(.urlForSDKConfigurationDirectory)
         }
     }
 

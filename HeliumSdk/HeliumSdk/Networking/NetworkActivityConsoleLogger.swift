@@ -52,7 +52,7 @@ HTTP Request
             }
         }
         log.appendLine(".....................................................................................\n")
-        logger.trace(log)
+        logger.verbose(log)
     }
 
     static func logURLResponse(_ urlResponse: URLResponse, data: Data?, logger: Logger) {
@@ -84,7 +84,7 @@ HTTP Response
         }
 
         log.appendLine(".....................................................................................\n")
-        logger.trace(log)
+        logger.verbose(log)
     }
 
     private static func timestamp(for source: Source) -> String {

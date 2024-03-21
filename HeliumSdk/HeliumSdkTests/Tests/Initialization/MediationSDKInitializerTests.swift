@@ -47,7 +47,11 @@ class MediationSDKInitializerTests: ChartboostMediationTestCase {
         XCTAssertEqual(mocks.environment.app.appID, "hello")
         // Check that the configs are requested to update
         var appConfigCompletion: UpdateAppConfigCompletion = { _, _ in }
-        XCTAssertMethodCalls(mocks.appConfigurationController, .updateConfiguration, parameters: [XCTMethodCaptureParameter { appConfigCompletion = $0 }])
+        XCTAssertMethodCalls(
+            mocks.appConfigurationController,
+            .restorePersistedConfiguration, .updateConfiguration,
+            parameters: [], [XCTMethodCaptureParameter { appConfigCompletion = $0 }]
+        )
         // Check that operation is waiting for config to update
         XCTAssertFalse(completed)
         
@@ -99,7 +103,7 @@ class MediationSDKInitializerTests: ChartboostMediationTestCase {
         XCTAssertTrue(completed)
         // Check that controllers were not called
         XCTAssertNoMethodCalls(mocks.partnerController)
-        XCTAssertNoMethodCalls(mocks.appConfigurationController)
+        XCTAssertMethodCalls(mocks.appConfigurationController, .restorePersistedConfiguration, parameters: [])
     }
     
     /// Validates that initialization finishes successfuly after the config is updated even if that fails, as long as the current config is not the default one.
@@ -168,7 +172,11 @@ class MediationSDKInitializerTests: ChartboostMediationTestCase {
         XCTAssertEqual(mocks.environment.app.appID, "hello")
         // Check that the configs are requested to update
         var appConfigCompletion: UpdateAppConfigCompletion = { _, _ in }
-        XCTAssertMethodCalls(mocks.appConfigurationController, .updateConfiguration, parameters: [XCTMethodCaptureParameter { appConfigCompletion = $0 }])
+        XCTAssertMethodCalls(
+            mocks.appConfigurationController,
+            .restorePersistedConfiguration, .updateConfiguration,
+            parameters: [], [XCTMethodCaptureParameter { appConfigCompletion = $0 }]
+        )
         // Check that operation is waiting for config to update
         XCTAssertFalse(completed)
         
@@ -206,7 +214,11 @@ class MediationSDKInitializerTests: ChartboostMediationTestCase {
         XCTAssertEqual(mocks.environment.app.appID, "hello")
         // Check that the configs are requested to update
         var appConfigCompletion: UpdateAppConfigCompletion = { _, _ in }
-        XCTAssertMethodCalls(mocks.appConfigurationController, .updateConfiguration, parameters: [XCTMethodCaptureParameter { appConfigCompletion = $0 }])
+        XCTAssertMethodCalls(
+            mocks.appConfigurationController,
+            .restorePersistedConfiguration, .updateConfiguration,
+            parameters: [], [XCTMethodCaptureParameter { appConfigCompletion = $0 }]
+        )
         // Check that operation is waiting for config to update
         XCTAssertFalse(completed)
         

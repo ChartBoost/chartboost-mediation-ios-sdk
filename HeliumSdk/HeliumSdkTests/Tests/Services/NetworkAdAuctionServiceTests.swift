@@ -51,7 +51,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
                     XCTAssertEqual("chartboost", bid.partnerIdentifier)
                     XCTAssertEqual(99, bid.clearingPrice)
                     XCTAssertTrue(bid.isProgrammatic)
-                    XCTAssertEqual("chartboost:\(request.heliumPlacement)", bid.partnerPlacement)
+                    XCTAssertEqual("chartboost:\(request.mediationPlacement)", bid.partnerPlacement)
                     XCTAssertEqual("PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz5cbjxW", bid.adm)
                 }
             case .failure(let error):
@@ -62,7 +62,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         }
 
         // Check that PartnerController was asked for bidder info
-        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.heliumPlacement, format: request.adFormat, loadID: Self.loadID)
+        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.mediationPlacement, format: request.adFormat, loadID: Self.loadID)
         var fetchBidderInfoCompletion: (BidderTokens) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeFetchBidderInformation, parameters: [
             expectedPreBidRequest, XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
@@ -106,7 +106,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         }
 
         // Check that PartnerController was asked for bidder info
-        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.heliumPlacement, format: request.adFormat, loadID: Self.loadID)
+        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.mediationPlacement, format: request.adFormat, loadID: Self.loadID)
         var fetchBidderInfoCompletion: (BidderTokens) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeFetchBidderInformation, parameters: [
             expectedPreBidRequest, XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
@@ -151,7 +151,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         }
 
         // Check that PartnerController was asked for bidder info
-        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.heliumPlacement, format: request.adFormat, loadID: Self.loadID)
+        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.mediationPlacement, format: request.adFormat, loadID: Self.loadID)
         var fetchBidderInfoCompletion: (BidderTokens) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeFetchBidderInformation, parameters: [
             expectedPreBidRequest, XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
@@ -199,7 +199,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         }
 
         // Check that PartnerController was asked for bidder info
-        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.heliumPlacement, format: request.adFormat, loadID: Self.loadID)
+        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.mediationPlacement, format: request.adFormat, loadID: Self.loadID)
         var fetchBidderInfoCompletion: (BidderTokens) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeFetchBidderInformation, parameters: [
             expectedPreBidRequest, XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
@@ -278,7 +278,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         }
 
         // Check that PartnerController was asked for bidder info
-        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.heliumPlacement, format: request.adFormat, loadID: Self.loadID)
+        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.mediationPlacement, format: request.adFormat, loadID: Self.loadID)
         var fetchBidderInfoCompletion: (BidderTokens) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeFetchBidderInformation, parameters: [
             expectedPreBidRequest, XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
@@ -347,7 +347,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         }
 
         // Check that PartnerController was asked for bidder info
-        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.heliumPlacement, format: request.adFormat, loadID: Self.loadID)
+        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.mediationPlacement, format: request.adFormat, loadID: Self.loadID)
         var fetchBidderInfoCompletion: (BidderTokens) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeFetchBidderInformation, parameters: [
             expectedPreBidRequest, XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
@@ -399,7 +399,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         }
 
         // Check that PartnerController was asked for bidder info
-        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.heliumPlacement, format: request.adFormat, loadID: Self.loadID)
+        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.mediationPlacement, format: request.adFormat, loadID: Self.loadID)
         var fetchBidderInfoCompletion: (BidderTokens) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeFetchBidderInformation, parameters: [
             expectedPreBidRequest, XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
@@ -439,7 +439,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         }
 
         // Check that PartnerController was asked for bidder info
-        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.heliumPlacement, format: request.adFormat, loadID: Self.loadID)
+        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.mediationPlacement, format: request.adFormat, loadID: Self.loadID)
         var fetchBidderInfoCompletion: (BidderTokens) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeFetchBidderInformation, parameters: [
             expectedPreBidRequest, XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
@@ -481,7 +481,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         }
 
         // Check that PartnerController was asked for bidder info
-        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.heliumPlacement, format: request.adFormat, loadID: Self.loadID)
+        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.mediationPlacement, format: request.adFormat, loadID: Self.loadID)
         var fetchBidderInfoCompletion: (BidderTokens) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeFetchBidderInformation, parameters: [
             expectedPreBidRequest, XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
@@ -523,7 +523,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         }
 
         // Check that PartnerController was asked for bidder info
-        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.heliumPlacement, format: request.adFormat, loadID: Self.loadID)
+        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.mediationPlacement, format: request.adFormat, loadID: Self.loadID)
         var fetchBidderInfoCompletion: (BidderTokens) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeFetchBidderInformation, parameters: [
             expectedPreBidRequest, XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
@@ -593,7 +593,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         }
 
         // Check that PartnerController was asked for bidder info
-        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.heliumPlacement, format: request.adFormat, loadID: Self.loadID)
+        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.mediationPlacement, format: request.adFormat, loadID: Self.loadID)
         var fetchBidderInfoCompletion: (BidderTokens) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeFetchBidderInformation, parameters: [
             expectedPreBidRequest, XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
@@ -673,7 +673,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         }
 
         // Check that PartnerController was asked for bidder info
-        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.heliumPlacement, format: request.adFormat, loadID: Self.loadID)
+        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.mediationPlacement, format: request.adFormat, loadID: Self.loadID)
         var fetchBidderInfoCompletion: (BidderTokens) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeFetchBidderInformation, parameters: [
             expectedPreBidRequest, XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
@@ -755,7 +755,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         }
 
         // Check that PartnerController was asked for bidder info
-        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.heliumPlacement, format: request.adFormat, loadID: Self.loadID)
+        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.mediationPlacement, format: request.adFormat, loadID: Self.loadID)
         var fetchBidderInfoCompletion: (BidderTokens) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeFetchBidderInformation, parameters: [
             expectedPreBidRequest, XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
@@ -848,7 +848,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         }
 
         // Check that PartnerController was asked for bidder info
-        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.heliumPlacement, format: request.adFormat, loadID: Self.loadID)
+        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.mediationPlacement, format: request.adFormat, loadID: Self.loadID)
         var fetchBidderInfoCompletion: (BidderTokens) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeFetchBidderInformation, parameters: [
             expectedPreBidRequest, XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
@@ -889,7 +889,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         }
 
         // Check that PartnerController was asked for bidder info
-        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.heliumPlacement, format: request.adFormat, loadID: Self.loadID)
+        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.mediationPlacement, format: request.adFormat, loadID: Self.loadID)
         var fetchBidderInfoCompletion: (BidderTokens) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeFetchBidderInformation, parameters: [
             expectedPreBidRequest, XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
@@ -938,7 +938,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         }
 
         // Check that PartnerController was asked for bidder info
-        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.heliumPlacement, format: request.adFormat, loadID: Self.loadID)
+        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.mediationPlacement, format: request.adFormat, loadID: Self.loadID)
         var fetchBidderInfoCompletion: (BidderTokens) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeFetchBidderInformation, parameters: [
             expectedPreBidRequest, XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
@@ -985,7 +985,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         }
 
         // Check that PartnerController was asked for bidder info
-        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.heliumPlacement, format: request.adFormat, loadID: Self.loadID)
+        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.mediationPlacement, format: request.adFormat, loadID: Self.loadID)
         var fetchBidderInfoCompletion: (BidderTokens) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeFetchBidderInformation, parameters: [
             expectedPreBidRequest, XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
@@ -1032,7 +1032,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         }
 
         // Check that PartnerController was asked for bidder info
-        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.heliumPlacement, format: request.adFormat, loadID: Self.loadID)
+        let expectedPreBidRequest = PreBidRequest(chartboostPlacement: request.mediationPlacement, format: request.adFormat, loadID: Self.loadID)
         var fetchBidderInfoCompletion: (BidderTokens) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.partnerController, .routeFetchBidderInformation, parameters: [
             expectedPreBidRequest, XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
@@ -1253,8 +1253,8 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
             .timeUntilNextLoadIsAllowed,
             .loadRateLimit,
             parameters:
-                [request.heliumPlacement], // .timeUntilNextLoadIsAllowed
-                [request.heliumPlacement] // .loadRateLimit
+                [request.mediationPlacement], // .timeUntilNextLoadIsAllowed
+                [request.mediationPlacement] // .loadRateLimit
         )
     }
 
@@ -1281,9 +1281,9 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
             .loadRateLimit,
             .setLoadRateLimit,
             parameters:
-                [request.heliumPlacement], // .timeUntilNextLoadIsAllowed
-                [request.heliumPlacement], // .loadRateLimit
-                [TimeInterval(5), request.heliumPlacement] // .setLoadRateLimit
+                [request.mediationPlacement], // .timeUntilNextLoadIsAllowed
+                [request.mediationPlacement], // .loadRateLimit
+                [TimeInterval(5), request.mediationPlacement] // .setLoadRateLimit
         )
     }
 

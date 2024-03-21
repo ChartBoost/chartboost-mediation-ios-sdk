@@ -16,5 +16,5 @@ struct SDKInfoProvider: SDKInfoProviding {
     let sdkName = "Helium"
 
     // WARNING: CI updates the following line with the correct SDK version. Check CI first before editing.
-    var sdkVersion: String { "4.8.0" }
+    var sdkVersion: String { "4.9.0" }
 }

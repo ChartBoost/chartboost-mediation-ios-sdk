@@ -22,7 +22,7 @@ extension AdLoadRequest {
             adSize: adSize,
             adFormat: adFormat,
             keywords: keywords,
-            heliumPlacement: heliumPlacement,
+            mediationPlacement: heliumPlacement,
             loadID: loadID
         )
     }

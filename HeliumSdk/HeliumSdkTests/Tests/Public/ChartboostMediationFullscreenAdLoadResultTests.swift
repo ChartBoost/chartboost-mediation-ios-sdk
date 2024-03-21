@@ -26,5 +26,6 @@ final class ChartboostMediationFullscreenAdLoadResultTests: ChartboostMediationT
         XCTAssertEqual(result.loadID, "hello")
         XCTAssertAnyEqual(result.metrics, ["abc": 123])
         XCTAssertNil(result.error)
+        XCTAssertEqual(result.ad?.loadID, "hello")
     }
 }

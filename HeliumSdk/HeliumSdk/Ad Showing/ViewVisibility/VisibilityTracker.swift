@@ -7,7 +7,7 @@ import UIKit
 
 /// Tracks the visibility of an inputted view and invokes the block when the specified visibility conditions
 /// for the view have been met.
-/// - Note: Use this tracker for Helium impression tracking.
+/// - Note: Use this tracker for Chartboost Mediation impression tracking.
 protocol VisibilityTracker {
     /// Indicates if a tracking operation is ongoing.
     /// `true` after startTracking() is called, `false` after the operation finishes due to the view becoming visible

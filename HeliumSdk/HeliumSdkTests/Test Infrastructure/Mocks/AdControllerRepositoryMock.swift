@@ -16,7 +16,7 @@ class AdControllerRepositoryMock: Mock<AdControllerRepositoryMock.Method>, AdCon
         [.adController: AdControllerMock()]
     }
     
-    func adController(forHeliumPlacement heliumPlacement: String) -> AdController {
-        record(.adController, parameters: [heliumPlacement])
+    func adController(for mediationPlacement: String) -> AdController {
+        record(.adController, parameters: [mediationPlacement])
     }
 }

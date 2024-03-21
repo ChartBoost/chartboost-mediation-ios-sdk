@@ -9,8 +9,8 @@ import Foundation
 @objc
 @objcMembers
 public final class Helium: NSObject {
-    /// Shared instance of the Helium SDK.
-    /// - Returns: Shared instance of the Helium SDK.
+    /// Shared instance of the Chartboost Mediation SDK.
+    /// - Returns: Shared instance of the Chartboost Mediation SDK.
     @objc(sharedHelium)
     public static func shared() -> Helium { _shared }
     private static let _shared = Helium()
@@ -29,7 +29,7 @@ public final class Helium: NSObject {
 
     // MARK: - Initialization
 
-    /// Initializes the Helium SDK.
+    /// Initializes the Chartboost Mediation SDK.
     /// This method must be called before ads can be served.
     /// - Parameter appId: Application identifier from the Chartboost dashboard.
     /// - Parameter options: Optional initialization options.
@@ -56,7 +56,7 @@ public final class Helium: NSObject {
     }
 
     /// Deprecated.
-    /// Initializes the Helium SDK.
+    /// Initializes the Chartboost Mediation SDK.
     /// This method must be called before ads can be served.
     /// - Parameter appId: Application identifier from the Chartboost dashboard.
     /// - Parameter appSignature: Application signature from the Chartboost dashboard.
@@ -81,10 +81,10 @@ public final class Helium: NSObject {
     /// Defaults to ``LogLevel/info``.
     public var logLevel: LogLevel {
         get {
-            return ConsoleLoggerHandler.logLevel
+            return ConsoleLogHandler.logLevel
         }
         set {
-            ConsoleLoggerHandler.logLevel = newValue
+            ConsoleLogHandler.logLevel = newValue
         }
     }
 
@@ -219,7 +219,7 @@ public final class Helium: NSObject {
 
     // MARK: - Game Engine
 
-    /// Specifies to the Helium SDK the game engine environment that it is running in.
+    /// Specifies to the Chartboost Mediation SDK the game engine environment that it is running in.
     /// This method should be called before loading ads.
     /// - Parameter name: Game engine name.
     /// - Parameter version: Game engine version.
@@ -230,7 +230,7 @@ public final class Helium: NSObject {
 
     // MARK: - SDK Information
 
-    /// The Helium SDK version.
+    /// The Chartboost Mediation SDK version.
     /// The value is a semantic versioning compliant string.
     public static var sdkVersion: String {
         _shared.environment.sdk.sdkVersion
@@ -255,5 +255,13 @@ public final class Helium: NSObject {
     public var discardOversizedAds: Bool {
         get { environment.sdkSettings.discardOversizedAds }
         set { environment.sdkSettings.discardOversizedAds = newValue }
+    }
+
+    /// A Boolean flag for setting test mode in this SDK.
+    ///
+    /// - Warning: Do not enable test mode in production builds.
+    public static var isTestModeEnabled: Bool {
+        get { _shared.environment.testMode.isTestModeEnabled }
+        set { _shared.environment.testMode.isTestModeEnabled = newValue }
     }
 }

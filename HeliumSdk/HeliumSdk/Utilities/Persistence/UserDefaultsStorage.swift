@@ -10,7 +10,7 @@ protocol UserDefaultsStorage: AnyObject {
     subscript<Value>(_ key: String) -> Value? { get set }
 }
 
-/// A UserDefaultsStorage implementation namespaces keys to group all Helium-related values together.
+/// A UserDefaultsStorage implementation namespaces keys to group all Chartboost Mediation related values together.
 final class MediationUserDefaultsStorage: UserDefaultsStorage {
     let keyPrefix: String
 

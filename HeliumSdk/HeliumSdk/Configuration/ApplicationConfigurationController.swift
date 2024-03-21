@@ -19,8 +19,13 @@ enum ApplicationConfigurationSource: CaseIterable {
 
 typealias UpdateAppConfigCompletion = (_ appConfigSource: ApplicationConfigurationSource, _ error: ChartboostMediationError?) -> Void
 
-/// Manages the app-specific configuration for the Helium SDK.
+/// Manages the app-specific configuration for the Chartboost Mediation SDK.
 protocol ApplicationConfigurationController {
+    /// Updates the configuration using the persisted data from a previous session, if available.
+    /// Note: this should be called when the SDK class is instantiated. Only the first call is respected.
+    /// Nothing happens if the configuration has been fetched from backend.
+    func restorePersistedConfiguration()
+
     /// Fetches a new configuration from backend.
     func updateConfiguration(completion: @escaping UpdateAppConfigCompletion)
 }
@@ -37,17 +42,12 @@ final class PersistingApplicationConfigurationController: ApplicationConfigurati
         set { defaultsStorage["init-hash"] = newValue }
     }
 
-    init() {
-        // Tries to restore a persisted configuration from a previous session
-        restorePersistedConfiguration()
-    }
-
     private var appConfigSource: ApplicationConfigurationSource = .hardcodedDefault
 
     /// The file system url where the configuration data is stored.
-    private var heliumConfigURL: URL {
+    private var sdkConfigURL: URL {
         get throws {
-            try fileStorage.urlForHeliumConfigurationDirectory.appendingPathComponent("HeConfig.json")
+            try fileStorage.urlForSDKConfigurationDirectory.appendingPathComponent("HeConfig.json")
         }
     }
 
@@ -89,10 +89,12 @@ final class PersistingApplicationConfigurationController: ApplicationConfigurati
     }
 
     /// Updates the configuration using the persisted data from a previous session, if available.
-    private func restorePersistedConfiguration() {
+    /// Note: this should be called when the SDK class is instantiated. Only the first call is respected.
+    /// Nothing happens if the configuration has been fetched from backend.
+    func restorePersistedConfiguration() {
         let url: URL
         do {
-            url = try heliumConfigURL
+            url = try sdkConfigURL
         } catch {
             logger.error("Failed to compute app config URL with error \(error)")
             return
@@ -141,7 +143,7 @@ final class PersistingApplicationConfigurationController: ApplicationConfigurati
         try configuration.update(with: data)
         // Persist data to use in the next session
         do {
-            try fileStorage.write(data, to: heliumConfigURL)
+            try fileStorage.write(data, to: sdkConfigURL)
             logger.debug("Persisted new app config")
         } catch {
             logger.error("Failed to persist app config with error \(error)")

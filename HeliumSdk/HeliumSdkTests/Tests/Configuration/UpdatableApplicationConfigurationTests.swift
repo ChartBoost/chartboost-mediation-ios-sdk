@@ -204,6 +204,9 @@ class UpdatableApplicationConfigurationTests: ChartboostMediationTestCase {
         XCTAssertEqual(configuration.minimumVisibleSeconds, TimeInterval(values?.bannerImpressionMinVisibleDurationMs ?? 0) / 1000)
         XCTAssertEqual(configuration.traversalLimit, values?.visibilityTrackerTraversalLimit ?? 25)
         XCTAssertEqual(configuration.showTimeout, TimeInterval(values?.showTimeout ?? 5))
+        XCTAssertEqual(configuration.maxQueueSize, Int(values?.maxQueueSize ?? 5))
+        XCTAssertEqual(configuration.defaultQueueSize, Int(values?.defaultQueueSize ?? 1))
+        XCTAssertEqual(configuration.queuedAdTtl, TimeInterval(values?.queuedAdTtl ?? 3600))
     }
     
     /// The expected config values when parsing the response "full_sdk_init_response.json" that contains all the possible fields.
@@ -335,7 +338,10 @@ class UpdatableApplicationConfigurationTests: ChartboostMediationTestCase {
                 .init(chartboostPlacement: "Placement6", format: "banner", autoRefreshRate: 35)
 			],
             logLevel: nil,
-            privacyBanList: PrivacyBanListCandidate.allCases.map { $0.rawValue }
+            privacyBanList: PrivacyBanListCandidate.allCases.map { $0.rawValue },
+            maxQueueSize: 5,
+            defaultQueueSize: 3,
+            queuedAdTtl: 3600
         )
     }
     
@@ -366,7 +372,10 @@ class UpdatableApplicationConfigurationTests: ChartboostMediationTestCase {
             initMetricsPostTimeout: nil,
             placements: [],
             logLevel: nil,
-            privacyBanList: []
+            privacyBanList: [],
+            maxQueueSize: nil,
+            defaultQueueSize: nil,
+            queuedAdTtl: nil
         )
     }
 }

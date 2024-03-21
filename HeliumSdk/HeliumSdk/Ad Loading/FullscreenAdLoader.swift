@@ -65,7 +65,12 @@ final class AdLoader: FullscreenAdLoader {
             switch result.result {
             case .success(let ad):
                 // Create the ad instance shared with the user
-                let fullscreenAd = self.adFactory.makeFullscreenAd(request: request, winningBidInfo: ad.bidInfo, controller: adController)
+                let fullscreenAd = self.adFactory.makeFullscreenAd(
+                    request: request,
+                    winningBidInfo: ad.bidInfo,
+                    controller: adController,
+                    loadID: ad.request.loadID
+                )
 
                 // When loadAd() exits early because another ad was already loaded, it returns the identifier for
                 // the already-completed request, not the one for the request that was passed at the same time as this callback.
@@ -108,8 +113,9 @@ final class AdLoader: FullscreenAdLoader {
             adSize: nil,    // nil means full-screen
             adFormat: adFormat,
             keywords: request.keywords,
-            heliumPlacement: request.placement,
-            loadID: UUID().uuidString
+            mediationPlacement: request.placement,
+            loadID: UUID().uuidString,
+            queueID: request.queueID
         )
     }
 

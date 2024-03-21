@@ -39,8 +39,8 @@ class FileSystemStorageTests: ChartboostMediationTestCase {
     
     
     /// Validates that the file storage returns a proper value for the configuration directory url.
-    func testURLForHeliumConfigurationDirectory() throws {
-        let url = try fileStorage.urlForHeliumConfigurationDirectory
+    func testURLForSDKConfigurationDirectory() throws {
+        let url = try fileStorage.urlForSDKConfigurationDirectory
         let expectedURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
             .first?
             .appendingPathComponent("HeliumConfig")

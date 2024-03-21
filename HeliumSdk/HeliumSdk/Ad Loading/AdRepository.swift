@@ -35,6 +35,7 @@ final class AuctionAdRepository: AdRepository {
         completion: @escaping (AdLoadResult) -> Void
     ) {
         let operation = backgroundTimeMonitor.startMonitoringOperation()
+        let start = Date()
 
         // Start backend-side auction
         auctionService.startAuction(request: request) { [weak self] response in
@@ -52,10 +53,10 @@ final class AuctionAdRepository: AdRepository {
                 bidFulfillOperation.run { [weak self, bidFulfillOperation] result in
                     guard let self else { return }
 
-                    let backgroundTime = operation.backgroundTimeUntilNow()
-
                     // dumb statement just to explicitly capture the bidFulfillOperation in the closure capture group without warnings
                     _ = bidFulfillOperation
+
+                    let backgroundTime = operation.backgroundTimeUntilNow()
 
                     // Log metrics
                     let rawMetrics = self.metrics.logLoad(
@@ -65,7 +66,9 @@ final class AuctionAdRepository: AdRepository {
                         error: result.result.error,
                         adFormat: request.adFormat,
                         size: request.adSize?.size,
-                        backgroundDuration: backgroundTime
+                        start: start,
+                        backgroundDuration: backgroundTime,
+                        queueID: request.queueID
                     )
                     // in a success path, the auctionID is always available from the response header, or from the bid json content
                     assert(response.auctionID != nil)
@@ -111,7 +114,9 @@ final class AuctionAdRepository: AdRepository {
                         error: error,
                         adFormat: request.adFormat,
                         size: request.adSize?.size,
-                        backgroundDuration: backgroundTime
+                        start: start,
+                        backgroundDuration: backgroundTime,
+                        queueID: request.queueID
                     )
                 } else {
                     rawMetrics = nil
@@ -146,12 +151,12 @@ extension AuctionAdRepository {
 
     private func makeBidInfo(bid: Bid) -> [String: Any] {
         var info: [String: Any] = [:]
-        info["auction-id"] = bid.auctionIdentifier
-        info["partner-id"] = bid.partnerIdentifier
-        info["price"] = bid.cpmPrice
-        info["line_item_id"] = bid.lineItemIdentifier
+        info[LoadedAd.auctionIDKey] = bid.auctionIdentifier
+        info[LoadedAd.partnerIDKey] = bid.partnerIdentifier
+        info[LoadedAd.priceKey] = bid.cpmPrice
+        info[LoadedAd.lineItemIDKey] = bid.lineItemIdentifier
         // The `line_item_name` is only present in the ILRD.
-        info["line_item_name"] = bid.ilrd?["line_item_name"] as? String // explicit casting unwraps the double optional
+        info[LoadedAd.lineItemNameKey] = bid.ilrd?["line_item_name"] as? String // explicit casting unwraps the double optional
         return info
     }
 }

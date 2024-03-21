@@ -36,6 +36,7 @@ protocol DependenciesContainer {
     var fileStorage: FileStorage { get }
     var fullScreenAdShowCoordinator: FullScreenAdShowCoordinator { get }
     var fullScreenAdShowObserver: FullScreenAdShowObserver { get }
+    var fullscreenAdQueueConfiguration: FullscreenAdQueueConfiguration { get }
     var ilrdEventPublisher: ILRDEventPublisher { get }
     var impressionCounter: ImpressionCounter { get }
     var impressionTracker: ImpressionTracker { get }
@@ -58,7 +59,7 @@ protocol DependenciesContainer {
     var taskDispatcher: AsynchronousTaskDispatcher { get }
     var userDefaultsStorage: UserDefaultsStorage { get }
     var visibilityTrackerConfiguration: VisibilityTrackerConfiguration { get }
-    var consoleLoggerConfiguration: ConsoleLoggerConfiguration { get }
+    var consoleLoggerConfigurationOverride: ConsoleLoggerConfigurationOverride { get }
     var privacyConfiguration: PrivacyConfiguration { get }
 }
 
@@ -74,9 +75,7 @@ final class SDKDependenciesContainer: DependenciesContainer {
     let adLoader: FullscreenAdLoader = AdLoader()
     let adRepository: AdRepository = AuctionAdRepository()
     let adapterFactory: PartnerAdapterFactory = ContainerPartnerAdapterFactory()
-    // lazy because it does some logic on init that requires access to other dependencies. Safe to make it lazy since it's used by only one
-    // component: the sdkInitializer.
-    lazy var appConfigurationController: ApplicationConfigurationController = PersistingApplicationConfigurationController()
+    let appConfigurationController: ApplicationConfigurationController = PersistingApplicationConfigurationController()
     let appConfigurationService: AppConfigurationServiceProtocol = AppConfigurationService()
     let appTrackingInfo: AppTrackingInfoProviding = AppTrackingInfoProvider()
     let appTrackingInfoDependency: AppTrackingInfoProvider.Dependency = AppTrackingInfoProvider.SystemDependency()
@@ -126,6 +125,7 @@ final class SDKDependenciesContainer: DependenciesContainer {
     var customTaskDispatcher: TaskDispatcher? { nil }
     var fullScreenAdShowCoordinator: FullScreenAdShowCoordinator { middleManFullScreenAdShowCoordinator }
     var fullScreenAdShowObserver: FullScreenAdShowObserver { middleManFullScreenAdShowCoordinator }
+    var fullscreenAdQueueConfiguration: FullscreenAdQueueConfiguration { configuration }
     var impressionCounter: ImpressionCounter { currentSessionImpressionTracker }
     var impressionTracker: ImpressionTracker { currentSessionImpressionTracker }
     var initializationStatusProvider: MediationInitializationStatusProvider { mediationSDKInitializer }
@@ -134,6 +134,6 @@ final class SDKDependenciesContainer: DependenciesContainer {
     var sdkInitializer: SDKInitializer { mediationSDKInitializer }
     var sdkInitializerConfiguration: SDKInitializerConfiguration { configuration }
     var visibilityTrackerConfiguration: VisibilityTrackerConfiguration { configuration }
-    var consoleLoggerConfiguration: ConsoleLoggerConfiguration { configuration }
+    var consoleLoggerConfigurationOverride: ConsoleLoggerConfigurationOverride  { configuration }
     var privacyConfiguration: PrivacyConfiguration { configuration }
 }

@@ -5,7 +5,7 @@
 
 import Foundation
 
-/// Options for Helium initialization.
+/// Options for Chartboost Mediation initialization.
 @objc(HeliumInitializationOptions)
 public class HeliumInitializationOptions: NSObject {
     // MARK: - Properties

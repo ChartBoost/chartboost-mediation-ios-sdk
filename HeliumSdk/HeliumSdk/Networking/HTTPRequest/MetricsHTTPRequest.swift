@@ -23,7 +23,6 @@ enum SDKInitResult: String, CaseIterable {
     case successWithFetchedConfig = "success_with_fetched_config"
 }
 
-/// Spec: go/cm-tracking-events
 struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataResponse {
     struct Body: Encodable {
         let auctionID: AuctionID?
@@ -34,6 +33,12 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
         let placementType: AdFormat?
         // Only required if `adFormat` is `adaptiveBanner`.
         let size: BackendEncodableSize?
+        // The start time, in milliseconds, for an ad load.
+        let start: Int?
+        // the end time, in milliseconds, for an ad load.
+        let end: Int?
+        // The amount of time, in milliseconds, the event encompases if an ad load.
+        let duration: Int?
         // The amount of time, in milliseconds, the app is backgrounded during an ad load.
         let backgroundDuration: Int?
 
@@ -44,6 +49,8 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
             error: Error? = nil,
             adFormat: AdFormat? = nil,
             size: BackendEncodableSize? = nil,
+            start: Date? = nil,
+            end: Date = Date(),
             backgroundDuration: TimeInterval? = nil
         ) {
             self.auctionID = auctionID
@@ -59,6 +66,19 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
                 self.size = size ?? CGSize.zero.backendEncodableSize
             } else {
                 self.size = nil
+            }
+
+            // Start can be omitted if the event type != .load; End and Duration are only applicable if Start is supplied.
+            if let start {
+                let start = start.unixTimestamp
+                self.start = start
+                let end = end.unixTimestamp
+                self.end = end
+                self.duration = end - start
+            } else {
+                self.start = nil
+                self.end = nil
+                self.duration = nil
             }
 
             // Background duration can be ommitted if the event type is != .load
@@ -114,10 +134,13 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
         }
     }
 
-    private init(eventType: MetricsEvent.EventType, loadID: LoadID?, body: Body) {
+    private init(eventType: MetricsEvent.EventType, loadID: LoadID?, queueID: String? = nil, body: Body) {
         self.eventType = eventType
         self.body = body
-        self.customHeaders = loadID.map { [HTTP.HeaderKey.loadID.rawValue: $0] } ?? [:]
+        self.customHeaders = [
+            HTTP.HeaderKey.loadID.rawValue: loadID,
+            HTTP.HeaderKey.queueID.rawValue: queueID,
+        ].compactMapValues { $0 }   // Only include headers for non-nil IDs
     }
 
     static func initialization(events: [MetricsEvent], result: SDKInitResult, error: ChartboostMediationError?) -> Self {
@@ -143,17 +166,23 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
         error: ChartboostMediationError?,
         adFormat: AdFormat,
         size: CGSize?,
-        backgroundDuration: TimeInterval?
+        start: Date,
+        end: Date,
+        backgroundDuration: TimeInterval?,
+        queueID: String? = nil
     ) -> Self {
         Self(
             eventType: .load,
             loadID: loadID,
+            queueID: queueID,
             body: .init(
                 auctionID: auctionID,
                 metrics: events,
                 error: .init(error: error),
                 adFormat: adFormat,
                 size: size?.backendEncodableSize,
+                start: start,
+                end: end,
                 backgroundDuration: backgroundDuration
             )
         )
@@ -178,8 +207,8 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
         Self(eventType: .expiration, loadID: loadID, body: .init(auctionID: auctionID))
     }
 
-    static func heliumImpression(auctionID: String, loadID: LoadID) -> Self {
-        Self(eventType: .heliumImpression, loadID: loadID, body: .init(auctionID: auctionID))
+    static func mediationImpression(auctionID: String, loadID: LoadID) -> Self {
+        Self(eventType: .mediationImpression, loadID: loadID, body: .init(auctionID: auctionID))
     }
 
     static func partnerImpression(auctionID: String, loadID: LoadID) -> Self {
@@ -197,14 +226,16 @@ extension MetricsEvent.EventType {
         case .bannerSize: return .bannerSize
         case .click: return .click
         case .expiration: return .expiration
-        case .heliumImpression: return .mediationImpression // "helium impression" will be renamed as "mediation impression" in the future
         case .initialization: return .initialization
         case .load: return .load
+        case .mediationImpression: return .mediationImpression
         case .partnerImpression: return .partnerImpression
         case .prebid: return .prebid
         case .reward: return .reward
         case .show: return .show
         case .winner: return .winner
+        case .startQueue: return .startQueue
+        case .endQueue: return .endQueue
         }
     }
 }

@@ -31,11 +31,11 @@ final class NetworkAdAuctionService: AdAuctionService {
     func startAuction(request: AdLoadRequest, completion: @escaping (AdAuctionResponse) -> Void) {
         // Fail immediately if the load should be rate limited
         if environment.testMode.isRateLimitingEnabled {
-            let timeUntilNextLoadIsAllowed = loadRateLimiter.timeUntilNextLoadIsAllowed(placement: request.heliumPlacement)
+            let timeUntilNextLoadIsAllowed = loadRateLimiter.timeUntilNextLoadIsAllowed(placement: request.mediationPlacement)
             guard timeUntilNextLoadIsAllowed <= 0 else {
                 let error = ChartboostMediationError(
                     code: .loadFailureRateLimited,
-                    description: "\(request.heliumPlacement) has been rate limited. Please try again in \(String(format: "%.03f", timeUntilNextLoadIsAllowed)) seconds."
+                    description: "\(request.mediationPlacement) has been rate limited. Please try again in \(String(format: "%.03f", timeUntilNextLoadIsAllowed)) seconds."
                 )
                 logger.error("Failed to start auction with error: \(error)")
                 completion(
@@ -50,7 +50,7 @@ final class NetworkAdAuctionService: AdAuctionService {
 
         // Fetch bidder tokens and partner info to attach to the bid request
         let preBidRequest = PreBidRequest(
-            chartboostPlacement: request.heliumPlacement,
+            chartboostPlacement: request.mediationPlacement,
             format: request.adFormat,
             loadID: request.loadID
         )
@@ -75,7 +75,7 @@ final class NetworkAdAuctionService: AdAuctionService {
                 switch result {
                 case .success(let response):
                     if let newLoadRateLimit = response.httpURLResponse.rateLimitReset {
-                        self?.loadRateLimiter.setLoadRateLimit(TimeInterval(newLoadRateLimit), placement: loadRequest.heliumPlacement)
+                        self?.loadRateLimiter.setLoadRateLimit(TimeInterval(newLoadRateLimit), placement: loadRequest.mediationPlacement)
                     }
                     logger.debug("Auction request succeeded")
                     completion(response.asAdAuctionResponse(request: loadRequest))
@@ -103,7 +103,7 @@ extension NetworkAdAuctionService {
         )
         auctionRequestFactory.makeRequest(
             request: request,
-            loadRateLimit: loadRateLimiter.loadRateLimit(placement: request.heliumPlacement),
+            loadRateLimit: loadRateLimiter.loadRateLimit(placement: request.mediationPlacement),
             bidderInformation: bidderInformation,
             completion: completion
         )

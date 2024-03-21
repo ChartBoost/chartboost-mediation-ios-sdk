@@ -6,16 +6,16 @@
 import Foundation
 
 /// Concrete class that implements the public HeliumInterstitialAd protocol.
-/// These are the ad instances that publishers use to ask Helium to load and show ads.
+/// These are the ad instances that publishers use to ask Chartboost Mediation to load and show ads.
 /// Publishers are responsible for keeping them alive.
 final class InterstitialAd: HeliumInterstitialAd, AdControllerDelegate {
     private let controller: AdController
     private weak var delegate: CHBHeliumInterstitialAdDelegate?
-    private let heliumPlacement: String
+    private let mediationPlacement: String
     @Injected(\.taskDispatcher) private var taskDispatcher
 
-    init(heliumPlacement: String, delegate: CHBHeliumInterstitialAdDelegate?, controller: AdController) {
-        self.heliumPlacement = heliumPlacement
+    init(mediationPlacement: String, delegate: CHBHeliumInterstitialAdDelegate?, controller: AdController) {
+        self.mediationPlacement = mediationPlacement
         self.delegate = delegate
         self.controller = controller
 
@@ -42,7 +42,7 @@ final class InterstitialAd: HeliumInterstitialAd, AdControllerDelegate {
                     // Thus if an ad is already loaded when the user tries to load an ad, we return the identifier for the
                     // request that completed the load, since that is the one we share with backend and partner adapters.
                     self.delegate?.heliumInterstitialAd(
-                        withPlacementName: self.heliumPlacement,
+                        withPlacementName: self.mediationPlacement,
                         requestIdentifier: ad.request.loadID,
                         winningBidInfo: ad.bidInfo,
                         didLoadWithError: nil
@@ -50,7 +50,7 @@ final class InterstitialAd: HeliumInterstitialAd, AdControllerDelegate {
                 // If failure notify didLoad with an error
                 case .failure(let error):
                     self.delegate?.heliumInterstitialAd(
-                        withPlacementName: self.heliumPlacement,
+                        withPlacementName: self.mediationPlacement,
                         requestIdentifier: request.loadID,
                         winningBidInfo: nil,
                         didLoadWithError: error
@@ -72,7 +72,7 @@ final class InterstitialAd: HeliumInterstitialAd, AdControllerDelegate {
             self.taskDispatcher.async(on: .main) {  // all delegate calls on main thread
                 // Notify didShow with an error in case of failure or nil in case of success
                 self.delegate?.heliumInterstitialAd(
-                    withPlacementName: self.heliumPlacement,
+                    withPlacementName: self.mediationPlacement,
                     didShowWithError: result.error
                 )
             }
@@ -94,7 +94,7 @@ extension InterstitialAd {
             adSize: nil,    // nil means full-screen
             adFormat: .interstitial,
             keywords: keywords?.dictionary,
-            heliumPlacement: heliumPlacement,
+            mediationPlacement: mediationPlacement,
             loadID: UUID().uuidString
         )
     }
@@ -108,7 +108,7 @@ extension InterstitialAd {
     func didTrackImpression() {
         taskDispatcher.async(on: .main) { [self] in
             delegate?.heliumInterstitialAdDidRecordImpression?(
-                withPlacementName: heliumPlacement
+                withPlacementName: mediationPlacement
             )
         }
     }
@@ -116,26 +116,26 @@ extension InterstitialAd {
     func didClick() {
         taskDispatcher.async(on: .main) { [self] in
             delegate?.heliumInterstitialAd?(
-                withPlacementName: heliumPlacement,
+                withPlacementName: mediationPlacement,
                 didClickWithError: nil
             )
         }
     }
 
     func didReward() {
-        logger.trace("Reward ignored by interstitial ad")
+        logger.verbose("Reward ignored by interstitial ad")
     }
 
     func didDismiss(error: ChartboostMediationError?) {
         taskDispatcher.async(on: .main) { [self] in
             delegate?.heliumInterstitialAd(
-                withPlacementName: heliumPlacement,
+                withPlacementName: mediationPlacement,
                 didCloseWithError: error
             )
         }
     }
 
     func didExpire() {
-        logger.trace("Expiration ignored by interstitial ad")
+        logger.verbose("Expiration ignored by interstitial ad")
     }
 }

@@ -72,4 +72,5 @@ class MocksContainer {
     var reachability = ReachabilityMock()
     var consoleLoggerConfigurationDependency = ConsoleLoggerConfigurationDependencyMock()
     var privacyConfigurationDependency = PrivacyConfigurationDependencyMock()
+    var fullscreenAdQueueConfiguration = FullscreenAdQueueConfigurationMock()
 }

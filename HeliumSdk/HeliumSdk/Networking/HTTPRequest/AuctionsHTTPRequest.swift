@@ -46,11 +46,12 @@ struct AuctionsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithDecodab
         }
     }
 
-    init(bidRequest: OpenRTB.BidRequest, loadRateLimit: Int, loadID: LoadID) {
+    init(bidRequest: OpenRTB.BidRequest, loadRateLimit: Int, loadID: LoadID, queueID: String? = nil) {
         customHeaders = [
             HTTP.HeaderKey.loadID.rawValue: loadID,
             HTTP.HeaderKey.rateLimitReset.rawValue: "\(loadRateLimit)",
-        ]
+            HTTP.HeaderKey.queueID.rawValue: queueID,
+        ].compactMapValues { $0 }  // Filter out queueID when it's nil
         body = bidRequest
     }
 }

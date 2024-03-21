@@ -7,7 +7,6 @@ import Foundation
 @testable import ChartboostMediationSDK
 
 class MetricsEventLoggerMock: Mock<MetricsEventLoggerMock.Method>, MetricsEventLogging {
-    
     enum Method {
         case logInitialization
         case logPrebid
@@ -20,6 +19,8 @@ class MetricsEventLoggerMock: Mock<MetricsEventLoggerMock.Method>, MetricsEventL
         case logReward
         case logAuctionCompleted
         case logRewardedCallback
+        case logStartQueue
+        case logEndQueue
     }
     
     override var  defaultReturnValues: [Method : Any?] {
@@ -35,8 +36,8 @@ class MetricsEventLoggerMock: Mock<MetricsEventLoggerMock.Method>, MetricsEventL
         record(.logPrebid, parameters: [loadID, events])
     }
     
-    func logLoad(auctionID: ChartboostMediationSDK.AuctionID, loadID: ChartboostMediationSDK.LoadID, events: [ChartboostMediationSDK.MetricsEvent], error: ChartboostMediationSDK.ChartboostMediationError?, adFormat: ChartboostMediationSDK.AdFormat, size: CGSize?, backgroundDuration: TimeInterval) -> ChartboostMediationSDK.RawMetrics? {
-        record(.logLoad, parameters: [auctionID, loadID, events, error, adFormat, size, backgroundDuration])
+    func logLoad(auctionID: ChartboostMediationSDK.AuctionID, loadID: ChartboostMediationSDK.LoadID, events: [ChartboostMediationSDK.MetricsEvent], error: ChartboostMediationSDK.ChartboostMediationError?, adFormat: ChartboostMediationSDK.AdFormat, size: CGSize?, start: Date, end: Date, backgroundDuration: TimeInterval, queueID: String?) -> ChartboostMediationSDK.RawMetrics? {
+        record(.logLoad, parameters: [auctionID, loadID, events, error, adFormat, size, start, end, backgroundDuration])
     }
     
     func logShow(auctionID: AuctionID, loadID: LoadID, event: MetricsEvent) -> RawMetrics? {
@@ -51,7 +52,7 @@ class MetricsEventLoggerMock: Mock<MetricsEventLoggerMock.Method>, MetricsEventL
         record(.logExpiration, parameters: [auctionID, loadID])
     }
     
-    func logHeliumImpression(for ad: PartnerAd) {
+    func logMediationImpression(for ad: PartnerAd) {
         record(.logHeliumImpression, parameters: [ad])
     }
     
@@ -70,4 +71,13 @@ class MetricsEventLoggerMock: Mock<MetricsEventLoggerMock.Method>, MetricsEventL
     func logRewardedCallback(_ rewardedCallback: RewardedCallback, customData: String?) {
         record(.logRewardedCallback, parameters: [rewardedCallback, customData])
     }
+
+    func logStartQueue(_ queue: ChartboostMediationSDK.FullscreenAdQueue) {
+        record(.logStartQueue)
+    }
+
+    func logEndQueue(_ queue: ChartboostMediationSDK.FullscreenAdQueue) {
+        record(.logEndQueue)
+    }
+
 }

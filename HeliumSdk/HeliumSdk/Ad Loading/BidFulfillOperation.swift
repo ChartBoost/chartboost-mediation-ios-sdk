@@ -211,7 +211,7 @@ extension PartnerControllerBidFulfillOperation {
     private func partnerAdLoadRequest(with bid: Bid) -> PartnerAdLoadRequest {
         PartnerAdLoadRequest(
             partnerIdentifier: bid.partnerIdentifier,
-            chartboostPlacement: request.heliumPlacement,
+            chartboostPlacement: request.mediationPlacement,
             partnerPlacement: bid.partnerPlacement,
             format: request.adFormat,
             // Fall back to the requested size if the bid size is not available. This should

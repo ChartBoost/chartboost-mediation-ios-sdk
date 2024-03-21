@@ -23,7 +23,7 @@ struct Bid {
     /// Extra partner-specific information.
     let partnerDetails: [String: Any]?
 
-    /// Helium line item identifier.
+    /// Chartboost Mediation line item identifier.
     let lineItemIdentifier: String?
 
     /// Optional Impression level revenue data (ILRD) associated with the bid.
@@ -75,7 +75,9 @@ extension Bid {
             }
 
             // TODO: Remove this reference adapter hack in HB-4504
-            let partnerIdentifier = environment.testMode.isTestModeEnabled && request.heliumPlacement.hasPrefix("REF") ? "reference" : seat
+            let partnerIdentifier = (environment.testMode.isTestModeEnabled &&
+                                     request.mediationPlacement.hasPrefix("REF"))
+                                     ? "reference" : seat
 
             for rtbBid in seatbid.bid {
                 // Merge the bidder's ILRD information with the base ILRD information,
@@ -114,7 +116,7 @@ extension Bid {
                 let bid = Bid(
                     identifier: UUID().uuidString,
                     partnerIdentifier: partnerIdentifier,
-                    partnerPlacement: rtbBid.ext.partner_placement ?? "\(seat):\(request.heliumPlacement)",
+                    partnerPlacement: rtbBid.ext.partner_placement ?? "\(seat):\(request.mediationPlacement)",
                     adm: rtbBid.adm,
                     partnerDetails: rtbBid.ext.partnerDetails,
                     lineItemIdentifier: rtbBid.ext.line_item_id,

@@ -6,7 +6,7 @@
 import Foundation
 import UIKit
 
-/// Helium banner ad.
+/// Chartboost Mediation banner ad.
 @objc
 public protocol HeliumBannerAd {
     /// Optional keywords that can be associated with the advertisement placement.
@@ -33,7 +33,7 @@ public protocol HeliumBannerAd {
     func clear()
 }
 
-/// Helium banner size to request.
+/// Chartboost Mediation banner size to request.
 @objc
 public enum CHBHBannerSize: Int {
     /// Standard 320x50 size.
@@ -80,7 +80,7 @@ public protocol HeliumBannerAdDelegate: AnyObject {
     /// - Parameter error: Optional error associated with the click event.
     @objc optional func heliumBannerAd(placementName: String, didClickWithError error: ChartboostMediationError?)
 
-    /// Ad impression recorded by Helium as result of an ad being shown.
+    /// Ad impression recorded by Chartboost Mediation as result of an ad being shown.
     /// - Parameter placementName: Placement associated with the impression event.
     @objc optional func heliumBannerAdDidRecordImpression(placementName: String)
 }

@@ -7,10 +7,10 @@ import Foundation
 
 /// Provides file read and write capabilities.
 protocol FileStorage {
-    // MARK: Predefined Helium directories
+    // MARK: Predefined Chartboost Mediation directories
 
     /// URL for the directory where we store configuration-related files.
-    var urlForHeliumConfigurationDirectory: URL { get throws }
+    var urlForSDKConfigurationDirectory: URL { get throws }
 
     /// URL for file that stores the Chartboost ID (/Library/Chartboost/chartboost_identifier).
     var urlForChartboostIDFile: URL { get throws }
@@ -41,7 +41,7 @@ protocol FileStorage {
 struct FileSystemStorage: FileStorage {
     private let fileManager = FileManager.default
 
-    var urlForHeliumConfigurationDirectory: URL {
+    var urlForSDKConfigurationDirectory: URL {
         get throws {
             try url(forSystemDirectory: .cachesDirectory).appendingPathComponent("HeliumConfig")
         }

@@ -7,6 +7,17 @@ import Foundation
 
 /// A fully loaded ad.
 struct LoadedAd {
+    /// Key for auction identifier in bidInfo dictionary
+    static let auctionIDKey = "auction-id"
+    /// Key for partner's identifier in bidInfo dictionary
+    static let partnerIDKey = "partner-id"
+    /// Key for bid price in bidInfo dictionary
+    static let priceKey = "price"
+    /// Key for line item ID in bidInfo dictionary
+    static let lineItemIDKey = "line_item_id"
+    /// Key for line item name in bidInfo dictionary
+    static let lineItemNameKey = "line_item_name"
+
     /// The bid
     let bid: Bid
     /// Information about the winning bid that may be of interest to the publisher.

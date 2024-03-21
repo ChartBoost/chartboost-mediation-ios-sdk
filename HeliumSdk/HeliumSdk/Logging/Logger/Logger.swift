@@ -61,10 +61,10 @@ final class Logger {
         }
     }
 
-    /// Log a message to all of the attached handlers at log severity level `trace`.
+    /// Log a message to all of the attached handlers at log severity level `verbose`.
     /// - Parameter message: The logged message.
-    func trace(_ message: String) {
-        log(message, level: .trace)
+    func verbose(_ message: String) {
+        log(message, level: .verbose)
     }
 
     /// Log a message to all of the attached handlers at log severity level `debug`.
@@ -94,7 +94,7 @@ final class Logger {
     // MARK: - Private
 
     private let logHandleQueue = DispatchQueue(label: "com.chartboost.mediation.sdk.logger-handler")
-    @Atomic private static var handlers: [LogHandler] = [ConsoleLoggerHandler()]
+    @Atomic private static var handlers: [LogHandler] = [ConsoleLogHandler()]
     private let defaultSubsystem = "com.chartboost.mediation.sdk"
     private let baseCategory = "Chartboost Mediation"
     private let subsystem: String

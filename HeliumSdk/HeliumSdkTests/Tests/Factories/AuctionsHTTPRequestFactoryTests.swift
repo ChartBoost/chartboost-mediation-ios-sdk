@@ -25,7 +25,7 @@ class AuctionsHTTPRequestFactoryTests: ChartboostMediationTestCase {
         XCTAssertEqual(environment.sdk.sdkName, impression.displaymanager)
         XCTAssertEqual(environment.sdk.sdkVersion, impression.displaymanagerver)
         XCTAssertEqual(1, impression.instl)
-        XCTAssertEqual(adLoadRequest.heliumPlacement, impression.tagid)
+        XCTAssertEqual(adLoadRequest.mediationPlacement, impression.tagid)
         XCTAssertEqual(1, impression.secure)
         XCTAssertNotNil(impression.video)
         if let video = impression.video {
@@ -178,7 +178,7 @@ class AuctionsHTTPRequestFactoryTests: ChartboostMediationTestCase {
                 default:
                     XCTAssertEqual(1, impression.instl)
                 }
-                XCTAssertEqual(adLoadRequest.heliumPlacement, impression.tagid)
+                XCTAssertEqual(adLoadRequest.mediationPlacement, impression.tagid)
                 XCTAssertEqual(1, impression.secure)
                 XCTAssertNotNil(impression.video)
                 if let video = impression.video {
