@@ -1,0 +1,32 @@
+{
+    "id" : "10ed5d777b23d503a05e9e2d7cc6d9f1aaea7a09",
+    "seatbid" : [
+      {
+        "bid" : [
+          {
+            "adm" : "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz5cbjxW",
+            "id" : "helium-test-mode-bidid",
+            "adid" : "1",
+            "ext" : {
+              "bidder" : {
+                "template" : "https:\/\/t.chartboost.com\/base_templates\/html\/vast-moat-v2-e381a73d74.html",
+                "trackingId" : "helium-test-mode-trackingId"
+              }
+            },
+            "price" : 99,
+            "impid" : "helium-test-mode-impid"
+          }
+        ],
+        "seat" : "chartboost",
+        "helium_bid_id" : "10ed5d777b23d503a05e9e2d7cc6d9f1aaea7a09_chartboost"
+      }
+    ],
+    "ext" : {
+      "responsetimemillis" : {
+        "adcolony" : 1,
+        "facebook" : 1,
+        "tapjoy" : 1,
+        "chartboost" : 1
+      }
+    }
+  }

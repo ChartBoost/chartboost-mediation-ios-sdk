@@ -1,0 +1,35 @@
+{
+    "helium_placement": "instl_mediation",
+    "type": "rewarded",
+    "batches": [
+        {
+            "priority": 1,
+            "line_items": [
+                {
+                    "cpm": 29,
+                    "partner_id": "chartboost",
+                    "partner_placement": "MoatPublishingInterstitialiOS",
+                    "priority": 1
+                },
+                {
+                    "cpm": 5,
+                    "partner_id": "facebook",
+                    "partner_placement": "428939561173260_575104883223393",
+                    "priority": 2
+                },
+                {
+                    "cpm": 4,
+                    "partner_id": "tapjoy",
+                    "partner_placement": "TJNonProgInterstitial",
+                    "priority": 3
+                },
+                {
+                    "cpm": 1,
+                    "partner_id": "adcolony",
+                    "partner_placement": "vz2d478b18e6f14747a0",
+                    "priority": 4
+                }
+            ]
+        }
+    ]
+}

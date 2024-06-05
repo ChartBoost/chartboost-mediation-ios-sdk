@@ -1,0 +1,127 @@
+{
+	"company_id": "596e66c543150f7e014a6660",
+	"placements": [{
+		"helium_placement": "placement_with_refresh_23",
+		"type": "banner",
+		"batches": [{
+			"priority": 1,
+			"line_items": [{
+				"line_item_id": "1aa098d9-4b76-4b90-9a9a-1ea70eec8c16",
+				"partner_id": "applovin",
+				"partner_placement": "5e876ddf0ad45ed1",
+				"cpm": 24.5,
+				"inclusion_type": "ALL",
+				"countries": {},
+				"priority": 1
+			}, {
+				"line_item_id": "4c7f3f58-d037-49bc-825a-9db6d14210b2",
+				"partner_id": "applovin",
+				"partner_placement": "c7a8d1db43f36017",
+				"cpm": 13.5,
+				"inclusion_type": "ALL",
+				"countries": {},
+				"priority": 2
+			}, {
+				"line_item_id": "564b96c8-a39f-441b-9e87-123ddaec3321",
+				"partner_id": "applovin",
+				"partner_placement": "0c774bcf788f2b26",
+				"cpm": 4.5,
+				"inclusion_type": "ALL",
+				"countries": {},
+				"priority": 3
+			}]
+		}],
+		"auto_refresh_rate": 23
+	}, {
+		"helium_placement": "placement_with_refresh_0",
+		"type": "banner",
+		"batches": [{
+			"priority": 1,
+			"line_items": [{
+				"line_item_id": "57c75beb-0c90-4155-9db2-8c88f73892c4",
+				"partner_id": "chartboost",
+				"partner_placement": "CBNonProBannerHigh",
+				"cpm": 25.0,
+				"inclusion_type": "ALL",
+				"countries": {},
+				"priority": 1
+			}, {
+				"line_item_id": "1aa098d9-4b76-4b90-9a9a-1ea70eec8c16",
+				"partner_id": "applovin",
+				"partner_placement": "5e876ddf0ad45ed1",
+				"cpm": 24.5,
+				"inclusion_type": "ALL",
+				"countries": {},
+				"priority": 2
+			}]
+		}],
+		"auto_refresh_rate": 0,
+		"prebid": [{
+			"partner_id": "amazon_aps",
+			"partner_placement": "5ee565ed-15c5-4053-bfe6-52afe4443776",
+			"width": 320,
+			"height": 50
+		}]
+	}, {
+		"helium_placement": "placement_with_refresh_missing",
+		"type": "banner",
+		"batches": [{
+			"priority": 1,
+			"line_items": [{
+				"line_item_id": "1aa098d9-4b76-4b90-9a9a-1ea70eec8c16",
+				"partner_id": "applovin",
+				"partner_placement": "5e876ddf0ad45ed1",
+				"cpm": 24.5,
+				"inclusion_type": "ALL",
+				"countries": {},
+				"priority": 1
+			}, {
+				"line_item_id": "4c7f3f58-d037-49bc-825a-9db6d14210b2",
+				"partner_id": "applovin",
+				"partner_placement": "c7a8d1db43f36017",
+				"cpm": 13.5,
+				"inclusion_type": "ALL",
+				"countries": {},
+				"priority": 2
+			}, {
+				"line_item_id": "564b96c8-a39f-441b-9e87-123ddaec3321",
+				"partner_id": "applovin",
+				"partner_placement": "0c774bcf788f2b26",
+				"cpm": 4.5,
+				"inclusion_type": "ALL",
+				"countries": {},
+				"priority": 3
+			}]
+		}]
+	}, {
+		"helium_placement": "placement_with_refresh_4",
+		"type": "banner",
+		"batches": [{
+			"priority": 1,
+			"line_items": [{
+				"line_item_id": "57c75beb-0c90-4155-9db2-8c88f73892c4",
+				"partner_id": "chartboost",
+				"partner_placement": "CBNonProBannerHigh",
+				"cpm": 25.0,
+				"inclusion_type": "ALL",
+				"countries": {},
+				"priority": 1
+			}, {
+				"line_item_id": "1aa098d9-4b76-4b90-9a9a-1ea70eec8c16",
+				"partner_id": "applovin",
+				"partner_placement": "5e876ddf0ad45ed1",
+				"cpm": 24.5,
+				"inclusion_type": "ALL",
+				"countries": {},
+				"priority": 2
+			}]
+		}],
+		"auto_refresh_rate": 4,
+		"prebid": [{
+			"partner_id": "amazon_aps",
+			"partner_placement": "5ee565ed-15c5-4053-bfe6-52afe4443776",
+			"width": 320,
+			"height": 50
+		}]
+	}]
+}

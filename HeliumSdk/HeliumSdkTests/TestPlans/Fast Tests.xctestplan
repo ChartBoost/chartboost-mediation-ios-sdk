@@ -1,0 +1,33 @@
+{
+  "configurations" : [
+    {
+      "id" : "DDEC010F-FD3F-4488-881E-CC9B3A690500",
+      "name" : "Default",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "BackgroundTimeMonitorOperationTests",
+        "GCDTaskDispatcherTests",
+        "GCDTaskGroupTests",
+        "LoadRateLimiterTests\/testTimeUntilNextLoadIsAllowed()",
+        "ResumableTimerTests",
+        "TimerDispatchTaskTests",
+        "VisibilityTrackerTests"
+      ],
+      "target" : {
+        "containerPath" : "container:HeliumSdk.xcodeproj",
+        "identifier" : "1147EAD9214B06550007EDF4",
+        "name" : "ChartboostMediationSDKTests"
+      }
+    }
+  ],
+  "version" : 1
+}
