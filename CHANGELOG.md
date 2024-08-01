@@ -2,6 +2,21 @@ iOS Change Log
 ==================
 Check for the latest Chartboost Mediation SDK at the Chartboost website.
 
+### Version 5.0.0 *(2024-08-01)*
+Improvements:
+- Completed rebranding all APIs from Helium to Chartboost Mediation.
+- Initialization of Chartboost Mediation now utilizes Chartboost Core SDK. Please review the [Initialize Mediation](https://docs.chartboost.com/en/mediation/integrate/ios/initialize-mediation/) and [Core SDK](https://docs.chartboost.com/en/mediation/integrate/core/ios/) documentation.
+- Privacy and consent signals are now set through Chartboost Core SDK.
+- Banners are now named `BannerAdView`.
+- Fullscreen ads are now loaded from `FullscreenAd`. See [Load Ads](https://docs.chartboost.com/en/mediation/integrate/ios/load-ads/) documentation.
+
+Review our [Migration from Mediation 4.x to 5.x](https://docs.chartboost.com/en/mediation/integrate/ios/migration-from-4x-to-5x/) documentation for more information.
+
+### Version 4.9.0.1 *(2024-03-27)*
+----------------------------
+Bug Fixes:
+- Fixed a Cocoapods podspec issue where the privacy manifest bundled resource path was not listed.
+
 ### Version 4.9.0 *(2024-03-21)*
 ----------------------------
 Improvements:
@@ -9,6 +24,11 @@ Improvements:
 - Added a test mode toggle.
 - Renamed `LogLevel.trace` to `LogLevel.verbose`.
 - Added `loadID` to `ChartboostMediatonFullscreenAd`.
+
+### Version 4.8.0.1 *(2024-03-27)*
+----------------------------
+Bug Fixes:
+- Fixed a Cocoapods podspec issue where the privacy manifest bundled resource path was not listed.
 
 ### Version 4.8.0 *(2024-02-08)*
 ----------------------------

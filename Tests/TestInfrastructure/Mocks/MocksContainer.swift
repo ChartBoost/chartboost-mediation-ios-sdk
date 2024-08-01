@@ -1,0 +1,72 @@
+// Copyright 2018-2024 Chartboost, Inc.
+//
+// Use of this source code is governed by an MIT-style
+// license that can be found in the LICENSE file.
+
+import Foundation
+@testable import ChartboostMediationSDK
+
+/// A wrapper over all the possible mocks.
+/// Any new mock used by a test should be added here and accessed through the `ChartboostMediationTestCase.mocks` property.
+/// This will ensure that the mock value is used for dependency injection on Mediation SDK classes.
+class MocksContainer {
+    var bidFulfillOperationConfiguration = BidFulfillOperationConfigurationMock()
+    var adControllerFactory = AdControllerFactoryMock()
+    var adControllerConfiguration = AdControllerConfigurationMock()
+    var adapterFactory = PartnerAdapterFactoryMock()
+    var adLoaderConfiguration = FullscreenAdLoaderConfigurationMock()
+    var appConfigurationController = ApplicationConfigurationControllerMock()
+    var appConfiguration = ApplicationConfigurationMock()
+    var application = ApplicationMock()
+    var auctionRequestFactory = AuctionsHTTPRequestFactoryMock()
+    var backgroundTimeMonitor = BackgroundTimeMonitorMock()
+    var bannerControllerConfiguration = BannerControllerConfigurationMock()
+    var credentialsValidator = SDKCredentialsValidatorMock()
+    var taskDispatcher = TaskDispatcherMock()
+    var adControllerRepository = AdControllerRepositoryMock()
+    var partnerController = PartnerControllerMock()
+    var partnerControllerConfiguration = PartnerControllerConfigurationMock()
+    var auctionService = AdAuctionServiceMock()
+    var initializationStatusProvider = MediationInitializationStatusProviderMock()
+    var metrics = MetricsEventLoggerMock()
+    var metricsConfiguration = MetricsEventLoggerConfigurationMock()
+    var fileStorage = FileStorageMock()
+    var fullScreenAdShowCoordinator = FullScreenAdShowCoordinatorMock()
+    var fullScreenAdShowObserver = FullScreenAdShowObserverMock()
+    var ilrdEventPublisher = ILRDEventPublisherMock()
+    var impressionTracker = ImpressionTrackerMock()
+    var initResultsEventPublisher = InitResultsEventPublisherMock()
+    var userDefaultsStorage = UserDefaultsStorageMock()
+    var visibilityTrackerConfiguration = VisibilityTrackerConfigurationMock()
+    var sdkInitRequestFactory = SDKInitHTTPRequestFactoryMock()
+    var sdkInitializerConfiguration = SDKInitializerConfigurationMock()
+    var adFactory = AdFactoryMock()
+    var sdkInitializer = SDKInitializerMock()
+    var environment = EnvironmentMock()
+    var impressionCounter = ImpressionCounterMock()
+    var appConfigurationService = AppConfigurationServiceMock()
+    var bidFulfillOperationFactory = BidFulfillOperationFactoryMock()
+    var bannerAdViewDelegate = BannerAdViewDelegateMock()
+    var bannerControllerDelegate = BannerControllerDelegateMock()
+    var bannerSwapControllerDelegate = BannerSwapControllerDelegateMock()
+    var adController = AdControllerMock()
+    var visibilityTracker = VisibilityTrackerMock()
+    var adControllerDelegate = AdControllerDelegateMock()
+    var adRepository = AdRepositoryMock()
+    var bannerController = BannerControllerMock()
+    var bannerSwapController = BannerSwapControllerMock()
+    var adLoader = FullscreenAdLoaderMock()
+    var fullscreenAdDelegate = FullscreenAdDelegateMock()
+    var consentSettings = ConsentSettingsMock()
+    var consentSettingsDelegate = ConsentSettingsDelegateMock()
+    var loadRateLimiter = LoadRateLimiterMock()
+    var networkManager: NetworkManagerProtocol = NetworkManagerMock()
+    var bundleInfo = BundleInfoProviderMock()
+    var appTrackingInfo = AppTrackingInfoProviderMock()
+    var chartboostIDProvider = ChartboostIDProviderMock()
+    var infoPlist = InfoPlistMock()
+    var reachability = ReachabilityMock()
+    var consoleLogHandlerConfiguration = ConsoleLoggerConfigurationDependencyMock()
+    var privacyConfigurationDependency = PrivacyConfigurationDependencyMock()
+    var fullscreenAdQueueConfiguration = FullscreenAdQueueConfigurationMock()
+}

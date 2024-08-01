@@ -1,0 +1,27 @@
+{
+    "id" : "10ed5d777b23d503a05e9e2d7cc6d9f1aaea7a09",
+    "seatbid" : [    
+      {
+        "bid" : [
+          {
+            "id" : "MEDIATION",
+            "ext" : {
+              "partner_placement" : "vz2d478b18e6f14747a0"
+            },
+            "price" : 2,
+            "impid" : "1"
+          }
+        ],
+        "seat" : "adcolony",
+        "helium_bid_id" : "10ed5d777b23d503a05e9e2d7cc6d9f1aaea7a09_adcolony"
+      }
+    ],
+    "ext" : {
+      "responsetimemillis" : {
+        "adcolony" : 1,
+        "facebook" : 1,
+        "tapjoy" : 1,
+        "chartboost" : 1
+      }
+    }
+  }
