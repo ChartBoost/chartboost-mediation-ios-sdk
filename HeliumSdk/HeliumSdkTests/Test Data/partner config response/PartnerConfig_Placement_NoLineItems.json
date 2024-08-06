@@ -1,9 +1,0 @@
-{
-    "helium_placement": "instl_mediation",
-    "type": "interstitial",
-    "batches": [
-        {
-            "priority": 1     
-        }
-    ]
-}
