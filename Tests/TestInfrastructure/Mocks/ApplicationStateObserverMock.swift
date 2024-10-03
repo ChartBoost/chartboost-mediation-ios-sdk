@@ -6,6 +6,7 @@
 import Foundation
 @testable import ChartboostMediationSDK
 
+// This mock cannot be auto-generated because it mocks multiple protocols at once.
 class ApplicationStateObserverMock: Mock<ApplicationStateObserverMock.Method>, ApplicationActivationObserver, ApplicationInactivationObserver, ApplicationTerminationObserver, ApplicationForegroundObserver, ApplicationBackgroundObserver {
     
     enum Method {
@@ -37,6 +38,7 @@ class ApplicationStateObserverMock: Mock<ApplicationStateObserverMock.Method>, A
     }
 }
 
+// This mock cannot be auto-generated because it mocks multiple protocols at once.
 class ApplicationActivationInactivationObserverMock: Mock<ApplicationActivationInactivationObserverMock.Method>, ApplicationActivationObserver, ApplicationInactivationObserver {
     
     enum Method {
@@ -53,6 +55,7 @@ class ApplicationActivationInactivationObserverMock: Mock<ApplicationActivationI
     }
 }
 
+// This mock could be auto-generated, but we leave it here since the ones before aren't.
 class ApplicationTerminationObserverMock: Mock<ApplicationTerminationObserverMock.Method>, ApplicationTerminationObserver {
     
     enum Method {

@@ -43,6 +43,10 @@ extension ChartboostMediationError.Code {
             return "If this problem persists, reach out to Chartboost Mediation Support and/or the mediation partner team for further assistance. If possible, always share a copy of your network traffic logs."
         case .initializationFailureInternalError:
             return "This is an internal error. Contact Chartboost Mediation Support and provide a copy of your console logs."
+        case .initializationFailureInitializationInProgress:
+            return "Chartboost Mediation is already initializing. Please wait."
+        case .initializationFailureInitializationDisabled:
+            return "Update to a newer Chartboost Mediation SDK version or contact Chartboost Mediation Support for assistance."
 
         // 200
         case .prebidFailureUnknown:
@@ -125,6 +129,8 @@ extension ChartboostMediationError.Code {
             return "Try again. If the problem persists, verify Partner settings in the Chartboost Mediation dashboard."
         case .loadFailureAdTooLarge:
             return "Try again. If the problem persists, verify Partner settings in the Chartboost Mediation dashboard."
+        case .loadFailureSDKDisabled:
+            return "Update to a newer Chartboost Mediation SDK version or contact Chartboost Mediation Support for assistance."
 
         // 400
         case .showFailureUnknown:

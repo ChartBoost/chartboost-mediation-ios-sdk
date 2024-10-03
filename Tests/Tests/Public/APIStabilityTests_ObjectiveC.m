@@ -283,6 +283,8 @@
     code = CBMErrorCodeInitializationFailureOSVersionNotSupported; // 113
     code = CBMErrorCodeInitializationFailureServerError; // 114
     code = CBMErrorCodeInitializationFailureInternalError; // 115
+    code = CBMErrorCodeInitializationFailureInitializationInProgress; // 116
+    code = CBMErrorCodeInitializationFailureInitializationDisabled; // 117
 
     code = CBMErrorCodePrebidFailureUnknown; // 200
     code = CBMErrorCodePrebidFailureAdapterNotFound; // 201

@@ -177,7 +177,9 @@ struct MediationAuctionsHTTPRequestFactory: AuctionsHTTPRequestFactory {
             coppa: consentSettings.isUserUnderage ? 1 : 0,
             ext: .init(
                 gdpr: consentSettings.gdprApplies == true ? 1 : 0,
-                us_privacy: consentSettings.consents[ConsentKeys.usp]
+                us_privacy: consentSettings.consents[ConsentKeys.usp],
+                gpp: consentSettings.consents[ConsentKeys.gpp],
+                gpp_sid: consentSettings.gppSID
             )
         )
     }

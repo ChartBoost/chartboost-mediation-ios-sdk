@@ -233,8 +233,15 @@ final class MetricsEventLogger: MetricsEventLogging {
     func logMediationImpression(for ad: LoadedAd) {
         send(MetricsHTTPRequest.mediationImpression(
             adFormat: ad.request.adFormat,
+            size: ad.bannerSize?.size,
             auctionID: ad.auctionID,
-            loadID: ad.request.loadID
+            loadID: ad.request.loadID,
+            bidders: ad.bidders,
+            winner: ad.winner.partnerID,
+            type: ad.type,
+            price: ad.price,
+            lineItemID: ad.winner.lineItemIdentifier,
+            partnerPlacement: ad.winner.isProgrammatic ? nil : ad.winner.partnerPlacement
         ))
         logToConsole(.mediationImpression, auctionID: ad.auctionID, loadID: ad.request.loadID)
     }

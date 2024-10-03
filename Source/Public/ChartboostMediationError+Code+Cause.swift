@@ -45,6 +45,10 @@ extension ChartboostMediationError.Code {
             return "The initialization request failed due to a server error."
         case .initializationFailureInternalError:
             return "An error occurred within the Chartboost Mediation initialization sequence."
+        case .initializationFailureInitializationInProgress:
+            return "Multiple initialization requests were made."
+        case .initializationFailureInitializationDisabled:
+            return "Initialization has been disabled by the mediation server."
 
         // 200
         case .prebidFailureUnknown:
@@ -143,6 +147,8 @@ extension ChartboostMediationError.Code {
             return "All waterfall entries have resulted in an error or no fill."
         case .loadFailureAdTooLarge:
             return "The partner ad dimension size is too large."
+        case .loadFailureSDKDisabled:
+            return "The load request failed due to the Chartboost Mediation SDK being disabled by the mediation server."
 
         // 400
         case .showFailureUnknown:

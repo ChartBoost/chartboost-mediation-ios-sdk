@@ -99,7 +99,7 @@ enum BackendAPI {
             case .load:
                 return "/v2/event/load"
             case .mediationImpression:
-                return "/v1/event/helium_impression"
+                return "/v2/event/helium_impression"
             case .partnerImpression:
                 return "/v1/event/partner_impression"
             case .prebid:

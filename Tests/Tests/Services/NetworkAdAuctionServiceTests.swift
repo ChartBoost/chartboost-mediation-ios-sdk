@@ -25,7 +25,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
 
     override func setUp() {
         super.setUp()
-        mocks.environment.randomizeAll()
         mocks.consentSettings.consents = [
             "key1": "value1",
             ConsentKeys.tcf: "asdfb",
@@ -37,6 +36,8 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
             "partner1": InternalPartnerAdapterInfo(partnerVersion: "1.2.3", adapterVersion: "1.2.3.4", partnerID: "-", partnerDisplayName: "-"),
             "partner4": InternalPartnerAdapterInfo(partnerVersion: "a.b.c", adapterVersion: "a.b.c.d", partnerID: "-", partnerDisplayName: "-")
         ]
+        // These tests use an old network manager mock that uses the real network manager under the hood
+        mocks.networkManager = DeprecatedNetworkManagerMock()
     }
 
     // MARK: - Basic
@@ -44,7 +45,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testSingleProgrammatic() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.Test_BidResp_OnlyProg)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -89,6 +89,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Finish the PartnerController bidder info fetch
         fetchBidderInfoCompletion(bidderInfo)
 
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         wait(for: [expectation], timeout: 5.0)
 
         XCTAssertTrue(completed)
@@ -97,7 +102,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testSingleNonProgramatic() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.Test_BidResp_Only1NonProg)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -141,6 +145,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Finish the PartnerController bidder info fetch
         fetchBidderInfoCompletion(bidderInfo)
 
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         wait(for: [expectation], timeout: 5.0)
 
         XCTAssertTrue(completed)
@@ -149,7 +158,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testOrderOfMultipleBids() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.Test_BidResp_Order)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -194,6 +202,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Finish the PartnerController bidder info fetch
         fetchBidderInfoCompletion(bidderInfo)
 
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         wait(for: [expectation], timeout: 5.0)
 
         XCTAssertTrue(completed)
@@ -202,7 +215,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testPartnerExt() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.Test_BidResp_OnlyTJProg)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -250,6 +262,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Finish the PartnerController bidder info fetch
         fetchBidderInfoCompletion(bidderInfo)
 
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         wait(for: [expectation], timeout: 5.0)
 
         XCTAssertTrue(completed)
@@ -261,7 +278,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testILRDBidderAndBase() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseILRD)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         let expectedBidILRD0: [String: Any] = [
             "impression_id": "ab82501b580000bb8ace119907f7a4d6665212c3",
@@ -337,6 +353,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Finish the PartnerController bidder info fetch
         fetchBidderInfoCompletion(bidderInfo)
 
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         wait(for: [expectation], timeout: 5.0)
 
         XCTAssertTrue(completed)
@@ -346,7 +367,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testILRDBidderAndNoBase() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseNoBaseILRD)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         let expectedBidILRDFirst: [String: Any] = [
             "network_name": "fyber",
@@ -414,6 +434,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Finish the PartnerController bidder info fetch
         fetchBidderInfoCompletion(bidderInfo)
 
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         wait(for: [expectation], timeout: 5.0)
 
         XCTAssertTrue(completed)
@@ -423,7 +448,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testILRDNoBidder() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseNoBidderILRD)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         let expectedBidILRD: [String: Any] = [
             "impression_id": "ab82501b580000bb8ace119907f7a4d6665212c3",
@@ -474,6 +498,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Finish the PartnerController bidder info fetch
         fetchBidderInfoCompletion(bidderInfo)
 
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         wait(for: [expectation], timeout: 5.0)
 
         XCTAssertTrue(completed)
@@ -483,7 +512,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testILRDNoInformation() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseNoILRD)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -522,6 +550,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Finish the PartnerController bidder info fetch
         fetchBidderInfoCompletion(bidderInfo)
 
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         wait(for: [expectation], timeout: 5.0)
 
         XCTAssertTrue(completed)
@@ -531,7 +564,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testILRDNullInformation() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseILRDNullValues)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -572,6 +604,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Finish the PartnerController bidder info fetch
         fetchBidderInfoCompletion(bidderInfo)
 
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         wait(for: [expectation], timeout: 5.0)
 
         XCTAssertTrue(completed)
@@ -583,7 +620,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testRewardedCallbackNotPresent() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseNoILRD)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -622,6 +658,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Finish the PartnerController bidder info fetch
         fetchBidderInfoCompletion(bidderInfo)
 
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         wait(for: [expectation], timeout: 5.0)
 
         XCTAssertTrue(completed)
@@ -632,7 +673,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testRewardedCallbackSparse() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseRewardedCallbackSparse)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -700,6 +740,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Finish the PartnerController bidder info fetch
         fetchBidderInfoCompletion(bidderInfo)
 
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         wait(for: [expectation], timeout: 5.0)
 
         XCTAssertTrue(completed)
@@ -709,7 +754,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testRewardedCallback() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseRewardedCallbackPOST)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -788,6 +832,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Finish the PartnerController bidder info fetch
         fetchBidderInfoCompletion(bidderInfo)
 
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         wait(for: [expectation], timeout: 5.0)
 
         XCTAssertTrue(completed)
@@ -798,7 +847,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testRewardedCallbackNullCPMPriceNullAdRevenueGET() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseRewardedCallbackNullGET)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -878,6 +926,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Finish the PartnerController bidder info fetch
         fetchBidderInfoCompletion(bidderInfo)
 
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         wait(for: [expectation], timeout: 5.0)
 
         XCTAssertTrue(completed)
@@ -888,7 +941,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testRewardedCallbackNullCPMPriceNullAdRevenuePOST() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseRewardedCallbackNullPOST)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -979,6 +1031,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Finish the PartnerController bidder info fetch
         fetchBidderInfoCompletion(bidderInfo)
 
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         wait(for: [expectation], timeout: 5.0)
 
         XCTAssertTrue(completed)
@@ -989,7 +1046,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testRewardedCallbackMalformed() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.BidResponseRewardedCallbackMalformed)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -1028,6 +1084,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Finish the PartnerController bidder info fetch
         fetchBidderInfoCompletion(bidderInfo)
 
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         wait(for: [expectation], timeout: 5.0)
 
         XCTAssertTrue(completed)
@@ -1039,7 +1100,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testRealInterstitialResponse() throws {
         let request = Self.interstitialRequest
         Self.registerResponseJSON(.bid_response_interstitial_real)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -1085,6 +1145,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Finish the PartnerController bidder info fetch
         fetchBidderInfoCompletion(bidderInfo)
 
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         wait(for: [expectation], timeout: 5.0)
 
         XCTAssertTrue(completed)
@@ -1094,7 +1159,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testRealRewardedResponse() throws {
         let request = InternalAdLoadRequest.test(adFormat: .rewarded, keywords: nil, loadID: Self.loadID)
         Self.registerResponseJSON(.bid_response_rewarded_real)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -1140,6 +1204,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Finish the PartnerController bidder info fetch
         fetchBidderInfoCompletion(bidderInfo)
 
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         wait(for: [expectation], timeout: 5.0)
 
         XCTAssertTrue(completed)
@@ -1149,7 +1218,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testRealBannerResponse() throws {
         let request = InternalAdLoadRequest.test(adFormat: .banner, keywords: nil, loadID: Self.loadID)
         Self.registerResponseJSON(.bid_response_banner_real)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -1195,6 +1263,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Finish the PartnerController bidder info fetch
         fetchBidderInfoCompletion(bidderInfo)
 
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         wait(for: [expectation], timeout: 5.0)
 
         XCTAssertTrue(completed)
@@ -1205,7 +1278,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testEmptyDataWithDifferentHTTPStatusCodes() {
         [200, 204, 404, 500].forEach { httpResponseStatusCode in
             Self.registerResponseJSON(nil, statusCode: httpResponseStatusCode)
-            mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
             let request = InternalAdLoadRequest.test(adFormat: .interstitial, keywords: nil)
             let expectation = XCTestExpectation(description: "auction")
             service.startAuction(request: request) { response in
@@ -1224,6 +1296,12 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
                 XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
             ])
             fetchBidderInfoCompletion(bidderInfo)
+
+            // Finish the request factory make operation
+            var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+            XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+            requestFactoryCompletion(.test())
+
             wait(for: [expectation], timeout: 1)
         }
     }
@@ -1231,7 +1309,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testValidDataWithDifferentHTTPStatusCodes() {
         [200, 204, 404, 500].forEach { httpResponseStatusCode in
             Self.registerResponseJSON(.Test_BidResp_OnlyProg, statusCode: httpResponseStatusCode)
-            mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
             let request = InternalAdLoadRequest.test(adFormat: .interstitial, keywords: nil)
             let expectation = XCTestExpectation(description: "auction")
             service.startAuction(request: request) { response in
@@ -1250,6 +1327,12 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
                 XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
             ])
             fetchBidderInfoCompletion(bidderInfo)
+
+            // Finish the request factory make operation
+            var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+            XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+            requestFactoryCompletion(.test())
+
             wait(for: [expectation], timeout: 1)
         }
     }
@@ -1257,9 +1340,8 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     /// Validates that the service completes with the proper info when the network manager fails due to an error decoding the response data.
     func testNetworkManagerJSONDecodingErrorIsReportedPropery() {
         // Mock network manager
-        let networkManager = CompleteNetworkManagerMock()
+        let networkManager = NetworkManagerProtocolMock()
         mocks.networkManager = networkManager
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         let responseData = "some data".data(using: .utf8)!
         let decodingError = NSError.test(domain: "decoding", code: 5)
@@ -1294,10 +1376,15 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
             XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
         ])
         fetchBidderInfoCompletion(bidderInfo)
-        
+
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         // Complete network auction request with JSON decoding error
         var auctionRequestCompletion: (NetworkManager.RequestCompletionWithJSONResponse<OpenRTB.BidResponse>) = { _ in }
-        XCTAssertMethodCalls(networkManager, .send, parameters: [XCTMethodIgnoredParameter(), 0, 0.0, XCTMethodCaptureParameter { auctionRequestCompletion = $0 }])
+        XCTAssertMethodCalls(networkManager, .sendTHTTPRequestWithDecodableResponseHttpRequestTMaxRetriesIntRetryDelayTimeIntervalCompletionEscapingNetworkManagerRequestCompletionWithJSONResponseTDecodableResponse, parameters: [XCTMethodIgnoredParameter(), 0, 0.0, XCTMethodCaptureParameter { auctionRequestCompletion = $0 }])
         auctionRequestCompletion(.failure(networkManagerError))
         
         // Check that the auction finished
@@ -1311,7 +1398,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Setup: load rate limiter rejects the load
         mocks.loadRateLimiter.setReturnValue(9.0, for: .timeUntilNextLoadIsAllowed)
         let request = InternalAdLoadRequest.test(adFormat: .interstitial, keywords: nil)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         var completed = false
@@ -1334,7 +1420,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Setup: network manager fails with a response that includes auction ID
         let request = InternalAdLoadRequest.test(adFormat: .interstitial, keywords: nil)
         Self.registerResponseJSON(nil, statusCode: 500)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -1351,7 +1436,12 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
             XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
         ])
         fetchBidderInfoCompletion(bidderInfo)
-        
+
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         // Check that operation has completed
         wait(for: [expectation], timeout: 1)
     }
@@ -1361,7 +1451,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
         // Setup: network manager succeeds with a response that includes auction ID
         let request = InternalAdLoadRequest.test(adFormat: .interstitial, keywords: nil)
         Self.registerResponseJSON(.Test_BidResp_OnlyProg)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
 
         // Start the auction
         let expectation = XCTestExpectation(description: "auction")
@@ -1378,7 +1467,12 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
             XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
         ])
         fetchBidderInfoCompletion(bidderInfo)
-        
+
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
+
         // Check that operation has completed
         wait(for: [expectation], timeout: 1)
     }
@@ -1388,7 +1482,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     /// Validates that the load rate limit is not updated by x-mediation-ratelimit-reset in the response header.
     func testRateLimitResetIfNetworkFails() {
         Self.registerResponseJSON(.Test_BidResp_OnlyProg, statusCode: 500)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
         let request = Self.interstitialRequest
         let expectation = XCTestExpectation(description: "auction")
         service.startAuction(request: request) { response in
@@ -1400,6 +1493,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
             XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
         ])
         fetchBidderInfoCompletion(bidderInfo)
+
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
 
         wait(for: [expectation], timeout: 1)
         XCTAssertMethodCalls(
@@ -1415,7 +1513,6 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     /// Validates that the load rate limit is updated by x-mediation-ratelimit-reset in the response header.
     func testRateLimitResetIfNetworkSucceeds() {
         Self.registerResponseJSON(.Test_BidResp_OnlyProg)
-        mocks.auctionRequestFactory.autoCompletionResult = AuctionsHTTPRequest.test()
         let request = Self.interstitialRequest
         let expectation = XCTestExpectation(description: "auction")
         service.startAuction(request: request) { response in
@@ -1427,6 +1524,11 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
             XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { fetchBidderInfoCompletion = $0 }
         ])
         fetchBidderInfoCompletion(bidderInfo)
+
+        // Finish the request factory make operation
+        var requestFactoryCompletion: (AuctionsHTTPRequest) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionRequestFactory, .makeRequest, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter(), XCTMethodCaptureParameter { requestFactoryCompletion = $0 }])
+        requestFactoryCompletion(.test())
 
         wait(for: [expectation], timeout: 1)
         XCTAssertMethodCalls(

@@ -48,6 +48,10 @@ extension ChartboostMediationError.Code {
             codeString = "SERVER_ERROR"
         case .initializationFailureInternalError:
             codeString = "INTERNAL_ERROR"
+        case .initializationFailureInitializationInProgress:
+            codeString = "INITIALIZATION_IN_PROGRESS"
+        case .initializationFailureInitializationDisabled:
+            codeString = "INITIALIZATION_DISABLED"
 
         // 200
         case .prebidFailureUnknown:
@@ -146,6 +150,8 @@ extension ChartboostMediationError.Code {
             codeString = "WATERFALL_EXHAUSTED_NO_FILL"
         case .loadFailureAdTooLarge:
             codeString = "AD_TOO_LARGE"
+        case .loadFailureSDKDisabled:
+            codeString = "SDK_DISABLED"
 
         // 400
         case .showFailureUnknown:

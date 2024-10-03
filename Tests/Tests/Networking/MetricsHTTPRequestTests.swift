@@ -15,7 +15,7 @@ final class MetricsHTTPRequestTests: ChartboostMediationTestCase {
         static let show = URL(unsafeString: "https://show.mediation-sdk.chartboost.com/v1/event/show")!
         static let click = URL(unsafeString: "https://click.mediation-sdk.chartboost.com/v2/event/click")!
         static let expiration = URL(unsafeString: "https://expiration.mediation-sdk.chartboost.com/v1/event/expiration")!
-        static let heliumImpression = URL(unsafeString: "https://mediation-impression.mediation-sdk.chartboost.com/v1/event/helium_impression")!
+        static let heliumImpression = URL(unsafeString: "https://mediation-impression.mediation-sdk.chartboost.com/v2/event/helium_impression")!
         static let partnerImpression = URL(unsafeString: "https://partner-impression.mediation-sdk.chartboost.com/v1/event/partner_impression")!
         static let reward = URL(unsafeString: "https://reward.mediation-sdk.chartboost.com/v2/event/reward")!
     }
@@ -60,6 +60,11 @@ final class MetricsHTTPRequestTests: ChartboostMediationTestCase {
     // MARK: - JSON
 
     lazy var auctionIDJSON: [String: Any] = ["auction_id": auctionID]
+
+    lazy var bidderJSON: [String: Any] = ["lurl": "lossURL", "nurl": "winURL", "price": 42.24, "seat": "some partnerIdentifier"]
+    lazy var bidders: NSArray = [bidderJSON, bidderJSON]
+    lazy var heliumImpressionJSON: [String: Any] = ["auction_id": auctionID, "bidders": bidders, "placement_type": "interstitial", "winner": "some partnerIdentifier", "type": "bidding", "line_item_id": "some lineItemID", "partner_placement": "some partnerPlacement", "price": 42.24]
+    lazy var heliumImpressionAdaptiveBannerJSON: [String: Any] = ["auction_id": auctionID, "bidders": bidders, "placement_type": "adaptive_banner", "size": [ "w": 180, "h": 50], "winner": "some partnerIdentifier", "type": "bidding", "line_item_id": "some lineItemID", "partner_placement": "some partnerPlacement", "price": 42.24]
 
     func customHeaders(format: AdFormat? = nil) -> [String: Any] {
         ["x-mediation-load-id": loadID,
@@ -374,14 +379,31 @@ final class MetricsHTTPRequestTests: ChartboostMediationTestCase {
     }
 
     func testHeliumImpressionEvent() throws {
-        let request = MetricsHTTPRequest.mediationImpression(adFormat: adFormat, auctionID: auctionID, loadID: loadID)
+        let bids: [Bid] = [Bid.test(), Bid.test()]
+        let bidders = bids.map { LoadedAd.Bidder(bid: $0) }
+
+        let request = MetricsHTTPRequest.mediationImpression(adFormat: adFormat, size: nil, auctionID: auctionID, loadID: loadID, bidders: bidders, winner: bids[0].partnerID, type: "bidding", price: 42.24, lineItemID: "some lineItemID", partnerPlacement: "some partnerPlacement")
         let json = try JSONSerialization.jsonDictionary(with: request.bodyData)
         XCTAssertEqual(request.eventType, .mediationImpression)
         XCTAssertEqual(try request.url, TestURL.heliumImpression)
         XCTAssertEqual(request.method, .post)
         XCTAssert(request.isSDKInitializationRequired)
         XCTAssertAnyEqual(request.customHeaders, customHeaders())
-        XCTAssertAnyEqual(json, auctionIDJSON)
+        XCTAssertAnyEqual(json, heliumImpressionJSON)
+    }
+
+    func testHeliumImpressionAdaptiveBannerEvent() throws {
+        let bids: [Bid] = [Bid.test(), Bid.test()]
+        let bidders = bids.map { LoadedAd.Bidder(bid: $0) }
+
+        let request = MetricsHTTPRequest.mediationImpression(adFormat: .adaptiveBanner, size: CGSize(width: 180, height: 50), auctionID: auctionID, loadID: loadID, bidders: bidders, winner: bids[0].partnerID, type: "bidding", price: 42.24, lineItemID: "some lineItemID", partnerPlacement: "some partnerPlacement")
+        let json = try JSONSerialization.jsonDictionary(with: request.bodyData)
+        XCTAssertEqual(request.eventType, .mediationImpression)
+        XCTAssertEqual(try request.url, TestURL.heliumImpression)
+        XCTAssertEqual(request.method, .post)
+        XCTAssert(request.isSDKInitializationRequired)
+        XCTAssertAnyEqual(request.customHeaders, customHeaders(format: .adaptiveBanner))
+        XCTAssertAnyEqual(json, heliumImpressionAdaptiveBannerJSON)
     }
 
     func testPartnerImpressionEvent() throws {

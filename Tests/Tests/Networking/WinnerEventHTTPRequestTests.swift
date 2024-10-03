@@ -157,7 +157,7 @@ final class WinnerEventHTTPRequestTests: ChartboostMediationTestCase {
 
     func testSendsSizeForAdaptiveBanner() throws {
         // The size should be the size sent in the `WinnerEventHTTPRequest`, not in the bid.
-        let bid = Bid.makeMock(size: CGSize(width: 500.0, height: 120.0))
+        let bid = Bid.test(size: CGSize(width: 500.0, height: 120.0))
         let request = WinnerEventHTTPRequest(winner: bid, of: Self.bids, loadID: Self.loadID, adFormat: .adaptiveBanner, size: CGSize(width: 400.0, height: 100.0))
         let jsonDict = try XCTUnwrap(request.bodyJSON)
         XCTAssertEqual(jsonDict["placement_type"] as? String, "adaptive_banner")
@@ -169,7 +169,7 @@ final class WinnerEventHTTPRequestTests: ChartboostMediationTestCase {
     }
 
     func testSendsZeroWhenBidSizeIsNil() throws {
-        let bid = Bid.makeMock()
+        let bid = Bid.test()
         let request = WinnerEventHTTPRequest(winner: bid, of: Self.bids, loadID: Self.loadID, adFormat: .adaptiveBanner, size: nil)
         let jsonDict = try XCTUnwrap(request.bodyJSON)
         let sizeDict = try XCTUnwrap(jsonDict["size"] as? [String: Any])
@@ -180,7 +180,7 @@ final class WinnerEventHTTPRequestTests: ChartboostMediationTestCase {
     }
 
     func testDoesNotSendSizeWhenFormatIsNotAdaptiveBanner() throws {
-        let bid = Bid.makeMock()
+        let bid = Bid.test()
         let request = WinnerEventHTTPRequest(winner: bid, of: Self.bids, loadID: Self.loadID, adFormat: .banner, size: CGSize(width: 320.0, height: 50.0))
         let jsonDict = try XCTUnwrap(request.bodyJSON)
         XCTAssertEqual(jsonDict["placement_type"] as? String, "banner")

@@ -12,9 +12,9 @@ class PartnerAdapterControllerTests: ChartboostMediationTestCase {
 
     let loadID = "some load ID"
 
-    let adapter1 = PartnerAdapterMock<PartnerAdapterConfigurationMock1>()
-    let adapter2 = PartnerAdapterMock<PartnerAdapterConfigurationMock2>()
-    let adapter3 = PartnerAdapterMock<PartnerAdapterConfigurationMock3>()
+    let adapter1 = PartnerAdapterMock(configuration: PartnerAdapterConfigurationMock1.self)
+    let adapter2 = PartnerAdapterMock(configuration: PartnerAdapterConfigurationMock2.self)
+    let adapter3 = PartnerAdapterMock(configuration: PartnerAdapterConfigurationMock3.self)
     
     let adapterStorage1 = MutablePartnerAdapterStorage()
     let adapterStorage2 = MutablePartnerAdapterStorage()
@@ -45,7 +45,7 @@ class PartnerAdapterControllerTests: ChartboostMediationTestCase {
     override func setUp() {
         super.setUp()
         
-        mocks.adapterFactory.setReturnValue([(adapter1, adapterStorage1), (adapter2, adapterStorage2), (adapter3, adapterStorage3)], for: .adaptersFromClassNames)
+        mocks.adapterFactory.setReturnValue([(adapter1, adapterStorage1), (adapter2, adapterStorage2), (adapter3, adapterStorage3)], for: .adapters)
         mocks.consentSettings.consents = ["a": "1", "b": "2"]
         mocks.consentSettings.isUserUnderage = true
     }
@@ -218,7 +218,7 @@ class PartnerAdapterControllerTests: ChartboostMediationTestCase {
     func testRouteLoadSucceedsIfPartnerLoadSucceeds() {
         // initialize adapters
         setUp3Adapters()
-        let ad = adapter2.returnValue(for: .makeFullscreenAd) as PartnerAdMock
+        let ad = adapter2.returnValue(for: .makeFullscreenAd) as PartnerFullscreenAdMock
         let request = PartnerAdLoadRequest.test(partnerID: adapter2.configuration.partnerID)
 
         // load ad
@@ -255,7 +255,7 @@ class PartnerAdapterControllerTests: ChartboostMediationTestCase {
     func testRouteLoadMakesBannerForBannerFormats() {
         // initialize adapters
         setUp3Adapters()
-        let ad = adapter2.returnValue(for: .makeBannerAd) as PartnerAdMock
+        let ad = adapter2.returnValue(for: .makeBannerAd) as PartnerBannerAdMock
         let request = PartnerAdLoadRequest.test(partnerID: adapter2.configuration.partnerID, adFormat: .banner)
 
         // load ad
@@ -307,7 +307,7 @@ class PartnerAdapterControllerTests: ChartboostMediationTestCase {
 
         // check partner ad is created
         XCTAssertMethodCalls(adapter2, .makeFullscreenAd, parameters: [request, delegate])
-        let ad = adapter2.returnValue(for: .makeFullscreenAd) as PartnerAdMock
+        let ad = adapter2.returnValue(for: .makeFullscreenAd) as PartnerFullscreenAdMock
         // check partner call is made
         var partnerLoadCompletion: (Error?) -> Void = { _ in }
         XCTAssertMethodCalls(ad, .load, parameters: [viewController, XCTMethodCaptureParameter { partnerLoadCompletion = $0 }])
@@ -346,7 +346,7 @@ class PartnerAdapterControllerTests: ChartboostMediationTestCase {
 
         // check partner ad is created
         XCTAssertMethodCalls(adapter2, .makeFullscreenAd, parameters: [request, delegate])
-        let ad = adapter2.returnValue(for: .makeFullscreenAd) as PartnerAdMock
+        let ad = adapter2.returnValue(for: .makeFullscreenAd) as PartnerFullscreenAdMock
         // check partner call is made
         var partnerLoadCompletion: (Error?) -> Void = { _ in }
         XCTAssertMethodCalls(ad, .load, parameters: [viewController, XCTMethodCaptureParameter { partnerLoadCompletion = $0 }])
@@ -397,7 +397,7 @@ class PartnerAdapterControllerTests: ChartboostMediationTestCase {
     func testRouteLoadInvalidatesAdAndIgnoresResultOnCancel() {
         // initialize adapters
         setUp3Adapters()
-        let ad = adapter2.returnValue(for: .makeFullscreenAd) as PartnerAdMock
+        let ad = adapter2.returnValue(for: .makeFullscreenAd) as PartnerFullscreenAdMock
         let request = PartnerAdLoadRequest.test(partnerID: adapter2.configuration.partnerID)
 
         // load ad
@@ -439,8 +439,8 @@ class PartnerAdapterControllerTests: ChartboostMediationTestCase {
     func testRouteShowSucceedsIfPartnerShowSucceeds() {
         // initialize adapters and load ad
         setUp3Adapters()
-        let ad = PartnerAdMock()
-        
+        let ad = PartnerFullscreenAdMock()
+
         // show
         var completed = false
         partnerController.routeShow(ad, viewController: viewController) { error in
@@ -469,8 +469,8 @@ class PartnerAdapterControllerTests: ChartboostMediationTestCase {
     func testRouteShowFailsIfPartnerShowFails() {
         // initialize adapters and load ad
         setUp3Adapters()
-        let ad = PartnerAdMock()
-        
+        let ad = PartnerFullscreenAdMock()
+
         // show
         let partnerError = ChartboostMediationError(code: .partnerError)
         var completed = false
@@ -502,8 +502,8 @@ class PartnerAdapterControllerTests: ChartboostMediationTestCase {
     func testRouteShowFailsWithChartboostMediationErrorIfPartnerShowFailsWithNonChartboostMediationError() {
         // initialize adapters and load ad
         setUp3Adapters()
-        let ad = PartnerAdMock()
-        
+        let ad = PartnerFullscreenAdMock()
+
         // show
         let partnerError = NSError.test()
         var completed = false
@@ -539,7 +539,7 @@ class PartnerAdapterControllerTests: ChartboostMediationTestCase {
     func testRouteInvalidateSucceedsIfPartnerInvalidateSucceeds() {
         // set up adapters
         setUp3Adapters()
-        let ad = adapter1.returnValue(for: .makeFullscreenAd) as PartnerAdMock
+        let ad = adapter1.returnValue(for: .makeFullscreenAd) as PartnerFullscreenAdMock
         // set no error throw on invalidate() call
         ad.setReturnValue(nil, for: .invalidate)
         // set storage to contain ad, like it would be after a load
@@ -567,14 +567,14 @@ class PartnerAdapterControllerTests: ChartboostMediationTestCase {
     func testRouteInvalidateFailsIfPartnerInvalidateFails() {
         // set up adapters and load ad
         setUp3Adapters()
-        let ad = adapter1.returnValue(for: .makeFullscreenAd) as PartnerAdMock
+        let ad = adapter1.returnValue(for: .makeFullscreenAd) as PartnerFullscreenAdMock
         // set error throw on invalidate() call
         let partnerError = ChartboostMediationError(code: .partnerError)
         ad.setReturnValue(partnerError, for: .invalidate)
         // set storage to contain ad, like it would be after a load
         adapterStorage1.ads.append(ad)
         // add other ads to storage to check that nothing happens to them
-        let otherAds = [PartnerAdMock(), PartnerAdMock()]
+        let otherAds = [PartnerFullscreenAdMock(), PartnerFullscreenAdMock()]
         adapterStorage1.ads.append(contentsOf: otherAds)
         
         // invalidate
@@ -603,7 +603,7 @@ class PartnerAdapterControllerTests: ChartboostMediationTestCase {
     func testRouteInvalidateFailsWithChartboostMediationErrorIfPartnerInvalidateFailsWithNonChartboostMediationError() {
         // set up adapters and load ad
         setUp3Adapters()
-        let ad = adapter1.returnValue(for: .makeFullscreenAd) as PartnerAdMock
+        let ad = adapter1.returnValue(for: .makeFullscreenAd) as PartnerFullscreenAdMock
         // set error throw on invalidate() call
         let partnerError = NSError.test()
         ad.setReturnValue(partnerError, for: .invalidate)

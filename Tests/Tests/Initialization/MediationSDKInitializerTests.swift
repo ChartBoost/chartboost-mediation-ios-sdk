@@ -207,4 +207,77 @@ class MediationSDKInitializerTests: ChartboostMediationTestCase {
         // Check that initialization finished with failure
         XCTAssertTrue(completed)
     }
+
+    /// Validates that initialization fails when `disableSDK` is true, but only after checking the config.
+    func testFirstAtteptToInitializeFailsNormallyWhenDisableSDKTrue() {
+        // Set the killswitch flag
+        mocks.sdkInitializerConfiguration.disableSDK = true
+
+        // Initialize
+        var completed = false
+        initializer.initialize(appIdentifier: "hello") { error in
+            // We expect initilization to fail
+            XCTAssertNotNil(error)
+            completed = true
+        }
+
+        // Capture callback
+        var appConfigCompletion: UpdateAppConfigCompletion = { _, _ in }
+        XCTAssertMethodCalls(
+            mocks.appConfigurationController,
+            .restorePersistedConfiguration, .updateConfiguration,
+            parameters: [], [XCTMethodCaptureParameter { appConfigCompletion = $0 }]
+        )
+
+        XCTAssertFalse(completed)
+        appConfigCompletion(.backend, nil)
+        // Perform the delayed task immediately
+        mocks.taskDispatcher.performDelayedWorkItems()
+        XCTAssertTrue(completed)
+    }
+
+    func testConfigUpdateSkipedWhenDisableSDKTrueAndInitHasAlreadyFailedOnce() {
+        // Set up the test by attempting initialization once
+        // Set the killswitch flag
+        mocks.sdkInitializerConfiguration.disableSDK = true
+
+        // Initialize
+        var completed = false
+        initializer.initialize(appIdentifier: "hello") { error in
+            // We expect initilization to fail
+            XCTAssertNotNil(error)
+            completed = true
+        }
+
+        // Capture callback
+        var appConfigCompletion: UpdateAppConfigCompletion = { _, _ in }
+        XCTAssertMethodCalls(
+            mocks.appConfigurationController,
+            .restorePersistedConfiguration, .updateConfiguration,
+            parameters: [], [XCTMethodCaptureParameter { appConfigCompletion = $0 }]
+        )
+
+        XCTAssertFalse(completed)
+        appConfigCompletion(.backend, nil)
+        // Perform the delayed task immediately
+        mocks.taskDispatcher.performDelayedWorkItems()
+        XCTAssertTrue(completed)
+
+
+        // Now that the test is set up by having one failed attempt to init, try again.
+        // Initialize
+        completed = false
+        initializer.initialize(appIdentifier: "hello") { error in
+            // We expect initilization to fail
+            XCTAssertNotNil(error)
+            completed = true
+        }
+
+        // Check that there were no calls to update the configuration
+        XCTAssertNoMethodCalls(mocks.appConfigurationController)
+
+        // Check that initialization completes.
+        mocks.taskDispatcher.performDelayedWorkItems()
+        XCTAssertTrue(completed)
+    }
 }

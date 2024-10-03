@@ -45,11 +45,11 @@ public class BannerAdView: UIView {
 
     // MARK: - Public Readonly
 
-    /// The original `request` that ``load(with:viewController:completion:)`` was called with, or `nil` if a
+    /// The original `request` that ``BannerAdView/load(with:viewController:completion:)`` was called with, or `nil` if a
     /// banner is not loaded.
     ///
-    /// When ``load(with:viewController:completion:)`` is called, this value will be available when `completion`
-    /// is called. If ``load(with:viewController:completion:)`` is called with a new request, this value will reflect the
+    /// When ``BannerAdView/load(with:viewController:completion:)`` is called, this value will be available when `completion`
+    /// is called. If ``BannerAdView/load(with:viewController:completion:)`` is called with a new request, this value will reflect the
     /// previous value until the new request has successfully loaded.
     @objc public var request: BannerAdLoadRequest? {
         controller.request
@@ -331,7 +331,7 @@ extension BannerAdView {
                 }
 
                 let data = AdaptiveBannerSizeData(
-                    auctionID: ad.bid.auctionID,
+                    auctionID: ad.winner.auctionID,
                     // Send the size that the ad will be rendered at.
                     creativeSize: BackendEncodableSize(cgSize: cgSize),
                     containerSize: BackendEncodableSize(cgSize: self.frame.size),

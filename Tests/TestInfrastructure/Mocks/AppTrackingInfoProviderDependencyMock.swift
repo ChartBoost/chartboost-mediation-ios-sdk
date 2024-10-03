@@ -6,7 +6,7 @@
 import AppTrackingTransparency
 @testable import ChartboostMediationSDK
 
-/// This is just a simple data mock, thus no need to inherit `Mock`.
+// This mock cannot be auto-generated because of the `AuthStatusOverride` mechanism (see AppTrackingInfoProviderMock).
 final class AppTrackingInfoProviderDependencyMock: AppTrackingInfoProviderDependency {
     /// `appTransparencyAuthStatus` returns the same value as this one.
     var authStatusOverride: AppTrackingInfoProviderMock.AuthStatusOverride = .notDetermined

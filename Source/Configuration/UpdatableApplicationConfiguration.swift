@@ -25,6 +25,7 @@ final class UpdatableApplicationConfiguration: ApplicationConfiguration {
         let bannerLoadTimeout: UInt?
         let showTimeout: UInt?
         let country: String?
+        let disableSdk: Bool?
         let internalTestId: String?
         let prebidFetchTimeout: UInt?
         let bannerImpressionMinVisibleDips: UInt?   // it's in "dips" but it's OK to just use it as "points"
@@ -68,6 +69,7 @@ final class UpdatableApplicationConfiguration: ApplicationConfiguration {
         static let maxQueueSize: UInt = 5
         static let defaultQueueSize: UInt = 1
         static let queuedAdTtl: TimeInterval = 3600
+        static let disableSdk: Bool = false
     }
 
     @Injected(\.environment) private var environment
@@ -112,6 +114,10 @@ extension UpdatableApplicationConfiguration: BidFulfillOperationConfiguration {
 }
 
 extension UpdatableApplicationConfiguration: SDKInitializerConfiguration {
+    var disableSDK: Bool {
+        values?.disableSdk ?? DefaultValues.disableSdk
+    }
+
     var initTimeout: TimeInterval {
         TimeInterval(values?.initTimeout ?? DefaultValues.initTimeout)
     }

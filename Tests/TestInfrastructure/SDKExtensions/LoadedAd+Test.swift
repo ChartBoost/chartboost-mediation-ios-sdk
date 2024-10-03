@@ -12,11 +12,32 @@ extension LoadedAd {
         ilrd: [String: Any]? = nil,
         bidInfo: [String: String] = ["asdfasdf": "1234"],
         rewardedCallback: RewardedCallback? = .test(),
-        partnerAd: PartnerAd = PartnerAdMock(),
+        partnerAd: PartnerAd = PartnerFullscreenAdMock(),
         bannerSize: BannerSize = .init(size: .zero, type: .fixed),
         request: InternalAdLoadRequest = .test()
     ) -> Self {
-        let bid = Bid(
+        let bids: [Bid] = [
+            Bid.test(ilrd: ilrd, rewardedCallback: rewardedCallback),
+            Bid.test(ilrd: ilrd, rewardedCallback: rewardedCallback),
+            Bid.test(ilrd: ilrd, rewardedCallback: rewardedCallback)
+        ]
+        return LoadedAd(
+            bids: bids,
+            winner: bids[0],
+            bidInfo: bidInfo,
+            partnerAd: partnerAd,
+            bannerSize: bannerSize,
+            request: request
+        )
+    }
+}
+
+extension Bid {
+    static func test(
+        ilrd: [String: Any]? = nil,
+        rewardedCallback: RewardedCallback? = .test()
+    ) -> Bid {
+        Bid(
             identifier: "some identifier \(Int.random(in: 1...99999))",
             partnerID: "some partnerIdentifier",
             partnerPlacement: "some partnerPlacement",
@@ -33,14 +54,6 @@ extension LoadedAd {
             winURL: "winURL",
             lossURL: "lossURL",
             size: nil
-        )
-
-        return LoadedAd(
-            bid: bid,
-            bidInfo: bidInfo,
-            partnerAd: partnerAd,
-            bannerSize: bannerSize,
-            request: request
         )
     }
 }

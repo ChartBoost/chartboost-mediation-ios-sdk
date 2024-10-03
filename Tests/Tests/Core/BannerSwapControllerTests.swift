@@ -9,14 +9,14 @@ import XCTest
 
 class BannerSwapControllerTests: ChartboostMediationTestCase {
 
-    lazy var bannerSwapController = setUpBannerSwapController()
+    lazy var bannerSwapController = BannerSwapController()
 
     let viewController = UIViewController()
 
     override func setUp() {
         super.setUp()
 
-        bannerSwapController = setUpBannerSwapController()
+        bannerSwapController.delegate = mocks.bannerSwapControllerDelegate
     }
 
     override func tearDown() {
@@ -669,49 +669,59 @@ class BannerSwapControllerTests: ChartboostMediationTestCase {
     func testPassesThroughDisplayBannerView() {
         let view = UIView()
         bannerSwapController.bannerController(mocks.bannerController, displayBannerView: view)
-        XCTAssertMethodCalls(mocks.bannerSwapControllerDelegate, .displayAd, parameters: [bannerSwapController, view])
+        XCTAssertMethodCalls(mocks.bannerSwapControllerDelegate, .bannerSwapControllerDisplayBannerView, parameters: [bannerSwapController, view])
     }
 
     func testPassesThroughClearBannerView() {
         let view = UIView()
         bannerSwapController.bannerController(mocks.bannerController, clearBannerView: view)
-        XCTAssertMethodCalls(mocks.bannerSwapControllerDelegate, .clearAd, parameters: [bannerSwapController, view])
+        XCTAssertMethodCalls(mocks.bannerSwapControllerDelegate, .bannerSwapControllerClearBannerView, parameters: [bannerSwapController, view])
     }
 
     func testPassesThroughDidRecordImpression() {
         bannerSwapController.bannerControllerDidRecordImpression(mocks.bannerController)
-        XCTAssertMethodCalls(mocks.bannerSwapControllerDelegate, .didRecordImpression, parameters: [bannerSwapController])
+        XCTAssertMethodCalls(mocks.bannerSwapControllerDelegate, .bannerSwapControllerDidRecordImpression, parameters: [bannerSwapController])
     }
 
     func testPassesThroughDidClick() {
         bannerSwapController.bannerControllerDidClick(mocks.bannerController)
-        XCTAssertMethodCalls(mocks.bannerSwapControllerDelegate, .didClick, parameters: [bannerSwapController])
+        XCTAssertMethodCalls(mocks.bannerSwapControllerDelegate, .bannerSwapControllerDidClick, parameters: [bannerSwapController])
     }
 }
 
 extension BannerSwapControllerTests {
-    private func setUpBannerSwapController() -> BannerSwapController {
-        let result = BannerSwapController()
-        result.delegate = mocks.bannerSwapControllerDelegate
-        return result
-    }
 
     /// Call to assert that the `BannerSwapController` created a new `BannerController` via the ad factory.
     ///
     /// - Returns: The banner controller that was created.
     /// - Throws: An error if a controller was not created.
-    private func assertCreatesController() throws -> BannerControllerMock {
+    @discardableResult
+    private func assertCreatesController() throws -> BannerControllerProtocolMock {
         // Since the `BannerSwapController` handles multiple `BannerController` instances at a time,
         // we need some way to keep track of the different instances of the underlying controllers
-        // when testing. One way of doing this was to create the `BannerControllerMock`, set that
-        // as the return value from ad factory, then call `load` on `BannerSwapController`. However,
-        // this would require creating both the mock and calling load with the same `request` value.
-        // Instead, the method here of saving controllers created by ad factory, then popping them
-        // off a stack lets us just call `load` with the request value, and ensure that it was
-        // properly forwarded when creating the `BannerController`.
-        let controller = try mocks.adFactory.popBannerController()
-        XCTAssertMethodCalls(mocks.adFactory, .makeBannerController, parameters: [XCTMethodIgnoredParameter()])
-        return try XCTUnwrap(controller as? BannerControllerMock)
+        // when testing. In order to do that we set a new instance as the return value after each
+        // read of such value.
+        // We also configure each controller instance by setting its properties to the values requested
+        // by the `BannerSwapController`, so we can compare with the expected values on each test.
+        let controller = try XCTUnwrap(mocks.adFactory.returnValue(for: .makeBannerController) as BannerControllerProtocolMock)
+        var request: BannerAdLoadRequest?
+        var delegate: BannerControllerDelegate?
+        var keywords: [String: String]?
+        var partnerSettings: [String: Any]?
+        XCTAssertMethodCalls(mocks.adFactory, .makeBannerController, parameters: [
+            XCTMethodCaptureParameter { request = $0 },
+            XCTMethodCaptureParameter { delegate = $0 },
+            XCTMethodCaptureParameter { keywords = $0 },
+            XCTMethodCaptureParameter { partnerSettings = $0 }
+        ])
+        controller.request = try XCTUnwrap(request)
+        controller.delegate = delegate
+        controller.keywords = keywords
+        controller.partnerSettings = partnerSettings
+        // Set a new return value so multiple calls result in different instances being returned.
+        mocks.adFactory.setReturnValue(BannerControllerProtocolMock(), for: .makeBannerController)
+        // Return the value
+        return controller
     }
 
     /// Call to assert that `load` was called on `controller`.
@@ -721,7 +731,7 @@ extension BannerSwapControllerTests {
     /// - Returns: The completion block to call to mock the completion from `BannerController`.
     @discardableResult
     private func assertLoad(
-        controller: BannerControllerMock,
+        controller: BannerControllerProtocolMock,
         viewVisibility: Bool? = nil
     ) throws -> ((BannerAdLoadResult) -> Void) {
         var result: ((BannerAdLoadResult) -> Void)?

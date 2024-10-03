@@ -34,6 +34,8 @@ protocol SDKInitializer {
 
 /// Configuration settings for SDKInitializer.
 protocol SDKInitializerConfiguration {
+    /// A remote killswitch flag.
+    var disableSDK: Bool { get }
     /// The  timeout for all partner initializations. Defaults to 1.0.
     var initTimeout: TimeInterval { get }
     /// Partner-specific configurations to be used by partner SDKs on initialization.
@@ -50,6 +52,7 @@ final class MediationSDKInitializer: SDKInitializer, MediationInitializationStat
         case uninitialized
         case initializing
         case initialized
+        case failedToInitialize
     }
 
     @Injected(\.appConfigurationController) private var appConfigurationController
@@ -76,7 +79,7 @@ final class MediationSDKInitializer: SDKInitializer, MediationInitializationStat
     func setPreinitializationConfiguration(_ configuration: PreinitializationConfiguration?) -> ChartboostMediationError? {
         taskDispatcher.sync(on: .background) {
             switch self.initializationStatus {
-            case .uninitialized:
+            case .uninitialized, .failedToInitialize:
                 self.preinitConfig = configuration
                 return nil
             case .initializing, .initialized:
@@ -90,6 +93,19 @@ final class MediationSDKInitializer: SDKInitializer, MediationInitializationStat
     /// making calls on the main thread if necessary.
     func initialize(appIdentifier: String?, completion: @escaping (ChartboostMediationError?) -> Void) {
         taskDispatcher.async(on: .background) { [self] in
+            // Initialization may begin as normal as long as `disableSDK` has not been set to true
+            // OR this is the first time since launch that init has been attempted. In other words,
+            // even when the SDK has been disabled we want it to begin the init process once so that
+            // it checks the server for an updated configuration - just in case it should be re-enabled.
+            guard !self.configuration.disableSDK ||
+                    self.initializationStatus != .failedToInitialize else {
+                let error = ChartboostMediationError(code: .initializationFailureInitializationDisabled)
+                self.initializationStatus = .failedToInitialize
+                logger.error("Initialization failed with error: \(error.description)")
+                completion(error)
+                return
+            }
+
             if initializationStatus == .uninitialized {
                 // restore the app config first so that the restored log level is effective after this point
                 appConfigurationController.restorePersistedConfiguration()
@@ -98,7 +114,7 @@ final class MediationSDKInitializer: SDKInitializer, MediationInitializationStat
             logger.debug("Initialization started")
 
             // Finish early if already initialized or initializing
-            guard initializationStatus == .uninitialized else {
+            guard initializationStatus == .uninitialized || initializationStatus == .failedToInitialize else {
                 // If already initialized we report success
                 if initializationStatus == .initialized {
                     logger.info("SDK already initialized")
@@ -114,6 +130,7 @@ final class MediationSDKInitializer: SDKInitializer, MediationInitializationStat
 
             // Validate credentials before attempting to initialize
             if let error = credentialsValidator.validate(appIdentifier: appIdentifier) {
+                initializationStatus = .failedToInitialize
                 logger.error("Initialization failed with error: \(error)")
                 completion(error)
                 return
@@ -139,10 +156,20 @@ final class MediationSDKInitializer: SDKInitializer, MediationInitializationStat
 
                     guard sdkInitResult != .failure else {
                         // If config update failed and we have no persisted config we fail the initialization
-                        self.initializationStatus = .uninitialized
+                        self.initializationStatus = .failedToInitialize
                         self.metrics.logInitialization([], result: sdkInitResult, error: error)
                         logger.error("Initialization failed with error: \(error?.description ?? "nil")")
                         completion(error ?? ChartboostMediationError(code: .initializationFailureAborted))
+                        return
+                    }
+
+                    // Force initialization to fail if remote killswitch is enabled.
+                    guard !self.configuration.disableSDK else {
+                        let error = ChartboostMediationError(code: .initializationFailureInitializationDisabled)
+                        self.initializationStatus = .failedToInitialize
+                        self.metrics.logInitialization([], result: sdkInitResult, error: error)
+                        logger.error("Initialization failed with error: \(error.description)")
+                        completion(error)
                         return
                     }
 

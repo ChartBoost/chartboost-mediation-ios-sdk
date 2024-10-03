@@ -6,13 +6,15 @@
 import Foundation
 @testable import ChartboostMediationSDK
 
+/// This mock is deprecated, please use `NetworkManagerProtocolMock` instead.
+///
 /// Networking is actually mocked by `URLProtocolMock`. The recommended usage is checking the sent request
 /// and mocking the response with `URLProtocolMock` instead of checking `XCTAssertMethodCallCount()` against
 /// `send()` like in regular unit tests.
 ///
 /// See this "Testing Tips & Tricks" WWDC session for demo:
 ///   https://developer.apple.com/videos/play/wwdc2018/417/
-class NetworkManagerMock: NetworkManagerProtocol {
+class DeprecatedNetworkManagerMock: NetworkManagerProtocol {
 
     private static let urlSessionConfig: URLSessionConfiguration = {
         let config = URLSessionConfiguration.ephemeral
@@ -29,21 +31,5 @@ class NetworkManagerMock: NetworkManagerProtocol {
     
     func send<T>(_ httpRequest: T, maxRetries: Int, retryDelay: TimeInterval, completion: @escaping NetworkManager.RequestCompletionWithJSONResponse<T.DecodableResponse>) where T : HTTPRequestWithDecodableResponse {
         networkManager.send(httpRequest, maxRetries: maxRetries, retryDelay: retryDelay, completion: completion)
-    }
-}
-
-/// Networking is completely mocked.
-class CompleteNetworkManagerMock: Mock<CompleteNetworkManagerMock.Method>, NetworkManagerProtocol {
-
-    enum Method {
-        case send
-    }
-
-    func send(_ httpRequest: HTTPRequestWithRawDataResponse, maxRetries: Int, retryDelay: TimeInterval, completion: @escaping NetworkManager.RequestCompletionWithRawDataResponse) {
-        record(.send, parameters: [httpRequest, maxRetries, retryDelay, completion])
-    }
-
-    func send<T>(_ httpRequest: T, maxRetries: Int, retryDelay: TimeInterval, completion: @escaping NetworkManager.RequestCompletionWithJSONResponse<T.DecodableResponse>) where T : HTTPRequestWithDecodableResponse {
-        record(.send, parameters: [httpRequest, maxRetries, retryDelay, completion])
     }
 }

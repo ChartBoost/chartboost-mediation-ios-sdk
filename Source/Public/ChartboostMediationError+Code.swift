@@ -87,6 +87,12 @@ extension ChartboostMediationError {
         /// An error occurred within the Chartboost Mediation initialization sequence.
         case initializationFailureInternalError = 115
 
+        /// This initializatinon attempt failed because another was already in progress.
+        case initializationFailureInitializationInProgress = 116
+
+        /// Initialization has been disabled by the mediation server.
+        case initializationFailureInitializationDisabled = 117
+
         // MARK: - 200: Prebid
 
         /// There was an error that was not accounted for.
@@ -231,6 +237,9 @@ extension ChartboostMediationError {
 
         /// The returned ad was larger than the requested size.
         case loadFailureAdTooLarge = 336
+
+        /// Initilization has been disabled, so ads cannot be loaded.
+        case loadFailureSDKDisabled = 337
 
         // MARK: - 400: Show
 

@@ -17,10 +17,13 @@ final class CoreModuleTests: ChartboostMediationTestCase {
         )
         let expectation = expectation(description: "initialize module")
 
-        module.initialize(configuration: config) {[unowned self] error in
-            XCTAssertEqual(mocks.sdkInitializer.recordedMethods, [SDKInitializerMock.Method.initialize])
+        module.initialize(configuration: config) { error in
+            XCTAssertNil(error)
             expectation.fulfill()
         }
+        var initializerCompletion: (ChartboostMediationError?) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.sdkInitializer, .initialize, parameters: [config.chartboostAppID, XCTMethodCaptureParameter { initializerCompletion = $0 }])
+        initializerCompletion(nil)
         wait(for: [expectation], timeout: 1)
     }
 }

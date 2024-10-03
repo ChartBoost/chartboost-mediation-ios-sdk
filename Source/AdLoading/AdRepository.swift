@@ -90,7 +90,8 @@ final class AuctionAdRepository: AdRepository {
                         )
                         // Finish successfully
                         let loadedAd = self.makeLoadedAd(
-                            bid: winningBid,
+                            bids: bids,
+                            winner: winningBid,
                             partnerAd: partnerAd,
                             adSize: adSize,
                             request: request
@@ -135,14 +136,16 @@ extension AuctionAdRepository {
     // Mappings from bid information into `LoadedAd` and related models
 
     private func makeLoadedAd(
-        bid: Bid,
+        bids: [Bid],
+        winner: Bid,
         partnerAd: PartnerAd,
         adSize: BannerSize?,
         request: InternalAdLoadRequest
     ) -> LoadedAd {
         LoadedAd(
-            bid: bid,
-            bidInfo: makeBidInfo(bid: bid),
+            bids: bids,
+            winner: winner,
+            bidInfo: makeBidInfo(bid: winner),
             partnerAd: partnerAd,
             bannerSize: adSize,
             request: request

@@ -347,5 +347,11 @@ extension OpenRTB.Regulations {
 
         /// CCPA consent value
         let us_privacy: String?
+
+        /// Full consent string in its encoded form
+        let gpp: String?
+
+        /// IDs of GPP Sections in force
+        let gpp_sid: String?
     }
 }

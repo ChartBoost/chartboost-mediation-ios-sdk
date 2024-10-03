@@ -90,7 +90,7 @@ extension HTTPRequest {
     }
 
     private func addMediationHeaders(to headers: inout [String: String]) {
-        @Injected(\.environment) var environment: EnvironmentProviding
+        @Injected(\.environment) var environment: Environment
 
         headers[HTTP.HeaderKey.appID.rawValue] = environment.app.chartboostAppID
         headers[HTTP.HeaderKey.deviceOS.rawValue] = environment.device.osName

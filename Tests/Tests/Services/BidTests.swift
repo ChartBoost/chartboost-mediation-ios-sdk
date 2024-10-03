@@ -10,7 +10,7 @@ final class BidTests: ChartboostMediationTestCase {
 
     /// Validate that no rewarded callback object is created when there is no data specified.
     func testNoData() throws {
-        let bid = Bid.makeMock(rewardedCallbackData: nil)
+        let bid = Bid.test(rewardedCallbackData: nil)
         XCTAssertNil(bid.rewardedCallback)
     }
 
@@ -24,16 +24,16 @@ final class BidTests: ChartboostMediationTestCase {
         let data = try JSONSerialization.data(withJSONObject: dictionary)
         let decoder = JSONDecoder()
         let rewardedCallbackData = try decoder.decode(RewardedCallbackData.self, from: data)
-        let bid = Bid.makeMock(rewardedCallbackData: rewardedCallbackData)
+        let bid = Bid.test(rewardedCallbackData: rewardedCallbackData)
         XCTAssertNil(bid.rewardedCallback)
     }
 
     func testConsumesWidthAndHeightFromRTBBidResponse() throws {
-        let bidResponse = OpenRTB.BidResponse.mock(
+        let bidResponse = OpenRTB.BidResponse.test(
             seatbid: [
-                .mock(
+                .test(
                     bid: [
-                        .mock(w: 400, h: 100)
+                        .test(w: 400, h: 100)
                     ]
                 )
             ]
@@ -45,11 +45,11 @@ final class BidTests: ChartboostMediationTestCase {
     }
 
     func testBidSizeIsNilWhenWidthIsNil() throws {
-        let bidResponse = OpenRTB.BidResponse.mock(
+        let bidResponse = OpenRTB.BidResponse.test(
             seatbid: [
-                .mock(
+                .test(
                     bid: [
-                        .mock(w: nil, h: 100)
+                        .test(w: nil, h: 100)
                     ]
                 )
             ]
@@ -60,11 +60,11 @@ final class BidTests: ChartboostMediationTestCase {
     }
 
     func testBidSizeIsNilWhenHeightIsNil() throws {
-        let bidResponse = OpenRTB.BidResponse.mock(
+        let bidResponse = OpenRTB.BidResponse.test(
             seatbid: [
-                .mock(
+                .test(
                     bid: [
-                        .mock(w: 400, h: nil)
+                        .test(w: 400, h: nil)
                     ]
                 )
             ]
@@ -75,11 +75,11 @@ final class BidTests: ChartboostMediationTestCase {
     }
 
     func testBidSizeIsNilWhenAdFormatIsNotAdaptiveBanner() throws {
-        let bidResponse = OpenRTB.BidResponse.mock(
+        let bidResponse = OpenRTB.BidResponse.test(
             seatbid: [
-                .mock(
+                .test(
                     bid: [
-                        .mock(w: 400, h: 100)
+                        .test(w: 400, h: 100)
                     ]
                 )
             ]
@@ -90,12 +90,12 @@ final class BidTests: ChartboostMediationTestCase {
     }
 
     func testBidCombinesPartnerSettingsWithPartnerDetails() throws {
-        let bidResponse = OpenRTB.BidResponse.mock(
+        let bidResponse = OpenRTB.BidResponse.test(
             seatbid: [
-                .mock(
+                .test(
                     bid: [
-                        .mock(
-                            ext: .mock(
+                        .test(
+                            ext: .test(
                                 bidder: JSON(value: [
                                     "helium": [
                                         "BidTests key": "dfn4as"

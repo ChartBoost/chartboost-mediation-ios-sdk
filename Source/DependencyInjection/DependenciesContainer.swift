@@ -31,7 +31,7 @@ protocol DependenciesContainer {
     var consentSettings: ConsentSettings { get }
     var credentialsValidator: SDKCredentialsValidator { get }
     var customTaskDispatcher: TaskDispatcher? { get }
-    var environment: EnvironmentProviding { get }
+    var environment: Environment { get }
     var fileStorage: FileStorage { get }
     var fullScreenAdShowCoordinator: FullScreenAdShowCoordinator { get }
     var fullScreenAdShowObserver: FullScreenAdShowObserver { get }
@@ -86,7 +86,21 @@ final class SDKDependenciesContainer: DependenciesContainer {
     let consentSettingsManager = ConsentSettingsManager()
     let credentialsValidator: SDKCredentialsValidator = LengthSDKCredentialsValidator()
     let currentSessionImpressionTracker = CurrentSessionImpressionTracker()
-    let environment: EnvironmentProviding = Environment()
+    let environment = Environment(
+        app: AppInfoProvider(),
+        audio: AudioInfoProvider(),
+        device: DeviceInfoProvider(),
+        screen: ScreenInfoProvider(),
+        sdk: SDKInfoProvider(),
+        sdkSettings: SDKSettingsProvider(),
+        session: SessionInfoProvider(),
+        skAdNetwork: SKAdNetworkInfoProvider(),
+        telephonyNetwork: TelephonyNetworkInfoProvider(),
+        testMode: TestModeInfo(),
+        userIDProvider: UserIDProvider(),
+        userSettings: UserSettingsProvider(),
+        userAgent: UserAgentProvider()
+    )
     let fileStorage: FileStorage = FileSystemStorage()
     let mediationSDKInitializer = MediationSDKInitializer()
     let ilrdEventPublisher: ILRDEventPublisher = NotificationCenterILRDEventPublisher()

@@ -341,7 +341,7 @@ private extension RewardedCallbackHTTPRequestTests {
         let data = try JSONSerialization.data(withJSONObject: dictionary)
         let decoder = JSONDecoder()
         let rewardedCallbackData = try decoder.decode(RewardedCallbackData.self, from: data)
-        let bid = Bid.makeMock(
+        let bid = Bid.test(
             partnerID: partnerID,
             adRevenue: adRevenue,
             cpmPrice: cpmPrice,

@@ -9,17 +9,14 @@ import XCTest
 
 class BannerAdViewTests: ChartboostMediationTestCase {
     lazy var bannerView: BannerAdView = setUpView()
-    var controller: BannerSwapControllerMock = BannerSwapControllerMock()
-    var networkManager = CompleteNetworkManagerMock()
+    var controller = BannerSwapControllerProtocolMock()
+    var networkManager: NetworkManagerProtocolMock { mocks.networkManager as! NetworkManagerProtocolMock }
 
     override func setUp() {
         super.setUp()
 
-        networkManager = CompleteNetworkManagerMock()
-        mocks.networkManager = networkManager
-
         // Create a fresh controller and set that as the return value on the mock adFactory.
-        controller = BannerSwapControllerMock()
+        controller = BannerSwapControllerProtocolMock()
         mocks.adFactory.setReturnValue(controller, for: .makeBannerSwapController)
 
         bannerView = setUpView()
@@ -828,7 +825,7 @@ class BannerAdViewTests: ChartboostMediationTestCase {
         // Manually set up since we need to specify some values
         let view = UIView()
         let adSize = BannerSize(size: CGSize(width: 400.0, height: 50.0), type: .adaptive)
-        let bid = Bid.makeMock(
+        let bid = Bid.test(
             identifier: "test_bid_id",
             partnerID: "test_partner_identifier",
             // The placement is pulled from the partner request, we'll set this to something else
@@ -837,12 +834,12 @@ class BannerAdViewTests: ChartboostMediationTestCase {
             lineItemIdentifier: "test_line_item_id",
             auctionID: "test_auction_id"
         )
-        let adapter = PartnerAdapterMock<PartnerAdapterConfigurationMock1>()
+        let adapter = PartnerAdapterMock()
         PartnerAdapterConfigurationMock1.partnerID = "test_partner_name"
         let partnerAdRequest = PartnerAdLoadRequest.test(partnerPlacement: "test_partner_placement")
-        let partnerAd = PartnerAdMock(adapter: adapter, request: partnerAdRequest, bannerView: view)
+        let partnerAd = PartnerBannerAdMock(adapter: adapter, request: partnerAdRequest, view: view)
         let adRequest = InternalAdLoadRequest.test(heliumPlacement: "test_placement_name", loadID: "test_load_id")
-        let ad = LoadedAd(bid: bid, bidInfo: [:], partnerAd: partnerAd, bannerSize: adSize, request: adRequest)
+        let ad = LoadedAd(bids: [bid], winner: bid, bidInfo: [:], partnerAd: partnerAd, bannerSize: adSize, request: adRequest)
         controller.request = .test(size: BannerSize(size: CGSize(width: 500.0, height: 100.0), type: .adaptive))
         controller.showingBannerAdLoadResult = InternalAdLoadResult(result: .success(ad), metrics: nil)
         bannerView.bannerSwapController(controller, displayBannerView: view)
@@ -908,7 +905,7 @@ extension BannerAdViewTests {
     }
 
     private func setUpControllerWithBanner(view: UIView, size: BannerSize) {
-        let partnerAd = PartnerAdMock(bannerView: view)
+        let partnerAd = PartnerBannerAdMock(view: view)
         let ad = LoadedAd.test(partnerAd: partnerAd, bannerSize: size)
         controller.showingBannerAdLoadResult = InternalAdLoadResult(result: .success(ad), metrics: nil)
         bannerView.bannerSwapController(controller, displayBannerView: view)
@@ -921,7 +918,7 @@ extension BannerAdViewTests {
         let captureExpectation = expectation(description: "Capture parameter expectation")
         XCTAssertMethodCalls(
             networkManager,
-            .send,
+            .sendHttpRequestHTTPRequestWithRawDataResponseMaxRetriesIntRetryDelayTimeIntervalCompletionEscapingNetworkManagerRequestCompletionWithRawDataResponse,
             parameters: [
                 XCTMethodCaptureParameter { request in
                     result = request

@@ -369,7 +369,7 @@ class SingleAdStorageAdControllerTests: ChartboostMediationTestCase {
         // Check timeout task was cancelled
         XCTAssertMethodCalls(mocks.taskDispatcher.returnTask, .cancel)
         // Check impression is logged and delegate method called
-        XCTAssertMethodCalls(mocks.metrics, .logShow, .logHeliumImpression, parameters: [
+        XCTAssertMethodCalls(mocks.metrics, .logShow, .logMediationImpression, parameters: [
             ad,
             XCTMethodIgnoredParameter(),    // start date
             nil // error
@@ -528,7 +528,7 @@ class SingleAdStorageAdControllerTests: ChartboostMediationTestCase {
         adController.markLoadedAdAsShown()
         
         // Check impression is logged and delegate method called
-        XCTAssertMethodCalls(mocks.metrics, .logHeliumImpression, parameters: [ad])
+        XCTAssertMethodCalls(mocks.metrics, .logMediationImpression, parameters: [ad])
         XCTAssertMethodCalls(mocks.adControllerDelegate, .didTrackImpression)
         XCTAssertNoMethodCalls(mocks.fullScreenAdShowObserver)
         XCTAssertMethodCalls(mocks.impressionTracker, .trackImpression, parameters: [ad.request.adFormat])
@@ -546,7 +546,7 @@ class SingleAdStorageAdControllerTests: ChartboostMediationTestCase {
         adController.markLoadedAdAsShown()
 
         // Check impression is logged and delegate method called
-        XCTAssertMethodCalls(mocks.metrics, .logHeliumImpression, parameters: [ad])
+        XCTAssertMethodCalls(mocks.metrics, .logMediationImpression, parameters: [ad])
         XCTAssertMethodCalls(mocks.adControllerDelegate, .didTrackImpression)
         XCTAssertNoMethodCalls(mocks.fullScreenAdShowObserver)
         XCTAssertMethodCalls(mocks.impressionTracker, .trackImpression, parameters: [ad.request.adFormat])
@@ -599,7 +599,7 @@ class SingleAdStorageAdControllerTests: ChartboostMediationTestCase {
         adController.delegate = mocks.adControllerDelegate
         
         // Call didTrackImpression
-        let ad = PartnerAdMock()
+        let ad = PartnerFullscreenAdMock()
         adController.didTrackImpression(ad)
         
         // Check impression is logged
@@ -612,7 +612,7 @@ class SingleAdStorageAdControllerTests: ChartboostMediationTestCase {
         adController.delegate = mocks.adControllerDelegate
         
         // Call didClick
-        let ad = PartnerAdMock()
+        let ad = PartnerFullscreenAdMock()
         adController.didClick(ad)
         
         // Check delegate method is called
@@ -627,7 +627,7 @@ class SingleAdStorageAdControllerTests: ChartboostMediationTestCase {
         adController.delegate = mocks.adControllerDelegate
         
         // Call didReward
-        let ad = PartnerAdMock()
+        let ad = PartnerFullscreenAdMock()
         adController.didReward(ad)
         
         // Check delegate method is called
@@ -661,7 +661,7 @@ class SingleAdStorageAdControllerTests: ChartboostMediationTestCase {
         adController.delegate = mocks.adControllerDelegate
         
         // Call didDismiss
-        let ad = PartnerAdMock(request: .test(adFormat: .interstitial))
+        let ad = PartnerFullscreenAdMock(request: .test(adFormat: .interstitial))
         adController.didDismiss(ad, error: nil)
         
         // Check delegate method is called
@@ -678,7 +678,7 @@ class SingleAdStorageAdControllerTests: ChartboostMediationTestCase {
         adController.delegate = mocks.adControllerDelegate
         
         // Call didDismiss
-        let ad = PartnerAdMock(request: .test(adFormat: .banner))
+        let ad = PartnerBannerAdMock(request: .test(adFormat: .banner))
         let error = ChartboostMediationError(code: .partnerError)
         adController.didDismiss(ad, error: error)
         
@@ -713,7 +713,7 @@ class SingleAdStorageAdControllerTests: ChartboostMediationTestCase {
         adController.delegate = mocks.adControllerDelegate
         
         // Call didClick
-        let ad = PartnerAdMock()
+        let ad = PartnerFullscreenAdMock()
         adController.didExpire(ad)
         
         // Check delegate method is called

@@ -71,6 +71,7 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
     @Injected(\.initializationStatusProvider) private var initializationStatusProvider
     @Injected(\.impressionTracker) private var impressionTracker
     @Injected(\.adControllerConfiguration) private var configuration
+    @Injected(\.sdkInitializerConfiguration) private var initConfiguration
     @OptionalInjected(\.customTaskDispatcher, default: .serialBackgroundQueue(name: "adController")) private var taskDispatcher
 
     /// Indicates if a load operation is already ongoing.
@@ -114,10 +115,16 @@ final class SingleAdStorageAdController: AdController, PartnerAdDelegate {
 
             // If Chartboost Mediation not started fail early
             guard initializationStatusProvider.isInitialized else {
-                logger.error("Load failed due to SDK not being initialized")
+                var error = ChartboostMediationError(code: .loadFailureChartboostMediationNotInitialized)
+                if initConfiguration.disableSDK {
+                    logger.error("Load failed due to SDK not being initialized, because initialization has been disabled")
+                    error = ChartboostMediationError(code: .loadFailureSDKDisabled)
+                } else {
+                    logger.error("Load failed due to SDK not being initialized")
+                }
                 completion(
                     InternalAdLoadResult(
-                        result: .failure(ChartboostMediationError(code: .loadFailureChartboostMediationNotInitialized)),
+                        result: .failure(error),
                         metrics: nil
                     )
                 )

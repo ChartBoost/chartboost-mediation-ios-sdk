@@ -19,7 +19,7 @@ class MocksContainer {
     var appConfiguration = ApplicationConfigurationMock()
     var application = ApplicationMock()
     var auctionRequestFactory = AuctionsHTTPRequestFactoryMock()
-    var backgroundTimeMonitor = BackgroundTimeMonitorMock()
+    var backgroundTimeMonitor = BackgroundTimeMonitoringMock()
     var bannerControllerConfiguration = BannerControllerConfigurationMock()
     var credentialsValidator = SDKCredentialsValidatorMock()
     var taskDispatcher = TaskDispatcherMock()
@@ -28,7 +28,7 @@ class MocksContainer {
     var partnerControllerConfiguration = PartnerControllerConfigurationMock()
     var auctionService = AdAuctionServiceMock()
     var initializationStatusProvider = MediationInitializationStatusProviderMock()
-    var metrics = MetricsEventLoggerMock()
+    var metrics = MetricsEventLoggingMock()
     var metricsConfiguration = MetricsEventLoggerConfigurationMock()
     var fileStorage = FileStorageMock()
     var fullScreenAdShowCoordinator = FullScreenAdShowCoordinatorMock()
@@ -42,9 +42,23 @@ class MocksContainer {
     var sdkInitializerConfiguration = SDKInitializerConfigurationMock()
     var adFactory = AdFactoryMock()
     var sdkInitializer = SDKInitializerMock()
-    var environment = EnvironmentMock()
+    var environment = Environment(
+        app: AppInfoProvidingMock(),
+        audio: AudioInfoProvidingMock(),
+        device: DeviceInfoProvidingMock(),
+        screen: ScreenInfoProvidingMock(),
+        sdk: SDKInfoProvidingMock(),
+        sdkSettings: SDKSettingsProvidingMock(),
+        session: SessionInfoProvidingMock(),
+        skAdNetwork: SKAdNetworkInfoProvidingMock(),
+        telephonyNetwork: TelephonyNetworkInfoProvidingMock(),
+        testMode: TestModeInfoProvidingMock(),
+        userIDProvider: UserIDProvidingMock(),
+        userSettings: UserSettingsProvidingMock(),
+        userAgent: UserAgentProvidingMock()
+    )
     var impressionCounter = ImpressionCounterMock()
-    var appConfigurationService = AppConfigurationServiceMock()
+    var appConfigurationService = AppConfigurationServiceProtocolMock()
     var bidFulfillOperationFactory = BidFulfillOperationFactoryMock()
     var bannerAdViewDelegate = BannerAdViewDelegateMock()
     var bannerControllerDelegate = BannerControllerDelegateMock()
@@ -53,20 +67,20 @@ class MocksContainer {
     var visibilityTracker = VisibilityTrackerMock()
     var adControllerDelegate = AdControllerDelegateMock()
     var adRepository = AdRepositoryMock()
-    var bannerController = BannerControllerMock()
-    var bannerSwapController = BannerSwapControllerMock()
+    var bannerController = BannerControllerProtocolMock()
+    var bannerSwapController = BannerSwapControllerProtocolMock()
     var adLoader = FullscreenAdLoaderMock()
     var fullscreenAdDelegate = FullscreenAdDelegateMock()
     var consentSettings = ConsentSettingsMock()
     var consentSettingsDelegate = ConsentSettingsDelegateMock()
-    var loadRateLimiter = LoadRateLimiterMock()
-    var networkManager: NetworkManagerProtocol = NetworkManagerMock()
-    var bundleInfo = BundleInfoProviderMock()
+    var loadRateLimiter = LoadRateLimitingMock()
+    var networkManager: NetworkManagerProtocol = NetworkManagerProtocolMock()
+    var bundleInfo = BundleInfoProvidingMock()
     var appTrackingInfo = AppTrackingInfoProviderMock()
-    var chartboostIDProvider = ChartboostIDProviderMock()
-    var infoPlist = InfoPlistMock()
+    var chartboostIDProvider = ChartboostIDProvidingMock()
+    var infoPlist = InfoPlistProvidingMock()
     var reachability = ReachabilityMock()
-    var consoleLogHandlerConfiguration = ConsoleLoggerConfigurationDependencyMock()
-    var privacyConfigurationDependency = PrivacyConfigurationDependencyMock()
+    var consoleLogHandlerConfiguration = MediationConsoleLogHandlerConfigurationMock()
+    var privacyConfigurationDependency = PrivacyConfigurationMock()
     var fullscreenAdQueueConfiguration = FullscreenAdQueueConfigurationMock()
 }

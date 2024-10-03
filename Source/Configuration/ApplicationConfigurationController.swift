@@ -89,7 +89,7 @@ final class PersistingApplicationConfigurationController: ApplicationConfigurati
     }
 
     /// Updates the configuration using the persisted data from a previous session, if available.
-    /// Note: this should be called when the SDK class is instantiated. Only the first call is respected.
+    /// Note: this should be called when the SDK class is instantiated.
     /// Nothing happens if the configuration has been fetched from backend.
     func restorePersistedConfiguration() {
         let url: URL

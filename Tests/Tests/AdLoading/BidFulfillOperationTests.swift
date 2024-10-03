@@ -55,7 +55,7 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
     
     /// Validates that the bid fulfiller returns fails early on fulfill() if another fulfill operation was already ongoing.
     func testFulfillFailsIfAPreviousFulfillmentIsStillOngoing() {
-        bids = [Bid.makeMock()]
+        bids = [Bid.test()]
         var completed = false
         // Fulfill 1 bids
         operation.run { result in
@@ -86,12 +86,12 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
     
     /// Validates that the bid fulfiller finishes when the first bid load succeeds without evaluating any other bid
     func testFulfillWhenFirstBidLoadSucceeds() {
-        let bid1 = Bid.makeMock()
-        let bid2 = Bid.makeMock()
-        let bid3 = Bid.makeMock()
+        let bid1 = Bid.test()
+        let bid2 = Bid.test()
+        let bid3 = Bid.test()
         bids = [bid1, bid2, bid3]
         let expectedRequest1 = partnerLoadRequest(for: bid1)
-        let expectedPartnerAd1 = PartnerAdMock(request: expectedRequest1)
+        let expectedPartnerAd1 = PartnerFullscreenAdMock(request: expectedRequest1)
         let expectedLoadAttempt1 = MetricsEvent.test(bid: bid1, errorCode: nil)
 
         var completed = false
@@ -123,13 +123,13 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
 
     /// Validates that the bid fulfiller finishes when the second bid load succeeds after the first one failed.
     func testFulfillWhenFirstBidLoadFailsAndSecondBidLoadSucceeds() {
-        let bid1 = Bid.makeMock()
-        let bid2 = Bid.makeMock()
-        let bid3 = Bid.makeMock()
+        let bid1 = Bid.test()
+        let bid2 = Bid.test()
+        let bid3 = Bid.test()
         bids = [bid1, bid2, bid3]
         let expectedRequest1 = partnerLoadRequest(for: bid1)
         let expectedRequest2 = partnerLoadRequest(for: bid2)
-        let expectedPartnerAd2 = PartnerAdMock(request: expectedRequest2)
+        let expectedPartnerAd2 = PartnerFullscreenAdMock(request: expectedRequest2)
         let expectedLoadAttempt1 = MetricsEvent.test(bid: bid1, errorCode: .partnerError)
         let expectedLoadAttempt2 = MetricsEvent.test(bid: bid2, errorCode: nil)
         
@@ -170,16 +170,16 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
     
     /// Validates that the bid fulfiller finishes when the last bid load succeeds after all the previous ones failed.
     func testFulfillWhenAllBidLoadsFailExpceptTheLastOne() {
-        let bid1 = Bid.makeMock()
-        let bid2 = Bid.makeMock()
-        let bid3 = Bid.makeMock()
-        let bid4 = Bid.makeMock()
+        let bid1 = Bid.test()
+        let bid2 = Bid.test()
+        let bid3 = Bid.test()
+        let bid4 = Bid.test()
         bids = [bid1, bid2, bid3, bid4]
         let expectedRequest1 = partnerLoadRequest(for: bid1)
         let expectedRequest2 = partnerLoadRequest(for: bid2)
         let expectedRequest3 = partnerLoadRequest(for: bid3)
         let expectedRequest4 = partnerLoadRequest(for: bid4)
-        let expectedPartnerAd4 = PartnerAdMock(request: expectedRequest4)
+        let expectedPartnerAd4 = PartnerFullscreenAdMock(request: expectedRequest4)
         let expectedLoadAttempt1 = MetricsEvent.test(bid: bid1, errorCode: .partnerError)
         let expectedLoadAttempt2 = MetricsEvent.test(bid: bid2, errorCode: .loadFailureTimeout)
         let expectedLoadAttempt3 = MetricsEvent.test(bid: bid3, errorCode: .loadFailurePartnerInstanceNotFound)
@@ -218,7 +218,7 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
         // Check that we have not completed yet and the partner controller was asked to cancel the previous load and load the third bid
         XCTAssertFalse(completed)
         var partnerLoadCompletion3: (Result<PartnerAd, ChartboostMediationError>) -> Void = { _ in }
-        XCTAssertMethodCalls(mocks.partnerController, .cancelLoad, .routeLoad, parameters: [], [expectedRequest3, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion3 = $0 }])
+        XCTAssertMethodCalls(mocks.partnerController, .routeLoad, parameters: [expectedRequest3, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion3 = $0 }])
         
         // Make partner controller finish the load with a failure
         partnerLoadCompletion3(.failure(ChartboostMediationError(code: .loadFailurePartnerInstanceNotFound)))
@@ -237,10 +237,10 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
     
     /// Validates that the bid fulfiller finishes with a failure when all partners fail.
     func testFulfillWhenAllBidLoadsFail() {
-        let bid1 = Bid.makeMock()
-        let bid2 = Bid.makeMock()
-        let bid3 = Bid.makeMock()
-        let bid4 = Bid.makeMock()
+        let bid1 = Bid.test()
+        let bid2 = Bid.test()
+        let bid3 = Bid.test()
+        let bid4 = Bid.test()
         bids = [bid1, bid2, bid3, bid4]
         let expectedRequest1 = partnerLoadRequest(for: bid1)
         let expectedRequest2 = partnerLoadRequest(for: bid2)
@@ -283,7 +283,7 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
         // Check that we have not completed yet and the partner controller was asked to cancel the previous load and load the third bid
         XCTAssertFalse(completed)
         var partnerLoadCompletion3: (Result<PartnerAd, ChartboostMediationError>) -> Void = { _ in }
-        XCTAssertMethodCalls(mocks.partnerController, .cancelLoad, .routeLoad, parameters: [], [expectedRequest3, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion3 = $0 }])
+        XCTAssertMethodCalls(mocks.partnerController, .routeLoad, parameters: [expectedRequest3, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion3 = $0 }])
         
         // Make partner controller finish the load with a failure
         partnerLoadCompletion3(.failure(ChartboostMediationError(code: .loadFailureAdapterNotFound)))
@@ -302,8 +302,8 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
     
     /// Validates that the bid fulfiller times out a bid load when it takes too long.
     func testFulfillWhenBidsTimeOut() {
-        let bid1 = Bid.makeMock()
-        let bid2 = Bid.makeMock()
+        let bid1 = Bid.test()
+        let bid2 = Bid.test()
         bids = [bid1, bid2]
         let expectedRequest1 = partnerLoadRequest(for: bid1)
         let expectedRequest2 = partnerLoadRequest(for: bid2)
@@ -335,7 +335,7 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
         
         // Check that we have not completed yet and the partner controller was asked to cancel the previous load and load the second bid
         XCTAssertFalse(completed)
-        XCTAssertMethodCalls(mocks.partnerController, .cancelLoad, .routeLoad, parameters: [], [expectedRequest2, viewController, delegate, XCTMethodIgnoredParameter()])
+        XCTAssertMethodCalls(mocks.partnerController, .routeLoad, parameters: [expectedRequest2, viewController, delegate, XCTMethodIgnoredParameter()])
         // Check that the timeout task has been scheduled
         XCTAssertMethodCalls(mocks.taskDispatcher, .asyncDelayed, parameters: [XCTMethodIgnoredParameter(), mocks.bidFulfillOperationConfiguration.fullscreenLoadTimeout, XCTMethodIgnoredParameter()])
         
@@ -348,13 +348,13 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
     
     /// Validates that the bid fulfiller ignores a late load response received after the timeout period.
     func testFulfillIgnoresATimedOutLoadResponse() {
-        let bid1 = Bid.makeMock()
-        let bid2 = Bid.makeMock()
+        let bid1 = Bid.test()
+        let bid2 = Bid.test()
         bids = [bid1, bid2]
         let expectedRequest1 = partnerLoadRequest(for: bid1)
         let expectedRequest2 = partnerLoadRequest(for: bid2)
-        let expectedPartnerAd1 = PartnerAdMock(request: expectedRequest1)
-        let expectedPartnerAd2 = PartnerAdMock(request: expectedRequest2)
+        let expectedPartnerAd1 = PartnerFullscreenAdMock(request: expectedRequest1)
+        let expectedPartnerAd2 = PartnerFullscreenAdMock(request: expectedRequest2)
         let expectedLoadAttempt1 = MetricsEvent.test(bid: bid1, errorCode: .loadFailureTimeout)
         let expectedLoadAttempt2 = MetricsEvent.test(bid: bid2, errorCode: nil)
         
@@ -384,7 +384,7 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
         // Check that we have not completed yet and the partner controller was asked to cancel the previous load and load the second bid
         XCTAssertFalse(completed)
         var partnerLoadCompletion2: (Result<PartnerAd, ChartboostMediationError>) -> Void = { _ in }
-        XCTAssertMethodCalls(mocks.partnerController, .cancelLoad, .routeLoad, parameters: [], [expectedRequest2, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion2 = $0 }])
+        XCTAssertMethodCalls(mocks.partnerController, .routeLoad, parameters: [expectedRequest2, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion2 = $0 }])
         
         // Make first bid load finish now, which should be too late!
         partnerLoadCompletion(.success(expectedPartnerAd1))
@@ -401,7 +401,7 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
     
     /// Validates that the bid fulfiller sends proper events to the event logger when a bid fails.
     func testFulfillLogsErrorEvents() {
-        let bid1 = Bid.makeMock()
+        let bid1 = Bid.test()
         bids = [bid1]
         let expectedRequest1 = partnerLoadRequest(for: bid1)
         let expectedLoadAttempt1 = MetricsEvent.test(bid: bid1, errorCode: .partnerError)
@@ -435,14 +435,14 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
     
     /// Validates that the bid fulfiller returns load attempt models with proper loadTime values.
     func testFulfillReturnsAttemptsWithProperLoadTime() {
-        let bid1 = Bid.makeMock()
-        let bid2 = Bid.makeMock()
-        let bid3 = Bid.makeMock()
+        let bid1 = Bid.test()
+        let bid2 = Bid.test()
+        let bid3 = Bid.test()
         bids = [bid1, bid2, bid3]
         let expectedRequest1 = partnerLoadRequest(for: bid1)
         let expectedRequest2 = partnerLoadRequest(for: bid2)
         let expectedRequest3 = partnerLoadRequest(for: bid3)
-        let expectedPartnerAd3 = PartnerAdMock(request: expectedRequest3)
+        let expectedPartnerAd3 = PartnerFullscreenAdMock(request: expectedRequest3)
         var expectedLoadAttempt1: MetricsEvent?
         var expectedLoadAttempt2: MetricsEvent?
         let expectedLoadAttempt3 = MetricsEvent.test(bid: bid3, errorCode: nil, loadTime: 0)
@@ -486,7 +486,7 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
         // Check that we have not completed yet and the partner controller was asked to cancel the previous load and load the third bid
         XCTAssertFalse(completed)
         var partnerLoadCompletion3: (Result<PartnerAd, ChartboostMediationError>) -> Void = { _ in }
-        XCTAssertMethodCalls(mocks.partnerController, .cancelLoad, .routeLoad, parameters: [], [expectedRequest3, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion3 = $0 }])
+        XCTAssertMethodCalls(mocks.partnerController, .routeLoad, parameters: [expectedRequest3, viewController, delegate, XCTMethodCaptureParameter { partnerLoadCompletion3 = $0 }])
         
         // Make partner controller finish the load with success after 0 seconds
         partnerLoadCompletion3(.success(expectedPartnerAd3))
@@ -497,14 +497,14 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
 
     func testRoutesLoadWithBannerSizeFromBid() throws {
         request = InternalAdLoadRequest.test(adSize: .standard, adFormat: .banner)
-        bids = [Bid.makeMock(size: CGSize(width: 400.0, height: 100.0))]
+        bids = [Bid.test(size: CGSize(width: 400.0, height: 100.0))]
         operation.run { _ in }
         try assertRoutesLoad(bid: bids[0])
     }
 
     func testRoutesLoadWithRequestedSizeIfBidSizeIsNil() throws {
         request = InternalAdLoadRequest.test(adSize: .standard, adFormat: .banner)
-        bids = [Bid.makeMock()]
+        bids = [Bid.test()]
         operation.run { _ in }
         try assertRoutesLoad(bid: bids[0])
     }
@@ -512,7 +512,7 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
     // MARK: - Banner Size
     func testAdSizeIsNilWhenAdDoesNotContainSizeAndRequestedAdSizeIsNil() throws {
         request = InternalAdLoadRequest.test(adSize: nil, adFormat: .interstitial)
-        bids = [Bid.makeMock()]
+        bids = [Bid.test()]
 
         let loadExpectation = expectation(description: "Successful load")
         operation.run { result in
@@ -526,15 +526,15 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
 
         let completion = try assertRoutesLoad(bid: bids[0])
         // Make partner controller finish the load
-        let ad = PartnerAdMock(bannerSize: nil)
+        let ad = PartnerBannerAdMock(size: nil)
         completion(.success(ad))
         waitForExpectations(timeout: 1.0)
     }
 
     func testAdSizeIsRequestedAdSizeWhenAdDoesNotContainSize() throws {
         request = InternalAdLoadRequest.test(adSize: .standard, adFormat: .banner)
-        bids = [Bid.makeMock()]
-        let partnerAd = PartnerAdMock(bannerView: UIView(), bannerSize: nil)
+        bids = [Bid.test()]
+        let partnerAd = PartnerBannerAdMock(view: UIView(), size: nil)
 
         let loadExpectation = expectation(description: "Successful load")
         operation.run { result in
@@ -556,10 +556,10 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
 
     func testAdaptiveAdSizeIsParsedFromAd() throws {
         request = InternalAdLoadRequest.test(adSize: .adaptive(width: 500.0), adFormat: .banner)
-        bids = [Bid.makeMock()]
-        let partnerAd = PartnerAdMock(
-            bannerView: UIView(),
-            bannerSize: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .adaptive)
+        bids = [Bid.test()]
+        let partnerAd = PartnerBannerAdMock(
+            view: UIView(),
+            size: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .adaptive)
         )
 
         let loadExpectation = expectation(description: "Successful load")
@@ -582,10 +582,10 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
 
     func testFixedAdSizeIsParsedFromAd() throws {
         request = InternalAdLoadRequest.test(adSize: .adaptive(width: 500.0), adFormat: .banner)
-        bids = [Bid.makeMock()]
-        let partnerAd = PartnerAdMock(
-            bannerView: UIView(),
-            bannerSize: PartnerBannerSize(size: CGSize(width: 320, height: 50), type: .fixed)
+        bids = [Bid.test()]
+        let partnerAd = PartnerBannerAdMock(
+            view: UIView(),
+            size: PartnerBannerSize(size: CGSize(width: 320, height: 50), type: .fixed)
         )
 
         // Load ad
@@ -612,10 +612,10 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
         request = InternalAdLoadRequest.test(adSize: .adaptive(width: 500.0), adFormat: .banner)
-        bids = [Bid.makeMock()]
-        let partnerAd = PartnerAdMock(
-            bannerView: UIView(),
-            bannerSize: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .adaptive)
+        bids = [Bid.test()]
+        let partnerAd = PartnerBannerAdMock(
+            view: UIView(),
+            size: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .adaptive)
         )
 
         // Load ad
@@ -641,10 +641,10 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
         request = InternalAdLoadRequest.test(adSize: .adaptive(width: 400.0, maxHeight: 50.0), adFormat: .banner)
-        bids = [Bid.makeMock()]
-        let partnerAd = PartnerAdMock(
-            bannerView: UIView(),
-            bannerSize: PartnerBannerSize(size: CGSize(width: 400, height: 50), type: .adaptive)
+        bids = [Bid.test()]
+        let partnerAd = PartnerBannerAdMock(
+            view: UIView(),
+            size: PartnerBannerSize(size: CGSize(width: 400, height: 50), type: .adaptive)
         )
 
         // Load ad
@@ -670,10 +670,10 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
         request = InternalAdLoadRequest.test(adSize: .standard, adFormat: .banner)
-        bids = [Bid.makeMock()]
-        let partnerAd = PartnerAdMock(
-            bannerView: UIView(),
-            bannerSize: PartnerBannerSize(size: CGSize(width: 320, height: 50), type: .fixed)
+        bids = [Bid.test()]
+        let partnerAd = PartnerBannerAdMock(
+            view: UIView(),
+            size: PartnerBannerSize(size: CGSize(width: 320, height: 50), type: .fixed)
         )
 
         // Load ad
@@ -699,10 +699,10 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
         mocks.environment.sdkSettings.discardOversizedAds = false
 
         request = InternalAdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
-        bids = [Bid.makeMock()]
-        let partnerAd = PartnerAdMock(
-            bannerView: UIView(),
-            bannerSize: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .adaptive)
+        bids = [Bid.test()]
+        let partnerAd = PartnerBannerAdMock(
+            view: UIView(),
+            size: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .adaptive)
         )
 
         // Load ad
@@ -728,10 +728,10 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
         mocks.environment.sdkSettings.discardOversizedAds = false
 
         request = InternalAdLoadRequest.test(adSize: .adaptive(width: 500.0, maxHeight: 50.0), adFormat: .banner)
-        bids = [Bid.makeMock()]
-        let partnerAd = PartnerAdMock(
-            bannerView: UIView(),
-            bannerSize: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .adaptive)
+        bids = [Bid.test()]
+        let partnerAd = PartnerBannerAdMock(
+            view: UIView(),
+            size: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .adaptive)
         )
 
         // Load ad
@@ -757,10 +757,10 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
         request = InternalAdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
-        bids = [Bid.makeMock()]
-        let partnerAd = PartnerAdMock(
-            bannerView: UIView(),
-            bannerSize: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .fixed)
+        bids = [Bid.test()]
+        let partnerAd = PartnerBannerAdMock(
+            view: UIView(),
+            size: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .fixed)
         )
 
         // Load ad
@@ -787,10 +787,10 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
         request = InternalAdLoadRequest.test(adSize: .adaptive(width: 500.0, maxHeight: 50.0), adFormat: .banner)
-        bids = [Bid.makeMock()]
-        let partnerAd = PartnerAdMock(
-            bannerView: UIView(),
-            bannerSize: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .fixed)
+        bids = [Bid.test()]
+        let partnerAd = PartnerBannerAdMock(
+            view: UIView(),
+            size: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .fixed)
         )
 
         // Load ad
@@ -817,8 +817,8 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
         request = InternalAdLoadRequest.test(adSize: nil, adFormat: .banner)
-        bids = [Bid.makeMock()]
-        let partnerAd = PartnerAdMock(bannerView: UIView())
+        bids = [Bid.test()]
+        let partnerAd = PartnerBannerAdMock(view: UIView())
 
         // Load ad
         let loadExpectation = expectation(description: "Successful load")
@@ -841,8 +841,8 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
         request = InternalAdLoadRequest.test(adSize: nil, adFormat: .banner)
-        bids = [Bid.makeMock()]
-        let partnerAd = PartnerAdMock(bannerView: UIView())
+        bids = [Bid.test()]
+        let partnerAd = PartnerBannerAdMock(view: UIView())
 
         // Load ad
         let loadExpectation = expectation(description: "Successful load")
@@ -865,10 +865,10 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
         mocks.environment.sdkSettings.discardOversizedAds = true
 
         request = InternalAdLoadRequest.test(adSize: .adaptive(width: 500.0, maxHeight: 50.0), adFormat: .adaptiveBanner)
-        bids = [Bid.makeMock()]
-        let partnerAd = PartnerAdMock(
-            bannerView: UIView(),
-            bannerSize: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .fixed)
+        bids = [Bid.test()]
+        let partnerAd = PartnerBannerAdMock(
+            view: UIView(),
+            size: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .fixed)
         )
 
         // Load ad
@@ -897,12 +897,12 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
 
         request = InternalAdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
         bids = [
-            Bid.makeMock(),
-            Bid.makeMock()
+            Bid.test(),
+            Bid.test()
         ]
-        let partnerAd = PartnerAdMock(
-            bannerView: UIView(),
-            bannerSize: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .adaptive)
+        let partnerAd = PartnerBannerAdMock(
+            view: UIView(),
+            size: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .adaptive)
         )
 
         // Load ad
@@ -930,12 +930,12 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
 
         request = InternalAdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
         bids = [
-            Bid.makeMock(),
-            Bid.makeMock()
+            Bid.test(),
+            Bid.test()
         ]
-        let partnerAd = PartnerAdMock(
-            bannerView: UIView(),
-            bannerSize: PartnerBannerSize(size: CGSize(width: 300, height: 100), type: .adaptive)
+        let partnerAd = PartnerBannerAdMock(
+            view: UIView(),
+            size: PartnerBannerSize(size: CGSize(width: 300, height: 100), type: .adaptive)
         )
 
         // Load ad
@@ -963,12 +963,12 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
 
         request = InternalAdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
         bids = [
-            Bid.makeMock(),
-            Bid.makeMock()
+            Bid.test(),
+            Bid.test()
         ]
-        let partnerAd = PartnerAdMock(
-            bannerView: UIView(),
-            bannerSize: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .fixed)
+        let partnerAd = PartnerBannerAdMock(
+            view: UIView(),
+            size: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .fixed)
         )
 
         // Load ad
@@ -989,9 +989,9 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
         completion(.success(partnerAd))
         assertRoutesInvalidate(ad: partnerAd)
 
-        let partnerAd2 = PartnerAdMock(
-            bannerView: UIView(),
-            bannerSize: PartnerBannerSize(size: CGSize(width: 250, height: 100), type: .adaptive)
+        let partnerAd2 = PartnerBannerAdMock(
+            view: UIView(),
+            size: PartnerBannerSize(size: CGSize(width: 250, height: 100), type: .adaptive)
         )
         let completion2 = try assertRoutesLoad(bid: bids[1])
         completion2(.success(partnerAd2))
@@ -1005,12 +1005,12 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
 
         request = InternalAdLoadRequest.test(adSize: .adaptive(width: 300.0), adFormat: .banner)
         bids = [
-            Bid.makeMock(),
-            Bid.makeMock()
+            Bid.test(),
+            Bid.test()
         ]
-        let partnerAd = PartnerAdMock(
-            bannerView: UIView(),
-            bannerSize: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .fixed)
+        let partnerAd = PartnerBannerAdMock(
+            view: UIView(),
+            size: PartnerBannerSize(size: CGSize(width: 400, height: 100), type: .fixed)
         )
 
         // Load ad
@@ -1032,9 +1032,9 @@ class BidFulfillOperationTests: ChartboostMediationTestCase {
         completion(.success(partnerAd))
         assertRoutesInvalidate(ad: partnerAd)
 
-        let partnerAd2 = PartnerAdMock(
-            bannerView: UIView(),
-            bannerSize: PartnerBannerSize(size: CGSize(width: 500, height: 150), type: .adaptive)
+        let partnerAd2 = PartnerBannerAdMock(
+            view: UIView(),
+            size: PartnerBannerSize(size: CGSize(width: 500, height: 150), type: .adaptive)
         )
         let completion2 = try assertRoutesLoad(bid: bids[1])
         completion2(.success(partnerAd2))

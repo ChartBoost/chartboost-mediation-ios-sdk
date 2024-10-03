@@ -21,7 +21,7 @@ public class ChartboostMediationError: NSError {
 
     // MARK: - Properties
 
-    /// The underlying ``Code`` for this error.
+    /// The underlying ``ChartboostMediationError/Code`` for this error.
     @objc public var chartboostMediationCode: Code {
         Code(rawValue: code) ?? .unknown
     }

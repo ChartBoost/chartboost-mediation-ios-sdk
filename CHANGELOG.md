@@ -2,6 +2,12 @@ iOS Change Log
 ==================
 Check for the latest Chartboost Mediation SDK at the Chartboost website.
 
+### Version 5.1.0 *(2024-10-03)*
+Chartboost Mediation SDKs that have reached their end-of-life will now be disabled. See [SDK Deprecation Policy](https://docs.chartboost.com/en/mediation/integrate/ios/sdk-deprecation-policy/) documentation.
+
+Improvements:
+- Added support for GPP Sections String (`IABGPP_GppSID`). This is read from `UserDefaults` and is passed in the auction request.
+
 ### Version 5.0.0 *(2024-08-01)*
 Improvements:
 - Completed rebranding all APIs from Helium to Chartboost Mediation.

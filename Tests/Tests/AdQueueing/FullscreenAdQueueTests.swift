@@ -47,10 +47,10 @@ final class FullscreenAdQueueTests: ChartboostMediationTestCase {
     func testStartAndStopEventsSent() throws {
         queue.start()
         mocks.taskDispatcher.performDelayedWorkItems()
-        XCTAssertMethodCalls(mocks.metrics, .logStartQueue, parameters: [])
+        XCTAssertMethodCalls(mocks.metrics, .logStartQueue, parameters: [queue])
         queue.stop()
         mocks.taskDispatcher.performDelayedWorkItems()
-        XCTAssertMethodCalls(mocks.metrics, .logEndQueue, parameters: [])
+        XCTAssertMethodCalls(mocks.metrics, .logEndQueue, parameters: [queue])
     }
 
     /// The queue waits to enter the .running state if called prior to SDK init.
@@ -68,7 +68,7 @@ final class FullscreenAdQueueTests: ChartboostMediationTestCase {
 
         // Again, test both the publisher-facing and backend-facing indicators of queue state.
         XCTAssertTrue(queue.isRunning)
-        XCTAssertMethodCalls(mocks.metrics, .logStartQueue, parameters: [])
+        XCTAssertMethodCalls(mocks.metrics, .logStartQueue, parameters: [queue])
     }
 
     /// Every time a stopped queue is restarted, it adopts a new ID.
@@ -212,7 +212,7 @@ final class FullscreenAdQueueTests: ChartboostMediationTestCase {
         // care of by the partner controller
         XCTAssertNoMethodCalls(controller)
         // Confirm that queue delegate methods have been called
-        XCTAssertMethodCalls(delegate, .didRemoveExpiredAd, parameters: [queue, XCTMethodIgnoredParameter()])
+        XCTAssertMethodCalls(delegate, .fullscreenAdQueueDidRemoveExpiredAd, parameters: [queue, XCTMethodIgnoredParameter()])
     }
 
     /// Validates that on timeout a queued ad is expired.
@@ -230,7 +230,7 @@ final class FullscreenAdQueueTests: ChartboostMediationTestCase {
         // Confirm that the ad is forced to be expired through the controller, triggering metrics logging
         XCTAssertMethodCalls(controller, .forceInternalExpiration, parameters: [])
         // Confirm that queue delegate methods have been called
-        XCTAssertMethodCalls(delegate, .didRemoveExpiredAd, parameters: [queue, XCTMethodIgnoredParameter()])
+        XCTAssertMethodCalls(delegate, .fullscreenAdQueueDidRemoveExpiredAd, parameters: [queue, XCTMethodIgnoredParameter()])
 
         // Simulate a partner expiration event on the ad
         ad.delegate?.didExpire?(ad: ad)

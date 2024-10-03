@@ -1,5 +1,7 @@
 # ``ChartboostMediationSDK``
 
+A programmatic ad monetization platform for mobile games and apps.
+
 For more information on the Chartboost Mediation SDK, see [Chartboost Developers](https://developers.chartboost.com/docs/mediation-ios-get-started).
 
 ## Topics

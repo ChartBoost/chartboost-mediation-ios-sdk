@@ -52,7 +52,7 @@ class DependenciesContainerMock: DependenciesContainer {
     var sdkInitializer: SDKInitializer { mocks.sdkInitializer }
     var impressionCounter: ImpressionCounter { mocks.impressionCounter }
     var appConfigurationService: AppConfigurationServiceProtocol { mocks.appConfigurationService }
-    var environment: EnvironmentProviding { mocks.environment }
+    var environment: Environment { mocks.environment }
     var networkManager: NetworkManagerProtocol { mocks.networkManager }
     var adLoader: FullscreenAdLoader { mocks.adLoader }
     var consentSettings: ConsentSettings { mocks.consentSettings }

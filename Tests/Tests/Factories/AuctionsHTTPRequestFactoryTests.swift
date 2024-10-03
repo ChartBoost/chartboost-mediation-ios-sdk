@@ -12,10 +12,6 @@ class AuctionsHTTPRequestFactoryTests: ChartboostMediationTestCase {
     lazy var factory = MediationAuctionsHTTPRequestFactory()
     let utcoffset = NSTimeZone.local.secondsFromGMT(for: Date()) / 60
 
-    var environment: EnvironmentMock {
-        mocks.environment
-    }
-
     func testInterstitialBidRequestUsingDefaultMockData() throws {
         let adLoadRequest = InternalAdLoadRequest.test(
             adSize: BannerSize(size: CGSize(width: 50, height: 50), type: .fixed),
@@ -29,8 +25,8 @@ class AuctionsHTTPRequestFactoryTests: ChartboostMediationTestCase {
         // imp
         XCTAssertEqual(1, body.imp.count)
         let impression = body.imp[0]
-        XCTAssertEqual(environment.sdk.sdkName, impression.displaymanager)
-        XCTAssertEqual(environment.sdk.sdkVersion, impression.displaymanagerver)
+        XCTAssertEqual(mocks.environment.sdk.sdkName, impression.displaymanager)
+        XCTAssertEqual(mocks.environment.sdk.sdkVersion, impression.displaymanagerver)
         XCTAssertEqual(1, impression.instl)
         XCTAssertEqual(adLoadRequest.mediationPlacement, impression.tagid)
         XCTAssertEqual(1, impression.secure)
@@ -69,63 +65,74 @@ class AuctionsHTTPRequestFactoryTests: ChartboostMediationTestCase {
         // app
         XCTAssertNotNil(body.app)
         if let app = body.app {
-            XCTAssertEqual(environment.app.chartboostAppID, app.id)
-            XCTAssertEqual(environment.app.bundleID, app.bundle)
-            XCTAssertEqual(environment.app.appVersion, app.ver)
-            XCTAssertNil(app.ext)
+            XCTAssertEqual(mocks.environment.app.chartboostAppID, app.id)
+            XCTAssertEqual(mocks.environment.app.bundleID, app.bundle)
+            XCTAssertEqual(mocks.environment.app.appVersion, app.ver)
+            if mocks.environment.app.gameEngineName != nil
+                || mocks.environment.app.gameEngineVersion != nil
+            {
+                XCTAssertEqual(mocks.environment.app.gameEngineName, app.ext?.game_engine_name)
+                XCTAssertEqual(mocks.environment.app.gameEngineVersion, app.ext?.game_engine_version)
+            } else {
+                XCTAssertNil(app.ext)
+            }
         }
 
         // device
         XCTAssertNotNil(body.device)
         if let device = body.device {
-            XCTAssertEqual(environment.userAgent.userAgent, device.ua)
+            XCTAssertEqual(mocks.environment.userAgent.userAgent, device.ua)
             XCTAssertEqual(0, device.lmt)
-            XCTAssertEqual(OpenRTB.Device.DeviceType.phone, device.devicetype)
-            XCTAssertEqual(environment.device.deviceMake, device.make)
-            XCTAssertEqual(environment.device.deviceModel, device.model)
-            XCTAssertEqual(environment.device.osName, device.os)
-            XCTAssertEqual(environment.device.osVersion, device.osv)
-            XCTAssertEqual(Int(environment.screen.screenHeight), device.h)
-            XCTAssertEqual(Int(environment.screen.screenWidth), device.w)
-            XCTAssertEqual(environment.screen.pixelRatio, device.pxratio)
-            XCTAssertEqual(environment.userSettings.languageCode, device.language)
-            XCTAssertEqual(environment.telephonyNetwork.carrierName, device.carrier)
-            XCTAssertNil(device.mccmnc)
-            XCTAssertEqual(OpenRTB.Device.ConnectionType.unknown, device.connectiontype)
-            XCTAssertEqual(environment.appTracking.idfa, device.ifa)
+            XCTAssertEqual(mocks.environment.device.deviceType.asOpenRTBDeviceType, device.devicetype)
+            XCTAssertEqual(mocks.environment.device.deviceMake, device.make)
+            XCTAssertEqual(mocks.environment.device.deviceModel, device.model)
+            XCTAssertEqual(mocks.environment.device.osName, device.os)
+            XCTAssertEqual(mocks.environment.device.osVersion, device.osv)
+            XCTAssertEqual(Int(mocks.environment.screen.screenHeight), device.h)
+            XCTAssertEqual(Int(mocks.environment.screen.screenWidth), device.w)
+            XCTAssertEqual(mocks.environment.screen.pixelRatio, device.pxratio)
+            XCTAssertEqual(mocks.environment.userSettings.languageCode, device.language)
+            XCTAssertEqual(mocks.environment.telephonyNetwork.carrierName, device.carrier)
+            if let mobileCountryCode = mocks.environment.telephonyNetwork.mobileCountryCode, let mobileNetworkCode = mocks.environment.telephonyNetwork.mobileNetworkCode {
+                XCTAssertEqual("\(mobileCountryCode)-\(mobileNetworkCode)", device.mccmnc)
+            } else {
+                XCTAssertNil(device.mccmnc)
+            }
+            XCTAssertEqual(OpenRTB.Device.ConnectionType(rawValue: mocks.environment.telephonyNetwork.connectionType.rawValue) ?? .unknown, device.connectiontype)
+            XCTAssertEqual(mocks.environment.appTracking.idfa, device.ifa)
             XCTAssertEqual(utcoffset, device.geo?.utcoffset)
             XCTAssertNotNil(device.ext)
             if let ext = device.ext {
-                XCTAssertEqual(environment.appTracking.idfv, ext.ifv)
-                XCTAssertEqual(environment.appTracking.appTransparencyAuthStatus, ext.atts)
-                XCTAssertEqual(environment.userSettings.inputLanguages, ext.inputLanguage)
-                XCTAssertEqual(environment.telephonyNetwork.networkTypes, ext.networktype)
-                XCTAssertEqual(environment.audio.audioOutputTypes, ext.audiooutputtype)
-                XCTAssertEqual(environment.audio.audioInputTypes, ext.audioinputtype)
-                XCTAssertEqual(environment.audio.audioVolume, ext.audiovolume)
-                XCTAssertEqual(environment.screen.screenBrightness, ext.screenbright)
-                XCTAssertEqual(environment.device.batteryLevel, ext.batterylevel)
-                XCTAssertEqual(environment.device.isBatteryCharging ? 1 : 0, ext.charging)
-                XCTAssertEqual(environment.screen.isDarkModeEnabled ? 1 : 0, ext.darkmode)
-                XCTAssertEqual(environment.device.totalDiskSpace, ext.totaldisk)
-                XCTAssertEqual(environment.device.freeDiskSpace, ext.diskspace)
-                XCTAssertEqual(environment.userSettings.textSize, ext.textsize)
-                XCTAssertEqual(environment.userSettings.isBoldTextEnabled ? 1 : 0, ext.boldtext)
+                XCTAssertEqual(mocks.environment.appTracking.idfv, ext.ifv)
+                XCTAssertEqual(mocks.environment.appTracking.appTransparencyAuthStatus, ext.atts)
+                XCTAssertEqual(mocks.environment.userSettings.inputLanguages, ext.inputLanguage)
+                XCTAssertEqual(mocks.environment.telephonyNetwork.networkTypes, ext.networktype)
+                XCTAssertEqual(mocks.environment.audio.audioOutputTypes, ext.audiooutputtype)
+                XCTAssertEqual(mocks.environment.audio.audioInputTypes, ext.audioinputtype)
+                XCTAssertEqual(mocks.environment.audio.audioVolume, ext.audiovolume)
+                XCTAssertEqual(mocks.environment.screen.screenBrightness, ext.screenbright)
+                XCTAssertEqual(mocks.environment.device.batteryLevel, ext.batterylevel)
+                XCTAssertEqual(mocks.environment.device.isBatteryCharging ? 1 : 0, ext.charging)
+                XCTAssertEqual(mocks.environment.screen.isDarkModeEnabled ? 1 : 0, ext.darkmode)
+                XCTAssertEqual(mocks.environment.device.totalDiskSpace, ext.totaldisk)
+                XCTAssertEqual(mocks.environment.device.freeDiskSpace, ext.diskspace)
+                XCTAssertEqual(mocks.environment.userSettings.textSize, ext.textsize)
+                XCTAssertEqual(mocks.environment.userSettings.isBoldTextEnabled ? 1 : 0, ext.boldtext)
             }
         }
 
         // user
         XCTAssertNotNil(body.user)
         if let user = body.user {
-            XCTAssertEqual(environment.userIDProvider.userID, user.id)
+            XCTAssertEqual(mocks.environment.userIDProvider.userID, user.id)
             XCTAssertNil(user.consent)
             XCTAssertNotNil(user.ext)
             if let ext = user.ext {
                 XCTAssertNil(ext.consent)
-                XCTAssertEqual(UInt(environment.session.elapsedSessionDuration), ext.sessionduration)
-                XCTAssertEqual(UInt(environment.impressionCounter.interstitialImpressionCount), ext.impdepth)
+                XCTAssertEqual(UInt(mocks.environment.session.elapsedSessionDuration), ext.sessionduration)
+                XCTAssertEqual(UInt(mocks.environment.impressionCounter.interstitialImpressionCount), ext.impdepth)
                 XCTAssertEqual(0, ext.keywords?.count ?? 0)
-                XCTAssertEqual(environment.userIDProvider.publisherUserID, ext.publisher_user_id)
+                XCTAssertEqual(mocks.environment.userIDProvider.publisherUserID, ext.publisher_user_id)
             }
         }
 
@@ -147,13 +154,13 @@ class AuctionsHTTPRequestFactoryTests: ChartboostMediationTestCase {
             XCTAssertEqual(adLoadRequest.loadID, ext.helium_sdk_request_id)
             XCTAssertNotNil(ext.skadn)
             if let skadn = ext.skadn {
-                XCTAssertNotNil(environment.skAdNetwork.skAdNetworkVersion, skadn.version)
-                XCTAssertEqual(environment.skAdNetwork.skAdNetworkIDs, skadn.skadnetids)
+                XCTAssertNotNil(mocks.environment.skAdNetwork.skAdNetworkVersion, skadn.version)
+                XCTAssertEqual(mocks.environment.skAdNetwork.skAdNetworkIDs, skadn.skadnetids)
             }
         }
 
         // test
-        XCTAssertEqual(environment.testMode.isTestModeEnabled ? 1 : 0, body.test)
+        XCTAssertEqual(mocks.environment.testMode.isTestModeEnabled ? 1 : 0, body.test)
 
         // Check headers
         XCTAssertJSONEqual(
@@ -170,12 +177,12 @@ class AuctionsHTTPRequestFactoryTests: ChartboostMediationTestCase {
             let loopCount = Int.random(in: 5...10)
             for _ in 0..<loopCount {
                 // randomization of input data
-                mocks.environment.randomizeAll()
+                randomizeEnvironmentData()
                 mocks.consentSettings.consents = [
                     "key1": "value1",
                     ConsentKeys.tcf: "asdfb",
                     ConsentKeys.usp: "12345",
-                    ConsentKeys.gpp: "gpp12345",
+                    ConsentKeys.gpp: "gpp1245",
                     ConsentKeys.ccpaOptIn: ConsentValues.granted
                 ]
                 mocks.consentSettings.isUserUnderage = true
@@ -188,8 +195,8 @@ class AuctionsHTTPRequestFactoryTests: ChartboostMediationTestCase {
                 // imp
                 XCTAssertEqual(1, request.imp.count)
                 let impression = request.imp[0]
-                XCTAssertEqual(environment.sdk.sdkName, impression.displaymanager)
-                XCTAssertEqual(environment.sdk.sdkVersion, impression.displaymanagerver)
+                XCTAssertEqual(mocks.environment.sdk.sdkName, impression.displaymanager)
+                XCTAssertEqual(mocks.environment.sdk.sdkVersion, impression.displaymanagerver)
                 switch adFormat {
                 case .banner, .adaptiveBanner:
                     XCTAssertEqual(0, impression.instl)
@@ -244,23 +251,23 @@ class AuctionsHTTPRequestFactoryTests: ChartboostMediationTestCase {
                 // app
                 XCTAssertNotNil(request.app)
                 if let app = request.app {
-                    XCTAssertEqual(environment.app.chartboostAppID, app.id)
-                    XCTAssertEqual(environment.app.bundleID, app.bundle)
-                    XCTAssertEqual(environment.app.appVersion, app.ver)
-                    if let gameEngineName = environment.app.gameEngineName {
+                    XCTAssertEqual(mocks.environment.app.chartboostAppID, app.id)
+                    XCTAssertEqual(mocks.environment.app.bundleID, app.bundle)
+                    XCTAssertEqual(mocks.environment.app.appVersion, app.ver)
+                    if let gameEngineName = mocks.environment.app.gameEngineName {
                         XCTAssertNotNil(app.ext)
                         if let ext = app.ext {
                             XCTAssertEqual(gameEngineName, ext.game_engine_name)
                         }
                     }
-                    if let gameEngineVersion = environment.app.gameEngineVersion {
+                    if let gameEngineVersion = mocks.environment.app.gameEngineVersion {
                         XCTAssertNotNil(app.ext)
                         if let ext = app.ext {
                             XCTAssertEqual(gameEngineVersion, ext.game_engine_version)
                         }
 
                     }
-                    if environment.app.gameEngineName == nil, environment.app.gameEngineVersion == nil {
+                    if mocks.environment.app.gameEngineName == nil, mocks.environment.app.gameEngineVersion == nil {
                         XCTAssertNil(app.ext)
                     }
                 }
@@ -268,62 +275,62 @@ class AuctionsHTTPRequestFactoryTests: ChartboostMediationTestCase {
                 // device
                 XCTAssertNotNil(request.device)
                 if let device = request.device {
-                    XCTAssertEqual(environment.userAgent.userAgent, device.ua)
-                    XCTAssertEqual(environment.appTracking.isLimitAdTrackingEnabled ? 1 : 0, device.lmt)
-                    XCTAssertEqual(environment.device.deviceType.asOpenRTBDeviceType, device.devicetype)
-                    XCTAssertEqual(environment.device.deviceMake, device.make)
-                    XCTAssertEqual(environment.device.deviceModel, device.model)
-                    XCTAssertEqual(environment.device.osName, device.os)
-                    XCTAssertEqual(environment.device.osVersion, device.osv)
-                    XCTAssertEqual(Int(environment.screen.screenHeight), device.h)
-                    XCTAssertEqual(Int(environment.screen.screenWidth), device.w)
-                    XCTAssertEqual(environment.screen.pixelRatio, device.pxratio)
-                    XCTAssertEqual(environment.userSettings.languageCode, device.language)
-                    XCTAssertEqual(environment.telephonyNetwork.carrierName, device.carrier)
-                    if let mobileCountryCode = environment.telephonyNetwork.mobileCountryCode, let mobileNetworkCode = environment.telephonyNetwork.mobileNetworkCode {
+                    XCTAssertEqual(mocks.environment.userAgent.userAgent, device.ua)
+                    XCTAssertEqual(mocks.environment.appTracking.isLimitAdTrackingEnabled ? 1 : 0, device.lmt)
+                    XCTAssertEqual(mocks.environment.device.deviceType.asOpenRTBDeviceType, device.devicetype)
+                    XCTAssertEqual(mocks.environment.device.deviceMake, device.make)
+                    XCTAssertEqual(mocks.environment.device.deviceModel, device.model)
+                    XCTAssertEqual(mocks.environment.device.osName, device.os)
+                    XCTAssertEqual(mocks.environment.device.osVersion, device.osv)
+                    XCTAssertEqual(Int(mocks.environment.screen.screenHeight), device.h)
+                    XCTAssertEqual(Int(mocks.environment.screen.screenWidth), device.w)
+                    XCTAssertEqual(mocks.environment.screen.pixelRatio, device.pxratio)
+                    XCTAssertEqual(mocks.environment.userSettings.languageCode, device.language)
+                    XCTAssertEqual(mocks.environment.telephonyNetwork.carrierName, device.carrier)
+                    if let mobileCountryCode = mocks.environment.telephonyNetwork.mobileCountryCode, let mobileNetworkCode = mocks.environment.telephonyNetwork.mobileNetworkCode {
                         XCTAssertEqual("\(mobileCountryCode)-\(mobileNetworkCode)", device.mccmnc)
                     } else {
                         XCTAssertNil(device.mccmnc)
                     }
-                    XCTAssertEqual(OpenRTB.Device.ConnectionType(rawValue: environment.telephonyNetwork.connectionType.rawValue), device.connectiontype)
-                    XCTAssertEqual(environment.appTracking.idfa, device.ifa)
+                    XCTAssertEqual(OpenRTB.Device.ConnectionType(rawValue: mocks.environment.telephonyNetwork.connectionType.rawValue), device.connectiontype)
+                    XCTAssertEqual(mocks.environment.appTracking.idfa, device.ifa)
                     XCTAssertEqual(utcoffset, device.geo?.utcoffset)
                     XCTAssertNotNil(device.ext)
                     if let ext = device.ext {
-                        XCTAssertEqual(environment.appTracking.idfv, ext.ifv)
-                        XCTAssertEqual(environment.appTracking.appTransparencyAuthStatus, ext.atts)
-                        XCTAssertEqual(environment.userSettings.inputLanguages, ext.inputLanguage)
-                        XCTAssertEqual(environment.telephonyNetwork.networkTypes, ext.networktype)
-                        XCTAssertEqual(environment.audio.audioOutputTypes, ext.audiooutputtype)
-                        XCTAssertEqual(environment.audio.audioInputTypes, ext.audioinputtype)
-                        XCTAssertEqual(environment.audio.audioVolume, ext.audiovolume)
-                        XCTAssertEqual(environment.screen.screenBrightness, ext.screenbright)
-                        XCTAssertEqual(environment.device.batteryLevel, ext.batterylevel)
-                        XCTAssertEqual(environment.device.isBatteryCharging ? 1 : 0, ext.charging)
-                        XCTAssertEqual(environment.screen.isDarkModeEnabled ? 1 : 0, ext.darkmode)
-                        XCTAssertEqual(environment.device.totalDiskSpace, ext.totaldisk)
-                        XCTAssertEqual(environment.device.freeDiskSpace, ext.diskspace)
-                        XCTAssertEqual(environment.userSettings.textSize, ext.textsize)
-                        XCTAssertEqual(environment.userSettings.isBoldTextEnabled ? 1 : 0, ext.boldtext)
+                        XCTAssertEqual(mocks.environment.appTracking.idfv, ext.ifv)
+                        XCTAssertEqual(mocks.environment.appTracking.appTransparencyAuthStatus, ext.atts)
+                        XCTAssertEqual(mocks.environment.userSettings.inputLanguages, ext.inputLanguage)
+                        XCTAssertEqual(mocks.environment.telephonyNetwork.networkTypes, ext.networktype)
+                        XCTAssertEqual(mocks.environment.audio.audioOutputTypes, ext.audiooutputtype)
+                        XCTAssertEqual(mocks.environment.audio.audioInputTypes, ext.audioinputtype)
+                        XCTAssertEqual(mocks.environment.audio.audioVolume, ext.audiovolume)
+                        XCTAssertEqual(mocks.environment.screen.screenBrightness, ext.screenbright)
+                        XCTAssertEqual(mocks.environment.device.batteryLevel, ext.batterylevel)
+                        XCTAssertEqual(mocks.environment.device.isBatteryCharging ? 1 : 0, ext.charging)
+                        XCTAssertEqual(mocks.environment.screen.isDarkModeEnabled ? 1 : 0, ext.darkmode)
+                        XCTAssertEqual(mocks.environment.device.totalDiskSpace, ext.totaldisk)
+                        XCTAssertEqual(mocks.environment.device.freeDiskSpace, ext.diskspace)
+                        XCTAssertEqual(mocks.environment.userSettings.textSize, ext.textsize)
+                        XCTAssertEqual(mocks.environment.userSettings.isBoldTextEnabled ? 1 : 0, ext.boldtext)
                     }
                 }
 
                 // user
                 XCTAssertNotNil(request.user)
                 if let user = request.user {
-                    XCTAssertEqual(environment.userIDProvider.userID, user.id)
+                    XCTAssertEqual(mocks.environment.userIDProvider.userID, user.id)
                     XCTAssertEqual(mocks.consentSettings.consents[ConsentKeys.tcf], user.consent)
                     XCTAssertNotNil(user.ext)
                     if let ext = user.ext {
                         XCTAssertEqual(mocks.consentSettings.expectedConsentValue, ext.consent)
-                        XCTAssertEqual(UInt(environment.session.elapsedSessionDuration), ext.sessionduration)
+                        XCTAssertEqual(UInt(mocks.environment.session.elapsedSessionDuration), ext.sessionduration)
                         switch adFormat {
                         case .banner, .adaptiveBanner:
-                            XCTAssertEqual(UInt(environment.impressionCounter.bannerImpressionCount), ext.impdepth)
+                            XCTAssertEqual(UInt(mocks.environment.impressionCounter.bannerImpressionCount), ext.impdepth)
                         case .interstitial:
-                            XCTAssertEqual(UInt(environment.impressionCounter.interstitialImpressionCount), ext.impdepth)
+                            XCTAssertEqual(UInt(mocks.environment.impressionCounter.interstitialImpressionCount), ext.impdepth)
                         case .rewarded, .rewardedInterstitial:
-                            XCTAssertEqual(UInt(environment.impressionCounter.rewardedImpressionCount), ext.impdepth)
+                            XCTAssertEqual(UInt(mocks.environment.impressionCounter.rewardedImpressionCount), ext.impdepth)
                         }
                         XCTAssertEqual(keywords?.count ?? 0, ext.keywords?.count ?? 0)
                         if let keywords = keywords, keywords.count > 0 {
@@ -332,7 +339,7 @@ class AuctionsHTTPRequestFactoryTests: ChartboostMediationTestCase {
                                 XCTAssertEqual(keywords[keyword.key], ext.keywords?[keyword.key])
                             }
                         }
-                        XCTAssertEqual(environment.userIDProvider.publisherUserID, ext.publisher_user_id)
+                        XCTAssertEqual(mocks.environment.userIDProvider.publisherUserID, ext.publisher_user_id)
                     }
                 }
 
@@ -363,13 +370,13 @@ class AuctionsHTTPRequestFactoryTests: ChartboostMediationTestCase {
                     XCTAssertEqual(adLoadRequest.loadID, ext.helium_sdk_request_id)
                     XCTAssertNotNil(ext.skadn)
                     if let skadn = ext.skadn {
-                        XCTAssertNotNil(environment.skAdNetwork.skAdNetworkVersion, skadn.version)
-                        XCTAssertEqual(environment.skAdNetwork.skAdNetworkIDs.count, skadn.skadnetids.count)
+                        XCTAssertNotNil(mocks.environment.skAdNetwork.skAdNetworkVersion, skadn.version)
+                        XCTAssertEqual(mocks.environment.skAdNetwork.skAdNetworkIDs.count, skadn.skadnetids.count)
                     }
                 }
 
                 // test
-                XCTAssertEqual(environment.testMode.isTestModeEnabled ? 1 : 0, request.test)
+                XCTAssertEqual(mocks.environment.testMode.isTestModeEnabled ? 1 : 0, request.test)
             }
         }
     }
@@ -395,6 +402,21 @@ class AuctionsHTTPRequestFactoryTests: ChartboostMediationTestCase {
             request = try makeRequest(loadRequest: adLoadRequest, bidderInformation: [:]).body
             XCTAssertNotNil(request.device?.geo?.utcoffset)
         }
+    }
+
+    func testRegsExt() throws {
+        mocks.consentSettings.gdprApplies = true
+        mocks.consentSettings.consents[ConsentKeys.usp] = "usp12345"
+        mocks.consentSettings.consents[ConsentKeys.gpp] = "gpp12345"
+        mocks.consentSettings.gppSID = "1_2_3_4"
+        let adLoadRequest = InternalAdLoadRequest.test(adFormat: .interstitial, keywords: [:])
+
+        let request = try makeRequest(loadRequest: adLoadRequest, bidderInformation: [:])
+
+        XCTAssertEqual(request.body.regs?.ext?.gdpr, 1)
+        XCTAssertEqual(request.body.regs?.ext?.us_privacy, "usp12345")
+        XCTAssertEqual(request.body.regs?.ext?.gpp_sid, "1_2_3_4")
+        XCTAssertEqual(request.body.regs?.ext?.gpp, "gpp12345")
     }
 
     func makeRequest(loadRequest: InternalAdLoadRequest, bidderInformation: BidderInformation, loadRateLimit: TimeInterval = 0) throws -> AuctionsHTTPRequest {
@@ -437,6 +459,24 @@ class AuctionsHTTPRequestFactoryTests: ChartboostMediationTestCase {
             }
         }
         return bidderInformation
+    }
+
+    func randomizeEnvironmentData() {
+        mocks.environment = Environment(
+            app: AppInfoProvidingMock(),
+            audio: AudioInfoProvidingMock(),
+            device: DeviceInfoProvidingMock(),
+            screen: ScreenInfoProvidingMock(),
+            sdk: SDKInfoProvidingMock(),
+            sdkSettings: SDKSettingsProvidingMock(),
+            session: SessionInfoProvidingMock(),
+            skAdNetwork: SKAdNetworkInfoProvidingMock(),
+            telephonyNetwork: TelephonyNetworkInfoProvidingMock(),
+            testMode: TestModeInfoProvidingMock(),
+            userIDProvider: UserIDProvidingMock(),
+            userSettings: UserSettingsProvidingMock(),
+            userAgent: UserAgentProvidingMock()
+        )
     }
 }
 

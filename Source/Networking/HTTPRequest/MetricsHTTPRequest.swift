@@ -29,7 +29,7 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
         let metrics: [MetricsEvent]?
         let result: String?
         let error: Error?
-        // Only required in `/v2/event/load`.
+        // Only required in `/v2/event/load` and `/v2/event/helium_impression`.
         let placementType: AdFormat?
         // Only required if `adFormat` is `adaptiveBanner`.
         let size: BackendEncodableSize?
@@ -42,6 +42,15 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
         // The amount of time, in milliseconds, the app is backgrounded during an ad load.
         let backgroundDuration: Int?
 
+        // Only required in `/v2/event/helium_impression`.
+        let bidders: [LoadedAd.Bidder]?
+        let winner: String?
+        let type: String?
+        let price: Decimal?
+        let lineItemID: String?
+        let partnerPlacement: String? // only if type is mediation
+        // -- end
+
         init(
             auctionID: AuctionID? = nil,
             metrics: [MetricsEvent]? = nil,
@@ -51,7 +60,13 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
             size: BackendEncodableSize? = nil,
             start: Date? = nil,
             end: Date = Date(),
-            backgroundDuration: TimeInterval? = nil
+            backgroundDuration: TimeInterval? = nil,
+            bidders: [LoadedAd.Bidder]? = nil,
+            winner: String? = nil,
+            loadType: String? = nil,
+            price: Decimal? = nil,
+            lineItemID: String? = nil,
+            partnerPlacement: String? = nil
         ) {
             self.auctionID = auctionID
             self.metrics = metrics
@@ -87,6 +102,13 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
             } else {
                 self.backgroundDuration = nil
             }
+
+            self.bidders = bidders
+            self.winner = winner
+            self.type = loadType
+            self.price = price
+            self.lineItemID = lineItemID
+            self.partnerPlacement = partnerPlacement
         }
 
         struct Error: Encodable {
@@ -211,8 +233,34 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
         Self(eventType: .expiration, loadID: loadID, body: .init(auctionID: auctionID), adFormat: adFormat)
     }
 
-    static func mediationImpression(adFormat: AdFormat, auctionID: String, loadID: LoadID) -> Self {
-        Self(eventType: .mediationImpression, loadID: loadID, body: .init(auctionID: auctionID), adFormat: adFormat)
+    static func mediationImpression(
+        adFormat: AdFormat,
+        size: CGSize?,
+        auctionID: String,
+        loadID: LoadID,
+        bidders: [LoadedAd.Bidder],
+        winner: String,
+        type: String,
+        price: Decimal,
+        lineItemID: String?,
+        partnerPlacement: String?
+    ) -> Self {
+        return Self(
+            eventType: .mediationImpression,
+            loadID: loadID,
+            body: .init(
+                auctionID: auctionID,
+                adFormat: adFormat,
+                size: size.map(BackendEncodableSize.init),
+                bidders: bidders,
+                winner: winner,
+                loadType: type,
+                price: price,
+                lineItemID: lineItemID,
+                partnerPlacement: partnerPlacement
+            ),
+            adFormat: adFormat
+        )
     }
 
     static func partnerImpression(adFormat: AdFormat, auctionID: String, loadID: LoadID) -> Self {

@@ -22,7 +22,7 @@ class BannerControllerTests: ChartboostMediationTestCase {
     }()
     let placement = "some placement"
     let loadedAdView = UIView()
-    lazy var loadedAd = LoadedAd.test(bidInfo: bidInfo, partnerAd: PartnerAdMock(bannerView: loadedAdView))
+    lazy var loadedAd = LoadedAd.test(bidInfo: bidInfo, partnerAd: PartnerBannerAdMock(view: loadedAdView))
     var adSize = BannerSize(
         size: CGSize(width: 23, height: 42),
         type: .fixed
@@ -62,6 +62,7 @@ class BannerControllerTests: ChartboostMediationTestCase {
                 visibilityTracker: mocks.visibilityTracker
             )
             mocks.adController.removeAllRecords() // removing reference to banner controller added as an observer
+            mocks.adController.delegate = nil
             mocks.application.removeAllRecords()  // removing reference to banner controller added as an observer
             mocks.fullScreenAdShowCoordinator.removeAllRecords()  // removing reference to banner controller added as an observer
         }
@@ -90,7 +91,7 @@ class BannerControllerTests: ChartboostMediationTestCase {
 
         XCTAssertMethodCalls(
             mocks.bannerControllerDelegate,
-            .clearAd,
+            .bannerControllerClearBannerView,
             parameters: [controller, loadedAdView]
         )
 
@@ -215,7 +216,7 @@ class BannerControllerTests: ChartboostMediationTestCase {
         // finishing second load should do nothing since auto-refresh timer hasn't fired yet
         let view2 = UIView()
         let requestID2 = "some_id_2"
-        let ad2 = LoadedAd.test(partnerAd: PartnerAdMock(bannerView: view2), request: .test(loadID: requestID2))
+        let ad2 = LoadedAd.test(partnerAd: PartnerBannerAdMock(view: view2), request: .test(loadID: requestID2))
         lastLoadAdCompletion?(.success(ad2))
         
         assertNoDelegateCalls()
@@ -497,7 +498,7 @@ class BannerControllerTests: ChartboostMediationTestCase {
         // finishing second load should do nothing since auto-refresh timer hasn't fired yet
         let view2 = UIView()
         let requestID2 = "some_id_2"
-        let ad2 = LoadedAd.test(partnerAd: PartnerAdMock(bannerView: view2), request: .test(loadID: requestID2))
+        let ad2 = LoadedAd.test(partnerAd: PartnerBannerAdMock(view: view2), request: .test(loadID: requestID2))
 
         // Before calling completion, set another load expectation that should not be called.
         loadExpectation = expectation(description: "Completion should not be called")
@@ -562,7 +563,7 @@ class BannerControllerTests: ChartboostMediationTestCase {
         // finishing second load should do nothing since auto-refresh timer hasn't fired yet
         let view2 = UIView()
         let requestID2 = "some_id_2"
-        let ad2 = LoadedAd.test(partnerAd: PartnerAdMock(bannerView: view2), request: .test(loadID: requestID2))
+        let ad2 = LoadedAd.test(partnerAd: PartnerBannerAdMock(view: view2), request: .test(loadID: requestID2))
 
         // Before calling completion, set another load expectation that should not be called.
         loadExpectation = expectation(description: "Completion should not be called")
@@ -640,7 +641,7 @@ class BannerControllerTests: ChartboostMediationTestCase {
         // finishing second load should show immediately
         let view2 = UIView()
         let requestID2 = "some_id_2"
-        let ad2 = LoadedAd.test(partnerAd: PartnerAdMock(bannerView: view2), request: .test(loadID: requestID2))
+        let ad2 = LoadedAd.test(partnerAd: PartnerBannerAdMock(view: view2), request: .test(loadID: requestID2))
 
         // Before calling completion, set another load expectation that should not be called.
         loadExpectation = expectation(description: "Completion should not be called")
@@ -709,7 +710,7 @@ class BannerControllerTests: ChartboostMediationTestCase {
         // finishing second load should show immediately
         let view2 = UIView()
         let requestID2 = "some_id_2"
-        let ad2 = LoadedAd.test(partnerAd: PartnerAdMock(bannerView: view2), request: .test(loadID: requestID2))
+        let ad2 = LoadedAd.test(partnerAd: PartnerBannerAdMock(view: view2), request: .test(loadID: requestID2))
         lastLoadAdCompletion?(.success(ad2))
         waitForExpectations(timeout: 1.0)
 
@@ -760,7 +761,7 @@ class BannerControllerTests: ChartboostMediationTestCase {
         // finishing second load should show immediately
         let view2 = UIView()
         let requestID2 = "some_id_2"
-        let ad2 = LoadedAd.test(partnerAd: PartnerAdMock(bannerView: view2), request: .test(loadID: requestID2))
+        let ad2 = LoadedAd.test(partnerAd: PartnerBannerAdMock(view: view2), request: .test(loadID: requestID2))
         lastLoadAdCompletion?(.success(ad2))
         waitForExpectations(timeout: 1.0)
 
@@ -880,7 +881,7 @@ class BannerControllerTests: ChartboostMediationTestCase {
         // finishing second load should do nothing since auto-refresh timer hasn't fired yet
         let view2 = UIView()
         let requestID2 = "some_id_2"
-        let ad2 = LoadedAd.test(partnerAd: PartnerAdMock(bannerView: view2), request: .test(loadID: requestID2))
+        let ad2 = LoadedAd.test(partnerAd: PartnerBannerAdMock(view: view2), request: .test(loadID: requestID2))
 
         loadExpectation = expectation(description: "Completion should not be called")
         loadExpectation.isInverted = true
@@ -1058,7 +1059,7 @@ class BannerControllerTests: ChartboostMediationTestCase {
         // Now we finish the load with success
         let view2 = UIView()
         let requestID2 = "some_id_2"
-        let ad2 = LoadedAd.test(partnerAd: PartnerAdMock(bannerView: view2), request: .test(loadID: requestID2))
+        let ad2 = LoadedAd.test(partnerAd: PartnerBannerAdMock(view: view2), request: .test(loadID: requestID2))
 
         loadExpectation = expectation(description: "Completion should not be called")
         loadExpectation.isInverted = true
@@ -1239,7 +1240,7 @@ class BannerControllerTests: ChartboostMediationTestCase {
         assertNoScheduledTask()
         
         // when view becomes visible we should do a second load, and schedule the show auto-refresh
-        mocks.visibilityTracker.lastCompletion?()
+        lastVisibilityTrackerCompletion?()
 
         assertAdControllerMarkedLoadedAdAsShownAndLoadedNext()
         assertNoDelegateCalls()
@@ -1326,7 +1327,7 @@ class BannerControllerTests: ChartboostMediationTestCase {
         assertNoScheduledTask()
         
         // when view becomes visible we should do a second load, and schedule the show auto-refresh
-        mocks.visibilityTracker.lastCompletion?()
+        lastVisibilityTrackerCompletion?()
         
         assertAdControllerMarkedLoadedAdAsShownAndLoadedNext()
         assertNoDelegateCalls()
@@ -1364,7 +1365,7 @@ class BannerControllerTests: ChartboostMediationTestCase {
         assertNoScheduledTask()
 
         // when view becomes visible we should do a second load, and schedule the show auto-refresh
-        mocks.visibilityTracker.lastCompletion?()
+        lastVisibilityTrackerCompletion?()
 
         assertAdControllerMarkedLoadedAdAsShownAndLoadedNext()
         assertNoDelegateCalls()
@@ -1399,7 +1400,7 @@ class BannerControllerTests: ChartboostMediationTestCase {
         assertNoScheduledTask()
 
         // when view becomes visible we should do a second load, and schedule the show auto-refresh
-        mocks.visibilityTracker.lastCompletion?()
+        lastVisibilityTrackerCompletion?()
 
         assertAdControllerMarkedLoadedAdAsShownAndLoadedNext()
         assertNoDelegateCalls()
@@ -1553,14 +1554,14 @@ class BannerControllerTests: ChartboostMediationTestCase {
     func testDidTrackImpression() {
         controller.didTrackImpression()
         
-        XCTAssertMethodCalls(mocks.bannerControllerDelegate, .didRecordImpression, parameters: [controller])
+        XCTAssertMethodCalls(mocks.bannerControllerDelegate, .bannerControllerDidRecordImpression, parameters: [controller])
     }
     
     /// Validates that the ad forwards the delegate method call.
     func testDidClick() {
         controller.didClick()
         
-        XCTAssertMethodCalls(mocks.bannerControllerDelegate, .didClick, parameters: [controller])
+        XCTAssertMethodCalls(mocks.bannerControllerDelegate, .bannerControllerDidClick, parameters: [controller])
     }
     
     /// Validates that the ad forwards the delegate method call.
@@ -1638,7 +1639,7 @@ class BannerControllerTests: ChartboostMediationTestCase {
     /// return the loaded ad's size in the load result.
     func testAdLoadResultSizeWhenWaitingToBecomeVisible() {
         loadedAd = .test(
-            partnerAd: PartnerAdMock(bannerView: loadedAdView),
+            partnerAd: PartnerBannerAdMock(view: loadedAdView),
             bannerSize: .adaptive(width: 300, maxHeight: 100)
         )
 
@@ -1654,6 +1655,7 @@ class BannerControllerTests: ChartboostMediationTestCase {
         lastLoadAdCompletion?(.success(loadedAd))
         waitForExpectations(timeout: 1.0)
 
+        assertNewBannerLayedOutAndPreviousCleared(for: loadedAdView)
         assertVisibilityTrackerStart(for: loadedAdView)
 
         mocks.visibilityTracker.isTracking = true
@@ -1744,7 +1746,9 @@ extension BannerControllerTests {
     }
     
     func assertAdControllerClearLoadedAndShowingAd() {
-        XCTAssertMethodCalls(mocks.adController, .clearLoadedAd, .clearShowingAd)
+        var clearCompletion: (ChartboostMediationError?) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.adController, .clearLoadedAd, .clearShowingAd, parameters: [], [XCTMethodCaptureParameter { clearCompletion = $0 }])
+        clearCompletion(nil)
     }
     
     func assertNoDelegateCalls() {
@@ -1756,13 +1760,15 @@ extension BannerControllerTests {
     }
 
     func assertNewBannerLayedOutAndPreviousCleared(for view: UIView, previousView: UIView? = nil) {
-        if let previousView {
-           XCTAssertMethodCalls(mocks.bannerControllerDelegate, .clearAd, .displayAd, parameters: [controller, previousView], [controller, view])
-        } else {
-           XCTAssertMethodCalls(mocks.bannerControllerDelegate, .displayAd, parameters: [controller, view])
-        }
+        var clearCompletion: (ChartboostMediationError?) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.adController, .clearShowingAd, parameters: [XCTMethodCaptureParameter { clearCompletion = $0 }])
+        clearCompletion(nil)
 
-        XCTAssertMethodCalls(mocks.adController, .clearShowingAd)
+        if let previousView {
+           XCTAssertMethodCalls(mocks.bannerControllerDelegate, .bannerControllerClearBannerView, .bannerControllerDisplayBannerView, parameters: [controller, previousView], [controller, view])
+        } else {
+           XCTAssertMethodCalls(mocks.bannerControllerDelegate, .bannerControllerDisplayBannerView, parameters: [controller, view])
+        }
     }
     
     func assertVisibilityTrackerStart(for view: UIView) {

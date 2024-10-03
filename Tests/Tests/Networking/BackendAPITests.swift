@@ -59,7 +59,7 @@ class BackendAPITests: ChartboostMediationTestCase {
                 XCTAssertEqual(endpoint.basePath, "/v2/event/load")
             case .mediationImpression:
                 XCTAssertEqual(endpoint.host, "mediation-impression.mediation-sdk.chartboost.com")
-                XCTAssertEqual(endpoint.basePath, "/v1/event/helium_impression")
+                XCTAssertEqual(endpoint.basePath, "/v2/event/helium_impression")
             case .partnerImpression:
                 XCTAssertEqual(endpoint.host, "partner-impression.mediation-sdk.chartboost.com")
                 XCTAssertEqual(endpoint.basePath, "/v1/event/partner_impression")
@@ -83,7 +83,7 @@ class BackendAPITests: ChartboostMediationTestCase {
     }
 
     func testAPIHostOverride() throws {
-        let testModeInfoMock = try XCTUnwrap(mocks.environment.testMode as? EnvironmentMock.TestModeInfoProviderMock)
+        let testModeInfoMock = try XCTUnwrap(mocks.environment.testMode as? TestModeInfoProvidingMock)
 
         Self.allEndpoints.forEach { endpoint in
             // Reset with nil

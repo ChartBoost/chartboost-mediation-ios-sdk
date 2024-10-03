@@ -141,6 +141,8 @@ class APIStabilityTests_Swift: ChartboostMediationTestCase {
         let _: ChartboostMediationError.Code = .initializationFailureOSVersionNotSupported // 113
         let _: ChartboostMediationError.Code = .initializationFailureServerError // 114
         let _: ChartboostMediationError.Code = .initializationFailureInternalError // 115
+        let _: ChartboostMediationError.Code = .initializationFailureInitializationInProgress // 116
+        let _: ChartboostMediationError.Code = .initializationFailureInitializationDisabled // 117
 
         let _: ChartboostMediationError.Code = .prebidFailureUnknown // 200
         let _: ChartboostMediationError.Code = .prebidFailureAdapterNotFound // 201

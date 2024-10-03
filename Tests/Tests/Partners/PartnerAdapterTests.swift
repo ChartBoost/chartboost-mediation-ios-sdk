@@ -8,8 +8,36 @@ import XCTest
 
 class PartnerAdapterTests: ChartboostMediationTestCase {
 
-    let adapter = PartnerAdapterMock<PartnerAdapterConfigurationMock1>()
-    
+    // This mock, unlike PartnerAdapterMock, does not mock the error() methods
+    class PartnerAdapterMockWithDefaultImplementations: PartnerAdapter {
+        var configuration: PartnerAdapterConfiguration.Type = PartnerAdapterConfigurationMock1.self
+
+        func setUp(with configuration: PartnerConfiguration, completion: @escaping (Result<PartnerDetails, any Error>) -> Void) {
+        }
+        
+        func fetchBidderInformation(request: PartnerAdPreBidRequest, completion: @escaping (Result<[String : String], any Error>) -> Void) {
+        }
+        
+        func setConsents(_ consents: [ConsentKey : ConsentValue], modifiedKeys: Set<ConsentKey>) {
+        }
+        
+        func setIsUserUnderage(_ isUserUnderage: Bool) {
+        }
+        
+        func makeBannerAd(request: PartnerAdLoadRequest, delegate: any PartnerAdDelegate) throws -> any PartnerBannerAd {
+            PartnerBannerAdMock()
+        }
+        
+        func makeFullscreenAd(request: PartnerAdLoadRequest, delegate: any PartnerAdDelegate) throws -> any PartnerFullscreenAd {
+            PartnerFullscreenAdMock()
+        }
+        
+        required init(storage: any PartnerAdapterStorage) {
+        }
+    }
+
+    let adapter = PartnerAdapterMockWithDefaultImplementations(storage: MutablePartnerAdapterStorage())
+
     // MARK: - Errors
     
     /// Validates that the error() method provided as a protocol extension returns a proper error when passing one parameter.

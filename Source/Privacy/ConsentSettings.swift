@@ -16,6 +16,9 @@ protocol ConsentSettings: AnyObject {
     /// Flag that indicates if GDPR applies based on the current IAB TCF string.
     var gdprApplies: Bool? { get }
 
+    /// IDs of GPP Sections in force
+    var gppSID: String? { get }
+
     /// Indicates whether the user is underage.
     var isUserUnderage: Bool { get }
 
@@ -51,6 +54,10 @@ final class ConsentSettingsManager: ConsentSettings {
         } else {
             return nil
         }
+    }
+
+    var gppSID: String? {
+        UserDefaults.standard.string(forKey: "IABGPP_GppSID")
     }
 
     var isUserUnderage: Bool {

@@ -16,8 +16,14 @@ final class NetworkManagerTests: ChartboostMediationTestCase {
     private static let errorMock = NSError(domain: "ErrorMock", code: 777)
     private static let retryDelay = TimeInterval(0.1)
 
-    @Injected(\.environment) private var environment
-    @Injected(\.networkManager) private var networkManager
+    private let urlSessionConfig: URLSessionConfiguration = {
+        let config = URLSessionConfiguration.ephemeral
+        config.protocolClasses = [URLProtocolMock.self]
+        URLProtocol.registerClass(URLProtocolMock.self)
+        return config
+    }()
+
+    lazy var networkManager = NetworkManager(urlSessionConfig: urlSessionConfig)
 
     override func setUp() {
         super.setUp()
@@ -40,7 +46,7 @@ final class NetworkManagerTests: ChartboostMediationTestCase {
         let headersWithMediationHeaders = [
             "Accept": "application/json; charset=utf-8",
             "Content-Type": "application/json; charset=utf-8",
-            "x-mediation-session-id": environment.session.sessionID,
+            "x-mediation-session-id": mocks.environment.session.sessionID,
             "x-mediation-idfv": mockIDFV,
             "x-mediation-app-id": mocks.environment.app.chartboostAppID,
             "x-mediation-sdk-version": mocks.environment.sdk.sdkVersion,
@@ -93,7 +99,7 @@ final class NetworkManagerTests: ChartboostMediationTestCase {
         let headersWithOutIDFV = [
             "Accept": "application/json; charset=utf-8",
             "Content-Type": "application/json; charset=utf-8",
-            "x-mediation-session-id": environment.session.sessionID,
+            "x-mediation-session-id": mocks.environment.session.sessionID,
             "x-mediation-app-id": mocks.environment.app.chartboostAppID,
             "x-mediation-sdk-version": mocks.environment.sdk.sdkVersion,
             "x-mediation-device-os": mocks.environment.device.osName,

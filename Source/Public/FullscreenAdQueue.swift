@@ -16,7 +16,7 @@ protocol FullscreenAdQueueConfiguration {
     /// The time (in seconds) that a loaded ad is allowed to wait in the queue before being expired.
     var queuedAdTtl: TimeInterval { get }
     /// The correct queue size for a particular placement.
-    func queueSize(for: String) -> Int
+    func queueSize(for placement: String) -> Int
 }
 
 /// Manages the pre-loading of fullscreen ads. Each `FullscreenAdQueue` manages ads for one placement.

@@ -39,7 +39,7 @@ public final class ChartboostMediation: NSObject {
     /// Set the logging level.
     ///
     /// This property can be called at any time, however it ideally should be called before initializing the SDK.
-    /// Defaults to ``LogLevel/info``.
+    /// Defaults to `.info`.
     public static var logLevel: LogLevel {
         get {
             return ConsoleLogHandler.mediation.clientSideLogLevel

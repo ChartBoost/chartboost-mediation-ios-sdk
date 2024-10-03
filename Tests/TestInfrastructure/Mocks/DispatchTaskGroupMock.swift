@@ -6,6 +6,7 @@
 import Foundation
 @testable import ChartboostMediationSDK
 
+// This mock cannot be auto-generated because of its custom mechanism to execute tasks immediately.
 class DispatchTaskGroupMock: DispatchTaskGroup {
     
     var executesAddedTasksImmediately = true

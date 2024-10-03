@@ -7,7 +7,13 @@ import XCTest
 @testable import ChartboostMediationSDK
 
 class VisibilityTrackerTests: ChartboostMediationTestCase {
-    typealias Configuration = VisibilityTrackerConfigurationMock
+    let configuration: VisibilityTrackerConfigurationMock = {
+        let configuration = VisibilityTrackerConfigurationMock()
+        configuration.minimumVisiblePoints = 1
+        configuration.pollInterval = 0.1
+        configuration.traversalLimit = 25
+        return configuration
+    }()
 
     // MARK: - Test Constants
     
@@ -75,7 +81,7 @@ class VisibilityTrackerTests: ChartboostMediationTestCase {
     /// - More than `Constants.shortImpressionTime` seconds visible
     func testTrackingFires() {
         let timerExpectation = expectation(description: "Wait for VisibilityTracker to fire")
-        let configuration = Configuration(minimumVisibleSeconds: Constants.shortImpressionTime, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = Constants.shortImpressionTime
         let timer = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         timer.startTracking(view) {
@@ -92,7 +98,7 @@ class VisibilityTrackerTests: ChartboostMediationTestCase {
     /// - More than 0 seconds visible
     func testZeroImpressionTimeFires() {
         let timerExpectation = expectation(description: "Wait for VisibilityTracker to fire")
-        let configuration = Configuration(minimumVisibleSeconds: 0, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = 0
         let timer = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         // Since the minimum time to fire is 0.1 seconds, an impression time
@@ -111,7 +117,7 @@ class VisibilityTrackerTests: ChartboostMediationTestCase {
     /// - A negative minimum seconds is specified.
     func testNegativeImpressionTimeFires() {
         let timerExpectation = expectation(description: "Wait for VisibilityTracker to fire")
-        let configuration = VisibilityTrackerConfigurationMock(minimumVisibleSeconds: -1000, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = -1000
         let timer = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         timer.startTracking(view) {
@@ -135,7 +141,7 @@ class VisibilityTrackerTests: ChartboostMediationTestCase {
         let timerExpectation = expectation(description: "VisibilityTracker should not fire")
         timerExpectation.isInverted = true
         
-        let configuration = Configuration(minimumVisibleSeconds: Constants.shortImpressionTime, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = Constants.shortImpressionTime
         let timer = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         timer.startTracking(view) {
@@ -159,7 +165,7 @@ class VisibilityTrackerTests: ChartboostMediationTestCase {
         let timerExpectation = expectation(description: "VisibilityTracker should not fire")
         timerExpectation.isInverted = true
         
-        let configuration = Configuration(minimumVisibleSeconds: Constants.shortImpressionTime, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = Constants.shortImpressionTime
         let timer = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         timer.startTracking(view) {
@@ -183,7 +189,7 @@ class VisibilityTrackerTests: ChartboostMediationTestCase {
         let timerExpectation = expectation(description: "VisibilityTracker should not fire")
         timerExpectation.isInverted = true
         
-        let configuration = Configuration(minimumVisibleSeconds: Constants.shortImpressionTime, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = Constants.shortImpressionTime
         let timer = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         timer.startTracking(view) {
@@ -205,7 +211,7 @@ class VisibilityTrackerTests: ChartboostMediationTestCase {
         let trackExpectation = expectation(description: "Wait for VisibilityTracker tick to fire")
         
         // Make sure the impression time takes several ticks of the underlying timer.
-        let configuration = Configuration(minimumVisibleSeconds: Constants.longImpressionTime, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = Constants.longImpressionTime
         let timer = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         timer.startTracking(view) {
@@ -229,7 +235,7 @@ class VisibilityTrackerTests: ChartboostMediationTestCase {
         timerExpectation.isInverted = true
         
         // Make sure the impression time takes several ticks of the underlying timer.
-        let configuration = Configuration(minimumVisibleSeconds: Constants.longImpressionTime, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = Constants.longImpressionTime
         var timer: VisibilityTracker? = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         timer?.startTracking(view) {
@@ -254,7 +260,7 @@ class VisibilityTrackerTests: ChartboostMediationTestCase {
         timerExpectation.isInverted = true
         
         // Make sure the impression time takes several ticks of the underlying timer.
-        let configuration = Configuration(minimumVisibleSeconds: Constants.longImpressionTime, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = Constants.longImpressionTime
         let timer = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         var testView: UIView? = UIView(frame: CGRect(origin: .zero, size: Constants.defaultFrameSize))
@@ -280,7 +286,7 @@ class VisibilityTrackerTests: ChartboostMediationTestCase {
         timerExpectation.isInverted = true
         
         // Make sure the impression time takes several ticks of the underlying timer.
-        let configuration = Configuration(minimumVisibleSeconds: Constants.longImpressionTime, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = Constants.longImpressionTime
         let timer = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         timer.startTracking(view) {
@@ -311,7 +317,7 @@ class VisibilityTrackerTests: ChartboostMediationTestCase {
         let trackExpectation = expectation(description: "Wait for VisibilityTracker tick to fire")
         
         // Make sure the impression time takes several ticks of the underlying timer.
-        let configuration = Configuration(minimumVisibleSeconds: Constants.shortImpressionTime, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = Constants.shortImpressionTime
         let timer = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         timer.startTracking(view) {
@@ -335,7 +341,7 @@ class VisibilityTrackerTests: ChartboostMediationTestCase {
         timerExpectation.isInverted = true
         
         // Make sure the impression time takes several ticks of the underlying timer.
-        let configuration = Configuration(minimumVisibleSeconds: Constants.longImpressionTime, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = Constants.longImpressionTime
         let timer = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         timer.startTracking(view) {
@@ -366,7 +372,7 @@ class VisibilityTrackerTests: ChartboostMediationTestCase {
         let trackExpectation = expectation(description: "Wait for VisibilityTracker tick to fire")
         
         // Make sure the impression time takes several ticks of the underlying timer.
-        let configuration = Configuration(minimumVisibleSeconds: Constants.shortImpressionTime, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = Constants.shortImpressionTime
         let timer = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         timer.startTracking(view) {
@@ -391,7 +397,7 @@ class VisibilityTrackerTests: ChartboostMediationTestCase {
         timerExpectation.expectedFulfillmentCount = 2
         timerExpectation.isInverted = true
         
-        let configuration = Configuration(minimumVisibleSeconds: Constants.shortImpressionTime, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = Constants.shortImpressionTime
         let timer = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         timer.startTracking(view) {
@@ -406,7 +412,7 @@ class VisibilityTrackerTests: ChartboostMediationTestCase {
     /// Validates that starting an already started timer has no effect.
     func testDoubleStartTracking() {
         let timerExpectation = expectation(description: "Wait for VisibilityTracker to fire")
-        let configuration = Configuration(minimumVisibleSeconds: Constants.shortImpressionTime, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = Constants.shortImpressionTime
         let timer = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         // Call startTracking twice, the second call should have no effect,
@@ -427,14 +433,14 @@ class VisibilityTrackerTests: ChartboostMediationTestCase {
     // MARK: - isTracking Tests
     
     func testInitialIsTrackingValue() {
-        let configuration = Configuration(minimumVisibleSeconds: Constants.shortImpressionTime, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = Constants.shortImpressionTime
         let timer = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         XCTAssertFalse(timer.isTracking)
     }
     
     func testIsTrackingValueAfterStartingTracking() {
-        let configuration = Configuration(minimumVisibleSeconds: Constants.shortImpressionTime, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = Constants.shortImpressionTime
         let timer = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         timer.startTracking(view) {}
@@ -444,7 +450,7 @@ class VisibilityTrackerTests: ChartboostMediationTestCase {
     
     func testIsTrackingValueAfterTrackingFinishes() {
         let timerExpectation = expectation(description: "Wait for VisibilityTracker to fire")
-        let configuration = Configuration(minimumVisibleSeconds: Constants.shortImpressionTime, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = Constants.shortImpressionTime
         let timer = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         timer.startTracking(view) {
@@ -458,7 +464,7 @@ class VisibilityTrackerTests: ChartboostMediationTestCase {
     }
     
     func testIsTrackingValueAfterTrackingIsStopped() {
-        let configuration = Configuration(minimumVisibleSeconds: Constants.shortImpressionTime, minimumVisiblePoints: 1, pollInterval: 0.1, traversalLimit: 25)
+        configuration.minimumVisibleSeconds = Constants.shortImpressionTime
         let timer = PixelByTimeVisibilityTracker(configuration: configuration, app: app)
         
         timer.startTracking(view) {}

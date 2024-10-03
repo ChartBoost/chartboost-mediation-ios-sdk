@@ -13,5 +13,5 @@ protocol SDKInfoProviding {
 struct SDKInfoProvider: SDKInfoProviding {
     let sdkName = "Helium"
 
-    let sdkVersion = "5.0.0"
+    let sdkVersion = "5.1.0"
 }

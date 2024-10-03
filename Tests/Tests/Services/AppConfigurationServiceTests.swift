@@ -9,14 +9,9 @@ import XCTest
 class AppConfigurationServiceTests: ChartboostMediationTestCase {
 
     private lazy var appConfigService = AppConfigurationService()
-    let networkManager = CompleteNetworkManagerMock()
+    var networkManager: NetworkManagerProtocolMock { mocks.networkManager as! NetworkManagerProtocolMock }
     private let sdkInitHash = "some SDK init hash"
     private let fullSDKInitResponseData = JSONLoader.loadData(.full_sdk_init_response)
-
-    override func setUp() {
-        super.setUp()
-        mocks.networkManager = networkManager
-    }
 
     /// Backend response 200 (Success) contains SDK init hash and the config data.
     func testFetchSuccessWithHTTPStatusCode200() {
@@ -25,7 +20,6 @@ class AppConfigurationServiceTests: ChartboostMediationTestCase {
             sdkInitHash: sdkInitHash,
             rawData: fullSDKInitResponseData
         )
-        mocks.sdkInitRequestFactory.autoCompletionResult = .success(SDKInitHTTPRequest.test())
 
         // Fetch app config
         var completed = false
@@ -41,14 +35,16 @@ class AppConfigurationServiceTests: ChartboostMediationTestCase {
         }
         
         // Check SDK init hash is used when creating the HTTP request
+        var requestFactoryCompletion: (Result<SDKInitHTTPRequest, ChartboostMediationError>) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.sdkInitRequestFactory, .makeRequest, parameters: [
             nil,    // sdkInitHash
-            XCTMethodIgnoredParameter()
+            XCTMethodCaptureParameter { requestFactoryCompletion = $0 }
         ])
+        requestFactoryCompletion(.success(SDKInitHTTPRequest.test()))
 
         // Finish network manager operation
         var sdkInitRequestCompletion: NetworkManager.RequestCompletionWithRawDataResponse = { _ in }
-        XCTAssertMethodCalls(networkManager, .send, parameters: [XCTMethodIgnoredParameter(), 0, 0.0, XCTMethodCaptureParameter { sdkInitRequestCompletion = $0 }])
+        XCTAssertMethodCalls(networkManager, .sendHttpRequestHTTPRequestWithRawDataResponseMaxRetriesIntRetryDelayTimeIntervalCompletionEscapingNetworkManagerRequestCompletionWithRawDataResponse, parameters: [XCTMethodIgnoredParameter(), 0, 0.0, XCTMethodCaptureParameter { sdkInitRequestCompletion = $0 }])
         sdkInitRequestCompletion(.success(sdkInitResponse))
 
         XCTAssertTrue(completed)
@@ -62,7 +58,6 @@ class AppConfigurationServiceTests: ChartboostMediationTestCase {
             sdkInitHash: sdkInitHash,
             rawData: fullSDKInitResponseData
         )
-        mocks.sdkInitRequestFactory.autoCompletionResult = .success(SDKInitHTTPRequest.test())
 
         // Fetch app config
         var completed = false
@@ -75,14 +70,16 @@ class AppConfigurationServiceTests: ChartboostMediationTestCase {
         }
 
         // Check SDK init hash is used when creating the HTTP request
+        var requestFactoryCompletion: (Result<SDKInitHTTPRequest, ChartboostMediationError>) -> Void = { _ in }
         XCTAssertMethodCalls(mocks.sdkInitRequestFactory, .makeRequest, parameters: [
             sdkInitHash,
-            XCTMethodIgnoredParameter()
+            XCTMethodCaptureParameter { requestFactoryCompletion = $0 }
         ])
+        requestFactoryCompletion(.success(SDKInitHTTPRequest.test()))
 
         // Finish network manager operation
         var sdkInitRequestCompletion: NetworkManager.RequestCompletionWithRawDataResponse = { _ in }
-        XCTAssertMethodCalls(networkManager, .send, parameters: [XCTMethodIgnoredParameter(), 0, 0.0, XCTMethodCaptureParameter { sdkInitRequestCompletion = $0 }])
+        XCTAssertMethodCalls(networkManager, .sendHttpRequestHTTPRequestWithRawDataResponseMaxRetriesIntRetryDelayTimeIntervalCompletionEscapingNetworkManagerRequestCompletionWithRawDataResponse, parameters: [XCTMethodIgnoredParameter(), 0, 0.0, XCTMethodCaptureParameter { sdkInitRequestCompletion = $0 }])
         sdkInitRequestCompletion(.success(sdkInitResponse))
 
         XCTAssertTrue(completed)
@@ -94,7 +91,6 @@ class AppConfigurationServiceTests: ChartboostMediationTestCase {
             httpURLResponse: .init(),
             maxRetries: 0
         )
-        mocks.sdkInitRequestFactory.autoCompletionResult = .success(SDKInitHTTPRequest.test())
 
         // Fetch app config
         var completed = false
@@ -108,9 +104,17 @@ class AppConfigurationServiceTests: ChartboostMediationTestCase {
             completed = true
         }
 
+        // Finish request factory operation
+        var requestFactoryCompletion: (Result<SDKInitHTTPRequest, ChartboostMediationError>) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.sdkInitRequestFactory, .makeRequest, parameters: [
+            XCTMethodIgnoredParameter(),
+            XCTMethodCaptureParameter { requestFactoryCompletion = $0 }
+        ])
+        requestFactoryCompletion(.success(SDKInitHTTPRequest.test()))
+
         // Finish network manager operation
         var sdkInitRequestCompletion: NetworkManager.RequestCompletionWithRawDataResponse = { _ in }
-        XCTAssertMethodCalls(networkManager, .send, parameters: [XCTMethodIgnoredParameter(), 0, 0.0, XCTMethodCaptureParameter { sdkInitRequestCompletion = $0 }])
+        XCTAssertMethodCalls(networkManager, .sendHttpRequestHTTPRequestWithRawDataResponseMaxRetriesIntRetryDelayTimeIntervalCompletionEscapingNetworkManagerRequestCompletionWithRawDataResponse, parameters: [XCTMethodIgnoredParameter(), 0, 0.0, XCTMethodCaptureParameter { sdkInitRequestCompletion = $0 }])
         sdkInitRequestCompletion(.failure(sdkInitError))
 
         XCTAssertTrue(completed)

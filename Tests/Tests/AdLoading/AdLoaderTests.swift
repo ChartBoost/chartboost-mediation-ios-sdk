@@ -18,10 +18,10 @@ final class AdLoaderTests: ChartboostMediationTestCase {
         let request = FullscreenAdLoadRequest(placement: placement, keywords: keywords, partnerSettings: ["poiu" : "9876"])
         let expectedAd = mocks.adFactory.returnValue(for: .makeFullscreenAd) as FullscreenAd
         let expectedLoadID = "some load ID"
-        let bid = Bid.makeMock()
-        let loadedAd = LoadedAd(bid: bid, bidInfo: ["hello": 23], partnerAd: PartnerAdMock(), bannerSize: .init(size: .zero, type: .fixed), request: .test(loadID: expectedLoadID))
-        mocks.adLoaderConfiguration.setReturnValue(format, for: .adFormatForPlacement)
-        
+        let bids: [Bid] = [Bid.test(), Bid.test(), Bid.test()]
+        let loadedAd = LoadedAd(bids: bids, winner: bids[0], bidInfo: ["hello": 23], partnerAd: PartnerBannerAdMock(), bannerSize: .init(size: .zero, type: .fixed), request: .test(loadID: expectedLoadID))
+        mocks.adLoaderConfiguration.setReturnValue(format, for: .adFormat)
+
         // Load the ad
         var finished = false
         adLoader.loadFullscreenAd(with: request) { result in
@@ -73,7 +73,7 @@ final class AdLoaderTests: ChartboostMediationTestCase {
         let expectedError = ChartboostMediationError(code: .loadFailureAborted)
         var expectedLoadID = ""
         let expectedRawMetrics: [String: Any] = ["hello": 23, "babab": "asdasfd"]
-        mocks.adLoaderConfiguration.setReturnValue(format, for: .adFormatForPlacement)
+        mocks.adLoaderConfiguration.setReturnValue(format, for: .adFormat)
         
         // Load the ad
         var finished = false
@@ -122,7 +122,7 @@ final class AdLoaderTests: ChartboostMediationTestCase {
     func testLoadFullscreenAdWithUnknownPlacement() {
         let request = FullscreenAdLoadRequest(placement: "")
         let expectedError = ChartboostMediationError(code: .loadFailureInvalidChartboostMediationPlacement)
-        mocks.adLoaderConfiguration.setReturnValue(nil, for: .adFormatForPlacement)
+        mocks.adLoaderConfiguration.setReturnValue(nil, for: .adFormat)
         
         // Load the ad
         var finished = false
@@ -143,7 +143,7 @@ final class AdLoaderTests: ChartboostMediationTestCase {
     func testLoadFullscreenAdWithBannerPlacement() {
         let request = FullscreenAdLoadRequest(placement: "")
         let expectedError = ChartboostMediationError(code: .loadFailureMismatchedAdFormat)
-        mocks.adLoaderConfiguration.setReturnValue(AdFormat.banner, for: .adFormatForPlacement)
+        mocks.adLoaderConfiguration.setReturnValue(AdFormat.banner, for: .adFormat)
         
         // Load the ad
         var finished = false
@@ -163,7 +163,7 @@ final class AdLoaderTests: ChartboostMediationTestCase {
     func testLoadFullscreenAdWithAdaptiveBannerPlacement() {
         let request = FullscreenAdLoadRequest(placement: "")
         let expectedError = ChartboostMediationError(code: .loadFailureMismatchedAdFormat)
-        mocks.adLoaderConfiguration.setReturnValue(AdFormat.adaptiveBanner, for: .adFormatForPlacement)
+        mocks.adLoaderConfiguration.setReturnValue(AdFormat.adaptiveBanner, for: .adFormat)
 
         // Load the ad
         var finished = false

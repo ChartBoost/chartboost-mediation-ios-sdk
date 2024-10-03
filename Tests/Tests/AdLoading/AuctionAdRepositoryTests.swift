@@ -86,7 +86,8 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
                 XCTAssertTrue($0 > self.mocks.metrics.recordedParameters[0][6] as! Date)
                 XCTAssertTrue($0 < Date())
             },
-            0.0
+            0.0,
+            nil // queueID
         ])
         
         // Check that we have finished with failure
@@ -99,7 +100,7 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
         let request = InternalAdLoadRequest.test(loadID: loadID)
         let viewController = UIViewController()
         let delegate = PartnerAdDelegateMock()
-        let bids = [Bid.makeMock(), Bid.makeMock(), Bid.makeMock()]
+        let bids = [Bid.test(), Bid.test(), Bid.test()]
         let expectedError = ChartboostMediationError(code: .loadFailureUnknown)
         let expectedResult = InternalAdLoadResult(
             result: .failure(ChartboostMediationError(code: .loadFailureUnknown)),
@@ -157,7 +158,8 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
                 XCTAssertTrue($0 > self.mocks.metrics.recordedParameters[0][6] as! Date)
                 XCTAssertTrue($0 < Date())
             },
-            0.0
+            0.0,
+            nil // queueID
         ])
     }
     
@@ -168,12 +170,12 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
         let viewController = UIViewController()
         let delegate = PartnerAdDelegateMock()
         let bids = [
-            Bid.makeMock(),
-            Bid.makeMock(rewardedCallbackData: .init(url: "https://winning.bid"), lineItemName: "some line item name"),
-            Bid.makeMock()
+            Bid.test(),
+            Bid.test(rewardedCallbackData: .init(url: "https://winning.bid"), lineItemName: "some line item name"),
+            Bid.test()
         ]
         let winningBid = bids[1]
-        let partnerAd = PartnerAdMock()
+        let partnerAd = PartnerFullscreenAdMock()
         let expectedLoadEvents = [MetricsEvent.test()]
         let expectedAuctionID = "some auction ID"
         let expectedRawMetrics: [String: Any] = ["hello": 23, "babab": "asdasfd"]
@@ -247,7 +249,8 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
                     XCTAssertTrue($0 > self.mocks.metrics.recordedParameters[0][6] as! Date)
                     XCTAssertTrue($0 < Date())
                 },
-                0.0
+                0.0,
+                nil // queueID
             ], [
                 bids,
                 winningBid,
@@ -264,10 +267,10 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
         let viewController = UIViewController()
         let delegate = PartnerAdDelegateMock()
         let bids = [
-            Bid.makeMock()
+            Bid.test()
         ]
         let winningBid = bids[0]
-        let partnerAd = PartnerAdMock()
+        let partnerAd = PartnerBannerAdMock()
         let expectedLoadEvents = [MetricsEvent.test()]
         let expectedAuctionID = "some auction ID"
         let expectedRawMetrics: [String: Any] = ["hello": 23, "babab": "asdasfd"]
@@ -318,7 +321,8 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
                     XCTAssertTrue($0 > self.mocks.metrics.recordedParameters[0][6] as! Date)
                     XCTAssertTrue($0 < Date())
                 },
-                0.0
+                0.0,
+                nil // queueID
             ], [
                 bids,
                 winningBid,
@@ -337,10 +341,10 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
         let viewController = UIViewController()
         let delegate = PartnerAdDelegateMock()
         let bids = [
-            Bid.makeMock()
+            Bid.test()
         ]
         let winningBid = bids[0]
-        let partnerAd = PartnerAdMock()
+        let partnerAd = PartnerBannerAdMock()
         let expectedLoadEvents = [MetricsEvent.test()]
         let expectedAuctionID = "some auction ID"
         let expectedRawMetrics: [String: Any] = ["hello": 23, "babab": "asdasfd"]
@@ -388,7 +392,8 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
                     XCTAssertTrue($0 > self.mocks.metrics.recordedParameters[0][6] as! Date)
                     XCTAssertTrue($0 < Date())
                 },
-                0.0
+                0.0,
+                nil // queueID
             ], [
                 bids,
                 winningBid,
@@ -405,10 +410,10 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
         let viewController = UIViewController()
         let delegate = PartnerAdDelegateMock()
         let bids = [
-            Bid.makeMock()
+            Bid.test()
         ]
         let winningBid = bids[0]
-        let partnerAd = PartnerAdMock()
+        let partnerAd = PartnerBannerAdMock()
         let expectedLoadEvents = [MetricsEvent.test()]
         let expectedAuctionID = "some auction ID"
         let expectedRawMetrics: [String: Any] = ["hello": 23, "babab": "asdasfd"]
@@ -456,7 +461,8 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
                     XCTAssertTrue($0 > self.mocks.metrics.recordedParameters[0][6] as! Date)
                     XCTAssertTrue($0 < Date())
                 },
-                0.0
+                0.0,
+                nil // queueID
             ], [
                 bids,
                 winningBid,
@@ -475,14 +481,16 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
         let viewController = UIViewController()
         let delegate = PartnerAdDelegateMock()
         let bids = [
-            Bid.makeMock(),
-            Bid.makeMock(rewardedCallbackData: .init(url: "https://winning.bid"), lineItemName: "some line item name"),
-            Bid.makeMock()
+            Bid.test(),
+            Bid.test(rewardedCallbackData: .init(url: "https://winning.bid"), lineItemName: "some line item name"),
+            Bid.test()
         ]
         let backgroundDuration = TimeInterval.random(in: 0.1...3.0)
-        mocks.backgroundTimeMonitor.backgroundTime = backgroundDuration
+        let operation = BackgroundTimeMonitorOperatorMock()
+        operation.setReturnValue(backgroundDuration, for: .backgroundTimeUntilNow)
+        mocks.backgroundTimeMonitor.setReturnValue(operation, for: .startMonitoringOperation)
         let winningBid = bids[1]
-        let partnerAd = PartnerAdMock()
+        let partnerAd = PartnerFullscreenAdMock()
         let expectedLoadEvents = [MetricsEvent.test()]
         let expectedAuctionID = "some auction ID"
         let expectedRawMetrics: [String: Any] = ["hello": 23, "babab": "asdasfd"]
@@ -556,7 +564,8 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
                     XCTAssertTrue($0 > self.mocks.metrics.recordedParameters[0][6] as! Date)
                     XCTAssertTrue($0 < Date())
                 },
-                backgroundDuration
+                backgroundDuration,
+                nil // queueID
             ], [
                 bids,
                 winningBid,
@@ -572,9 +581,11 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
         let request = InternalAdLoadRequest.test(loadID: loadID)
         let viewController = UIViewController()
         let delegate = PartnerAdDelegateMock()
-        let bids = [Bid.makeMock(), Bid.makeMock(), Bid.makeMock()]
+        let bids = [Bid.test(), Bid.test(), Bid.test()]
         let backgroundDuration = TimeInterval.random(in: 0.1...3.0)
-        mocks.backgroundTimeMonitor.backgroundTime = backgroundDuration
+        let operation = BackgroundTimeMonitorOperatorMock()
+        operation.setReturnValue(backgroundDuration, for: .backgroundTimeUntilNow)
+        mocks.backgroundTimeMonitor.setReturnValue(operation, for: .startMonitoringOperation)
         let expectedError = ChartboostMediationError(code: .loadFailureUnknown)
         let expectedResult = InternalAdLoadResult(
             result: .failure(ChartboostMediationError(code: .loadFailureUnknown)),
@@ -632,7 +643,8 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
                 XCTAssertTrue($0 > self.mocks.metrics.recordedParameters[0][6] as! Date)
                 XCTAssertTrue($0 < Date())
             },
-            backgroundDuration
+            backgroundDuration,
+            nil // queueID
         ])
     }
 

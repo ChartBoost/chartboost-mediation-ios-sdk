@@ -7,9 +7,23 @@ import XCTest
 @testable import ChartboostMediationSDK
 
 final class PartnerAdTests: ChartboostMediationTestCase {
-    
-    let ad = PartnerAdMock()
-    
+
+    // This mock, unlike PartnerFullscreenAdMock, does not mock the error() methods
+    class PartnerAdMockWithDefaultImplementations: PartnerFullscreenAd {
+        var adapter: PartnerAdapter = PartnerAdapterMock()
+        var request: PartnerAdLoadRequest = .test()
+        var delegate: PartnerAdDelegate?
+        var details: PartnerDetails = [:]
+
+        func load(with viewController: UIViewController?, completion: @escaping ((any Error)?) -> Void) {
+        }
+
+        func show(with viewController: UIViewController, completion: @escaping ((any Error)?) -> Void) {
+        }
+    }
+
+    let ad = PartnerAdMockWithDefaultImplementations()
+
     // MARK: - Errors
     
     /// Validates that the error() method provided as a protocol extension returns a proper error when passing one parameter.
