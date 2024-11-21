@@ -107,7 +107,7 @@ public class FullscreenAdQueue: NSObject {
     }
     let maxQueueSize: Int
     @Atomic private var queue: [QueuedAd] = []
-    private (set) var queueID = ""
+    private(set) var queueID = ""
     private var queueState: QueueState = .stopped {
         didSet {
             queueStateDidTransition(from: oldValue, to: queueState)
