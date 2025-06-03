@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -58,24 +58,25 @@ final class AuctionAdRepository: AdRepository {
 
                     let backgroundTime = backgroundMonitoringOperation.backgroundTimeUntilNow()
 
-                    // Log metrics
-                    let rawMetrics = self.metrics.logLoad(
-                        auctionID: response.auctionID ?? "",
-                        loadID: request.loadID,
-                        events: result.loadEvents,
-                        error: result.result.error,
-                        adFormat: request.adFormat,
-                        size: request.adSize?.size,
-                        start: start,
-                        backgroundDuration: backgroundTime,
-                        queueID: request.queueID
-                    )
                     // in a success path, the auctionID is always available from the response header, or from the bid json content
                     assert(response.auctionID != nil)
 
                     // Return with a loaded ad or an error
                     switch result.result {
                     case .success((let winningBid, let partnerAd, let adSize)):
+                        // Log load
+                        let rawMetrics = metrics.logLoad(
+                            auctionID: response.auctionID ?? "",
+                            loadID: request.loadID,
+                            events: result.loadEvents,
+                            error: result.result.error,
+                            adFormat: request.adFormat,
+                            size: request.adSize?.size,
+                            start: start,
+                            backgroundDuration: backgroundTime,
+                            queueID: request.queueID,
+                            partnerAd: partnerAd
+                        )
                         // Log auction complete
                         self.metrics.logAuctionCompleted(
                             with: bids,
@@ -96,8 +97,22 @@ final class AuctionAdRepository: AdRepository {
                             adSize: adSize,
                             request: request
                         )
+
                         completion(InternalAdLoadResult(result: .success(loadedAd), metrics: rawMetrics))
                     case .failure(let error):
+                        // Log load
+                        let rawMetrics = metrics.logLoad(
+                            auctionID: response.auctionID ?? "",
+                            loadID: request.loadID,
+                            events: result.loadEvents,
+                            error: result.result.error,
+                            adFormat: request.adFormat,
+                            size: request.adSize?.size,
+                            start: start,
+                            backgroundDuration: backgroundTime,
+                            queueID: request.queueID
+                        )
+
                         // Finish with failure
                         completion(InternalAdLoadResult(result: .failure(error), metrics: rawMetrics))
                     }

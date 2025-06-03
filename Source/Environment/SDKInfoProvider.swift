@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -13,5 +13,5 @@ protocol SDKInfoProviding {
 struct SDKInfoProvider: SDKInfoProviding {
     let sdkName = "Helium"
 
-    let sdkVersion = "5.2.0"
+    let sdkVersion = "5.3.0"
 }

@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -11,18 +11,8 @@ class BackendAPITests: ChartboostMediationTestCase {
     static let allEndpoints: [BackendAPI.Endpoint] = [
         .auction_nonTracking,
         .auction_tracking,
-        .bannerSize,
-        .click,
         .config,
-        .expiration,
-        .initialization,
         .load,
-        .mediationImpression,
-        .partnerImpression,
-        .prebid,
-        .reward,
-        .show,
-        .winner
     ]
 
     func testEndpointValues() {
@@ -36,48 +26,12 @@ class BackendAPITests: ChartboostMediationTestCase {
             case .auction_tracking:
                 XCTAssertEqual(endpoint.host, "tracking.auction.mediation-sdk.chartboost.com")
                 XCTAssertEqual(endpoint.basePath, "/v3/auctions")
-            case .bannerSize:
-                XCTAssertEqual(endpoint.host, "banner-size.mediation-sdk.chartboost.com")
-                XCTAssertEqual(endpoint.basePath, "/v1/event/banner_size")
-            case .click:
-                XCTAssertEqual(endpoint.host, "click.mediation-sdk.chartboost.com")
-                XCTAssertEqual(endpoint.basePath, "/v2/event/click")
             case .config:
                 XCTAssertEqual(endpoint.host, "config.mediation-sdk.chartboost.com")
                 XCTAssertEqual(endpoint.basePath, "/v1/sdk_init")
-            case .endQueue:
-                XCTAssertEqual(endpoint.host, "end-queue.mediation-sdk.chartboost.com")
-                XCTAssertEqual(endpoint.basePath, "/v1/event/end_queue")
-            case .expiration:
-                XCTAssertEqual(endpoint.host, "expiration.mediation-sdk.chartboost.com")
-                XCTAssertEqual(endpoint.basePath, "/v1/event/expiration")
-            case .initialization:
-                XCTAssertEqual(endpoint.host, "initialization.mediation-sdk.chartboost.com")
-                XCTAssertEqual(endpoint.basePath, "/v1/event/initialization")
             case .load:
                 XCTAssertEqual(endpoint.host, "load.mediation-sdk.chartboost.com")
                 XCTAssertEqual(endpoint.basePath, "/v2/event/load")
-            case .mediationImpression:
-                XCTAssertEqual(endpoint.host, "mediation-impression.mediation-sdk.chartboost.com")
-                XCTAssertEqual(endpoint.basePath, "/v2/event/helium_impression")
-            case .partnerImpression:
-                XCTAssertEqual(endpoint.host, "partner-impression.mediation-sdk.chartboost.com")
-                XCTAssertEqual(endpoint.basePath, "/v1/event/partner_impression")
-            case .prebid:
-                XCTAssertEqual(endpoint.host, "prebid.mediation-sdk.chartboost.com")
-                XCTAssertEqual(endpoint.basePath, "/v1/event/prebid")
-            case .reward:
-                XCTAssertEqual(endpoint.host, "reward.mediation-sdk.chartboost.com")
-                XCTAssertEqual(endpoint.basePath, "/v2/event/reward")
-            case .show:
-                XCTAssertEqual(endpoint.host, "show.mediation-sdk.chartboost.com")
-                XCTAssertEqual(endpoint.basePath, "/v1/event/show")
-            case .startQueue:
-                XCTAssertEqual(endpoint.host, "start-queue.mediation-sdk.chartboost.com")
-                XCTAssertEqual(endpoint.basePath, "/v1/event/start_queue")
-            case .winner:
-                XCTAssertEqual(endpoint.host, "winner.mediation-sdk.chartboost.com")
-                XCTAssertEqual(endpoint.basePath, "/v3/event/winner")
             }
         }
     }

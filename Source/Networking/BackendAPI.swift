@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -13,20 +13,8 @@ enum BackendAPI {
     enum Endpoint {
         case auction_nonTracking
         case auction_tracking
-        case bannerSize
-        case click
         case config // previously known as `sdk_init`
-        case expiration
-        case initialization
         case load
-        case mediationImpression
-        case partnerImpression
-        case prebid
-        case reward
-        case show
-        case winner
-        case startQueue
-        case endQueue
 
         var scheme: String {
             "https"
@@ -39,34 +27,10 @@ enum BackendAPI {
                     return "non-tracking.auction"
                 case .auction_tracking:
                     return "tracking.auction"
-                case .bannerSize:
-                    return "banner-size"
-                case .click:
-                    return "click"
                 case .config:
                     return "config"
-                case .expiration:
-                    return "expiration"
-                case .initialization:
-                    return "initialization"
                 case .load:
                     return "load"
-                case .mediationImpression:
-                    return "mediation-impression"
-                case .partnerImpression:
-                    return "partner-impression"
-                case .prebid:
-                    return "prebid"
-                case .reward:
-                    return "reward"
-                case .show:
-                    return "show"
-                case .winner:
-                    return "winner"
-                case .startQueue:
-                    return "start-queue"
-                case .endQueue:
-                    return "end-queue"
                 }
             }
 
@@ -86,34 +50,10 @@ enum BackendAPI {
                 return "/v3/auctions"
             case .auction_tracking:
                 return "/v3/auctions"
-            case .bannerSize:
-                return "/v1/event/banner_size"
-            case .click:
-                return "/v2/event/click"
             case .config:
                 return "/v1/sdk_init"
-            case .expiration:
-                return "/v1/event/expiration"
-            case .initialization:
-                return "/v1/event/initialization"
             case .load:
                 return "/v2/event/load"
-            case .mediationImpression:
-                return "/v2/event/helium_impression"
-            case .partnerImpression:
-                return "/v1/event/partner_impression"
-            case .prebid:
-                return "/v1/event/prebid"
-            case .reward:
-                return "/v2/event/reward"
-            case .show:
-                return "/v1/event/show"
-            case .winner:
-                return "/v3/event/winner"
-            case .startQueue:
-                return "/v1/event/start_queue"
-            case .endQueue:
-                return "/v1/event/end_queue"
             }
         }
     }

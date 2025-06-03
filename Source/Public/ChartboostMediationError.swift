@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -12,7 +12,7 @@ import Foundation
 /// of standard `NSError` properties, like `localizedDescription`, `localizedRecoveryOptions`, `localizedRecoverySuggestion`, and
 /// `localizedFailureReason`.
 @objc(CBMError)
-public class ChartboostMediationError: NSError {
+public class ChartboostMediationError: NSError, @unchecked Sendable {
     // MARK: - Constants
 
     /// Chartboost Mediation SDK error domain.

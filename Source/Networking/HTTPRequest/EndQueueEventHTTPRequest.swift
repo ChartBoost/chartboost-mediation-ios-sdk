@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -20,19 +20,17 @@ struct EndQueueEventHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithDe
     let method = HTTP.Method.post
     let responseKeyDecodingStrategy: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys
     let requestKeyEncodingStrategy: JSONEncoder.KeyEncodingStrategy = .convertToSnakeCase
-    var url: URL {
-        get throws {
-            try makeURL(endpoint: .endQueue)
-        }
-    }
+    let url: URL
 
     init(
+        eventTracker: ServerEventTracker,
         appID: String,
         currentQueueDepth: Int,
         placementName: String,
         queueCapacity: Int,
         queueID: String
     ) {
+        self.url = eventTracker.url
         self.body = Body(
             appID: appID,
             currentQueueDepth: currentQueueDepth,

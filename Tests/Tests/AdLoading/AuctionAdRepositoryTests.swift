@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -87,7 +87,8 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
                 XCTAssertTrue($0 < Date())
             },
             0.0,
-            nil // queueID
+            nil, // queueID
+            nil // parterAd
         ])
         
         // Check that we have finished with failure
@@ -159,7 +160,8 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
                 XCTAssertTrue($0 < Date())
             },
             0.0,
-            nil // queueID
+            nil, // queueID
+            nil // parterAd
         ])
     }
     
@@ -250,7 +252,8 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
                     XCTAssertTrue($0 < Date())
                 },
                 0.0,
-                nil // queueID
+                nil, // queueID
+                partnerAd
             ], [
                 bids,
                 winningBid,
@@ -322,7 +325,8 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
                     XCTAssertTrue($0 < Date())
                 },
                 0.0,
-                nil // queueID
+                nil, // queueID
+                partnerAd
             ], [
                 bids,
                 winningBid,
@@ -393,7 +397,8 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
                     XCTAssertTrue($0 < Date())
                 },
                 0.0,
-                nil // queueID
+                nil, // queueID
+                partnerAd
             ], [
                 bids,
                 winningBid,
@@ -462,7 +467,8 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
                     XCTAssertTrue($0 < Date())
                 },
                 0.0,
-                nil // queueID
+                nil, // queueID
+                partnerAd
             ], [
                 bids,
                 winningBid,
@@ -565,7 +571,8 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
                     XCTAssertTrue($0 < Date())
                 },
                 backgroundDuration,
-                nil // queueID
+                nil, // queueID
+                partnerAd
             ], [
                 bids,
                 winningBid,
@@ -644,8 +651,41 @@ class AuctionAdRepositoryTests: ChartboostMediationTestCase {
                 XCTAssertTrue($0 < Date())
             },
             backgroundDuration,
-            nil // queueID
+            nil, // queueID
+            nil
         ])
+    }
+
+    func testPartnerAdIsInjectedCorrectly() {
+        let request = InternalAdLoadRequest.test(loadID: loadID)
+        let viewController = UIViewController()
+        let delegate = PartnerAdDelegateMock()
+        let bid = Bid.test()
+        let partnerAd = PartnerBannerAdMock()
+        mocks.metrics.setReturnValue([:], for: .logLoad)
+
+        let loadExpectation = expectation(description: "Load finished")
+
+        adRepository.loadAd(request: request, viewController: viewController, delegate: delegate) { result in
+            if case .success(let loadedAd) = result.result {
+                XCTAssertIdentical(loadedAd.partnerAd, partnerAd)
+            } else {
+                XCTFail("Expected success with injected partnerAd")
+            }
+            loadExpectation.fulfill()
+        }
+
+        var auctionCompletion: (AdAuctionResponse) -> Void = { _ in }
+        XCTAssertMethodCalls(mocks.auctionService, .startAuction, parameters: [request, XCTMethodCaptureParameter { auctionCompletion = $0 }])
+        auctionCompletion(AdAuctionResponse(result: .success([bid]), auctionID: "auction123"))
+
+        var fulfillCompletion: ((BidFulfillOperationResult) -> Void) = { _ in }
+        XCTAssertMethodCalls(mocks.bidFulfillOperationFactory, .makeBidFulfillOperation, parameters: [[bid], request, viewController, delegate])
+        let fulfillOperation = mocks.bidFulfillOperationFactory.returnValue(for: .makeBidFulfillOperation) as BidFulfillOperationMock
+        XCTAssertMethodCalls(fulfillOperation, .run, parameters: [XCTMethodCaptureParameter { fulfillCompletion = $0 }])
+        fulfillCompletion(BidFulfillOperationResult(result: .success((bid, partnerAd, nil)), loadEvents: []))
+
+        waitForExpectations(timeout: 1)
     }
 
     // MARK: - Helpers

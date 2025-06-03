@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -89,6 +89,7 @@ public class BannerAdView: UIView {
     @Injected(\.bannerControllerConfiguration) private var configuration
     @Injected(\.networkManager) private var networkManager
     @Injected(\.taskDispatcher) private var taskDispatcher
+    @Injected(\.metrics) private var metrics
     private let controller: BannerSwapControllerProtocol
 
     /// Convenience to get the loaded ad from the controller, or `nil` if an ad is not loaded.
@@ -337,12 +338,7 @@ extension BannerAdView {
                     containerSize: BackendEncodableSize(cgSize: self.frame.size),
                     requestSize: requestSize
                 )
-                let request = AdaptiveBannerSizeHTTPRequest(
-                    adFormat: ad.request.adFormat,
-                    data: data,
-                    loadID: ad.request.loadID
-                )
-                self.networkManager.send(request) { _ in }
+                self.metrics.logContainerTooSmallWarning(adFormat: ad.request.adFormat, data: data, loadID: ad.request.loadID)
             }
         }
     }

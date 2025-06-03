@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -23,11 +23,13 @@ extension OpenRTB.BidResponse {
 extension OpenRTB.BidResponse.Extension {
     static func test(
         ilrd: JSON<[String: Any]>? = nil,
-        rewarded_callback: RewardedCallbackData? = .test()
+        rewarded_callback: RewardedCallbackData? = .test(),
+        eventTrackers: JSON<[String: [[String: String]]]>? = nil
     ) -> OpenRTB.BidResponse.Extension {
         .init(
             ilrd: ilrd,
-            rewarded_callback: rewarded_callback
+            rewarded_callback: rewarded_callback,
+            event_trackers: eventTrackers
         )
     }
 }
@@ -95,7 +97,8 @@ extension OpenRTB.Bid.Extension {
         cpm_price: Decimal? = 42.0,
         partner_placement: String? = "mock_partner_placement",
         bidder: JSON<[String: Any]>? = nil,
-        ilrd: JSON<[String: Any]>? = nil
+        ilrd: JSON<[String: Any]>? = nil,
+        eventTrackers: JSON<[String: Any]>? = JSON(value: [:])
     ) -> OpenRTB.Bid.Extension {
         .init(
             ad_revenue: ad_revenue,

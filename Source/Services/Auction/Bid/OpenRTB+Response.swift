@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -34,6 +34,9 @@ extension OpenRTB {
                 var retry_delay: TimeInterval?
                 var body: String?
             }
+
+            // Event trackers grouped by event type, each containing an array of URLs to ping.
+            let event_trackers: JSON<[String: [[String: String]]]>?
         }
     }
 
@@ -100,5 +103,25 @@ extension OpenRTB.Bid.Extension {
 
     var partnerDetails: [String: Any]? {
         bidder?.value[Self.bidderHeliumKey] as? [String: Any]
+    }
+}
+
+extension OpenRTB.BidResponse.Extension {
+    /// Extracts event trackers from the bid response
+    var eventTrackers: [MetricsEvent.EventType: [ServerEventTracker]] {
+        guard let trackersData = event_trackers?.value else { return [:] }
+        var parsedTrackers: [MetricsEvent.EventType: [ServerEventTracker]] = [:]
+
+        for (eventType, trackerArray) in trackersData {
+            let trackers = trackerArray.compactMap { dict -> ServerEventTracker? in
+                guard let urlString = dict["url"], let url = URL(unsafeString: urlString) else { return nil }
+                return ServerEventTracker(url: url)
+            }
+
+            if let type = MetricsEvent.EventType(rawValue: eventType), !trackers.isEmpty {
+                parsedTrackers[type] = trackers
+            }
+        }
+        return parsedTrackers
     }
 }

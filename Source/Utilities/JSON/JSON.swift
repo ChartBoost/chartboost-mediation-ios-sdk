@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -9,7 +9,7 @@ import Foundation
 /// Useful as part of another Codable object, where a generic `[String: Any]` property cannot be used since such a type cannot conform
 /// to Codable.
 /// - parameter T: The primitive value type expected to match the JSON structure.
-struct JSON<T>: Decodable {
+struct JSON<T>: Codable {
     /// The native primitive value represented by this JSON model.
     let value: T
 
@@ -32,10 +32,18 @@ struct JSON<T>: Decodable {
         // Set the value
         self.value = value
     }
+
+    func encode(to encoder: Encoder) throws {
+        try JSONValue(value).encode(to: encoder)
+    }
 }
 
-/// A Decodable JSON value.
-private enum JSONValue: Decodable {
+/// A Codable JSON value.
+private enum JSONValue: Codable {
+    enum JSONValueError: Error {
+        case unsupportedType(Any)
+    }
+
     case object([String: JSONValue])
     case array([JSONValue])
     case string(String)
@@ -44,6 +52,29 @@ private enum JSONValue: Decodable {
     case decimal(Decimal)
     case double(Double)
     case null
+
+    init(_ value: Any) throws {
+        switch value {
+        case let stringValue as String:
+            self = .string(stringValue)
+        case let boolValue as Bool:
+            self = .bool(boolValue)
+        case let intValue as Int:
+            self = .integer(intValue)
+        case let decimalValue as Decimal:
+            self = .decimal(decimalValue)
+        case let doubleValue as Double:
+            self = .double(doubleValue)
+        case let objectValue as [String: Any]:
+            self = .object(try objectValue.mapValues { try JSONValue($0) })
+        case let arrayValue as [Any]:
+            self = .array(try arrayValue.map { try JSONValue($0) })
+        case let nilValue as Any? where nilValue == nil:
+            self = .null
+        default:
+            throw JSONValueError.unsupportedType(value)
+        }
+    }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -68,6 +99,21 @@ private enum JSONValue: Decodable {
             throw DecodingError.dataCorrupted(
                 .init(codingPath: decoder.codingPath, debugDescription: "Invalid JSON value")
             )
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+
+        switch self {
+        case .object(let value): try container.encode(value)
+        case .array(let value): try container.encode(value)
+        case .string(let value): try container.encode(value)
+        case .bool(let value): try container.encode(value)
+        case .integer(let value): try container.encode(value)
+        case .decimal(let value): try container.encode(value)
+        case .double(let value): try container.encode(value)
+        case .null: try container.encodeNil()
         }
     }
 

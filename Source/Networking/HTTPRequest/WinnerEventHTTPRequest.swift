@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -61,13 +61,10 @@ struct WinnerEventHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawD
     let body: Body
     let requestKeyEncodingStrategy: JSONEncoder.KeyEncodingStrategy = .convertToSnakeCase
 
-    var url: URL {
-        get throws {
-            try makeURL(endpoint: .winner)
-        }
-    }
+    let url: URL
 
-    init(winner: Bid, of bids: [Bid], loadID: LoadID, adFormat: AdFormat, size: CGSize?) {
+    init(eventTracker: ServerEventTracker, winner: Bid, of bids: [Bid], loadID: LoadID, adFormat: AdFormat, size: CGSize?) {
+        self.url = eventTracker.url
         body = .init(winner: winner, of: bids, adFormat: adFormat, size: size)
         customHeaders = [
             HTTP.HeaderKey.adType.rawValue: adFormat.rawValue,

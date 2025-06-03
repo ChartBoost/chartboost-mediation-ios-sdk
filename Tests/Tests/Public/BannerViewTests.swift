@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -743,7 +743,7 @@ class BannerAdViewTests: ChartboostMediationTestCase {
         XCTAssertMethodCalls(mocks.taskDispatcher, .asyncDelayed, parameters: [XCTMethodIgnoredParameter(), expectedDelay])
         mocks.taskDispatcher.performDelayedWorkItems()
 
-        let _: AdaptiveBannerSizeHTTPRequest = try assertSendsNetworkRequest()
+        XCTAssertMethodCalls(mocks.metrics, .logContainerTooSmallWarning)
     }
 
     func testSendsContainerTooSmallErrorIfWidthOfContainerIsSmallerThanBannerFixed() throws {
@@ -761,7 +761,7 @@ class BannerAdViewTests: ChartboostMediationTestCase {
         XCTAssertMethodCalls(mocks.taskDispatcher, .asyncDelayed, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter()])
         mocks.taskDispatcher.performDelayedWorkItems()
 
-        let _: AdaptiveBannerSizeHTTPRequest = try assertSendsNetworkRequest()
+        XCTAssertMethodCalls(mocks.metrics, .logContainerTooSmallWarning)
     }
 
     func testSendsContainerTooSmallErrorIfHeightContainerIsSmallerThanBannerFixed() throws {
@@ -779,7 +779,7 @@ class BannerAdViewTests: ChartboostMediationTestCase {
         XCTAssertMethodCalls(mocks.taskDispatcher, .asyncDelayed, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter()])
         mocks.taskDispatcher.performDelayedWorkItems()
 
-        let _: AdaptiveBannerSizeHTTPRequest = try assertSendsNetworkRequest()
+        XCTAssertMethodCalls(mocks.metrics, .logContainerTooSmallWarning)
     }
 
     func testSendsContainerTooSmallErrorIfWidthOfContainerIsSmallerThanBannerAdaptive() throws {
@@ -798,7 +798,7 @@ class BannerAdViewTests: ChartboostMediationTestCase {
         XCTAssertMethodCalls(mocks.taskDispatcher, .asyncDelayed, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter()])
         mocks.taskDispatcher.performDelayedWorkItems()
 
-        let _: AdaptiveBannerSizeHTTPRequest = try assertSendsNetworkRequest()
+        XCTAssertMethodCalls(mocks.metrics, .logContainerTooSmallWarning)
     }
 
     func testSendsContainerTooSmallErrorIfHeightContainerIsSmallerThanBannerAdaptive() throws {
@@ -816,7 +816,7 @@ class BannerAdViewTests: ChartboostMediationTestCase {
         XCTAssertMethodCalls(mocks.taskDispatcher, .asyncDelayed, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter()])
         mocks.taskDispatcher.performDelayedWorkItems()
 
-        let _: AdaptiveBannerSizeHTTPRequest = try assertSendsNetworkRequest()
+        XCTAssertMethodCalls(mocks.metrics, .logContainerTooSmallWarning)
     }
 
     func testContainerTooSmallErrorFields() throws {
@@ -853,38 +853,65 @@ class BannerAdViewTests: ChartboostMediationTestCase {
         XCTAssertMethodCalls(mocks.taskDispatcher, .asyncDelayed, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter()])
         mocks.taskDispatcher.performDelayedWorkItems()
 
-        // Ensure that we send the minimum size of the banner at the time of sampling.
-        let request: AdaptiveBannerSizeHTTPRequest = try assertSendsNetworkRequest()
-        XCTAssertEqual(request.customHeaders["x-mediation-load-id"], "test_load_id")
-        XCTAssertEqual(request.body.auctionID, "test_auction_id")
-        XCTAssertEqual(request.body.creativeSize?.width, 400)
-        XCTAssertEqual(request.body.creativeSize?.width, 400)
-        XCTAssertEqual(request.body.creativeSize?.height, 50)
-        XCTAssertEqual(request.body.containerSize?.width, 400)
-        XCTAssertEqual(request.body.containerSize?.height, 40)
-        XCTAssertEqual(request.body.requestSize?.width, 500)
-        XCTAssertEqual(request.body.requestSize?.height, 100)
+        // Verify that `logContainerTooSmallWarning` is called with the correct parameters
+        XCTAssertMethodCalls(mocks.metrics, .logContainerTooSmallWarning, parameters: [
+            ad.request.adFormat,
+            XCTMethodCaptureParameter { (data: AdaptiveBannerSizeData) in
+                XCTAssertEqual(data.auctionID, "test_auction_id")
+                XCTAssertEqual(data.creativeSize?.width, 400)
+                XCTAssertEqual(data.creativeSize?.height, 50)
+                XCTAssertEqual(data.containerSize?.width, 400)
+                XCTAssertEqual(data.containerSize?.height, 40)
+                XCTAssertEqual(data.requestSize?.width, 500)
+                XCTAssertEqual(data.requestSize?.height, 100)
+            },
+            "test_load_id"
+        ])
     }
 
     func testContainerTooSmallErrorSampledCreativeSize() throws {
         bannerView.frame.size = CGSize(width: 400.0, height: 40.0)
 
-        setUpControllerWithBanner(
-            view: UIView(),
-            size: BannerSize(size: CGSize(width: 400.0, height: 100.0), type: .adaptive)
-        )
+        // Manually set up since we need to specify some values
+        let view = UIView()
+        let adSize = BannerSize(size: CGSize(width: 400.0, height: 100.0), type: .adaptive)
 
-        // Fake the impression.
+        let bid = Bid.test(
+            identifier: "test_bid_id",
+            partnerID: "test_partner_identifier",
+            partnerPlacement: "incorrect_placement",
+            lineItemIdentifier: "test_line_item_id",
+            auctionID: "test_auction_id"
+        )
+        let adapter = PartnerAdapterMock()
+        PartnerAdapterConfigurationMock1.partnerID = "test_partner_name"
+        let partnerAdRequest = PartnerAdLoadRequest.test(partnerPlacement: "test_partner_placement")
+        let partnerAd = PartnerBannerAdMock(adapter: adapter, request: partnerAdRequest, view: view)
+
+        let adRequest = InternalAdLoadRequest.test(heliumPlacement: "test_placement_name", loadID: "test_load_id")
+        let ad = LoadedAd(bids: [bid], winner: bid, bidInfo: [:], partnerAd: partnerAd, bannerSize: adSize, request: adRequest)
+        controller.showingBannerAdLoadResult = InternalAdLoadResult(result: .success(ad), metrics: nil)
+        bannerView.layoutSubviews()
+
+        // Ensure the loadID is correct
+        XCTAssertEqual(ad.request.loadID, "test_load_id")
+
+        // Fake the impression
         bannerView.bannerSwapControllerDidRecordImpression(controller)
 
-        // Fake the delay.
+        // Fake the delay
         XCTAssertMethodCalls(mocks.taskDispatcher, .asyncDelayed, parameters: [XCTMethodIgnoredParameter(), XCTMethodIgnoredParameter()])
         mocks.taskDispatcher.performDelayedWorkItems()
 
-        // Ensure that we send the minimum size of the banner at the time of sampling.
-        let request: AdaptiveBannerSizeHTTPRequest = try assertSendsNetworkRequest()
-        XCTAssertEqual(request.body.creativeSize?.width, 200)
-        XCTAssertEqual(request.body.creativeSize?.height, 50)
+        // Verify that `logContainerTooSmallWarning` is called with the correct parameters
+        XCTAssertMethodCalls(mocks.metrics, .logContainerTooSmallWarning, parameters: [
+            ad.request.adFormat,
+            XCTMethodCaptureParameter { (data: AdaptiveBannerSizeData) in
+                XCTAssertEqual(data.creativeSize?.width, 200)
+                XCTAssertEqual(data.creativeSize?.height, 50)
+            },
+            "test_load_id"
+        ])
     }
 }
 

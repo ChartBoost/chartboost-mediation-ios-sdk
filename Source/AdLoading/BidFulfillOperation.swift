@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -231,7 +231,8 @@ extension PartnerControllerBidFulfillOperation {
             partnerSettings: bid.partnerDetails ?? [:],
             identifier: request.loadID,
             auctionID: bid.auctionID,
-            internalAdFormat: request.adFormat
+            internalAdFormat: request.adFormat,
+            eventTrackers: bid.eventTrackers
         )
     }
 

@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -55,6 +55,9 @@ struct Bid {
 
     /// The size of the ad.
     let size: CGSize?
+
+    /// Event trackers specific to this bid.
+    let eventTrackers: [MetricsEvent.EventType: [ServerEventTracker]]
 }
 
 extension Bid {
@@ -136,7 +139,8 @@ extension Bid {
                     clearingPrice: rtbBid.clearingPrice,
                     winURL: rtbBid.winURL,
                     lossURL: rtbBid.lossURL,
-                    size: size
+                    size: size,
+                    eventTrackers: response.ext?.eventTrackers ?? [:]
                 )
                 bids.append(bid)
             }

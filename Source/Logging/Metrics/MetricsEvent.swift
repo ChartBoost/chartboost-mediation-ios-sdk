@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -12,7 +12,7 @@ struct MetricsEvent: Encodable {
         case mediation
     }
 
-    // WARNING: The name of each case of this enum must match the strings passed by the backend on app config "metricsEvents".
+    // WARNING: The name of each case of this enum must match the strings passed by the backend on app config "event_trackers".
     // They should not be renamed!
     enum EventType: String, CaseIterable {
         case initialization
@@ -26,8 +26,8 @@ struct MetricsEvent: Encodable {
         case reward
         case winner
         case bannerSize = "banner_size"
-        case startQueue
-        case endQueue
+        case startQueue = "start_queue"
+        case endQueue = "end_queue"
     }
 
     /// Start time the event started.

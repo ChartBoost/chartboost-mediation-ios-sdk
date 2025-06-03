@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -12,7 +12,7 @@ import Foundation
 final class UpdatableApplicationConfiguration: ApplicationConfiguration {
     /// Raw configuration values as obtained from the backend.
     /// Note that property names must match the schema keys, except that we use camel case names instead of snake case.
-    struct RawValues: Decodable {
+    struct RawValues: Codable {
         struct Placement: Codable {
             let chartboostPlacement: String
             // a String instead of a Codable enum so we can recover from parsing errors without discarding the whole response
@@ -35,7 +35,7 @@ final class UpdatableApplicationConfiguration: ApplicationConfiguration {
         let visibilityTrackerTraversalLimit: UInt?
         let adapterClasses: [String]?
         let credentials: JSON<[String: [String: Any]]>
-        let metricsEvents: [String]?
+        let eventTrackers: [String: [ServerEventTracker]]?
         let initTimeout: UInt?
         let initMetricsPostTimeout: UInt?
         let placements: [Placement]
@@ -70,6 +70,11 @@ final class UpdatableApplicationConfiguration: ApplicationConfiguration {
         static let defaultQueueSize: UInt = 1
         static let queuedAdTtl: TimeInterval = 3600
         static let disableSdk: Bool = false
+        static let eventTrackers: [MetricsEvent.EventType: [ServerEventTracker]] = {
+            [
+                .initialization: [ServerEventTracker.defaultInitialization]
+            ]
+        }()
     }
 
     @Injected(\.environment) private var environment
@@ -158,8 +163,21 @@ extension UpdatableApplicationConfiguration: AdControllerConfiguration {
 }
 
 extension UpdatableApplicationConfiguration: MetricsEventLoggerConfiguration {
-    var filter: [MetricsEvent.EventType] {
-        values?.metricsEvents?.compactMap { MetricsEvent.EventType(rawValue: $0) } ?? MetricsEvent.EventType.allCases
+    var eventTrackers: [MetricsEvent.EventType: [ServerEventTracker]] {
+        guard let rawTrackers = values?.eventTrackers else { return DefaultValues.eventTrackers }
+        var result = [MetricsEvent.EventType: [ServerEventTracker]](
+            uniqueKeysWithValues: rawTrackers.compactMap { key, value -> (MetricsEvent.EventType, [ServerEventTracker])? in
+                guard let eventType = MetricsEvent.EventType(rawValue: key) else { return nil }
+                let trackers = value.filter(\.isValid)
+                return (eventType, trackers)
+            }
+        )
+
+        if result[.initialization]?.isEmpty != false {
+            result[.initialization] = [ServerEventTracker.defaultInitialization]
+        }
+
+        return result
     }
 
     var country: String? {

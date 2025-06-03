@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -28,7 +28,8 @@ final class WinnerEventHTTPRequestTests: ChartboostMediationTestCase {
             clearingPrice: nil,
             winURL: nil,
             lossURL: nil,
-            size: nil
+            size: nil,
+            eventTrackers: [:]
         ),
         .init( // #1: non programmatic
             identifier: "identifier_1",
@@ -46,7 +47,8 @@ final class WinnerEventHTTPRequestTests: ChartboostMediationTestCase {
             clearingPrice: 111,
             winURL: "https://win.url",
             lossURL: "https://loss.url",
-            size: nil
+            size: nil,
+            eventTrackers: [:]
         ),
         .init( // #2: programmatic
             identifier: "identifier_2",
@@ -64,7 +66,8 @@ final class WinnerEventHTTPRequestTests: ChartboostMediationTestCase {
             clearingPrice: 222,
             winURL: "https://win.url",
             lossURL: "https://loss.url",
-            size: nil
+            size: nil,
+            eventTrackers: [:]
         )
     ]
 
@@ -97,7 +100,7 @@ final class WinnerEventHTTPRequestTests: ChartboostMediationTestCase {
     /// Test the 1st of 3 `bids`.
     func testWinnerEventWithMostlyNilWinnerBid() throws {
         let winnerBid = Self.bids[0]
-        let request = WinnerEventHTTPRequest(winner: winnerBid, of: Self.bids, loadID: Self.loadID, adFormat: .banner, size: nil)
+        let request = WinnerEventHTTPRequest(eventTracker: ServerEventTracker(url: WinnerEventHTTPRequestTests.url), winner: winnerBid, of: Self.bids, loadID: Self.loadID, adFormat: .banner, size: nil)
         let json = try JSONSerialization.jsonDictionary(with: request.bodyData)
         let expectedJSON = Dictionary.merge(Self.biddersJSON, [
             "auction_id": winnerBid.auctionID,
@@ -107,7 +110,7 @@ final class WinnerEventHTTPRequestTests: ChartboostMediationTestCase {
             "partner_placement": winnerBid.partnerPlacement,
             "placement_type": "banner",
         ])
-        XCTAssertEqual(try request.url, Self.url)
+        XCTAssertEqual(request.url, Self.url)
         XCTAssertEqual(request.method, .post)
         XCTAssert(request.isSDKInitializationRequired)
         XCTAssertAnyEqual(request.customHeaders, customHeaders(format: .banner))
@@ -117,7 +120,7 @@ final class WinnerEventHTTPRequestTests: ChartboostMediationTestCase {
     /// Test the 2nd of 3 `bids`.
     func testWinnerEventWithNonProgrammaticWinnerBid() throws {
         let winnerBid = Self.bids[1]
-        let request = WinnerEventHTTPRequest(winner: winnerBid, of: Self.bids, loadID: Self.loadID, adFormat: .banner, size: nil)
+        let request = WinnerEventHTTPRequest(eventTracker: ServerEventTracker(url: WinnerEventHTTPRequestTests.url), winner: winnerBid, of: Self.bids, loadID: Self.loadID, adFormat: .banner, size: nil)
         let json = try JSONSerialization.jsonDictionary(with: request.bodyData)
         let expectedJSON = Dictionary.merge(Self.biddersJSON, [
             "auction_id": winnerBid.auctionID,
@@ -128,7 +131,7 @@ final class WinnerEventHTTPRequestTests: ChartboostMediationTestCase {
             "partner_placement": winnerBid.partnerPlacement,
             "placement_type": "banner",
         ])
-        XCTAssertEqual(try request.url, Self.url)
+        XCTAssertEqual(request.url, Self.url)
         XCTAssertEqual(request.method, .post)
         XCTAssert(request.isSDKInitializationRequired)
         XCTAssertAnyEqual(request.customHeaders, customHeaders(format: .banner))
@@ -138,7 +141,7 @@ final class WinnerEventHTTPRequestTests: ChartboostMediationTestCase {
     /// Test the 3rd of 3 `bids`.
     func testWinnerEventWithProgrammaticWinnerBid() throws {
         let winnerBid = Self.bids[2]
-        let request = WinnerEventHTTPRequest(winner: winnerBid, of: Self.bids, loadID: Self.loadID, adFormat: .banner, size: nil)
+        let request = WinnerEventHTTPRequest(eventTracker: ServerEventTracker(url: WinnerEventHTTPRequestTests.url), winner: winnerBid, of: Self.bids, loadID: Self.loadID, adFormat: .banner, size: nil)
         let json = try JSONSerialization.jsonDictionary(with: request.bodyData)
         let expectedJSON = Dictionary.merge(Self.biddersJSON, [
             "auction_id": winnerBid.auctionID,
@@ -148,7 +151,7 @@ final class WinnerEventHTTPRequestTests: ChartboostMediationTestCase {
             "price": 222,
             "placement_type": "banner",
         ])
-        XCTAssertEqual(try request.url, Self.url)
+        XCTAssertEqual(request.url, Self.url)
         XCTAssertEqual(request.method, .post)
         XCTAssert(request.isSDKInitializationRequired)
         XCTAssertAnyEqual(request.customHeaders, customHeaders(format: .banner))
@@ -158,7 +161,7 @@ final class WinnerEventHTTPRequestTests: ChartboostMediationTestCase {
     func testSendsSizeForAdaptiveBanner() throws {
         // The size should be the size sent in the `WinnerEventHTTPRequest`, not in the bid.
         let bid = Bid.test(size: CGSize(width: 500.0, height: 120.0))
-        let request = WinnerEventHTTPRequest(winner: bid, of: Self.bids, loadID: Self.loadID, adFormat: .adaptiveBanner, size: CGSize(width: 400.0, height: 100.0))
+        let request = WinnerEventHTTPRequest(eventTracker: ServerEventTracker(url: WinnerEventHTTPRequestTests.url), winner: bid, of: Self.bids, loadID: Self.loadID, adFormat: .adaptiveBanner, size: CGSize(width: 400.0, height: 100.0))
         let jsonDict = try XCTUnwrap(request.bodyJSON)
         XCTAssertEqual(jsonDict["placement_type"] as? String, "adaptive_banner")
         let sizeDict = try XCTUnwrap(jsonDict["size"] as? [String: Any])
@@ -170,7 +173,7 @@ final class WinnerEventHTTPRequestTests: ChartboostMediationTestCase {
 
     func testSendsZeroWhenBidSizeIsNil() throws {
         let bid = Bid.test()
-        let request = WinnerEventHTTPRequest(winner: bid, of: Self.bids, loadID: Self.loadID, adFormat: .adaptiveBanner, size: nil)
+        let request = WinnerEventHTTPRequest(eventTracker: ServerEventTracker(url: WinnerEventHTTPRequestTests.url), winner: bid, of: Self.bids, loadID: Self.loadID, adFormat: .adaptiveBanner, size: nil)
         let jsonDict = try XCTUnwrap(request.bodyJSON)
         let sizeDict = try XCTUnwrap(jsonDict["size"] as? [String: Any])
         let width = try XCTUnwrap(sizeDict["w"] as? Int)
@@ -181,7 +184,7 @@ final class WinnerEventHTTPRequestTests: ChartboostMediationTestCase {
 
     func testDoesNotSendSizeWhenFormatIsNotAdaptiveBanner() throws {
         let bid = Bid.test()
-        let request = WinnerEventHTTPRequest(winner: bid, of: Self.bids, loadID: Self.loadID, adFormat: .banner, size: CGSize(width: 320.0, height: 50.0))
+        let request = WinnerEventHTTPRequest(eventTracker: ServerEventTracker(url: WinnerEventHTTPRequestTests.url), winner: bid, of: Self.bids, loadID: Self.loadID, adFormat: .banner, size: CGSize(width: 320.0, height: 50.0))
         let jsonDict = try XCTUnwrap(request.bodyJSON)
         XCTAssertEqual(jsonDict["placement_type"] as? String, "banner")
         XCTAssertNil(jsonDict["size"])

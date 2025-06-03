@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -143,21 +143,24 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
         }
     }
 
-    let eventType: MetricsEvent.EventType
     let method = HTTP.Method.post
     let customHeaders: HTTP.Headers
     let body: Body
     let requestKeyEncodingStrategy: JSONEncoder.KeyEncodingStrategy = .convertToSnakeCase
-    var isSDKInitializationRequired: Bool { eventType != .initialization }
+    var isSDKInitializationRequired: Bool
 
-    var url: URL {
-        get throws {
-            try makeURL(endpoint: eventType.endpoint)
-        }
-    }
+    let url: URL
 
-    private init(eventType: MetricsEvent.EventType, loadID: LoadID?, queueID: String? = nil, body: Body, adFormat: AdFormat?) {
-        self.eventType = eventType
+    private init(
+        eventTracker: ServerEventTracker,
+        loadID: LoadID?,
+        queueID: String? = nil,
+        body: Body,
+        adFormat: AdFormat?,
+        isSDKInitializationRequired: Bool = true
+    ) {
+        self.isSDKInitializationRequired = isSDKInitializationRequired
+        self.url = eventTracker.url
         self.body = body
         self.customHeaders = [
             HTTP.HeaderKey.adType.rawValue: adFormat?.rawValue,
@@ -166,27 +169,34 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
         ].compactMapValues { $0 }   // Only include headers for non-nil IDs
     }
 
-    static func initialization(events: [MetricsEvent], result: SDKInitResult, error: ChartboostMediationError?) -> Self {
+    static func initialization(
+        eventTracker: ServerEventTracker,
+        metricsEvent: [MetricsEvent],
+        result: SDKInitResult,
+        error: ChartboostMediationError?
+    ) -> Self {
         Self(
-            eventType: .initialization,
+            eventTracker: eventTracker,
             loadID: nil,
             body: .init(
-                metrics: events,
+                metrics: metricsEvent,
                 result: result.rawValue,
                 error: .init(error: error)
             ),
-            adFormat: nil
+            adFormat: nil,
+            isSDKInitializationRequired: false
         )
     }
 
-    static func prebid(adFormat: AdFormat, loadID: LoadID, events: [MetricsEvent]) -> Self {
-        Self(eventType: .prebid, loadID: loadID, body: .init(metrics: events), adFormat: adFormat)
+    static func prebid(eventTracker: ServerEventTracker, adFormat: AdFormat, loadID: LoadID, metricsEvents: [MetricsEvent]) -> Self {
+        Self(eventTracker: eventTracker, loadID: loadID, body: .init(metrics: metricsEvents), adFormat: adFormat)
     }
 
     static func load(
+        eventTracker: ServerEventTracker,
         auctionID: String,
         loadID: LoadID,
-        events: [MetricsEvent],
+        metricsEvent: [MetricsEvent],
         error: ChartboostMediationError?,
         adFormat: AdFormat,
         size: CGSize?,
@@ -196,12 +206,12 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
         queueID: String? = nil
     ) -> Self {
         Self(
-            eventType: .load,
+            eventTracker: eventTracker,
             loadID: loadID,
             queueID: queueID,
             body: .init(
                 auctionID: auctionID,
-                metrics: events,
+                metrics: metricsEvent,
                 error: .init(error: error),
                 adFormat: adFormat,
                 size: size?.backendEncodableSize,
@@ -213,27 +223,34 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
         )
     }
 
-    static func show(adFormat: AdFormat, auctionID: String, loadID: LoadID, event: MetricsEvent) -> Self {
+    static func show(
+        eventTracker: ServerEventTracker,
+        adFormat: AdFormat,
+        auctionID: String,
+        loadID: LoadID,
+        metricsEvent: MetricsEvent
+    ) -> Self {
         Self(
-            eventType: .show,
+            eventTracker: eventTracker,
             loadID: loadID,
             body: .init(
                 auctionID: auctionID,
-                metrics: [event]
+                metrics: [metricsEvent]
             ),
             adFormat: adFormat
         )
     }
 
-    static func click(adFormat: AdFormat, auctionID: String, loadID: LoadID) -> Self {
-        Self(eventType: .click, loadID: loadID, body: .init(auctionID: auctionID), adFormat: adFormat)
+    static func click(eventTracker: ServerEventTracker, adFormat: AdFormat, auctionID: String, loadID: LoadID) -> Self {
+        Self(eventTracker: eventTracker, loadID: loadID, body: .init(auctionID: auctionID), adFormat: adFormat)
     }
 
-    static func expiration(adFormat: AdFormat, auctionID: String, loadID: LoadID) -> Self {
-        Self(eventType: .expiration, loadID: loadID, body: .init(auctionID: auctionID), adFormat: adFormat)
+    static func expiration(eventTracker: ServerEventTracker, adFormat: AdFormat, auctionID: String, loadID: LoadID) -> Self {
+        Self(eventTracker: eventTracker, loadID: loadID, body: .init(auctionID: auctionID), adFormat: adFormat)
     }
 
     static func mediationImpression(
+        eventTracker: ServerEventTracker,
         adFormat: AdFormat,
         size: CGSize?,
         auctionID: String,
@@ -246,7 +263,7 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
         partnerPlacement: String?
     ) -> Self {
         return Self(
-            eventType: .mediationImpression,
+            eventTracker: eventTracker,
             loadID: loadID,
             body: .init(
                 auctionID: auctionID,
@@ -263,32 +280,12 @@ struct MetricsHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWithRawDataR
         )
     }
 
-    static func partnerImpression(adFormat: AdFormat, auctionID: String, loadID: LoadID) -> Self {
-        Self(eventType: .partnerImpression, loadID: loadID, body: .init(auctionID: auctionID), adFormat: adFormat)
+    static func partnerImpression(eventTracker: ServerEventTracker, adFormat: AdFormat, auctionID: String, loadID: LoadID) -> Self {
+        Self(eventTracker: eventTracker, loadID: loadID, body: .init(auctionID: auctionID), adFormat: adFormat)
     }
 
-    static func reward(adFormat: AdFormat, auctionID: String, loadID: LoadID) -> Self {
-        Self(eventType: .reward, loadID: loadID, body: .init(auctionID: auctionID), adFormat: adFormat)
-    }
-}
-
-extension MetricsEvent.EventType {
-    fileprivate var endpoint: BackendAPI.Endpoint {
-        switch self {
-        case .bannerSize: return .bannerSize
-        case .click: return .click
-        case .expiration: return .expiration
-        case .initialization: return .initialization
-        case .load: return .load
-        case .mediationImpression: return .mediationImpression
-        case .partnerImpression: return .partnerImpression
-        case .prebid: return .prebid
-        case .reward: return .reward
-        case .show: return .show
-        case .winner: return .winner
-        case .startQueue: return .startQueue
-        case .endQueue: return .endQueue
-        }
+    static func reward(eventTracker: ServerEventTracker, adFormat: AdFormat, auctionID: String, loadID: LoadID) -> Self {
+        Self(eventTracker: eventTracker, loadID: loadID, body: .init(auctionID: auctionID), adFormat: adFormat)
     }
 }
 

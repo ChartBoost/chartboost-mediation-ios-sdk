@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -71,14 +71,14 @@ final class ResumableTimer {
     /// chooses the nonnegative value of 0.1 milliseconds instead.
     /// - Parameter repeats: If `true`, the timer will repeatedly reschedule itself until invalidated. If `false`, the timer will be
     /// invalidated after it fires. The default is `false`
-    /// - Parameter runLoopMode: The run loop mode that the timer will run on. The default mode is `RunLoop.Mode.default`.
+    /// - Parameter runLoopMode: The run loop mode that the timer will run on. The default mode is `RunLoop.Mode.common`.
     /// - Parameter closure: The execution body of the timer; the timer itself is passed as the parameter to this closure when executed to
     /// aid in avoiding cyclical references.
     /// - Returns: An initialized timer.
     required init(
         interval timerInterval: TimeInterval,
         repeats: Bool = false,
-        runLoopMode: RunLoop.Mode = .default,
+        runLoopMode: RunLoop.Mode = .common,
         closure: @escaping (ResumableTimer) -> Void
     ) {
         // Initialize immutable internal state

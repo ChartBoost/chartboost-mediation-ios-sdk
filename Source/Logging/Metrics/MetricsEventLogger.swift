@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -28,7 +28,8 @@ protocol MetricsEventLogging {
         start: Date,
         end: Date,
         backgroundDuration: TimeInterval,
-        queueID: String?
+        queueID: String?,
+        partnerAd: PartnerAd?
     ) -> RawMetrics?
 
     /// Logs a show event.
@@ -79,6 +80,9 @@ protocol MetricsEventLogging {
     /// Logs that .stop() has been called on a running queue. The queue will discard the current queueID and will not request any
     /// more ads unless restarted.
     func logEndQueue(_ queue: FullscreenAdQueue)
+
+    /// Logs an informative warning message to alert against potential issues related to its dimensions.
+    func logContainerTooSmallWarning(adFormat: AdFormat, data: AdaptiveBannerSizeData, loadID: String)
 }
 
 extension MetricsEventLogging {
@@ -93,7 +97,8 @@ extension MetricsEventLogging {
         size: CGSize?,
         start: Date,
         backgroundDuration: TimeInterval,
-        queueID: String? = nil
+        queueID: String? = nil,
+        partnerAd: PartnerAd? = nil
     ) -> RawMetrics? {
         self.logLoad(
             auctionID: auctionID,
@@ -105,14 +110,14 @@ extension MetricsEventLogging {
             start: start,
             end: Date(),
             backgroundDuration: backgroundDuration,
-            queueID: queueID
+            queueID: queueID,
+            partnerAd: partnerAd
         )
     }
 }
 
 protocol MetricsEventLoggerConfiguration {
-    /// The list of enabled event types.
-    var filter: [MetricsEvent.EventType] { get }
+    var eventTrackers: [MetricsEvent.EventType: [ServerEventTracker]] { get }
     /// The country associated with the load, specified by the backend.
     var country: String? { get }
     /// An internal test identifier obtained and passed back to the backend for tracking purposes.
@@ -128,24 +133,27 @@ final class MetricsEventLogger: MetricsEventLogging {
     @Injected(\.initializationStatusProvider) private var initializationStatusProvider
     @Injected(\.networkManager) private var networkManager
 
-    func logInitialization(_ events: [MetricsEvent], result: SDKInitResult, error: ChartboostMediationError?) {
-        guard configuration.filter.contains(.initialization) else { return }
-
-        send(MetricsHTTPRequest.initialization(events: events, result: result, error: error))
-        logToConsole(.initialization, events: events, error: error)
+    func logInitialization(_ metricsEvent: [MetricsEvent], result: SDKInitResult, error: ChartboostMediationError?) {
+        guard shouldLogEvent(.initialization) else { return }
+        for tracker in eventTrackers(for: .initialization) {
+            let request = MetricsHTTPRequest.initialization(eventTracker: tracker, metricsEvent: metricsEvent, result: result, error: error)
+            send(request)
+        }
+        logToConsole(.initialization, events: metricsEvent, error: error)
     }
 
     func logPrebid(for request: PartnerAdPreBidRequest, events: [MetricsEvent]) {
         guard !events.isEmpty else { return }
-        guard configuration.filter.contains(.prebid) else { return }
-
-        send(
-            MetricsHTTPRequest.prebid(
+        guard shouldLogEvent(.prebid) else { return }
+        for trackerEvents in eventTrackers(for: .prebid) {
+            let request = MetricsHTTPRequest.prebid(
+                eventTracker: trackerEvents,
                 adFormat: request.internalAdFormat,
                 loadID: request.loadID,
-                events: events
+                metricsEvents: events
             )
-        )
+            send(request)
+        }
         logToConsole(.prebid, events: events)
     }
 
@@ -159,109 +167,145 @@ final class MetricsEventLogger: MetricsEventLogging {
         start: Date,
         end: Date,
         backgroundDuration: TimeInterval,
-        queueID: String? = nil
+        queueID: String? = nil,
+        partnerAd: PartnerAd? = nil
     ) -> RawMetrics? {
-        guard configuration.filter.contains(.load) else { return nil }
+        guard shouldLogEvent(.load) else { return nil }
+        let trackers = eventTrackers(for: .load, partnerAd: partnerAd)
+        var metrics: RawMetrics?
+        for tracker in trackers {
+            let request = MetricsHTTPRequest.load(
+                eventTracker: tracker,
+                auctionID: auctionID,
+                loadID: loadID,
+                metricsEvent: events,
+                error: error,
+                adFormat: adFormat,
+                size: size,
+                start: start,
+                end: end,
+                backgroundDuration: backgroundDuration,
+                queueID: queueID
+            )
+            send(request)
 
-        let request = MetricsHTTPRequest.load(
-            auctionID: auctionID,
-            loadID: loadID,
-            events: events,
-            error: error,
-            adFormat: adFormat,
-            size: size,
-            start: start,
-            end: end,
-            backgroundDuration: backgroundDuration,
-            queueID: queueID
-        )
-        var metrics = send(request)
+            // Set metrics to return (value is overwritten for each tracker but it's fine since they all should have
+            // the same body).
+            metrics = request.bodyJSON
+
+            // Since the `loadID` is sent in the header, it's not part of the dict that's provided
+            // to the pub. Add it after logging to the console, since the `loadID` is logged as part
+            // of that.
+            metrics?["load_id"] = loadID
+        }
         logToConsole(.load, auctionID: auctionID, loadID: loadID, events: events)
-        // Since the `loadID` is sent in the header, it's not part of the dict that's provided
-        // to the pub. Add it after logging to the console, since the `loadID` is logged as part
-        // of that.
-        metrics?["load_id"] = loadID
         return metrics
     }
 
     func logShow(for ad: LoadedAd, start: Date, error: ChartboostMediationError?) -> RawMetrics? {
-        guard configuration.filter.contains(.show) else { return nil }
-
+        guard shouldLogEvent(.show) else { return nil }
+        let trackers = eventTrackers(for: .show, ad: ad)
+        guard !trackers.isEmpty else { return nil }
         let event = MetricsEvent(
             start: start,
             error: error,
             partnerID: ad.partnerAd.request.partnerID
         )
-        let metrics = send(
-            MetricsHTTPRequest.show(
+
+        var metrics: RawMetrics?
+
+        // Send to all trackers
+        for tracker in trackers {
+            let request = MetricsHTTPRequest.show(
+                eventTracker: tracker,
                 adFormat: ad.request.adFormat,
                 auctionID: ad.partnerAd.request.auctionID,
                 loadID: ad.request.loadID,
-                event: event
+                metricsEvent: event
             )
-        )
+            send(request)
+            metrics = request.bodyJSON  // Last request's bodyJSON is returned
+        }
+
         logToConsole(.show, auctionID: ad.partnerAd.request.auctionID, loadID: ad.request.loadID, events: [event])
         return metrics
     }
 
     func logClick(for ad: PartnerAd) {
-        guard configuration.filter.contains(.click) else { return }
-
-        send(
-            MetricsHTTPRequest.click(
-                adFormat: ad.request.internalAdFormat,
-                auctionID: ad.request.auctionID,
-                loadID: ad.request.loadID
+        guard shouldLogEvent(.click) else { return }
+        let request = ad.request
+        for tracker in eventTrackers(for: .click, partnerAd: ad) {
+            send(
+                MetricsHTTPRequest.click(
+                    eventTracker: tracker,
+                    adFormat: request.internalAdFormat,
+                    auctionID: request.auctionID,
+                    loadID: request.loadID
+                )
             )
-        )
+        }
         logToConsole(.click, auctionID: ad.request.auctionID, loadID: ad.request.loadID)
     }
 
     func logExpiration(for ad: PartnerAd) {
-        guard configuration.filter.contains(.expiration) else { return }
-
-        send(
-            MetricsHTTPRequest.expiration(
-                adFormat: ad.request.internalAdFormat,
-                auctionID: ad.request.auctionID,
-                loadID: ad.request.loadID
+        guard shouldLogEvent(.expiration) else { return }
+        let request = ad.request
+        for tracker in eventTrackers(for: .expiration, partnerAd: ad) {
+            send(
+                MetricsHTTPRequest.expiration(
+                    eventTracker: tracker,
+                    adFormat: request.internalAdFormat,
+                    auctionID: request.auctionID,
+                    loadID: request.loadID
+                )
             )
-        )
+        }
         logToConsole(.expiration, auctionID: ad.request.auctionID, loadID: ad.request.loadID)
     }
 
     func logMediationImpression(for ad: LoadedAd) {
-        send(MetricsHTTPRequest.mediationImpression(
-            adFormat: ad.request.adFormat,
-            size: ad.bannerSize?.size,
-            auctionID: ad.auctionID,
-            loadID: ad.request.loadID,
-            bidders: ad.bidders,
-            winner: ad.winner.partnerID,
-            type: ad.type,
-            price: ad.price,
-            lineItemID: ad.winner.lineItemIdentifier,
-            partnerPlacement: ad.winner.isProgrammatic ? nil : ad.winner.partnerPlacement
-        ))
+        for tracker in eventTrackers(for: .mediationImpression, ad: ad) {
+            send(MetricsHTTPRequest.mediationImpression(
+                eventTracker: tracker,
+                adFormat: ad.request.adFormat,
+                size: ad.bannerSize?.size,
+                auctionID: ad.auctionID,
+                loadID: ad.request.loadID,
+                bidders: ad.bidders,
+                winner: ad.winner.partnerID,
+                type: ad.type,
+                price: ad.price,
+                lineItemID: ad.winner.lineItemIdentifier,
+                partnerPlacement: ad.winner.isProgrammatic ? nil : ad.winner.partnerPlacement
+            ))
+        }
         logToConsole(.mediationImpression, auctionID: ad.auctionID, loadID: ad.request.loadID)
     }
 
     func logPartnerImpression(for ad: PartnerAd) {
-        send(MetricsHTTPRequest.partnerImpression(
-            adFormat: ad.request.internalAdFormat,
-            auctionID: ad.request.auctionID,
-            loadID: ad.request.loadID
-        ))
-        logToConsole(.partnerImpression, auctionID: ad.request.auctionID, loadID: ad.request.loadID)
+        let request = ad.request
+        for tracker in eventTrackers(for: .partnerImpression, partnerAd: ad) {
+            send(MetricsHTTPRequest.partnerImpression(
+                eventTracker: tracker,
+                adFormat: request.internalAdFormat,
+                auctionID: request.auctionID,
+                loadID: request.loadID
+            ))
+        }
+        logToConsole(.partnerImpression, auctionID: request.auctionID, loadID: request.loadID)
     }
 
     func logReward(for ad: PartnerAd) {
-        send(MetricsHTTPRequest.reward(
-            adFormat: ad.request.internalAdFormat,
-            auctionID: ad.request.auctionID,
-            loadID: ad.request.loadID
-        ))
-        logToConsole(.reward, auctionID: ad.request.auctionID, loadID: ad.request.loadID)
+        let request = ad.request
+        for tracker in eventTrackers(for: .reward, partnerAd: ad) {
+            send(MetricsHTTPRequest.reward(
+                eventTracker: tracker,
+                adFormat: request.internalAdFormat,
+                auctionID: request.auctionID,
+                loadID: request.loadID
+            ))
+        }
+        logToConsole(.reward, auctionID: request.auctionID, loadID: request.loadID)
     }
 
     func logAuctionCompleted(
@@ -271,14 +315,17 @@ final class MetricsEventLogger: MetricsEventLogging {
         adFormat: AdFormat,
         size: CGSize?
     ) {
-        let request = WinnerEventHTTPRequest(
-            winner: winner,
-            of: bids,
-            loadID: loadID,
-            adFormat: adFormat,
-            size: size
-        )
-        networkManager.send(request) { _ in }
+        for tracker in eventTrackers(for: .winner) {
+            let request = WinnerEventHTTPRequest(
+                eventTracker: tracker,
+                winner: winner,
+                of: bids,
+                loadID: loadID,
+                adFormat: adFormat,
+                size: size
+            )
+            networkManager.send(request) { _ in }
+        }
     }
 
     func logRewardedCallback(_ rewardedCallback: RewardedCallback, customData: String?) {
@@ -289,28 +336,34 @@ final class MetricsEventLogger: MetricsEventLogging {
     }
 
     func logStartQueue(_ queue: FullscreenAdQueue) {
-        let event = StartQueueEventHTTPRequest(
-            actualMaxQueueSize: queue.maxQueueSize,
-            appID: environment.app.chartboostAppID ?? "",
-            currentQueueDepth: queue.numberOfAdsReady,
-            placementName: queue.placement,
-            queueCapacity: queue.queueCapacity,
-            queueID: queue.queueID
-        )
-        networkManager.send(event) { _ in }
-        logger.log("Starting queue for placement \(queue.placement)", level: .info)
+        for tracker in eventTrackers(for: .startQueue) {
+            let event = StartQueueEventHTTPRequest(
+                eventTracker: tracker,
+                actualMaxQueueSize: queue.maxQueueSize,
+                appID: environment.app.chartboostAppID ?? "",
+                currentQueueDepth: queue.numberOfAdsReady,
+                placementName: queue.placement,
+                queueCapacity: queue.queueCapacity,
+                queueID: queue.queueID
+            )
+            networkManager.send(event) { _ in }
+            logger.log("Starting queue for placement \(queue.placement)", level: .info)
+        }
     }
 
     func logEndQueue(_ queue: FullscreenAdQueue) {
-        let event = EndQueueEventHTTPRequest(
-            appID: environment.app.chartboostAppID ?? "",
-            currentQueueDepth: queue.numberOfAdsReady,
-            placementName: queue.placement,
-            queueCapacity: queue.queueCapacity,
-            queueID: queue.queueID
-        )
-        networkManager.send(event) { _ in }
-        logger.log("Stopping queue for placement \(queue.placement)", level: .info)
+        for tracker in eventTrackers(for: .endQueue) {
+            let event = EndQueueEventHTTPRequest(
+                eventTracker: tracker,
+                appID: environment.app.chartboostAppID ?? "",
+                currentQueueDepth: queue.numberOfAdsReady,
+                placementName: queue.placement,
+                queueCapacity: queue.queueCapacity,
+                queueID: queue.queueID
+            )
+            networkManager.send(event) { _ in }
+            logger.log("Stopping queue for placement \(queue.placement)", level: .info)
+        }
     }
 
     private func logToConsole(
@@ -330,6 +383,25 @@ final class MetricsEventLogger: MetricsEventLogging {
         } else {
             logger.verbose("Metrics data for \(eventType): [\(auctionIDInfo)][\(loadIDInfo)] \(errorInfo)")
         }
+    }
+
+    func logContainerTooSmallWarning(adFormat: AdFormat, data: AdaptiveBannerSizeData, loadID: String) {
+        for tracker in eventTrackers(for: .bannerSize) {
+            let request = AdaptiveBannerSizeHTTPRequest(eventTracker: tracker, adFormat: adFormat, data: data, loadID: loadID)
+            networkManager.send(request) { _ in }
+        }
+    }
+
+    private func eventTrackers(
+        for eventType: MetricsEvent.EventType,
+        ad: LoadedAd? = nil,
+        partnerAd: PartnerAd? = nil
+    ) -> [ServerEventTracker] {
+        let sdkTrackers = configuration.eventTrackers[eventType] ?? []
+        let bidTrackers = ad?.winner.eventTrackers[eventType] ?? []
+        let partnerTrackers = partnerAd?.request.eventTrackers[eventType] ?? []
+
+        return sdkTrackers + bidTrackers + partnerTrackers
     }
 }
 
@@ -368,15 +440,12 @@ extension MetricsEvent {
 }
 
 extension MetricsEventLogger {
-    @discardableResult
-    private func send(_ request: MetricsHTTPRequest) -> RawMetrics? {
+    private func send(_ request: MetricsHTTPRequest) {
         networkManager.send(request) { _ in }
+    }
 
-        switch request.eventType {
-        case .load, .show:
-            return request.bodyJSON
-        default:
-            return nil
-        }
+    // TODO: temperary solution, need to remove (HB-9161).
+    private func shouldLogEvent(_ eventType: MetricsEvent.EventType) -> Bool {
+        return configuration.eventTrackers[eventType] != nil
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -118,5 +118,52 @@ final class BidTests: ChartboostMediationTestCase {
                 "InternalAdLoadRequest+Test key": "InternalAdLoadRequest+Test value"
             ]
         )
+    }
+
+    func testEmptyEventTrackers() throws {
+        let bidResponse = OpenRTB.BidResponse.test(
+            ext: .test(eventTrackers: nil) // No event_trackers in JSON
+        )
+
+        let bids = Bid.makeBids(response: bidResponse, request: .test(adFormat: .banner))
+        let bid = try XCTUnwrap(bids.first)
+
+        XCTAssertNotNil(bid)
+        XCTAssertEqual(bid.eventTrackers.values.count, 0)
+    }
+
+    func testInvalidEventTrackers() throws {
+        let bidResponse = OpenRTB.BidResponse.test(
+               ext: .test(eventTrackers: JSON(value: [
+                   "click": [["invalid_key": "invalid_value"]]
+               ]))
+           )
+        let bids = Bid.makeBids(response: bidResponse, request: .test(adFormat: .banner))
+        let bid = try XCTUnwrap(bids.first)
+
+        XCTAssertNotNil(bid)
+        XCTAssertEqual(bid.eventTrackers.count, 0)
+    }
+
+    func testValidEventTrackers() throws {
+
+        let bidResponse =  OpenRTB.BidResponse.test(
+            ext: .test(eventTrackers: JSON(value: [
+                "click": [
+                    ["url": "https://url_one.com"],
+                    ["url": "https://url_two.com"]
+                ],
+                "helium_impression": [
+                    ["url": "https://mediation-impression.mediation-sdk.chartboost.com/v2/event/helium_impression"]
+                ]
+            ])))
+
+        let bids = Bid.makeBids(response: bidResponse, request: .test(adFormat: .banner))
+        let bid = try XCTUnwrap(bids.first)
+
+        XCTAssertNotNil(bid)
+        XCTAssertEqual(bid.eventTrackers.count, 2)
+        XCTAssertEqual(bid.eventTrackers[.click]?.count, 2)
+        XCTAssertEqual(bid.eventTrackers[.mediationImpression]?.count, 1)
     }
 }

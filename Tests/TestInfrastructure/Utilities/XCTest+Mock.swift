@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -203,6 +203,10 @@ private func assertParametersEqual(recorded: [Any?], expected: [Any?], file: Sta
         }
         // Compare nil parameters
         else if param1 == nil && param2 == nil {
+            continue
+        }
+        // Compare identity if both are AnyObject
+        else if let param1 = param1 as? AnyObject, let param2 = param2 as? AnyObject, param1 === param2 {
             continue
         }
         // Compare AnyEquatable parameters. See AnyEquatable.swift for more info.

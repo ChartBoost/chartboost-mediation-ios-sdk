@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -58,6 +58,8 @@ public struct PartnerAdLoadRequest: Equatable {
     var loadID: String { identifier }
     /// The internal ad format associated.
     let internalAdFormat: AdFormat
+    /// Event trackers for per-ad tracking.
+    let eventTrackers: [MetricsEvent.EventType: [ServerEventTracker]]
 
     // MARK: Equatable
     public static func == (lhs: PartnerAdLoadRequest, rhs: PartnerAdLoadRequest) -> Bool {
@@ -77,6 +79,7 @@ public struct PartnerAdLoadRequest: Equatable {
                 && lhs.identifier == rhs.identifier
                 && lhs.auctionID == rhs.auctionID
                 && lhs.internalAdFormat == rhs.internalAdFormat
+                && lhs.eventTrackers == rhs.eventTrackers
         else {
             return false
         }

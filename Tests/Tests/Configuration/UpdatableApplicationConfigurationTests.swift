@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -327,7 +327,11 @@ class UpdatableApplicationConfigurationTests: ChartboostMediationTestCase {
                 // TODO: Remove this reference adapter hack in HB-4504
                 "reference": [:]
             ] as [String: [String: Any]]),
-            metricsEvents: nil,
+            eventTrackers:[
+                "initialization": [
+                     ServerEventTracker(url: URL(unsafeString: "https://initialization.mediation-sdk.chartboost.com/v1/event/initialization")!)
+                 ]
+            ],
             initTimeout: 1,
             initMetricsPostTimeout: 5,
             placements: [
@@ -369,7 +373,7 @@ class UpdatableApplicationConfigurationTests: ChartboostMediationTestCase {
                 // TODO: Remove this reference adapter hack in HB-4504
                 "reference": [:]
             ]),
-            metricsEvents: nil,
+            eventTrackers: nil,
             initTimeout: nil,
             initMetricsPostTimeout: nil,
             placements: [],
@@ -379,5 +383,87 @@ class UpdatableApplicationConfigurationTests: ChartboostMediationTestCase {
             defaultQueueSize: nil,
             queuedAdTtl: nil
         )
+    }
+
+    /// Ensures that fallback logic for missing or malformed event trackers applies **only** to the `initialization` event.
+    func testEventTrackersFallbackAppliesOnlyToInitialization() throws {
+        let defaultURL = "https://initialization.mediation-sdk.chartboost.com/v1/event/initialization"
+        let validClickURL = "https://click.mediation-sdk.chartboost.com/v2/event/click"
+        let validShowURL = "https://show.mediation-sdk.chartboost.com/v1/event/show"
+
+        let baseJSON: [String: Any] = [
+            "credentials": [:],
+            "placements": [],
+            "event_trackers": [
+                "click": [["url": validClickURL]],
+                "show": [["url": validShowURL]]
+            ]
+        ]
+
+        let scenarios: [(description: String, json: [String: Any], expectedFallback: Bool)] = [
+            (
+                "absent initialization event",
+                baseJSON.merging(["event_trackers": [
+                    "click": [["url": validClickURL]],
+                    "show": [["url": validShowURL]]
+                ]], uniquingKeysWith: { $1 }),
+                true
+            ),
+            (
+                "empty initialization event",
+                baseJSON.merging(["event_trackers": [
+                    "initialization": [],
+                    "click": [["url": validClickURL]],
+                    "show": [["url": validShowURL]]
+                ]], uniquingKeysWith: { $1 }),
+                true
+            ),
+            (
+                "valid initialization url",
+                baseJSON.merging(["event_trackers": [
+                    "initialization": [["url": defaultURL]],
+                    "click": [["url": validClickURL]],
+                    "show": [["url": validShowURL]]
+                ]], uniquingKeysWith: { $1 }),
+                true
+            ),
+            (
+                "valid initialization url",
+                baseJSON.merging(["event_trackers": [
+                    "initialization": [["url": "https://initialization.mediation-sdk.chartboost.com/v1/event/initializationWrong"]],
+                    "click": [["url": validClickURL]],
+                    "show": [["url": validShowURL]]
+                ]], uniquingKeysWith: { $1 }),
+                false
+            )
+        ]
+
+        for (desc, json, shouldFallback) in scenarios {
+            let data = try JSONSerialization.data(withJSONObject: json)
+            let config = UpdatableApplicationConfiguration()
+            do {
+                try config.update(with: data)
+            } catch {
+                XCTFail("Caught error during `update(with:)` in scenario: \(desc)\n\(error)")
+                continue
+            }
+
+            let trackers = config.eventTrackers
+            let initTrackers = trackers[.initialization]
+            let clickTrackers = trackers[.click]
+            let showTrackers = trackers[.show]
+
+            if shouldFallback {
+                XCTAssertEqual(initTrackers?.first?.url.absoluteString,
+                               "https://initialization.mediation-sdk.chartboost.com/v1/event/initialization",
+                               "Fallback not applied in case: \(desc)")
+            } else {
+                XCTAssertNotEqual(initTrackers?.first?.url.absoluteString, defaultURL, "Should not fallback to default: \(desc)")
+
+            }
+
+            XCTAssertEqual(clickTrackers?.first?.url.absoluteString, validClickURL, "Click tracker altered in case: \(desc)")
+            XCTAssertEqual(showTrackers?.first?.url.absoluteString, validShowURL, "Show tracker altered in case: \(desc)")
+        }
     }
 }

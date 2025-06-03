@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -7,6 +7,9 @@ import XCTest
 @testable import ChartboostMediationSDK
 
 final class AdaptiveBannerSizeHTTPRequestTests: ChartboostMediationTestCase {
+
+    private static let url = URL(unsafeString: "https://banner_size.mediation-sdk.chartboost.com/v1/event/banner_size")!
+
     // MARK: AdaptiveBannerSizeHTTPRequest
     func testRequestHeaders() throws {
         let data = AdaptiveBannerSizeData(
@@ -15,7 +18,7 @@ final class AdaptiveBannerSizeHTTPRequestTests: ChartboostMediationTestCase {
             containerSize: nil,
             requestSize: nil
         )
-        let request = AdaptiveBannerSizeHTTPRequest(adFormat: .banner, data: data, loadID: "test_load_id")
+        let request = AdaptiveBannerSizeHTTPRequest(eventTracker: ServerEventTracker(url: AdaptiveBannerSizeHTTPRequestTests.url), adFormat: .banner, data: data, loadID: "test_load_id")
         XCTAssertJSONEqual(
             request.customHeaders,
             ["x-mediation-load-id": "test_load_id",
@@ -34,7 +37,7 @@ final class AdaptiveBannerSizeHTTPRequestTests: ChartboostMediationTestCase {
             containerSize: nil,
             requestSize: nil
         )
-        let request = AdaptiveBannerSizeHTTPRequest(adFormat: .adaptiveBanner, data: data, loadID: "test")
+        let request = AdaptiveBannerSizeHTTPRequest(eventTracker: ServerEventTracker(url: AdaptiveBannerSizeHTTPRequestTests.url), adFormat: .adaptiveBanner, data: data, loadID: "test")
         let jsonDict = request.bodyJSON
         XCTAssertAnyEqual(jsonDict, expectedResult)
     }
@@ -62,7 +65,7 @@ final class AdaptiveBannerSizeHTTPRequestTests: ChartboostMediationTestCase {
             containerSize: BackendEncodableSize(cgSize: CGSize(width: 200, height: 200)),
             requestSize: BackendEncodableSize(cgSize: CGSize(width: 300, height: 300))
         )
-        let request = AdaptiveBannerSizeHTTPRequest(adFormat: .adaptiveBanner, data: data, loadID: "test")
+        let request = AdaptiveBannerSizeHTTPRequest(eventTracker: ServerEventTracker(url: AdaptiveBannerSizeHTTPRequestTests.url), adFormat: .adaptiveBanner, data: data, loadID: "test")
         let jsonDict = request.bodyJSON
         XCTAssertAnyEqual(jsonDict, expectedResult)
     }

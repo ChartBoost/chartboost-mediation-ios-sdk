@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -22,13 +22,10 @@ struct AdaptiveBannerSizeHTTPRequest: HTTPRequestWithRawDataResponse, HTTPReques
     let body: Body
     let requestKeyEncodingStrategy: JSONEncoder.KeyEncodingStrategy = .convertToSnakeCase
 
-    var url: URL {
-        get throws {
-            try makeURL(endpoint: .bannerSize)
-        }
-    }
+    let url: URL
 
-    init(adFormat: AdFormat, data: AdaptiveBannerSizeData, loadID: String) {
+    init(eventTracker: ServerEventTracker, adFormat: AdFormat, data: AdaptiveBannerSizeData, loadID: String) {
+        url = eventTracker.url
         body = data
         customHeaders = [
             HTTP.HeaderKey.adType.rawValue: adFormat.rawValue,

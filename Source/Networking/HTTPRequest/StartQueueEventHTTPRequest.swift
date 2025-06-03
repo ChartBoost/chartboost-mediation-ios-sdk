@@ -1,4 +1,4 @@
-// Copyright 2018-2024 Chartboost, Inc.
+// Copyright 2018-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -21,13 +21,10 @@ struct StartQueueEventHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWith
     let method = HTTP.Method.post
     let requestKeyEncodingStrategy: JSONEncoder.KeyEncodingStrategy = .convertToSnakeCase
     let responseKeyDecodingStrategy: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys
-    var url: URL {
-        get throws {
-            try makeURL(endpoint: .startQueue)
-        }
-    }
+    let url: URL
 
     init(
+        eventTracker: ServerEventTracker,
         actualMaxQueueSize: Int,
         appID: String,
         currentQueueDepth: Int,
@@ -35,6 +32,7 @@ struct StartQueueEventHTTPRequest: HTTPRequestWithEncodableBody, HTTPRequestWith
         queueCapacity: Int,
         queueID: String
     ) {
+        self.url = eventTracker.url
         self.body = Body(
             actualMaxQueueSize: actualMaxQueueSize,
             appID: appID,
