@@ -6,7 +6,7 @@
 import Foundation
 
 /// An event with metrics and other relevant info intended to be logged to our servers and on console.
-struct MetricsEvent: Encodable {
+struct MetricsEvent: Equatable, Encodable {
     enum NetworkType: String {
         case bidding
         case mediation

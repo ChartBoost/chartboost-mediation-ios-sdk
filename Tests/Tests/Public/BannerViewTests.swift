@@ -10,7 +10,7 @@ import XCTest
 class BannerAdViewTests: ChartboostMediationTestCase {
     lazy var bannerView: BannerAdView = setUpView()
     var controller = BannerSwapControllerProtocolMock()
-    var networkManager: NetworkManagerProtocolMock { mocks.networkManager as! NetworkManagerProtocolMock }
+    var networkManager: NetworkManagerProtocolMock { mocks.networkManagerNew }
 
     override func setUp() {
         super.setUp()

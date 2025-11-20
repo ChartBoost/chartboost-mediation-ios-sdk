@@ -74,7 +74,11 @@ class MocksContainer {
     var consentSettings = ConsentSettingsMock()
     var consentSettingsDelegate = ConsentSettingsDelegateMock()
     var loadRateLimiter = LoadRateLimitingMock()
-    var networkManager: NetworkManagerProtocol = NetworkManagerProtocolMock()
+    var networkManager: NetworkManagerProtocol {
+        networkManagerLegacy ?? networkManagerNew   // new unless a legacy value has been explicitly set
+    }
+    var networkManagerLegacy: NetworkManagerProtocol?
+    var networkManagerNew = NetworkManagerProtocolMock()
     var bundleInfo = BundleInfoProvidingMock()
     var appTrackingInfo = AppTrackingInfoProviderMock()
     var chartboostIDProvider = ChartboostIDProvidingMock()

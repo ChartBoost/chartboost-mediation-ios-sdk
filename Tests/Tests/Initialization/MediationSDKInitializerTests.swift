@@ -263,7 +263,6 @@ class MediationSDKInitializerTests: ChartboostMediationTestCase {
         mocks.taskDispatcher.performDelayedWorkItems()
         XCTAssertTrue(completed)
 
-
         // Now that the test is set up by having one failed attempt to init, try again.
         // Initialize
         completed = false

@@ -37,7 +37,6 @@ class FileSystemStorageTests: ChartboostMediationTestCase {
         _ = try? FileManager.default.removeItem(at: directoryURL)
     }
     
-    
     /// Validates that the file storage returns a proper value for the configuration directory url.
     func testURLForSDKConfigurationDirectory() throws {
         let url = try fileStorage.urlForSDKConfigurationDirectory

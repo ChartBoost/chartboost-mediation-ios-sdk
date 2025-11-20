@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name              = 'ChartboostMediationSDK'
-  spec.version           = '5.3.0'
+  spec.version           = '5.4.0'
   spec.license           = { :type => 'MIT', :file => 'LICENSE.md' }
   spec.homepage          = 'https://github.com/ChartBoost/chartboost-mediation-ios-sdk'
   spec.authors           = { 'Chartboost' => 'https://www.chartboost.com/' }
@@ -49,7 +49,7 @@ Pod::Spec.new do |spec|
         }
 
         # Dependency
-        test_spec.dependency 'Sourcery', '~> 2.0'
+        test_spec.dependency 'Sourcery', '~> 2.2.0'
 
         # Add build-phase script to auto-generate test mocks using Sourcery
         test_spec.script_phase = {

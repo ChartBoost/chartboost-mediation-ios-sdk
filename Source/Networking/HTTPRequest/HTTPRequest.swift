@@ -5,10 +5,10 @@
 
 import Foundation
 
-enum HTTPRequestError: Error {
+enum HTTPRequestError: LocalizedError {
     case createURLWithComponentsError(urlComponents: URLComponents)
 
-    var localizedDescription: String {
+    var errorDescription: String? {
         switch self {
         case .createURLWithComponentsError(let urlComponents):
             return "Failed to create a `URL` with `URLComponents`: \(urlComponents)"

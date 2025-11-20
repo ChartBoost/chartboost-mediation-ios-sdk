@@ -594,7 +594,6 @@ class PartnerAdapterControllerTests: ChartboostMediationTestCase {
         XCTAssertNoMethodCalls(adapter2)
         XCTAssertNoMethodCalls(adapter3)
 
-        
         // check storage is updated
         XCTAssertAnyEqual(adapterStorage1.ads, otherAds)
     }

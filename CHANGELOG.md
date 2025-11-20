@@ -2,6 +2,9 @@ iOS Change Log
 ==================
 Check for the latest Chartboost Mediation SDK at the Chartboost website.
 
+### Version 5.4.0 *(2025-11-20)*
+- Minor telemetry bug fixes.
+
 ### Version 5.3.0 *(2025-06-03)*
 - Bug fixes and improvements.
 - Xcode 16.0 is the new minimum supported version.

@@ -37,7 +37,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
             "partner4": InternalPartnerAdapterInfo(partnerVersion: "a.b.c", adapterVersion: "a.b.c.d", partnerID: "-", partnerDisplayName: "-")
         ]
         // These tests use an old network manager mock that uses the real network manager under the hood
-        mocks.networkManager = DeprecatedNetworkManagerMock()
+        mocks.networkManagerLegacy = DeprecatedNetworkManagerMock()
     }
 
     // MARK: - Basic
@@ -1341,7 +1341,7 @@ class NetworkAdAuctionServiceTests: ChartboostMediationTestCase {
     func testNetworkManagerJSONDecodingErrorIsReportedPropery() {
         // Mock network manager
         let networkManager = NetworkManagerProtocolMock()
-        mocks.networkManager = networkManager
+        mocks.networkManagerLegacy = networkManager
 
         let responseData = "some data".data(using: .utf8)!
         let decodingError = NSError.test(domain: "decoding", code: 5)
